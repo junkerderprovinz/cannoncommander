@@ -1643,8 +1643,6 @@
     "fmOpen": "Avaa CannonCommanderissa",
     "fmShow": "Näytä CannonCommander",
     "fmQuit": "Lopeta",
-    "styleTitle": "Kuten Resurssienhallinnassa vai kuin Commander?",
-    "styleText": "Kiva, että olet täällä! Miten haluat käyttää CannonCommanderia? Voit muuttaa sitä milloin tahansa asetuksissa kohdassa Pikanäppäimet.",
     "explorerName": "Kuten Resurssienhallinnassa",
     "explorerHow": "Napsautus valitsee tiedoston, hiirellä piirretty kehys useita. F5 päivittää, askelpalautin palaa takaisin ja Alt+D siirtyy polkuriville.",
     "commanderName": "Kuin Commander",
@@ -3801,6 +3799,16 @@
         "other": "{n} merkintää lisää"
       }
     }
+  },
+  "welcome": {
+    "title": "Tervetuloa CannonCommanderiin",
+    "lead": "Kiva, että olet täällä! Miten haluat työskennellä?",
+    "singleHow": "Yksi kansio koko leveydeltä ja sivupalkki vieressä. Sopii pienemmille näytöille.",
+    "dualHow": "Kaksi kansiota rinnakkain. F5 kopioi ja F6 siirtää toiseen paneeliin.",
+    "hintDesktop": "Voit muuttaa sitä milloin tahansa asetuksissa kohdassa Pikanäppäimet.",
+    "hintWeb": "Vaihda milloin tahansa Näytä-valikosta tai näppäimillä Ctrl+1 ja Ctrl+2.",
+    "start": "Aloitetaan",
+    "action": "Tervetuloikkuna"
   },
   "core": {
     "notBuilt": "Ei vielä rakennettu: {id}",

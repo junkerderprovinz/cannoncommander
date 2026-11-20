@@ -11,7 +11,7 @@ export const MENUS: [string, MenuEntry[]][] = [
     'flat', 'columns', { head: tl('menus.sort') }, 'sortName', 'sortSize', 'sortTime', 'sortType', '-', 'swapPanels', 'equalPanels', 'profiles', 'refresh']],
   ['go', ['back', 'forward', 'up', 'home', 'gotoPath', 'history', '-', 'BOOKMARKS', '-', 'openTrash', 'openShares', 'openActivity']],
   ['tools', ['search', 'quickFilter', '-', 'compareDirs', 'sync', 'diff', 'duplicates', 'diskUsage', 'terminal', '-', 'jobs', 'mounts']],
-  ['help', ['palette', 'shortcuts', 'whatsNew', 'docs', 'installApp', 'glyphs', '-', 'about']],
+  ['help', ['palette', 'shortcuts', 'whatsNew', 'welcome', 'docs', 'installApp', 'glyphs', '-', 'about']],
 ];
 
 export const menuName = (i: number) => tl(`menus.${MENUS[i]![0]}`)();

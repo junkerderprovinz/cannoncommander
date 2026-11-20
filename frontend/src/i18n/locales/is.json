@@ -1643,8 +1643,6 @@
     "fmOpen": "Opna í CannonCommander",
     "fmShow": "Sýna CannonCommander",
     "fmQuit": "Hætta",
-    "styleTitle": "Eins og í Explorer eða eins og Commander?",
-    "styleText": "Gaman að hafa þig hér! Hvernig viltu nota CannonCommander? Þú getur breytt því hvenær sem er í stillingum undir Flýtilyklar.",
     "explorerName": "Eins og í Explorer",
     "explorerHow": "Smellur velur skrá, rammi með músinni velur nokkrar. F5 endurnýjar, Backspace fer til baka og Alt+D fer í slóðastikuna.",
     "commanderName": "Eins og Commander",
@@ -3801,6 +3799,16 @@
         "other": "{n} færslur í viðbót"
       }
     }
+  },
+  "welcome": {
+    "title": "Velkomin í CannonCommander",
+    "lead": "Gaman að hafa þig hér! Hvernig viltu vinna?",
+    "singleHow": "Ein mappa yfir alla breiddina og hliðarstikan við hliðina. Hentar vel minni skjám.",
+    "dualHow": "Tvær möppur hlið við hlið. F5 afritar og F6 færir yfir á hinn gluggann.",
+    "hintDesktop": "Þú getur breytt því hvenær sem er í stillingum undir Flýtilyklar.",
+    "hintWeb": "Skiptu hvenær sem er í valmyndinni Skoða eða með Ctrl+1 og Ctrl+2.",
+    "start": "Byrjum",
+    "action": "Velkomugluggi"
   },
   "core": {
     "notBuilt": "Ekki smíðað enn: {id}",

@@ -1643,8 +1643,6 @@
     "fmOpen": "CannonCommander'da aç",
     "fmShow": "CannonCommander'ı göster",
     "fmQuit": "Çık",
-    "styleTitle": "Explorer'daki gibi mi, Commander gibi mi?",
-    "styleText": "Burada olmana sevindik! CannonCommander'ı nasıl kullanmak istersin? Bunu ayarlarda Klavye kısayolları altında istediğin zaman değiştirebilirsin.",
     "explorerName": "Explorer'daki gibi",
     "explorerHow": "Bir tıklama bir dosyayı, fareyle çizilen çerçeve birkaçını seçer. F5 yeniler, Backspace geri gider ve Alt+D yol çubuğuna atlar.",
     "commanderName": "Commander gibi",
@@ -3801,6 +3799,16 @@
         "other": "{n} kayıt daha"
       }
     }
+  },
+  "welcome": {
+    "title": "CannonCommander'a hoş geldin",
+    "lead": "Burada olmana sevindik! Nasıl çalışmak istersin?",
+    "singleHow": "Tüm genişlikte tek klasör, yanında kenar çubuğu. Küçük ekranlara iyi uyar.",
+    "dualHow": "Yan yana iki klasör. F5 kopyalar, F6 diğer panele taşır.",
+    "hintDesktop": "Bunu ayarlarda Klavye kısayolları altında istediğin zaman değiştirebilirsin.",
+    "hintWeb": "Görünüm menüsünden ya da Ctrl+1 ve Ctrl+2 ile istediğin zaman geçiş yap.",
+    "start": "Hadi başlayalım",
+    "action": "Karşılama penceresi"
   },
   "core": {
     "notBuilt": "Henüz yapılmadı: {id}",

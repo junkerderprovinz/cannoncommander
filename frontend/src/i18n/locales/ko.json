@@ -1595,8 +1595,6 @@
     "fmOpen": "CannonCommander에서 열기",
     "fmShow": "CannonCommander 보기",
     "fmQuit": "종료",
-    "styleTitle": "탐색기처럼, 아니면 Commander처럼?",
-    "styleText": "반가워요! CannonCommander를 어떻게 사용하고 싶으세요? 설정의 키보드 단축키에서 언제든 바꿀 수 있습니다.",
     "explorerName": "탐색기처럼",
     "explorerHow": "클릭으로 파일 하나를, 마우스로 틀을 그려 여러 개를 선택합니다. F5는 새로 고침, Backspace는 뒤로, Alt+D는 경로 표시줄로 이동합니다.",
     "commanderName": "Commander처럼",
@@ -3664,6 +3662,16 @@
         "other": "항목 {n}개"
       }
     }
+  },
+  "welcome": {
+    "title": "CannonCommander에 오신 것을 환영해요",
+    "lead": "반가워요! 어떻게 작업하고 싶으세요?",
+    "singleHow": "폴더 하나를 전체 너비로 보여 주고 옆에 사이드바를 둡니다. 작은 화면에 잘 맞아요.",
+    "dualHow": "두 폴더를 나란히 보여 줍니다. F5는 다른 패널로 복사하고 F6은 이동합니다.",
+    "hintDesktop": "설정의 키보드 단축키에서 언제든 바꿀 수 있습니다.",
+    "hintWeb": "보기 메뉴나 Ctrl+1, Ctrl+2로 언제든 바꿀 수 있어요.",
+    "start": "시작하기",
+    "action": "환영 창"
   },
   "core": {
     "notBuilt": "아직 만들지 않음: {id}",

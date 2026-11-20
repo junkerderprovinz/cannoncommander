@@ -1739,8 +1739,6 @@
     "fmOpen": "Otevřít v CannonCommanderu",
     "fmShow": "Zobrazit CannonCommander",
     "fmQuit": "Ukončit",
-    "styleTitle": "Jako v Průzkumníku, nebo jako Commander?",
-    "styleText": "Moc rádi tě tu vidíme! Jak chceš CannonCommander ovládat? Kdykoli to můžeš změnit v nastavení v části Klávesové zkratky.",
     "explorerName": "Jako v Průzkumníku",
     "explorerHow": "Klik vybere soubor, rámeček myší vybere několik. F5 obnoví, Backspace jde zpět a Alt+D skočí do řádku s cestou.",
     "commanderName": "Jako Commander",
@@ -4075,6 +4073,16 @@
         "other": "ještě {n} záznamů"
       }
     }
+  },
+  "welcome": {
+    "title": "Vítej v CannonCommanderu",
+    "lead": "Moc rádi tě tu vidíme! Jak chceš pracovat?",
+    "singleHow": "Jedna složka přes celou šířku, vedle ní postranní panel. Hodí se pro menší obrazovky.",
+    "dualHow": "Dvě složky vedle sebe. F5 kopíruje a F6 přesouvá do druhého okna.",
+    "hintDesktop": "Kdykoli to můžeš změnit v nastavení v části Klávesové zkratky.",
+    "hintWeb": "Přepnout můžeš kdykoli v nabídce Zobrazení nebo pomocí Ctrl+1 a Ctrl+2.",
+    "start": "Jdeme na to",
+    "action": "Uvítací okno"
   },
   "core": {
     "notBuilt": "Ještě nepostaveno: {id}",

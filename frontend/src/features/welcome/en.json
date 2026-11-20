@@ -1,0 +1,10 @@
+{
+  "title": "Welcome to CannonCommander",
+  "lead": "Lovely to have you here! How would you like to work?",
+  "singleHow": "One folder across the full width, with the sidebar beside it. A good fit for smaller screens.",
+  "dualHow": "Two folders side by side. F5 copies and F6 moves to the other panel.",
+  "hintDesktop": "You can change it any time in the settings under Keyboard shortcuts.",
+  "hintWeb": "Switch any time in the View menu or with Ctrl+1 and Ctrl+2.",
+  "start": "Let's go",
+  "action": "Welcome window"
+}

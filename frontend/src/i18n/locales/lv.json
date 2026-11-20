@@ -1691,8 +1691,6 @@
     "fmOpen": "Atvērt CannonCommander",
     "fmShow": "Rādīt CannonCommander",
     "fmQuit": "Iziet",
-    "styleTitle": "Kā pārlūkā Explorer vai kā Commander?",
-    "styleText": "Prieks, ka esi šeit! Kā vēlies lietot CannonCommander? To jebkurā laikā var mainīt iestatījumu sadaļā Īsinājumtaustiņi.",
     "explorerName": "Kā pārlūkā Explorer",
     "explorerHow": "Klikšķis atlasa failu, ar peli novilkts rāmis atlasa vairākus. F5 atsvaidzina, Backspace iet atpakaļ, un Alt+D pārlec uz ceļa joslu.",
     "commanderName": "Kā Commander",
@@ -3938,6 +3936,16 @@
         "other": "vēl {n} ieraksti"
       }
     }
+  },
+  "welcome": {
+    "title": "Laipni lūdzam CannonCommander",
+    "lead": "Prieks, ka esi šeit! Kā vēlies strādāt?",
+    "singleHow": "Viena mape visā platumā, blakus sānjosla. Labi der mazākiem ekrāniem.",
+    "dualHow": "Divas mapes blakus. F5 kopē, un F6 pārvieto uz otru paneli.",
+    "hintDesktop": "To jebkurā laikā var mainīt iestatījumu sadaļā Īsinājumtaustiņi.",
+    "hintWeb": "Pārslēdz jebkurā laikā izvēlnē Skats vai ar Ctrl+1 un Ctrl+2.",
+    "start": "Sāksim",
+    "action": "Sveiciena logs"
   },
   "core": {
     "notBuilt": "Vēl nav izveidots: {id}",

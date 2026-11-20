@@ -36,7 +36,12 @@ function stored(): Record<string, unknown> {
   try { return migratePrefs(JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); } catch { return {}; }
 }
 
-export const prefs = reactive({ ...structuredClone(DEFAULT_PREFS), ...stored() }) as Prefs;
+const kept = stored();
+export const prefs = reactive({ ...structuredClone(DEFAULT_PREFS), ...kept }) as Prefs;
+
+// Nothing kept in this browser or on the server: somebody opening the app for the first time.
+let fresh = !Object.keys(kept).length;
+export const firstVisit = () => fresh;
 
 let saveToServer: ((p: Prefs) => void) | null = null;
 export const onPrefsSaved = (fn: (p: Prefs) => void) => { saveToServer = fn; };
@@ -49,6 +54,7 @@ export function setPref(key: string, value: unknown) {
 }
 
 export function mergeServerPrefs(server: Record<string, unknown>) {
+  if (Object.keys(server).length) fresh = false;
   Object.assign(prefs, migratePrefs({ ...server }));
   applyPrefs();
 }

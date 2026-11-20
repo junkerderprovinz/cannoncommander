@@ -1595,8 +1595,6 @@
     "fmOpen": "CannonCommander で開く",
     "fmShow": "CannonCommander を表示",
     "fmQuit": "終了",
-    "styleTitle": "エクスプローラー風にしますか、Commander 風にしますか?",
-    "styleText": "ようこそ! CannonCommander をどのように操作しますか? 設定の「キーボードショートカット」でいつでも変更できます。",
     "explorerName": "エクスプローラー風",
     "explorerHow": "クリックでファイルを選択し、マウスで枠を描くと複数選択できます。F5 で更新、Backspace で戻り、Alt+D でパスバーに移ります。",
     "commanderName": "Commander 風",
@@ -3664,6 +3662,16 @@
         "other": "{n} 件の項目"
       }
     }
+  },
+  "welcome": {
+    "title": "CannonCommander へようこそ",
+    "lead": "来てくれてうれしいです! どのように使いますか?",
+    "singleHow": "フォルダーを 1 つ全幅で表示し、横にサイドバーを置きます。小さめの画面に向いています。",
+    "dualHow": "2 つのフォルダーを並べて表示します。F5 でもう一方のパネルへコピー、F6 で移動します。",
+    "hintDesktop": "設定の「キーボードショートカット」でいつでも変更できます。",
+    "hintWeb": "表示メニューまたは Ctrl+1 と Ctrl+2 でいつでも切り替えられます。",
+    "start": "はじめる",
+    "action": "ようこそウィンドウ"
   },
   "core": {
     "notBuilt": "まだ実装されていません: {id}",

@@ -1643,8 +1643,6 @@
     "fmOpen": "Openen in CannonCommander",
     "fmShow": "CannonCommander tonen",
     "fmQuit": "Afsluiten",
-    "styleTitle": "Zoals in de Verkenner of zoals een Commander?",
-    "styleText": "Fijn dat je er bent! Hoe wil je CannonCommander gebruiken? Je kunt het altijd aanpassen in de instellingen onder Sneltoetsen.",
     "explorerName": "Zoals in de Verkenner",
     "explorerHow": "Een klik selecteert een bestand, een kader met de muis selecteert er meerdere. F5 vernieuwt, Backspace gaat terug en Alt+D springt naar de padbalk.",
     "commanderName": "Zoals een Commander",
@@ -3801,6 +3799,16 @@
         "other": "nog {n} items"
       }
     }
+  },
+  "welcome": {
+    "title": "Welkom bij CannonCommander",
+    "lead": "Fijn dat je er bent! Hoe wil je werken?",
+    "singleHow": "Eén map over de volle breedte, met de zijbalk ernaast. Past goed bij kleinere schermen.",
+    "dualHow": "Twee mappen naast elkaar. F5 kopieert en F6 verplaatst naar het andere paneel.",
+    "hintDesktop": "Je kunt het altijd aanpassen in de instellingen onder Sneltoetsen.",
+    "hintWeb": "Wissel altijd via het menu Beeld of met Ctrl+1 en Ctrl+2.",
+    "start": "Aan de slag",
+    "action": "Welkomstvenster"
   },
   "core": {
     "notBuilt": "Nog niet gebouwd: {id}",

@@ -14,16 +14,18 @@ import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
 import keysDe from '@/features/keys/de.json';
 import keysEn from '@/features/keys/en.json';
+import welcomeDe from '@/features/welcome/de.json';
+import welcomeEn from '@/features/welcome/en.json';
 import de from './de.json';
 import en from './en.json';
 import setup from './desktop';
 import { launch } from './launch';
 import { fileManager, followFileManager, setFileManager } from './filemanager';
 import { openHandedOver, takeStartFolders } from './open';
-import { askStyle } from './style';
 
 addMessages('desktop', { de, en });
 addMessages('keys', { de: keysDe, en: keysEn });
+addMessages('welcome', { de: welcomeDe, en: welcomeEn });
 vi.mock('@/core/menu', async (original) => ({ ...(await original<typeof import('@/core/menu')>()), menu: vi.fn() }));
 
 let posted: { path: string; run: boolean }[] = [];
@@ -181,40 +183,15 @@ describe('default file manager', () => {
 });
 
 describe('first start', () => {
-  const answer = (label: string) => {
-    const w = winStack.at(-1)!;
-    w.foot.find((f) => f.label === label)!.run!(document.body);
-    w.close();
-  };
-
-  it('asks once how the app should handle and opens files in their programs', () => {
-    Object.assign(prefs, { desktopStyle: '', clickSelect: false, dblclick: 'open', keys: null });
-    action('sidePane', { label: 'Vorschaubereich', run: () => {} });
-    askStyle();
-    expect(winStack.map((w) => w.title)).toEqual(['Wie im Explorer oder wie ein Commander?']);
+  it('greets with the welcome window once and opens files in their programs', () => {
+    Object.assign(prefs, { desktopStyle: '', dblclick: 'open' });
+    setup();
+    expect(winStack.map((w) => w.title)).toEqual(['Willkommen bei CannonCommander']);
     expect(prefs.dblclick).toBe('system');
-    answer('Wie im Explorer');
-    expect(prefs).toMatchObject({ desktopStyle: 'explorer', clickSelect: true });
-    expect((prefs.keys as { preset: string }).preset).toBe('explorer');
-    expect(actions.sidePane!.key).toBe('Alt+P');
-  });
-
-  it('shows one panel for the explorer way and both panels for the commander', () => {
-    Object.assign(prefs, { desktopStyle: '', dual: true, keys: null });
-    askStyle();
-    answer('Wie im Explorer');
-    expect(prefs.dual).toBe(false);
-    expect(JSON.parse(localStorage.getItem('cannoncommander-prefs')!).dual).toBe(false);
-    askStyle();
-    answer('Wie ein Commander');
-    expect(prefs.dual).toBe(true);
-  });
-
-  it('stays a commander when the question is closed without an answer', () => {
-    Object.assign(prefs, { desktopStyle: '', clickSelect: true, keys: null });
-    askStyle();
     winStack.at(-1)!.close();
-    expect(prefs).toMatchObject({ desktopStyle: 'commander', clickSelect: false, keys: null });
+    expect(prefs.desktopStyle).toBe('commander');
+    setup();
+    expect(winStack).toHaveLength(0);
   });
 });
 

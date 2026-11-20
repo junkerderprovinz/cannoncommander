@@ -1691,8 +1691,6 @@
     "fmOpen": "Otvori u CannonCommanderu",
     "fmShow": "Prikaži CannonCommander",
     "fmQuit": "Zatvori",
-    "styleTitle": "Kao u Exploreru ili kao Commander?",
-    "styleText": "Drago nam je što si tu! Kako želiš koristiti CannonCommander? To uvijek možeš promijeniti u postavkama pod Tipkovnički prečaci.",
     "explorerName": "Kao u Exploreru",
     "explorerHow": "Klik odabire datoteku, okvir mišem odabire više njih. F5 osvježava, Backspace ide natrag, a Alt+D skače u traku putanje.",
     "commanderName": "Kao Commander",
@@ -3938,6 +3936,16 @@
         "other": "još {n} unosa"
       }
     }
+  },
+  "welcome": {
+    "title": "Dobro došao u CannonCommander",
+    "lead": "Drago nam je što si tu! Kako želiš raditi?",
+    "singleHow": "Jedna mapa preko cijele širine, a pokraj nje bočna traka. Dobro pristaje manjim zaslonima.",
+    "dualHow": "Dvije mape jedna do druge. F5 kopira, a F6 premješta u drugu ploču.",
+    "hintDesktop": "To uvijek možeš promijeniti u postavkama pod Tipkovnički prečaci.",
+    "hintWeb": "Prebaci kad god želiš u izborniku Prikaz ili tipkama Ctrl+1 i Ctrl+2.",
+    "start": "Krenimo",
+    "action": "Prozor dobrodošlice"
   },
   "core": {
     "notBuilt": "Još nije izgrađeno: {id}",

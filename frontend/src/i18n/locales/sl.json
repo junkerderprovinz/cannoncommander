@@ -1739,8 +1739,6 @@
     "fmOpen": "Odpri v CannonCommanderju",
     "fmShow": "Pokaži CannonCommander",
     "fmQuit": "Končaj",
-    "styleTitle": "Kot v Raziskovalcu ali kot Commander?",
-    "styleText": "Lepo, da si tukaj! Kako želiš uporabljati CannonCommander? To lahko kadar koli spremeniš v nastavitvah pod Bližnjice na tipkovnici.",
     "explorerName": "Kot v Raziskovalcu",
     "explorerHow": "Klik izbere datoteko, okvir z miško jih izbere več. F5 osveži, Backspace gre nazaj, Alt+D pa skoči v vrstico s potjo.",
     "commanderName": "Kot Commander",
@@ -4075,6 +4073,16 @@
         "other": "še {n} vnosov"
       }
     }
+  },
+  "welcome": {
+    "title": "Dobrodošel v CannonCommanderju",
+    "lead": "Lepo, da si tukaj! Kako želiš delati?",
+    "singleHow": "Ena mapa čez vso širino, ob njej stranska vrstica. Dobro se poda manjšim zaslonom.",
+    "dualHow": "Dve mapi druga ob drugi. F5 kopira, F6 pa premakne v drugo okno.",
+    "hintDesktop": "To lahko kadar koli spremeniš v nastavitvah pod Bližnjice na tipkovnici.",
+    "hintWeb": "Preklopiš lahko kadar koli v meniju Pogled ali s Ctrl+1 in Ctrl+2.",
+    "start": "Začnimo",
+    "action": "Pozdravno okno"
   },
   "core": {
     "notBuilt": "Še ni zgrajeno: {id}",

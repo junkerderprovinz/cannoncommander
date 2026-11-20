@@ -12,8 +12,6 @@
   "fmOpen": "Open in CannonCommander",
   "fmShow": "Show CannonCommander",
   "fmQuit": "Quit",
-  "styleTitle": "As in Explorer or like a commander?",
-  "styleText": "Lovely to have you here! How would you like to use CannonCommander? You can change it any time in the settings under Keyboard shortcuts.",
   "explorerName": "As in Explorer",
   "explorerHow": "A click selects a file, a frame drawn with the mouse selects several. F5 refreshes, Backspace goes back and Alt+D jumps to the path bar.",
   "commanderName": "Like a commander",

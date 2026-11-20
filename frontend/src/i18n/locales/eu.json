@@ -2108,8 +2108,6 @@
     "fmOpen": "Ireki CannonCommander-en",
     "fmShow": "Erakutsi CannonCommander",
     "fmQuit": "Irten",
-    "styleTitle": "Arakatzailean bezala ala Commander baten antzera?",
-    "styleText": "Pozten gara hemen izateaz! Nola erabili nahi duzu CannonCommander? Edozein unetan alda dezakezu ezarpenetan, Lasterbide-teklak atalean.",
     "explorerName": "Arakatzailean bezala",
     "explorerHow": "Klik batek fitxategi bat hautatzen du, saguarekin egindako markoak hainbat. F5ek freskatzen du, Atzera teklak atzera egiten du eta Alt+D bide-barrara doa.",
     "commanderName": "Commander baten antzera",
@@ -4634,5 +4632,15 @@
     "hue": "Ñabardura",
     "shade": "Saturazioa eta distira",
     "colourValue": "Kolore-balioa"
+  },
+  "welcome": {
+    "title": "Ongi etorri CannonCommanderrera",
+    "lead": "Pozten gara hemen izateaz! Nola egin nahi duzu lan?",
+    "singleHow": "Karpeta bat zabalera osoan, alboko barra ondoan duela. Pantaila txikiagoetarako egokia.",
+    "dualHow": "Bi karpeta elkarren ondoan. F5ek kopiatzen du eta F6k beste panelera eramaten du.",
+    "hintDesktop": "Edozein unetan alda dezakezu ezarpenetan, Lasterbide-teklak atalean.",
+    "hintWeb": "Edozein unetan alda dezakezu Ikusi menuan edo Ctrl+1 eta Ctrl+2 erabilita.",
+    "start": "Goazen",
+    "action": "Ongietorri-leihoa"
   }
 }

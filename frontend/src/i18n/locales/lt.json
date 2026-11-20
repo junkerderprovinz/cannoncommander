@@ -1739,8 +1739,6 @@
     "fmOpen": "Atidaryti CannonCommander",
     "fmShow": "Rodyti CannonCommander",
     "fmQuit": "Išeiti",
-    "styleTitle": "Kaip naršyklėje ar kaip Commander?",
-    "styleText": "Smagu, kad esi čia! Kaip norėtum naudoti CannonCommander? Bet kada gali tai pakeisti nustatymų skiltyje Spartieji klavišai.",
     "explorerName": "Kaip naršyklėje",
     "explorerHow": "Spustelėjimas pasirenka failą, pele nubrėžtas rėmelis pasirenka kelis. F5 atnaujina, Backspace grįžta atgal, o Alt+D peršoka į kelio juostą.",
     "commanderName": "Kaip Commander",
@@ -4075,6 +4073,16 @@
         "other": "dar {n} įrašų"
       }
     }
+  },
+  "welcome": {
+    "title": "Sveiki atvykę į CannonCommander",
+    "lead": "Smagu, kad esi čia! Kaip norėtum dirbti?",
+    "singleHow": "Vienas aplankas per visą plotį, šalia šoninė juosta. Tinka mažesniems ekranams.",
+    "dualHow": "Du aplankai greta. F5 kopijuoja, o F6 perkelia į kitą skydelį.",
+    "hintDesktop": "Bet kada gali tai pakeisti nustatymų skiltyje Spartieji klavišai.",
+    "hintWeb": "Perjunk bet kada meniu Rodinys arba klavišais Ctrl+1 ir Ctrl+2.",
+    "start": "Pradėkime",
+    "action": "Pasveikinimo langas"
   },
   "core": {
     "notBuilt": "Dar nesukurta: {id}",

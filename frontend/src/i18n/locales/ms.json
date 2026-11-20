@@ -1595,8 +1595,6 @@
     "fmOpen": "Buka dalam CannonCommander",
     "fmShow": "Tunjukkan CannonCommander",
     "fmQuit": "Keluar",
-    "styleTitle": "Seperti dalam Explorer atau seperti Commander?",
-    "styleText": "Seronok anda di sini! Bagaimana anda mahu menggunakan CannonCommander? Anda boleh menukarnya bila-bila masa dalam tetapan di bawah Pintasan papan kekunci.",
     "explorerName": "Seperti dalam Explorer",
     "explorerHow": "Satu klik memilih satu fail, bingkai dengan tetikus memilih beberapa. F5 menyegar semula, Backspace kembali dan Alt+D melompat ke bar laluan.",
     "commanderName": "Seperti Commander",
@@ -3664,6 +3662,16 @@
         "other": "{n} entri lagi"
       }
     }
+  },
+  "welcome": {
+    "title": "Selamat datang ke CannonCommander",
+    "lead": "Seronok anda di sini! Bagaimana anda mahu bekerja?",
+    "singleHow": "Satu folder selebar skrin, dengan bar sisi di sebelahnya. Sesuai untuk skrin yang lebih kecil.",
+    "dualHow": "Dua folder bersebelahan. F5 menyalin dan F6 mengalihkan ke panel lain.",
+    "hintDesktop": "Anda boleh menukarnya bila-bila masa dalam tetapan di bawah Pintasan papan kekunci.",
+    "hintWeb": "Tukar bila-bila masa dalam menu Paparan atau dengan Ctrl+1 dan Ctrl+2.",
+    "start": "Jom mula",
+    "action": "Tetingkap alu-aluan"
   },
   "core": {
     "notBuilt": "Belum dibina: {id}",

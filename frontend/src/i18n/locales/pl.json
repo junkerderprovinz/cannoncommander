@@ -1739,8 +1739,6 @@
     "fmOpen": "Otwórz w CannonCommanderze",
     "fmShow": "Pokaż CannonCommandera",
     "fmQuit": "Zakończ",
-    "styleTitle": "Jak w Eksploratorze czy jak Commander?",
-    "styleText": "Miło, że jesteś! Jak chcesz obsługiwać CannonCommandera? Możesz to w każdej chwili zmienić w ustawieniach w sekcji Skróty klawiszowe.",
     "explorerName": "Jak w Eksploratorze",
     "explorerHow": "Kliknięcie zaznacza plik, ramka myszą zaznacza kilka. F5 odświeża, Backspace wraca, a Alt+D przechodzi do paska ścieżki.",
     "commanderName": "Jak Commander",
@@ -4075,6 +4073,16 @@
         "other": "jeszcze {n} wpisu"
       }
     }
+  },
+  "welcome": {
+    "title": "Witaj w CannonCommanderze",
+    "lead": "Miło, że jesteś! Jak chcesz pracować?",
+    "singleHow": "Jeden folder na całą szerokość, obok pasek boczny. Dobrze sprawdza się na mniejszych ekranach.",
+    "dualHow": "Dwa foldery obok siebie. F5 kopiuje, a F6 przenosi do drugiego okna.",
+    "hintDesktop": "Możesz to w każdej chwili zmienić w ustawieniach w sekcji Skróty klawiszowe.",
+    "hintWeb": "Przełączysz w każdej chwili w menu Widok albo skrótami Ctrl+1 i Ctrl+2.",
+    "start": "Zaczynamy",
+    "action": "Okno powitalne"
   },
   "core": {
     "notBuilt": "Jeszcze niezbudowane: {id}",

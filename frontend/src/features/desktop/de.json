@@ -12,8 +12,6 @@
   "fmOpen": "In CannonCommander öffnen",
   "fmShow": "CannonCommander zeigen",
   "fmQuit": "Beenden",
-  "styleTitle": "Wie im Explorer oder wie ein Commander?",
-  "styleText": "Schön, dass du da bist! Wie möchtest du CannonCommander bedienen? Du kannst das jederzeit in den Einstellungen unter Tastenkürzel ändern.",
   "explorerName": "Wie im Explorer",
   "explorerHow": "Ein Klick wählt eine Datei, ein Rahmen mit der Maus wählt mehrere. F5 lädt neu, die Rücktaste geht zurück und Alt+D springt in die Pfadzeile.",
   "commanderName": "Wie ein Commander",

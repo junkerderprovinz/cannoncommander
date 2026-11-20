@@ -1643,8 +1643,6 @@
     "fmOpen": "Åbn i CannonCommander",
     "fmShow": "Vis CannonCommander",
     "fmQuit": "Afslut",
-    "styleTitle": "Som i Stifinder eller som en Commander?",
-    "styleText": "Dejligt, at du er her! Hvordan vil du bruge CannonCommander? Du kan altid ændre det i indstillingerne under Tastaturgenveje.",
     "explorerName": "Som i Stifinder",
     "explorerHow": "Et klik markerer en fil, en ramme med musen markerer flere. F5 opdaterer, Backspace går tilbage, og Alt+D hopper til stilinjen.",
     "commanderName": "Som en Commander",
@@ -3801,6 +3799,16 @@
         "other": "{n} poster mere"
       }
     }
+  },
+  "welcome": {
+    "title": "Velkommen til CannonCommander",
+    "lead": "Dejligt, at du er her! Hvordan vil du arbejde?",
+    "singleHow": "Én mappe i hele bredden med sidepanelet ved siden af. Passer godt til mindre skærme.",
+    "dualHow": "To mapper side om side. F5 kopierer, og F6 flytter til det andet panel.",
+    "hintDesktop": "Du kan altid ændre det i indstillingerne under Tastaturgenveje.",
+    "hintWeb": "Skift når som helst i menuen Vis eller med Ctrl+1 og Ctrl+2.",
+    "start": "Lad os komme i gang",
+    "action": "Velkomstvindue"
   },
   "core": {
     "notBuilt": "Ikke bygget endnu: {id}",

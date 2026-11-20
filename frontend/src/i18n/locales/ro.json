@@ -1691,8 +1691,6 @@
     "fmOpen": "Deschide în CannonCommander",
     "fmShow": "Arată CannonCommander",
     "fmQuit": "Ieșire",
-    "styleTitle": "Ca în Explorer sau ca un Commander?",
-    "styleText": "Ne bucurăm că ești aici! Cum vrei să folosești CannonCommander? Poți schimba oricând în setări, la Comenzi rapide de la tastatură.",
     "explorerName": "Ca în Explorer",
     "explorerHow": "Un clic selectează un fișier, un cadru cu mouse-ul selectează mai multe. F5 reîmprospătează, Backspace merge înapoi, iar Alt+D sare în bara de cale.",
     "commanderName": "Ca un Commander",
@@ -3938,6 +3936,16 @@
         "other": "încă {n} de intrări"
       }
     }
+  },
+  "welcome": {
+    "title": "Bun venit în CannonCommander",
+    "lead": "Ne bucurăm că ești aici! Cum vrei să lucrezi?",
+    "singleHow": "Un dosar pe toată lățimea, cu bara laterală alături. Se potrivește ecranelor mai mici.",
+    "dualHow": "Două dosare unul lângă altul. F5 copiază, iar F6 mută în celălalt panou.",
+    "hintDesktop": "Poți schimba oricând în setări, la Comenzi rapide de la tastatură.",
+    "hintWeb": "Poți comuta oricând din meniul Vizualizare sau cu Ctrl+1 și Ctrl+2.",
+    "start": "Să începem",
+    "action": "Fereastra de bun venit"
   },
   "core": {
     "notBuilt": "Încă neconstruit: {id}",

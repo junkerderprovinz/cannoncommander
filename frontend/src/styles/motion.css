@@ -91,6 +91,14 @@
     /* A window or dialog rising into place on the level's spring. */
     --motion-win-dur: 380ms;
     --motion-win-travel: 30px;
+    /* The welcome window arriving: how long each piece takes and the gap between two, how far they rise, how far
+       the logo's cannons kick back, how much the smoke at their muzzles swells, and the curve they all follow. */
+    --motion-welcome-dur: 560ms;
+    --motion-welcome-step: 90ms;
+    --motion-welcome-dist: 14px;
+    --motion-welcome-kick: 5%;
+    --motion-welcome-swell: 1.8;
+    --motion-welcome-ease: cubic-bezier(.16, 1, .3, 1);
     /* The rows of a folder coming in: how far they rise and how far they swing in from alternate sides. */
     --motion-row-travel: 14px;
     --motion-row-sway: 8px;
@@ -165,6 +173,12 @@
     --motion-menu-sway: 0px;
     --motion-win-dur: 150ms;
     --motion-win-travel: 6px;
+    --motion-welcome-dur: 300ms;
+    --motion-welcome-step: 50ms;
+    --motion-welcome-dist: 4px;
+    --motion-welcome-kick: 1.5%;
+    --motion-welcome-swell: 1.25;
+    --motion-welcome-ease: cubic-bezier(.16, 1, .3, 1);
     --motion-row-travel: 4px;
     --motion-row-sway: 0px;
     --motion-press-scale: .985;
@@ -238,6 +252,12 @@
     --motion-menu-sway: 0px;
     --motion-win-dur: 0s;
     --motion-win-travel: 0px;
+    --motion-welcome-dur: 0s;
+    --motion-welcome-step: 0ms;
+    --motion-welcome-dist: 0px;
+    --motion-welcome-kick: 0%;
+    --motion-welcome-swell: 1;
+    --motion-welcome-ease: linear;
     --motion-row-travel: 0px;
     --motion-row-sway: 0px;
     --motion-press-scale: 1;
@@ -309,6 +329,12 @@
     --motion-menu-sway: 36px;
     --motion-win-dur: 640ms;
     --motion-win-travel: 90px;
+    --motion-welcome-dur: 820ms;
+    --motion-welcome-step: 130ms;
+    --motion-welcome-dist: 40px;
+    --motion-welcome-kick: 14%;
+    --motion-welcome-swell: 3;
+    --motion-welcome-ease: cubic-bezier(.34, 1.56, .64, 1);
     --motion-row-travel: 40px;
     --motion-row-sway: 48px;
     --motion-press-scale: .88;

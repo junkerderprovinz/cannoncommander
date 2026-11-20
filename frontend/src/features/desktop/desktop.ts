@@ -4,15 +4,15 @@
 import './desktop.css';
 import { on } from '@/api/sse';
 import { action, actions } from '@/core/actions';
-import { prefs } from '@/core/prefs';
+import { prefs, setPref } from '@/core/prefs';
 import { addOpenMenuItems } from '@/files/menus';
 import { inArchive, join } from '@/files/paths';
 import { tl } from '@/i18n';
 import { usePanels } from '@/stores/panels';
+import { openWelcome } from '@/features/welcome';
 import { followFileManager } from './filemanager';
 import { launch } from './launch';
 import { type Opening, openHandedOver, takeStartFolders } from './open';
-import { askStyle } from './style';
 
 // The window's own menu offers Back, Forward and Reload in the language of the system's web view, which mean nothing
 // here. Fields keep theirs for cut, copy and paste.
@@ -35,7 +35,11 @@ export default function setup() {
   // is on this computer already.
   for (const id of ['download', 'upload']) delete actions[id];
   void followFileManager();
-  if (!prefs.desktopStyle) askStyle();
+  if (!prefs.desktopStyle) {
+    // The desktop app stands in for the computer's own file manager, which opens a file in its program.
+    setPref('dblclick', 'system');
+    openWelcome();
+  }
   // Öffnen hands the file to its program, beside Öffnen mit, as in Explorer's menu.
   addOpenMenuItems((sel, path) => (sel.some((k) => !k.dir && !k.up) && !inArchive(path) ? ['launch'] : []));
   on('desktop.open', (e) => { void openHandedOver((e.data as Opening[] | undefined) ?? []); });

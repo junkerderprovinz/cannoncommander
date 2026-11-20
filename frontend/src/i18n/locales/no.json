@@ -1643,8 +1643,6 @@
     "fmOpen": "Åpne i CannonCommander",
     "fmShow": "Vis CannonCommander",
     "fmQuit": "Avslutt",
-    "styleTitle": "Som i Utforsker eller som en Commander?",
-    "styleText": "Hyggelig at du er her! Hvordan vil du bruke CannonCommander? Du kan når som helst endre det i innstillingene under Hurtigtaster.",
     "explorerName": "Som i Utforsker",
     "explorerHow": "Et klikk markerer en fil, en ramme med musen markerer flere. F5 oppdaterer, Backspace går tilbake og Alt+D hopper til stilinjen.",
     "commanderName": "Som en Commander",
@@ -3801,6 +3799,16 @@
         "other": "{n} oppføringer til"
       }
     }
+  },
+  "welcome": {
+    "title": "Velkommen til CannonCommander",
+    "lead": "Hyggelig at du er her! Hvordan vil du jobbe?",
+    "singleHow": "Én mappe i hele bredden, med sidefeltet ved siden av. Passer godt til mindre skjermer.",
+    "dualHow": "To mapper side om side. F5 kopierer og F6 flytter til det andre panelet.",
+    "hintDesktop": "Du kan når som helst endre det i innstillingene under Hurtigtaster.",
+    "hintWeb": "Bytt når som helst i Vis-menyen eller med Ctrl+1 og Ctrl+2.",
+    "start": "Sett i gang",
+    "action": "Velkomstvindu"
   },
   "core": {
     "notBuilt": "Ikke bygget ennå: {id}",

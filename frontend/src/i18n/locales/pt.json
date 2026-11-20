@@ -1691,8 +1691,6 @@
     "fmOpen": "Abrir no CannonCommander",
     "fmShow": "Mostrar o CannonCommander",
     "fmQuit": "Sair",
-    "styleTitle": "Como no Explorador ou como um Commander?",
-    "styleText": "Que bom ter-te aqui! Como queres usar o CannonCommander? Podes mudar isto a qualquer momento nas definições, em Atalhos de teclado.",
     "explorerName": "Como no Explorador",
     "explorerHow": "Um clique seleciona um ficheiro, um quadro com o rato seleciona vários. F5 atualiza, Backspace volta atrás e Alt+D salta para a barra do caminho.",
     "commanderName": "Como um Commander",
@@ -3938,6 +3936,16 @@
         "other": "mais {n} entradas"
       }
     }
+  },
+  "welcome": {
+    "title": "Bem-vindo ao CannonCommander",
+    "lead": "Que bom ter-te aqui! Como queres trabalhar?",
+    "singleHow": "Uma pasta em toda a largura, com a barra lateral ao lado. Fica bem em ecrãs mais pequenos.",
+    "dualHow": "Duas pastas lado a lado. F5 copia e F6 move para o outro painel.",
+    "hintDesktop": "Podes mudar isto a qualquer momento nas definições, em Atalhos de teclado.",
+    "hintWeb": "Podes mudar a qualquer momento no menu Ver ou com Ctrl+1 e Ctrl+2.",
+    "start": "Vamos lá",
+    "action": "Janela de boas-vindas"
   },
   "core": {
     "notBuilt": "Ainda não construído: {id}",

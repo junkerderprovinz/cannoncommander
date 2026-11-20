@@ -1643,8 +1643,6 @@
     "fmOpen": "Megnyitás a CannonCommanderben",
     "fmShow": "CannonCommander megjelenítése",
     "fmQuit": "Kilépés",
-    "styleTitle": "Mint az Intézőben, vagy mint egy Commander?",
-    "styleText": "Örülünk, hogy itt vagy! Hogyan szeretnéd használni a CannonCommandert? Bármikor módosíthatod a beállításokban, a Billentyűparancsok részben.",
     "explorerName": "Mint az Intézőben",
     "explorerHow": "Egy kattintás kijelöl egy fájlt, egérrel húzott keret többet. Az F5 frissít, a Backspace visszalép, az Alt+D pedig az útvonalsávra ugrik.",
     "commanderName": "Mint egy Commander",
@@ -3801,6 +3799,16 @@
         "other": "még {n} bejegyzés"
       }
     }
+  },
+  "welcome": {
+    "title": "Üdv a CannonCommanderben",
+    "lead": "Örülünk, hogy itt vagy! Hogyan szeretnél dolgozni?",
+    "singleHow": "Egy mappa teljes szélességben, mellette az oldalsáv. Kisebb kijelzőkhöz jól illik.",
+    "dualHow": "Két mappa egymás mellett. Az F5 másol, az F6 áthelyez a másik ablakba.",
+    "hintDesktop": "Bármikor módosíthatod a beállításokban, a Billentyűparancsok részben.",
+    "hintWeb": "Bármikor átválthatsz a Nézet menüben vagy a Ctrl+1 és Ctrl+2 billentyűkkel.",
+    "start": "Kezdjük",
+    "action": "Üdvözlőablak"
   },
   "core": {
     "notBuilt": "Még nincs megépítve: {id}",

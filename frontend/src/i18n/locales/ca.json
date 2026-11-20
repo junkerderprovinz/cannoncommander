@@ -1691,8 +1691,6 @@
     "fmOpen": "Obre a CannonCommander",
     "fmShow": "Mostra CannonCommander",
     "fmQuit": "Surt",
-    "styleTitle": "Com a l'Explorador o com un Commander?",
-    "styleText": "Que bé tenir-te aquí! Com vols fer servir CannonCommander? Ho pots canviar quan vulguis a la configuració, a Dreceres de teclat.",
     "explorerName": "Com a l'Explorador",
     "explorerHow": "Un clic selecciona un fitxer, un marc amb el ratolí en selecciona diversos. F5 actualitza, Retrocés torna enrere i Alt+D salta a la barra del camí.",
     "commanderName": "Com un Commander",
@@ -3938,6 +3936,16 @@
         "other": "{n} entrades més"
       }
     }
+  },
+  "welcome": {
+    "title": "Benvingut a CannonCommander",
+    "lead": "Que bé tenir-te aquí! Com vols treballar?",
+    "singleHow": "Una carpeta a tota l'amplada, amb la barra lateral al costat. Va bé per a pantalles més petites.",
+    "dualHow": "Dues carpetes una al costat de l'altra. F5 copia i F6 mou a l'altre panell.",
+    "hintDesktop": "Ho pots canviar quan vulguis a la configuració, a Dreceres de teclat.",
+    "hintWeb": "Pots canviar-ho quan vulguis al menú Visualitza o amb Ctrl+1 i Ctrl+2.",
+    "start": "Som-hi",
+    "action": "Finestra de benvinguda"
   },
   "core": {
     "notBuilt": "Encara no està fet: {id}",

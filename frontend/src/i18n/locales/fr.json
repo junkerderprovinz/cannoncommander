@@ -1691,8 +1691,6 @@
     "fmOpen": "Ouvrir dans CannonCommander",
     "fmShow": "Afficher CannonCommander",
     "fmQuit": "Quitter",
-    "styleTitle": "Comme dans l'Explorateur ou comme un Commander ?",
-    "styleText": "Ravi de t'accueillir ! Comment veux-tu utiliser CannonCommander ? Tu peux le changer à tout moment dans les réglages, sous Raccourcis clavier.",
     "explorerName": "Comme dans l'Explorateur",
     "explorerHow": "Un clic sélectionne un fichier, un cadre tracé à la souris en sélectionne plusieurs. F5 actualise, Retour arrière revient en arrière et Alt+D va dans la barre de chemin.",
     "commanderName": "Comme un Commander",
@@ -3938,6 +3936,16 @@
         "other": "{n} autres entrées"
       }
     }
+  },
+  "welcome": {
+    "title": "Bienvenue dans CannonCommander",
+    "lead": "Ravi de t'accueillir ! Comment veux-tu travailler ?",
+    "singleHow": "Un dossier sur toute la largeur, avec la barre latérale à côté. Idéal pour les petits écrans.",
+    "dualHow": "Deux dossiers côte à côte. F5 copie et F6 déplace vers l'autre panneau.",
+    "hintDesktop": "Tu peux le changer à tout moment dans les réglages, sous Raccourcis clavier.",
+    "hintWeb": "Tu peux basculer à tout moment dans le menu Affichage ou avec Ctrl+1 et Ctrl+2.",
+    "start": "C'est parti",
+    "action": "Fenêtre de bienvenue"
   },
   "core": {
     "notBuilt": "Pas encore construit : {id}",

@@ -43,6 +43,9 @@ const MOMENTS: [string, RegExp, string[]][] = [
   ['the salute', /\.fx-salute\b/, ['salute-dur', 'salute-burst', 'salute-step']],
   ['the head kicking back', /\.fx-recoil\b/, ['recoil-dur', 'recoil-dist']],
   ['the tumbleweed', /\.fx-weed\b/, ['tumble-dur', 'tumble-hop']],
+  ['the welcome window coming in', /\.wl-way\b/, ['welcome-dur', 'welcome-step', 'welcome-dist']],
+  ['the cannons of the welcome logo kicking back', /\.wl-cannon\b/, ['welcome-dur', 'welcome-kick']],
+  ['the smoke at their muzzles', /\.wl-puff\b/, ['welcome-dur', 'welcome-swell']],
 ];
 
 const frames = new Map(all.flatMap((s) => keyframes(s.css).map((k) => [k.name, k.body] as const)));
