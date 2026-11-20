@@ -1,5 +1,5 @@
 @import './motion.css';
-:root { --window-bar: 0px; --gut: 1rem; --row-h: 2.25rem; --side-w: 17rem; }
+:root { --gut: 1rem; --row-h: 2.25rem; --side-w: 17rem; }
 :root[data-density="compact"] { --row-h: 1.85rem; }
 :root[data-density="comfortable"] { --row-h: 2.6rem; }
 * { box-sizing: border-box; }
