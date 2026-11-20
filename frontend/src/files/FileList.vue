@@ -193,7 +193,7 @@ watch(() => F.loaded(props.i) && list.value.length > 0, (ready) => {
 }, { immediate: true });
 onBeforeUnmount(settle);
 
-// The cursor stays in sight after a key moved it, also onto a line that is not drawn yet.
+// The cursor stays in sight after a key moved it or a folder opened on it, also on a line that is not drawn yet.
 watch(() => [tab.value.cursor, props.i === F.active] as const, async ([cursor, active]) => {
   if (!active) return;
   await nextTick();
@@ -205,7 +205,7 @@ watch(() => [tab.value.cursor, props.i === F.active] as const, async ([cursor, a
   }
   const line = lines.value.find((x) => x.head === undefined && cursor >= x.from && cursor < x.to);
   if (l && line) l.scrollTop = Math.max(0, line.y - l.clientHeight / 2);
-});
+}, { immediate: true });
 
 // The rows on screen and the columns shown decide what fs/meta is asked for; sorting by such a column needs all rows.
 const metaCols = computed(() => {

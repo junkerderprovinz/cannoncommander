@@ -148,6 +148,9 @@ export const usePanels = defineStore('panels', () => {
     return turn;
   }
   const current = (tab: Tab, turn: number) => turns.get(tab) === turn;
+  // The entry each folder had the cursor on when the tab left it.
+  const spots = new WeakMap<Tab, Map<string, string>>();
+  const spotsOf = (tab: Tab) => spots.get(tab) ?? spots.set(tab, new Map()).get(tab)!;
   const waiting = (i = active.value) => slow.get(T(i)) ?? '';
 
   // Puts the tab into a folder at once and says whether it moved. go() calls it once the folder is read; on its own it
@@ -169,7 +172,13 @@ export const usePanels = defineStore('panels', () => {
       tab.fwd = [];
       if (!following) pushNav(i);
     }
+    const from = tab.path, kept = spotsOf(tab), at = entries(i)[tab.cursor];
+    if (at && !at.up) kept.set(from, at.name);
     Object.assign(tab, { path, marked: new Set(), cursor: 0, filter: '', qf: false, editPath: false, flat: false });
+    // Up a level the cursor stands on the folder the way came from, back through the history where it stood before.
+    const child = from.startsWith(path === '/' ? '/' : path + '/') ? split(from.slice(path.length))[0]?.replace('::', '') : undefined;
+    const name = record ? child ?? kept.get(path) : kept.get(path) ?? child;
+    if (name) tab.cursor = Math.max(0, entries(i).findIndex((k) => !k.up && k.name === name));
     visited.value = [path, ...visited.value.filter((p) => p !== path)].slice(0, 20);
     if (!inArchive(path)) recordVisit(path);
     ancestors(path).forEach((p) => openTree.add(p));

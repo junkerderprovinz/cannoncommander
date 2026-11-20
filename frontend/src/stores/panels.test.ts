@@ -148,6 +148,30 @@ describe('panels', () => {
     expect(F.entries()[F.T().cursor]!.name).toBe('2026');
   });
 
+  it('puts the cursor on the folder it came out of when a crumb leads further up', async () => {
+    const F = await panels();
+    await F.go('/mnt/user/fotos/2026');
+    await F.go('/mnt/user');
+    expect(F.entries()[F.T().cursor]!.name).toBe('fotos');
+  });
+
+  it('puts the cursor back where it was when the way back leads into a folder', async () => {
+    const F = await panels();
+    await F.go('/mnt/user');
+    F.T().cursor = F.entries().findIndex((k) => k.name === 'isos');
+    await F.go('/mnt/user/isos');
+    await F.go('/mnt/user/fotos/2026');
+    for (const _ of [1, 2]) await F.go(F.T().hist.pop()!, 0, false);
+    expect(F.T().path).toBe('/mnt/user');
+    expect(F.entries()[F.T().cursor]!.name).toBe('isos');
+  });
+
+  it('starts at the top of a folder it has not been in', async () => {
+    const F = await panels();
+    await F.go('/mnt/user/isos');
+    expect(F.T().cursor).toBe(0);
+  });
+
   it('searches the folders below by default and only here when asked', async () => {
     const F = await panels();
     await F.go('/mnt/user');
