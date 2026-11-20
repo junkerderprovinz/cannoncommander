@@ -1,5 +1,6 @@
 // Firefox keeps the mouse's side buttons for its own history and never shows them to the page (bug 1720538),
-// so every folder change gets a history entry and stepping through the history steps through the folders.
+// so every folder change gets a history entry and stepping through the history steps through the folders. The step
+// goes to the panel under the pointer, or the active one, whichever panel the entry came from.
 // The active folder also stands in the hash, so a reload or a shared link opens it again.
 import { run } from './actions';
 import { view } from './views';
@@ -15,6 +16,12 @@ let setActive = (_panel: number) => {};
 export function setNavSource(source: { hash: () => string; setActive: (panel: number) => void }) {
   hash = source.hash;
   setActive = source.setActive;
+}
+
+let pointed: number | undefined;
+function point(e: Event) {
+  const at = (e.target as Element).closest<HTMLElement>('.panel[data-panel]');
+  pointed = at ? Number(at.dataset.panel) : undefined;
 }
 
 const url = () => {
@@ -61,11 +68,12 @@ export function onPopState(e: PopStateEvent) {
     return;
   }
   if (view.id !== 'files' || winStack.length) return;
-  if (owner !== undefined) setActive(owner);
+  if (pointed !== undefined) setActive(pointed);
   run(back ? 'back' : 'forward');
 }
 
 export function installNav() {
   history.replaceState({ ccNav: 0 }, '', url());
   addEventListener('popstate', onPopState);
+  addEventListener('pointerover', point, true);
 }
