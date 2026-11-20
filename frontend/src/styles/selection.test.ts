@@ -47,10 +47,13 @@ describe('a selected row anywhere in the file manager', () => {
 });
 
 describe('the field that renames a row', () => {
-  it('has no border and no ring, only its own ground', () => {
+  it('has no border, no ring and no ground, so the selected name and the caret mark it', () => {
     const own = on('.rn-field').map((r) => r.body).join();
     expect(own).toMatch(/border: 0/);
     expect(own).toMatch(/outline: none/);
+    expect(own).toMatch(/background: transparent/);
+    expect(own).toMatch(/caret-color: var\(--accent-ink\)/);
+    expect(on('.rn-field::selection').map((r) => r.body).join()).toMatch(/background: var\(--row-cursor\)/);
     const lines = rules.filter((r) => r.selector.includes('.rn-field') && /border-color|box-shadow|outline:(?!\s*none)/.test(r.body));
     expect(lines.map((r) => `${r.file}: ${r.selector}`)).toEqual([]);
   });
