@@ -3452,12 +3452,7 @@
     "conflicts": "Spori",
     "forAll": "Uporabi za vse",
     "step": "{at} od {n}",
-    "exists": {
-      "one": "{n} ime v {dest} že obstaja",
-      "two": "{n} imeni v {dest} že obstajata",
-      "few": "{n} imena v {dest} že obstajajo",
-      "other": "{n} imen v {dest} že obstaja"
-    },
+    "taken": "V cilju že obstaja",
     "sideNew": "Novo",
     "sideOld": "Obstoječe",
     "newer": "novejše",

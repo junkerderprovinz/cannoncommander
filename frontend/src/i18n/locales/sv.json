@@ -3250,10 +3250,7 @@
     "conflicts": "Konflikter",
     "forAll": "Använd för alla",
     "step": "{at} av {n}",
-    "exists": {
-      "one": "{n} namn finns redan i {dest}",
-      "other": "{n} namn finns redan i {dest}"
-    },
+    "taken": "Finns redan i målet",
     "sideNew": "Ny",
     "sideOld": "Befintlig",
     "newer": "nyare",

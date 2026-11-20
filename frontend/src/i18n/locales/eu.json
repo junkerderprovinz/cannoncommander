@@ -3696,10 +3696,7 @@
     "conflicts": "Gatazkak",
     "forAll": "Aplikatu guztiei",
     "step": "{at}/{n}",
-    "exists": {
-      "one": "Izen 1 badago jada {dest} karpetan",
-      "other": "{n} izen badaude jada {dest} karpetan"
-    },
+    "taken": "Helmugan badago dagoeneko",
     "sideNew": "Berria",
     "sideOld": "Dagoena",
     "newer": "berriagoa",

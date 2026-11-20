@@ -3149,9 +3149,7 @@
     "conflicts": "Xung đột",
     "forAll": "Áp dụng cho tất cả",
     "step": "{at} trên {n}",
-    "exists": {
-      "other": "{n} tên đã có trong {dest}"
-    },
+    "taken": "Đã có ở đích",
     "sideNew": "Mới",
     "sideOld": "Đang có",
     "newer": "mới hơn",

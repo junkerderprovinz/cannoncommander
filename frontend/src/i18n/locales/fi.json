@@ -3250,10 +3250,7 @@
     "conflicts": "Ristiriidat",
     "forAll": "Käytä kaikille",
     "step": "{at}/{n}",
-    "exists": {
-      "one": "{n} nimi on jo kohteessa {dest}",
-      "other": "{n} nimeä on jo kohteessa {dest}"
-    },
+    "taken": "Löytyy jo kohteesta",
     "sideNew": "Uusi",
     "sideOld": "Olemassa oleva",
     "newer": "uudempi",

@@ -3351,11 +3351,7 @@
     "conflicts": "Sukobi",
     "forAll": "Primijeni na sve",
     "step": "{at} od {n}",
-    "exists": {
-      "one": "{n} naziv već postoji u {dest}",
-      "few": "{n} naziva već postoje u {dest}",
-      "other": "{n} naziva već postoji u {dest}"
-    },
+    "taken": "Već postoji u odredištu",
     "sideNew": "Novo",
     "sideOld": "Postojeće",
     "newer": "novije",

@@ -3149,9 +3149,7 @@
     "conflicts": "Percanggahan",
     "forAll": "Guna untuk semua",
     "step": "{at} daripada {n}",
-    "exists": {
-      "other": "{n} nama sudah wujud dalam {dest}"
-    },
+    "taken": "Sudah ada di destinasi",
     "sideNew": "Baharu",
     "sideOld": "Sedia ada",
     "newer": "lebih baharu",

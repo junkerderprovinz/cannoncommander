@@ -3250,10 +3250,7 @@
     "conflicts": "Conflicten",
     "forAll": "Voor alle gebruiken",
     "step": "{at} van {n}",
-    "exists": {
-      "one": "1 naam bestaat al in {dest}",
-      "other": "{n} namen bestaan al in {dest}"
-    },
+    "taken": "Bestaat al in het doel",
     "sideNew": "Nieuw",
     "sideOld": "Bestaand",
     "newer": "nieuwer",

@@ -3452,12 +3452,7 @@
     "conflicts": "Konflikty",
     "forAll": "Použít pro všechny",
     "step": "{at} z {n}",
-    "exists": {
-      "one": "1 název už v {dest} existuje",
-      "few": "{n} názvy už v {dest} existují",
-      "many": "{n} názvu už v {dest} existuje",
-      "other": "{n} názvů už v {dest} existuje"
-    },
+    "taken": "V cíli už existuje",
     "sideNew": "Nový",
     "sideOld": "Stávající",
     "newer": "novější",

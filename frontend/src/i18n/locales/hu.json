@@ -3250,10 +3250,7 @@
     "conflicts": "Ütközések",
     "forAll": "Mindegyikre",
     "step": "{at}/{n}",
-    "exists": {
-      "one": "1 név már létezik itt: {dest}",
-      "other": "{n} név már létezik itt: {dest}"
-    },
+    "taken": "Már létezik a célban",
     "sideNew": "Új",
     "sideOld": "Meglévő",
     "newer": "újabb",

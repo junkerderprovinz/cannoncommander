@@ -3452,12 +3452,7 @@
     "conflicts": "Konfliktai",
     "forAll": "Taikyti visiems",
     "step": "{at} iš {n}",
-    "exists": {
-      "one": "{n} pavadinimas jau yra aplanke {dest}",
-      "few": "{n} pavadinimai jau yra aplanke {dest}",
-      "many": "{n} pavadinimo jau yra aplanke {dest}",
-      "other": "{n} pavadinimų jau yra aplanke {dest}"
-    },
+    "taken": "Paskirtyje jau yra",
     "sideNew": "Naujas",
     "sideOld": "Esamas",
     "newer": "naujesnis",

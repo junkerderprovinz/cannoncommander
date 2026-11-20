@@ -3250,10 +3250,7 @@
     "conflicts": "Konflikter",
     "forAll": "Brug for alle",
     "step": "{at} af {n}",
-    "exists": {
-      "one": "1 navn findes allerede i {dest}",
-      "other": "{n} navne findes allerede i {dest}"
-    },
+    "taken": "Findes allerede i målet",
     "sideNew": "Ny",
     "sideOld": "Eksisterende",
     "newer": "nyere",

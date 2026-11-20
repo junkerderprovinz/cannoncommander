@@ -30,6 +30,7 @@ describe('the conflict window', () => {
   it('answers a single name with one of the buttons in its foot', async () => {
     const answer = resolveConflicts([conflict('album.flac')], '/mnt/user/musik');
     expect(buttons()).toEqual(['Abbrechen', 'Ersetzen', 'Überspringen', 'Beide behalten']);
+    expect(top().foot.filter((f) => f.label && f.label !== 'Abbrechen').map((f) => f.g)).toEqual(['IconSync', 'IconForward', 'IconCopy']);
     expect(top().foot.find((f) => f.primary)?.label).toBe('Beide behalten');
     press('Ersetzen');
     expect(await answer).toEqual({ 'album.flac': 'replace' });
@@ -93,6 +94,14 @@ describe('the body of the conflict window', () => {
     expect(document.querySelector('.cf-name b')?.textContent).toBe('b.mkv');
     expect(document.body.textContent).toContain('2 von 3');
     expect(document.querySelectorAll('.cf-row')).toHaveLength(1);
+  });
+
+  it('says what is wrong in a red badge beside the name, without a card or a tile around it', () => {
+    mount([conflict('a.mkv')], 0);
+    const badge = document.querySelector('.cf-name [data-glim="Badge"]');
+    expect(badge?.textContent?.trim()).toBe('Gibt es im Ziel schon');
+    expect(badge?.className).toMatch(/fail/);
+    expect(document.querySelector('[data-glim="SubCard"], [data-glim="GlyphTile"]')).toBeNull();
   });
 
   it('offers Für alle übernehmen only while more than one name is left', () => {

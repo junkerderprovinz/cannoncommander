@@ -3351,11 +3351,7 @@
     "conflicts": "Conflictes",
     "forAll": "Aplica a tots",
     "step": "{at} de {n}",
-    "exists": {
-      "one": "1 nom ja existeix a {dest}",
-      "many": "{n} noms ja existeixen a {dest}",
-      "other": "{n} noms ja existeixen a {dest}"
-    },
+    "taken": "Ja existeix a la destinació",
     "sideNew": "Nou",
     "sideOld": "Existent",
     "newer": "més recent",

@@ -3,10 +3,11 @@ import type { Choice, JobConflict, Rule } from '@/api/ops';
 import { t } from '@/i18n';
 
 export const RULES = (): [Rule, string, string][] => [
-  ['ask', t('transfer.rule.ask'), 'IconHelp'], ['skip', t('transfer.rule.skip'), 'IconKeepRight'], ['replace', t('transfer.rule.replace'), 'IconKeepLeft'],
-  ['newer', t('transfer.rule.newer'), 'IconUpdate'], ['both', t('transfer.rule.both'), 'IconKeepBoth'],
+  ['ask', t('transfer.rule.ask'), 'IconHelp'], ['skip', t('transfer.rule.skip'), 'IconForward'], ['replace', t('transfer.rule.replace'), 'IconSync'],
+  ['newer', t('transfer.rule.newer'), 'IconUpdate'], ['both', t('transfer.rule.both'), 'IconCopy'],
 ];
-export const CHOICES = () => [['replace', t('transfer.choice.replace'), 'IconKeepLeft'], ['skip', t('transfer.choice.skip'), 'IconKeepRight'], ['both', t('transfer.choice.both'), 'IconKeepBoth']] as const;
+// Two arrows in a circle swap the old for the new, an arrow ahead passes the name by, two sheets keep both.
+export const CHOICES = () => [['replace', t('transfer.choice.replace'), 'IconSync'], ['skip', t('transfer.choice.skip'), 'IconForward'], ['both', t('transfer.choice.both'), 'IconCopy']] as const;
 
 // Nur Neuere ersetzen answers each row by its dates; the other rules answer every row the same.
 export const pick = (rule: Choice, c: Pick<JobConflict, 'newer'>): Choice => (rule === 'newer' ? (c.newer === 'source' ? 'replace' : 'skip') : rule);

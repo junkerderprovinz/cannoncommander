@@ -3351,11 +3351,7 @@
     "conflicts": "Conflitti",
     "forAll": "Applica a tutti",
     "step": "{at} di {n}",
-    "exists": {
-      "one": "1 nome esiste già in {dest}",
-      "many": "{n} nomi esistono già in {dest}",
-      "other": "{n} nomi esistono già in {dest}"
-    },
+    "taken": "Esiste già nella destinazione",
     "sideNew": "Nuovo",
     "sideOld": "Esistente",
     "newer": "più recente",

@@ -3250,10 +3250,7 @@
     "conflicts": "Conflitos",
     "forAll": "Aplicar a todos",
     "step": "{at} de {n}",
-    "exists": {
-      "one": "1 nome xa existe en {dest}",
-      "other": "{n} nomes xa existen en {dest}"
-    },
+    "taken": "Xa existe no destino",
     "sideNew": "Novo",
     "sideOld": "Existente",
     "newer": "máis novo",

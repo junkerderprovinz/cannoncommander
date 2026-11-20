@@ -3351,11 +3351,7 @@
     "conflicts": "Konflikti",
     "forAll": "Piemērot visiem",
     "step": "{at} no {n}",
-    "exists": {
-      "zero": "{n} nosaukumu jau ir mapē {dest}",
-      "one": "{n} nosaukums jau ir mapē {dest}",
-      "other": "{n} nosaukumi jau ir mapē {dest}"
-    },
+    "taken": "Mērķī jau ir",
     "sideNew": "Jauns",
     "sideOld": "Esošais",
     "newer": "jaunāks",

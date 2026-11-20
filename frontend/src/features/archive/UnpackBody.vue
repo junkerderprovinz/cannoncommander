@@ -17,7 +17,7 @@ export interface UnpackState {
   password: string; locked: boolean; ok: boolean; size: number | null;
 }
 const props = defineProps<{ st: UnpackState }>();
-const clashes = computed(() => [['skip', t('archive.skip'), 'IconKeepRight'], ['both', t('archive.both'), 'IconKeepBoth'], ['replace', t('archive.replace'), 'IconKeepLeft']] as const);
+const clashes = computed(() => [['skip', t('archive.skip'), 'IconForward'], ['both', t('archive.both'), 'IconCopy'], ['replace', t('archive.replace'), 'IconSync']] as const);
 const ok = folderState(() => props.st.dest);
 watchEffect(() => { props.st.ok = !!ok.value; });
 const head = computed(() => (props.st.inside ? t('archive.fromArchive', { objects: plural(props.st.items.length, 'ui.objects'), name: props.st.archive }) : plural(props.st.items.length, 'archive.archives')));

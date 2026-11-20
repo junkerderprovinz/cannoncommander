@@ -1,8 +1,8 @@
-.cf-row { display: flex; flex-direction: column; gap: .35rem; }
+.cf-row { display: flex; flex-direction: column; gap: .6rem; padding: .2rem .1rem; }
 .cf-name { display: flex; align-items: center; gap: .6rem; min-width: 0; }
 .cf-name b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cf-step { margin-inline-start: auto; flex: none; font-size: 12px; color: var(--carbon-text-muted); }
-.cf-sides { display: flex; flex-direction: column; gap: .25rem; padding-inline-start: 2.35rem; }
+.cf-sides { display: flex; flex-direction: column; gap: .25rem; }
 .cf-side { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
 .cf-side .glim-pill { justify-self: auto; }
 .cf-side .glim-pill--state { font-weight: 600; }

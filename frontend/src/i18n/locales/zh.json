@@ -3149,9 +3149,7 @@
     "conflicts": "冲突",
     "forAll": "全部应用",
     "step": "第 {at} 个，共 {n} 个",
-    "exists": {
-      "other": "{dest} 中已有 {n} 个同名项"
-    },
+    "taken": "目标中已存在",
     "sideNew": "新",
     "sideOld": "已有",
     "newer": "较新",

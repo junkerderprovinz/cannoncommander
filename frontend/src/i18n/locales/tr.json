@@ -3250,10 +3250,7 @@
     "conflicts": "Çakışmalar",
     "forAll": "Hepsine uygula",
     "step": "{at}/{n}",
-    "exists": {
-      "one": "{dest} içinde 1 ad zaten var",
-      "other": "{dest} içinde {n} ad zaten var"
-    },
+    "taken": "Hedefte zaten var",
     "sideNew": "Yeni",
     "sideOld": "Mevcut",
     "newer": "daha yeni",

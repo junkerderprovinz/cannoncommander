@@ -3149,9 +3149,7 @@
     "conflicts": "競合",
     "forAll": "すべてに適用",
     "step": "{at} / {n}",
-    "exists": {
-      "other": "{dest} にはすでに同じ名前が {n} 個あります"
-    },
+    "taken": "移動先に既にあります",
     "sideNew": "新しいもの",
     "sideOld": "既存のもの",
     "newer": "新しい",

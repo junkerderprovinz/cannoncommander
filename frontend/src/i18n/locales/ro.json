@@ -3351,11 +3351,7 @@
     "conflicts": "Conflicte",
     "forAll": "Aplică la toate",
     "step": "{at} din {n}",
-    "exists": {
-      "one": "1 nume există deja în {dest}",
-      "few": "{n} nume există deja în {dest}",
-      "other": "{n} de nume există deja în {dest}"
-    },
+    "taken": "Există deja la destinație",
     "sideNew": "Nou",
     "sideOld": "Existent",
     "newer": "mai nou",

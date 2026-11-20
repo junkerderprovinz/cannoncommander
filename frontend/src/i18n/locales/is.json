@@ -3250,10 +3250,7 @@
     "conflicts": "Árekstrar",
     "forAll": "Nota fyrir allt",
     "step": "{at} af {n}",
-    "exists": {
-      "one": "{n} heiti er þegar til í {dest}",
-      "other": "{n} heiti eru þegar til í {dest}"
-    },
+    "taken": "Er þegar til í markinu",
     "sideNew": "Nýtt",
     "sideOld": "Fyrir",
     "newer": "nýrra",

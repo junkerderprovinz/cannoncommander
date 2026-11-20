@@ -3452,12 +3452,7 @@
     "conflicts": "Konflikty",
     "forAll": "Zastosuj do wszystkich",
     "step": "{at} z {n}",
-    "exists": {
-      "one": "1 nazwa już istnieje w {dest}",
-      "few": "{n} nazwy już istnieją w {dest}",
-      "many": "{n} nazw już istnieje w {dest}",
-      "other": "{n} nazwy już istnieje w {dest}"
-    },
+    "taken": "Już jest w celu",
     "sideNew": "Nowy",
     "sideOld": "Istniejący",
     "newer": "nowszy",

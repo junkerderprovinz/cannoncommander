@@ -3149,9 +3149,7 @@
     "conflicts": "충돌",
     "forAll": "모두에 적용",
     "step": "{at} / {n}",
-    "exists": {
-      "other": "{dest}에 이미 있는 이름 {n}개"
-    },
+    "taken": "대상에 이미 있음",
     "sideNew": "새 파일",
     "sideOld": "기존 파일",
     "newer": "더 새것",

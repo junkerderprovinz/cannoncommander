@@ -32,7 +32,7 @@
   "conflicts": "Conflicts",
   "forAll": "Use for all",
   "step": "{at} of {n}",
-  "exists": { "one": "1 name exists in {dest} already", "other": "{n} names exist in {dest} already" },
+  "taken": "Already in the target",
   "sideNew": "New",
   "sideOld": "There",
   "newer": "newer",

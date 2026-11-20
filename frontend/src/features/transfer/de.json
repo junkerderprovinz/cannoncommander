@@ -32,7 +32,7 @@
   "conflicts": "Konflikte",
   "forAll": "Für alle übernehmen",
   "step": "{at} von {n}",
-  "exists": { "one": "1 Name gibt es in {dest} schon", "other": "{n} Namen gibt es in {dest} schon" },
+  "taken": "Gibt es im Ziel schon",
   "sideNew": "Neu",
   "sideOld": "Vorhanden",
   "newer": "neuer",
