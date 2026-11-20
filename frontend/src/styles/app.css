@@ -1,5 +1,7 @@
 @import './motion.css';
 :root { --gut: 1rem; --row-h: 2.25rem; --side-w: 17rem; }
+/* The cursor row of the active panel, a step stronger than the selection's wash. */
+:root { --row-cursor: color-mix(in srgb, var(--accent-soft), var(--accent) 14%); }
 :root[data-density="compact"] { --row-h: 1.85rem; }
 :root[data-density="comfortable"] { --row-h: 2.6rem; }
 * { box-sizing: border-box; }
@@ -24,6 +26,9 @@ svg { display: block; }
 
 /* Head row: one bar with the brand, the menus and the controls for the whole window. */
 .head { --btn-h: 2.4rem; display: flex; align-items: center; gap: .35rem; min-width: 0; height: 3.4rem; padding: 0 .5rem; }
+/* The window buttons are as tall as the head's other buttons and stand close together after them. */
+.window-controls { display: flex; align-items: center; gap: .1rem; flex: none; }
+.window-controls .glim-window-button { width: auto; height: auto; }
 /* The window buttons are as tall as the head's other buttons and stand close together after them. */
 .window-controls { display: flex; align-items: center; gap: .1rem; flex: none; }
 .window-controls .glim-window-button { width: auto; height: auto; }
@@ -81,18 +86,17 @@ svg { display: block; }
 .unpin svg { width: .8rem; height: .8rem; color: currentColor; }
 .glim-nav-row:hover .unpin { opacity: 1; }
 .unpin:hover { background: var(--hover); color: var(--accent-glyph); }
-.glim-active .unpin:hover { background: color-mix(in srgb, var(--accent-contrast) 15%, transparent); color: inherit; }
+/* The open place takes the same wash as a selected row in the list, with its text and glyph as on any row. */
+#side .glim-nav-row.glim-active { background-color: var(--accent-soft); color: var(--carbon-text); }
+#side .glim-nav-row.glim-active svg { color: var(--accent-glyph); }
+.glim-active .unpin:hover { background: var(--hover); color: inherit; }
 #side .meta { font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); flex: none; }
-#side .glim-active .meta { color: var(--accent-contrast); }
 .glim-nav-row:has(> .drop) { outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
 #side { --nav-row-h: 2.1rem; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
 .tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); }
 .tree-tog.open svg { transform: none; }
 .tree-tog:hover { color: var(--accent-glyph); }
-.glim-active .tree-tog { color: var(--accent-contrast); }
-.glim-active .vmeter { background: color-mix(in srgb, var(--accent-contrast) 22%, transparent); }
-.glim-active .vmeter i { background: var(--accent-contrast); }
 
 .panels { flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr; gap: var(--gut); }
 .app.dual .panels { grid-template-columns: 1fr 1fr; }
@@ -167,9 +171,9 @@ svg { display: block; }
 .rn-error .glim-field-error { margin-top: 0; }
 .band { position: fixed; z-index: 5; pointer-events: none; border: 1px solid var(--accent); border-radius: 2px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .row.cut { opacity: .55; }
-/* The row the keys move from keeps a bar at its start, on a selected row as on any other. */
-.panel.active .row.cursor { box-shadow: inset 3px 0 0 var(--accent-ink); }
-[dir=rtl] .panel.active .row.cursor { box-shadow: inset -3px 0 0 var(--accent-ink); }
+/* The row the keys move from, in the active panel: a stronger wash on a selected row, the hover's lift on any other. */
+.panel.active .row.cursor.marked, .panel.active .list:not(.marking) > .row.cursor { background: var(--row-cursor); }
+.panel.active .list.marking > .row.cursor:not(.marked) { background: var(--hover); }
 /* With two panels the one that keys and commands act on stays bright; the other steps back. */
 .app.dual .panel:not(.active) .ptab.cur { background: var(--carbon-surface3); color: var(--carbon-text); }
 .app.dual .panel:not(.active) :is(.list, .crumbs, .lfoot) { opacity: .62; transition: opacity var(--motion-control-dur, .15s); }
@@ -364,7 +368,7 @@ button.psep:hover { background: var(--hover); color: var(--carbon-text); }
 .mitem > svg:last-child:not(:first-child) { width: .6rem; height: .6rem; margin-inline-start: auto; flex: none; transform: rotate(-90deg); color: var(--carbon-text-muted); }
 .mitem span { overflow: hidden; text-overflow: ellipsis; }
 .mitem:hover { background: var(--hover); color: var(--carbon-text); }
-.mitem.on { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--carbon-text); }
+.mitem.on { background: var(--accent-soft); color: var(--carbon-text); }
 
 /* Copy, move and delete: a picture of what happens first, the choices below it. */
 .xwin .glim-window-body { gap: .85rem; }

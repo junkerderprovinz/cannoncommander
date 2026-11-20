@@ -7,7 +7,6 @@
 .row .meta .u-cache { display: none; }
 .u-moon { display: inline-grid; place-items: center; color: var(--carbon-text-muted); }
 .u-moon svg { width: .85rem; height: .85rem; }
-.glim-active .u-moon { color: var(--accent-contrast); }
 .bk :not(.glim-info-icon) > svg { fill: currentColor; }
 .bk-val { margin-inline-start: auto; text-align: end; color: var(--carbon-text-sub); min-width: 0; }
 .bk-pathv { display: flex; align-items: center; gap: .2rem; max-width: 70%; }

@@ -19,11 +19,7 @@ describe('the arrows that open a folder in a tree', () => {
     expect(hovers.filter((r) => /background/.test(r.body)).map((r) => `${r.file}: ${r.selector}`)).toEqual([]);
   });
 
-  it('keep the contrast colour on the open row, where the accent is the ground', () => {
-    const app = rules.filter((r) => r.file.endsWith('app.css'));
-    const hover = app.findIndex((r) => r.selector === '.tree-tog:hover');
-    const lit = app.findIndex((r) => r.selector === '.glim-active .tree-tog');
-    expect(lit).toBeGreaterThan(hover);
-    expect(app[lit]!.body).toMatch(/color: var\(--accent-contrast\)/);
+  it('keep their own colour on the open row, which takes the wash of a selected row', () => {
+    expect(rules.filter((r) => /\.glim-active \.tree-tog/.test(r.selector)).map((r) => `${r.file}: ${r.selector}`)).toEqual([]);
   });
 });
