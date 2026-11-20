@@ -125,8 +125,10 @@ const count = computed(() => {
       </span>
     </div>
     <Render v-for="(bar, n) in extend.panelBars" :key="n" :node="bar(i)" />
-    <FileList :key="tab.path + v" :i="i" :class="{ waiting }" :aria-busy="!!waiting" />
-    <div v-if="waiting" class="pwait glim-card" role="status"><BusyRing size="small" :delay="0" /><span>{{ t('files.opening', { name: folderName(waiting) }) }}</span></div>
+    <div class="lwrap">
+      <FileList :key="tab.path + v" :i="i" :class="{ waiting }" :aria-busy="!!waiting" />
+      <div v-if="waiting" class="pwait glim-card" role="status" :aria-label="t('files.openingFolder', { name: folderName(waiting) })"><BusyRing size="large" :delay="0" /><span>{{ t('files.opening') }}</span></div>
+    </div>
     <div class="lfoot glim-num">
       <span v-if="marked.length">{{ markedText }}<button class="lclear" data-run="unselect" :data-tip="t('files.unselectTip')" :aria-label="t('files.unselect')" @click="run('unselect')"><G n="IconClose" /></button></span>
       <span v-else>{{ count }}</span>
