@@ -367,7 +367,7 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
 </script>
 
 <template>
-  <div ref="el" class="list" :class="[`view-${v}`, { 'grid-view': grid, zoomed: tile !== undefined }]" tabindex="0"
+  <div ref="el" class="list" :class="[`view-${v}`, { 'grid-view': grid, zoomed: tile !== undefined, marking: tab.marked.size > 0 }]" tabindex="0"
     :style="{ '--cols': Columns.template(), '--minw': Columns.minWidth(), '--zoom-tile': shownTile(v, tile) + 'px' }"
     @click="onClick" @contextmenu="onMenu" @scroll.passive="onScroll" @pointerdown="onDown" @dragstart.capture="onDragStart">
     <div v-if="ROW_VIEWS.includes(v)" class="lhead" data-lhead @pointerdown="onHeadDown">

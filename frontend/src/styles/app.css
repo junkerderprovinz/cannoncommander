@@ -153,8 +153,10 @@ svg { display: block; }
 /* The badges beside a name step back behind it: a shade darker in the light theme, and in the dark one the
    step closest to the card, where the third surface would stand out. */
 .name { --pill-ground: light-dark(var(--carbon-surface3), var(--carbon-surface2)); }
-.row.marked { background: color-mix(in srgb, var(--accent) 22%, transparent); }
-.row.marked:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+/* A selected row takes GlimStone's wash of the accent behind its whole width, so name, size and date read as on any
+   row. While nothing is marked, the cursor row is the selection. */
+.row.marked, .list:not(.marking) > .row.cursor { background: var(--accent-soft); }
+.row.marked:hover, .list:not(.marking) > .row.cursor:hover { background: color-mix(in srgb, var(--accent-soft), var(--accent) 12%); }
 .row.marked .t { color: var(--carbon-text); }
 .rn-field { flex: 1 1 auto; min-width: 6rem; height: 1.6em; margin: 0; padding: 0 .35rem; border: 1px solid var(--accent); border-radius: 4px; outline: none; background: var(--carbon-surface3); color: var(--carbon-text); font: inherit; }
 .gcard .rn-field, .citem .rn-field { width: 100%; }
@@ -162,8 +164,9 @@ svg { display: block; }
 .rn-error .glim-field-error { margin-top: 0; }
 .band { position: fixed; z-index: 5; pointer-events: none; border: 1px solid var(--accent); border-radius: 2px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .row.cut { opacity: .55; }
-.panel.active .row.cursor { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
-.panel:not(.active) .row.cursor { outline: none; }
+/* The row the keys move from keeps a bar at its start, on a selected row as on any other. */
+.panel.active .row.cursor { box-shadow: inset 3px 0 0 var(--accent-ink); }
+[dir=rtl] .panel.active .row.cursor { box-shadow: inset -3px 0 0 var(--accent-ink); }
 /* With two panels the one that keys and commands act on stays bright; the other steps back. */
 .app.dual .panel:not(.active) .ptab.cur { background: var(--carbon-surface3); color: var(--carbon-text); }
 .app.dual .panel:not(.active) :is(.list, .crumbs, .lfoot) { opacity: .62; transition: opacity var(--motion-control-dur, .15s); }
