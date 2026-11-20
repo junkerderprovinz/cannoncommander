@@ -9,6 +9,7 @@ import { attempt, c, confirmWin } from '@/features/config/shared';
 import { reloadRemotes } from '@/features/remotes/store';
 import { loadCatalog, markOf, remoteKind, testVerdict } from '../remotes';
 import RemoteWin from '../wins/RemoteWin.vue';
+import RowActions, { type RowAction } from './RowActions.vue';
 
 type Mounting = AppSettings['remotes'];
 const remotes = ref<Remote[]>([]);
@@ -36,8 +37,13 @@ const automount = computed({ get: () => mounting.value?.automount ?? true, set: 
 const cache = computed({ get: () => mounting.value?.cache ?? 'writes', set: (v: Mounting['cache']) => saveRc({ cache: v }) });
 const cacheSize = computed({ get: () => mounting.value?.cacheSize ?? 50, set: (v: number) => saveRc({ cacheSize: v }) });
 
+// The remotes being mounted or unmounted right now, by name.
+const switching = reactive<Record<string, boolean>>({});
 async function mount(r: Remote) {
-  if (!(await attempt(admin.mountRemote(r.name, !r.mounted)))) return load();
+  switching[r.name] = true;
+  const done = await attempt(admin.mountRemote(r.name, !r.mounted));
+  switching[r.name] = false;
+  if (!done) return load();
   await load();
   void reloadRemotes();
   toast(r.mounted ? c('remotes.unmounted', { name: r.name }) : c('remotes.mounted', { name: r.name }));
@@ -53,6 +59,10 @@ async function test(r: Remote) {
 }
 const rowText = computed(() => ({ test: c('test'), edit: c('edit'), remove: c('remove') }));
 const ROW_KEYS = { test: 'IconCheck', edit: 'IconPencil', remove: 'IconTrash' };
+const actionsOf = (r: Remote): RowAction[] => [{
+  id: 'mount', label: r.mounted ? c('remotes.unmount') : c('remotes.mount'), labelKey: r.mounted ? 'IconUnlink' : 'IconLink',
+  busy: switching[r.name], onClick: () => { void mount(r); },
+}];
 
 // The remote in the window, null for a new one.
 const editing = shallowRef<{ remote: Remote | null } | null>(null);
@@ -77,9 +87,8 @@ function remove(r: Remote) {
 
 <template>
   <Card :title="c('remotes.title')">
-    <!-- Mounting stands beside the row until GlimStone's ConnectionRow has a place for an action of its own. -->
     <div v-if="remotes.length" class="a-conns">
-      <div v-for="r in remotes" :key="r.name" class="a-conn">
+      <template v-for="r in remotes" :key="r.name">
         <ConnectionRow :name="r.name" :mark="markFor(r)" :status="remoteKind(r, providers)" :test="tests[r.name]" :text="rowText" :label-keys="ROW_KEYS"
           @test="test(r)" @edit="edit(r)" @remove="remove(r)">
           <template #badges>
@@ -88,8 +97,8 @@ function remove(r: Remote) {
           </template>
           <p class="a-conn-path mono">{{ r.mount }}</p>
         </ConnectionRow>
-        <Button data-mount :label="r.mounted ? c('remotes.unmount') : c('remotes.mount')" :label-key="r.mounted ? 'IconUnlink' : 'IconLink'" :compact-below="640" @click="mount(r)" />
-      </div>
+        <RowActions :actions="actionsOf(r)" />
+      </template>
     </div>
     <EmptyState v-else-if="rclone && !rclone.installed" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noRclone')" :hint="c('remotes.noRcloneHint')" />
     <EmptyState v-else nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.none')" />

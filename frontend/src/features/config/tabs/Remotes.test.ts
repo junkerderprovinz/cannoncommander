@@ -21,6 +21,7 @@ let sent: Sent[] = [];
 let remotes: Remote[] = [];
 let tested: RemoteTest;
 let answerTest: Promise<void>;
+let answerMount: Promise<void>;
 
 function answer(status: number, body?: unknown) {
   return new Response(body === undefined ? null : JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
@@ -38,6 +39,7 @@ async function server(url: string, init: RequestInit = {}) {
   }
   const mount = /^\/remotes\/([^/]+)\/(mount|unmount)$/.exec(path);
   if (mount) {
+    await answerMount;
     remotes = remotes.map((r) => (r.name === mount[1] ? { ...r, mounted: mount[2] === 'mount' } : r));
     return answer(200, remotes.find((r) => r.name === mount[1]));
   }
@@ -57,6 +59,7 @@ beforeEach(() => {
   ];
   tested = { ok: true, entries: 3, free: 2 * 1024 ** 3 };
   answerTest = Promise.resolve();
+  answerMount = Promise.resolve();
   vi.stubGlobal('fetch', vi.fn(server));
   vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
 });
@@ -80,7 +83,7 @@ async function open() {
 }
 const row = (name: string) => document.querySelector<HTMLElement>(`[data-glim="ConnectionRow"][aria-label="${name}"]`)!;
 const button = (name: string, which: string) => row(name).querySelector<HTMLButtonElement>(`[data-connection="${which}"]`)!;
-const mountButton = (name: string) => row(name).closest('.a-conn')!.querySelector<HTMLButtonElement>('[data-mount]')!;
+const mountButton = (name: string) => button(name, 'mount');
 // The button's title shows in GlimStone's bubble while it has the focus or the pointer.
 async function bubble(el: HTMLElement) {
   el.focus();
@@ -139,13 +142,23 @@ describe('the list of remotes', () => {
     expect(await bubble(button('nextcloud', 'test'))).toContain('The remote didn\'t answer in time');
   });
 
-  it('mounts and unmounts beside the row', async () => {
+  it('mounts and unmounts from the row, as its first button', async () => {
     await open();
+    const order = (name: string) => [...row(name).querySelectorAll<HTMLElement>('.glim-connection-actions [data-connection]')].map((b) => b.dataset.connection);
+    expect(order('nextcloud')).toEqual(['mount', 'test', 'edit', 'remove']);
     expect(mountButton('nextcloud').textContent?.trim()).toBe('Unmount');
     expect(mountButton('backups').textContent?.trim()).toBe('Mount');
-    await click(mountButton('nextcloud'));
+    let go = () => {};
+    answerMount = new Promise((r) => { go = r; });
+    mountButton('nextcloud').click();
+    await settle();
+    expect(mountButton('nextcloud').getAttribute('aria-busy')).toBe('true');
+    go();
+    await settle();
     expect(sent.at(-1)).toMatchObject({ method: 'POST', path: '/remotes/nextcloud/unmount' });
+    expect(mountButton('nextcloud').getAttribute('aria-busy')).toBeNull();
     expect(mountButton('nextcloud').textContent?.trim()).toBe('Mount');
+    expect(order('nextcloud')).toEqual(['mount', 'test', 'edit', 'remove']);
   });
 
   it('opens a remote to edit from its row', async () => {
