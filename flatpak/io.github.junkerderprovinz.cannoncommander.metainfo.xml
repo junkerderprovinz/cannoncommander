@@ -80,7 +80,7 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
-    <release version="1.2.0" date="2026-11-19">
+    <release version="1.2.0" date="2026-11-20">
       <description>
         <p>Disk usage shows every drive with its history and colours the treemap by file type or age. On Unraid a storeroom keeps unused templates, compose stacks, appdata folders and Docker leftovers before anything goes, and Linux gets an AppImage.</p>
       </description>

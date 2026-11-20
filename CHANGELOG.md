@@ -4,7 +4,7 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## v1.2.0 (2026-11-19)
+## v1.2.0 (2026-11-20)
 
 CannonCommander shows every drive with its history, colours the treemap by file type or age, and keeps what the server no longer uses in a storeroom before anything goes. Linux gets an AppImage.
 
