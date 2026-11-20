@@ -1,3 +1,4 @@
+import { host } from '@/core/host';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, nextTick } from 'vue';
@@ -117,6 +118,18 @@ describe('a head short of room', () => {
     await settle();
     expect(compact()).toBe(true);
     expect(head.classList.contains('fold-menus')).toBe(false);
+  });
+
+  it('looks again at its room once the window buttons of the desktop app join it', async () => {
+    const head = room(1200);
+    await settle();
+    expect(compact()).toBe(false);
+    Object.defineProperty(head, 'scrollWidth', { configurable: true, get: () => (head.querySelector('.window-controls') ? 1260 : 1200) });
+    Object.assign(host, { desktop: true, os: 'windows' });
+    for (let i = 0; i < 6; i++) await nextTick();
+    expect(head.querySelector('.window-controls')).not.toBeNull();
+    expect(compact()).toBe(true);
+    Object.assign(host, { desktop: false, os: '' });
   });
 
   it('then folds the menus into one button, and takes both back once there is room', async () => {

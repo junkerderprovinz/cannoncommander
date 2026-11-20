@@ -70,7 +70,8 @@ onMounted(() => {
   watcher.observe(head.value!);
 });
 onBeforeUnmount(() => watcher?.disconnect());
-watch([language, files], () => {
+// The window buttons arrive once the app knows it runs on the desktop, and the observer only sees the head resize.
+watch([language, files, drawsOwnFrame], () => {
   fold.value = 0;
   needed = [];
   void nextTick(fit);
