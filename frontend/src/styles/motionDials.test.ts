@@ -1,15 +1,15 @@
 // Every animation and transition of the app's own reads a dial, so the level setting reaches it. A fixed time plays
 // every level at one speed, and nothing on screen says which one went deaf.
 import { describe, expect, it } from 'vitest';
-import { gates, inside, keyframes, lineOf, rules, sheets } from '@/testing/motionCss';
+import { calmGates, gates, inside, keyframes, lineOf, rules, sheets } from '@/testing/motionCss';
 
-const all = sheets().map((s) => ({ ...s, gates: gates(s.css), rules: rules(s.css) }));
+const all = sheets().map((s) => ({ ...s, gates: gates(s.css), calm: calmGates(s.css), rules: rules(s.css) }));
 
 // A spinner turns under reduced motion too, at one slow pace, because one standing still reads as a hang.
 const STILL_TURNING = ['a-spin', 'sp-spin', 'cl-spin'];
 
 const declarations = (prop: RegExp) => all.flatMap((s) => s.rules.flatMap((r) => [...r.body.matchAll(prop)]
-  .map((m) => ({ file: s.file, value: m[1]!.trim(), line: lineOf(s.css, r.at + m.index), gated: inside(s.gates, r.at) }))));
+  .map((m) => ({ file: s.file, value: m[1]!.trim(), line: lineOf(s.css, r.at + m.index), gated: inside(s.gates, r.at), calm: inside(s.calm, r.at) }))));
 
 describe('the animations of the app', () => {
   const frames = all.flatMap((s) => keyframes(s.css).map((k) => ({ ...k, file: s.file })));
@@ -19,14 +19,23 @@ describe('the animations of the app', () => {
     expect(frames.length).toBeGreaterThanOrEqual(8);
   });
 
+  const plays = (a: { value: string }, name: string) => new RegExp(`(^|[\\s,])${name}\\b`).test(a.value);
+
   it('each play inside the gate on a dial', () => {
-    const deaf = frames.filter((k) => !animations.some((a) => a.gated && new RegExp(`(^|[\\s,])${k.name}\\b`).test(a.value) && a.value.includes('var(--motion-')));
+    const deaf = frames.filter((k) => !animations.some((a) => (a.gated || a.calm) && plays(a, k.name) && a.value.includes('var(--motion-')));
     expect(deaf.map((k) => `${k.file}: ${k.name}`)).toEqual([]);
   });
 
-  it('play outside the gate only as a spinner or not at all', () => {
-    const loose = animations.filter((a) => !a.gated && a.value !== 'none' && !STILL_TURNING.some((n) => a.value.startsWith(n + ' ')));
+  it('play outside the gate only as a spinner, as a fade for reduced motion, or not at all', () => {
+    const loose = animations.filter((a) => !a.gated && !a.calm && a.value !== 'none' && !STILL_TURNING.some((n) => a.value.startsWith(n + ' ')));
     expect(loose.map((a) => `${a.file}:${a.line} ${a.value}`)).toEqual([]);
+  });
+
+  it('only fade for a system that asked for less motion, never move', () => {
+    const calm = animations.filter((a) => a.calm && a.value !== 'none');
+    expect(calm.length).toBeGreaterThan(0);
+    const moving = calm.flatMap((a) => frames.filter((k) => plays(a, k.name) && /\b(transform|translate|scale|rotate)\s*:/.test(k.body)).map((k) => `${a.file}:${a.line} ${k.name}`));
+    expect(moving).toEqual([]);
   });
 
   it('end every transform at none, so nothing left behind becomes the box a fixed child is placed in', () => {

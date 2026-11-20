@@ -133,6 +133,10 @@ describe('the cards', () => {
     expect(dual.querySelector('.wl-sk-chip')).not.toBeNull();
     expect(dual.querySelector('.wl-sk-new')).not.toBeNull();
     expect(dual.querySelectorAll('.wl-sketch-panel')).toHaveLength(3);
+    // For reduced motion the highlight fades from row to row and the opened folder fades in, so nothing has to move.
+    expect(single.querySelectorAll('.wl-sk-glow')).toHaveLength(3);
+    expect(dual.querySelectorAll('.wl-sk-glow')).toHaveLength(3);
+    expect(single.querySelectorAll('.wl-sk-alt')).toHaveLength(5);
   });
 });
 

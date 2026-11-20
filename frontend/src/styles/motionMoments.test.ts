@@ -46,7 +46,7 @@ const MOMENTS: [string, RegExp, string[]][] = [
   ['the welcome window coming in', /\.wl-way\b/, ['welcome-dur', 'welcome-step', 'welcome-dist']],
   ['the cannons of the welcome logo kicking back', /\.wl-cannon\b/, ['welcome-dur', 'welcome-kick']],
   ['the smoke at their muzzles', /\.wl-puff\b/, ['welcome-dur', 'welcome-swell']],
-  ['the sketches on the welcome cards at work', /\.wl-sk-/, ['sketch-dur', 'sketch-slide', 'sketch-loops']],
+  ['the sketches on the welcome cards at work', /\.wl-sk-/, ['sketch-dur', 'sketch-slide']],
 ];
 
 const frames = new Map(all.flatMap((s) => keyframes(s.css).map((k) => [k.name, k.body] as const)));

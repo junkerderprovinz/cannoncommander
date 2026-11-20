@@ -35,6 +35,11 @@ export function gates(css: string): [number, number][] {
   return [...css.matchAll(/@media[^{]*prefers-reduced-motion:\s*no-preference[^{]*\{/g)].map((m) => [m.index, closing(css, m.index)]);
 }
 
+/** The ranges of every `@media` block for a system that asked for less motion, where a fade may stand in for movement. */
+export function calmGates(css: string): [number, number][] {
+  return [...css.matchAll(/@media[^{]*prefers-reduced-motion:\s*reduce[^{]*\{/g)].map((m) => [m.index, closing(css, m.index)]);
+}
+
 export const inside = (ranges: [number, number][], at: number) => ranges.some(([a, b]) => at > a && at < b);
 
 /** Each rule's selector and body at the innermost level, with where its body starts. */

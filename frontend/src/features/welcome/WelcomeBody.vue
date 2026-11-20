@@ -72,10 +72,16 @@ function onKey(e: KeyboardEvent, i: number) {
           <g v-for="(p, k) in panels(c.id)" :key="k">
             <rect class="wl-sketch-panel" :x="p.x" y="22" :width="p.w" height="70" rx="3" />
             <rect v-if="k === 0" class="wl-sk-cursor" :x="p.x + 3" y="28" :width="p.w - 6" height="7" rx="2" />
+            <template v-if="k === 0">
+              <rect v-for="(row, r) in ROWS.slice(0, 3)" :key="row[0]" class="wl-sk-glow" :x="p.x + 3" :y="row[0] - 2" :width="p.w - 6" height="7" rx="2" :style="{ '--wl-r': r }" />
+            </template>
             <rect
               v-for="([y, share, wide], r) in ROWS" :key="y" class="wl-sketch-row" :class="{ 'wl-sk-row': c.id === 'single' }"
               :x="p.x + 6" :y="y" :width="(p.w - 12) * share" height="3" rx="1.5" :style="{ '--wl-r': r, '--wl-wide': wide }"
             />
+            <template v-if="c.id === 'single'">
+              <rect v-for="[y, share, wide] in ROWS" :key="y" class="wl-sk-alt" :x="p.x + 6" :y="y" :width="(p.w - 12) * share * wide" height="3" rx="1.5" />
+            </template>
             <rect v-if="k === 1" class="wl-sk-new" :x="p.x + 6" y="70" :width="(p.w - 12) * .65" height="3" rx="1.5" />
           </g>
           <rect v-if="c.id === 'dual'" class="wl-sk-chip" :x="LEFT + 4" y="37" width="30" height="5" rx="2" />

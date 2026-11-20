@@ -26,8 +26,10 @@
 .wl-sketch-row { fill: var(--carbon-text-muted); opacity: .4; }
 .wl-sk-row { transform-box: fill-box; transform-origin: left center; }
 .wl-sk-cursor { fill: var(--accent); opacity: .35; }
-/* The file on its way across and the row it becomes stay hidden while the sketch stands still. */
-.wl-sk-chip { fill: var(--accent); opacity: 0; }
+/* The file on its way across, the row it becomes, the highlights and rows a fade uses for reduced motion: hidden
+   while the sketch stands still. */
+.wl-sk-chip, .wl-sk-glow { fill: var(--accent); opacity: 0; }
+.wl-sk-alt { fill: var(--carbon-text-muted); opacity: 0; }
 .wl-sk-new { fill: var(--accent); opacity: 0; transform-box: fill-box; transform-origin: left center; }
 .wl-name { padding-inline: .25rem; font-size: var(--text-title); font-weight: 600; }
 .wl-how { padding-inline: .25rem; color: var(--carbon-text-sub); font-size: var(--text-subline); line-height: 1.45; }
@@ -59,7 +61,7 @@
   12% { opacity: .9; }
   to { opacity: 0; scale: var(--motion-welcome-swell, 1); translate: calc(var(--wl-drift, 1) * 18px * var(--motion-welcome-swell, 1)) 0; }
 }
-/* The sketches at work, one loop each, then a rest: in one window the cursor walks down two rows, the folder opens
+/* The sketches at work, round after round with a rest between: in one window the cursor walks down two rows, the folder opens
    with its rows sliding in, the cursor moves on and the folder closes again. In two windows the cursor takes the
    second row, the file glides into the right panel and lands as a new row, and the cursor moves on. */
 @keyframes wl-sk-walk {
@@ -108,15 +110,47 @@
   .wl-lead { animation: wl-rise var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) calc(var(--motion-welcome-step, 0ms) * 2) both; }
   .wl-way { animation: wl-rise var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) calc(var(--motion-welcome-step, 0ms) * (3 + var(--wl-i, 0))) both; }
   .wl-hint { animation: wl-rise var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) calc(var(--motion-welcome-step, 0ms) * 5) both; }
-  :root:not([data-motion="off"]) [data-way="single"] .wl-sk-cursor { animation: wl-sk-walk var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
-  :root:not([data-motion="off"]) [data-way="single"] .wl-sk-crumb { animation: wl-sk-path var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
+  :root:not([data-motion="off"]) [data-way="single"] .wl-sk-cursor { animation: wl-sk-walk var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) infinite both; }
+  :root:not([data-motion="off"]) [data-way="single"] .wl-sk-crumb { animation: wl-sk-path var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) infinite both; }
   :root:not([data-motion="off"]) .wl-sk-row {
-    animation: wl-sk-open var(--motion-sketch-dur, 0s) ease-out calc(var(--motion-welcome-step, 0ms) * (8 + var(--wl-r, 0) / 2)) var(--motion-sketch-loops, 0) both;
+    animation: wl-sk-open var(--motion-sketch-dur, 0s) ease-out calc(var(--motion-welcome-step, 0ms) * (8 + var(--wl-r, 0) / 2)) infinite both;
   }
-  :root:not([data-motion="off"]) [data-way="dual"] .wl-sk-cursor { animation: wl-sk-pick var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
-  :root:not([data-motion="off"]) .wl-sk-chip { animation: wl-sk-send var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
-  :root:not([data-motion="off"]) .wl-sk-new { animation: wl-sk-land var(--motion-sketch-dur, 0s) ease-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
+  :root:not([data-motion="off"]) [data-way="dual"] .wl-sk-cursor { animation: wl-sk-pick var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) infinite both; }
+  :root:not([data-motion="off"]) .wl-sk-chip { animation: wl-sk-send var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) infinite both; }
+  :root:not([data-motion="off"]) .wl-sk-new { animation: wl-sk-land var(--motion-sketch-dur, 0s) ease-out calc(var(--motion-welcome-step, 0ms) * 8) infinite both; }
   :root:not([data-motion="subtle"]):not([data-motion="off"]) .wl-puff {
     animation: wl-puff calc(var(--motion-welcome-dur, 0s) * 1.4) ease-out calc(var(--motion-welcome-step, 0ms) * 4) both;
   }
+}
+
+/* With reduced motion the sketches still work, without anything moving: the highlight fades from row to row, the
+   opened folder fades in with other names, and the file appears in the right panel. */
+@keyframes wl-sk-glow {
+  0% { opacity: 0; }
+  4%, 22% { opacity: .35; }
+  28%, 100% { opacity: 0; }
+}
+@keyframes wl-sk-fade-out {
+  0%, 48% { opacity: .4; }
+  54%, 88% { opacity: 0; }
+  94%, 100% { opacity: .4; }
+}
+@keyframes wl-sk-fade-in {
+  0%, 48% { opacity: 0; }
+  54%, 88% { opacity: .4; }
+  94%, 100% { opacity: 0; }
+}
+@keyframes wl-sk-arrive {
+  0%, 46% { opacity: 0; }
+  56%, 86% { opacity: .5; }
+  94%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="off"]) .wl-sk-cursor { opacity: 0; }
+  :root:not([data-motion="off"]) .wl-sk-glow {
+    animation: wl-sk-glow var(--motion-sketch-dur, 12s) ease-in-out calc(var(--motion-sketch-dur, 12s) * var(--wl-r, 0) / 4) infinite both;
+  }
+  :root:not([data-motion="off"]) .wl-sk-row { animation: wl-sk-fade-out var(--motion-sketch-dur, 12s) ease-in-out infinite both; }
+  :root:not([data-motion="off"]) .wl-sk-alt { animation: wl-sk-fade-in var(--motion-sketch-dur, 12s) ease-in-out infinite both; }
+  :root:not([data-motion="off"]) .wl-sk-new { animation: wl-sk-arrive var(--motion-sketch-dur, 12s) ease-in-out infinite both; }
 }
