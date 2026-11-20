@@ -3221,6 +3221,7 @@
     },
     "copy": "Copiar",
     "move": "Mover",
+    "symlink": "Ligar",
     "to": "A",
     "way": "Modo",
     "linkWay": "Crear como ligazón dura",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "1 ligazón dura creada, sen ocupar espazo novo",
       "other": "{n} ligazóns duras creadas, sen ocupar espazo novo"
+    },
+    "symlinked": {
+      "one": "Creouse 1 ligazón",
+      "other": "Creáronse {n} ligazóns"
     },
     "noLink": "Unha ligazón dura só funciona no mesmo disco ou no mesmo Pool",
     "clipCut": "Cortar",

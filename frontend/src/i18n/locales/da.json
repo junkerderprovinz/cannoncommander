@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopiér",
     "move": "Flyt",
+    "symlink": "Link",
     "to": "Til",
     "way": "Måde",
     "linkWay": "Opret som hårdt link",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "1 hårdt link oprettet, fylder ingen ny plads",
       "other": "{n} hårde links oprettet, fylder ingen ny plads"
+    },
+    "symlinked": {
+      "one": "1 link oprettet",
+      "other": "{n} links oprettet"
     },
     "noLink": "Et hårdt link virker kun på samme disk eller i samme Pool",
     "clipCut": "Klip",

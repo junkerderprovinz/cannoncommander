@@ -3667,6 +3667,7 @@
     },
     "copy": "Kopiatu",
     "move": "Mugitu",
+    "symlink": "Estekatu",
     "to": "Nora",
     "way": "Modua",
     "linkWay": "Sortu esteka gogor gisa",
@@ -3777,6 +3778,10 @@
     "linked": {
       "one": "Esteka gogor 1 sortuta, leku berririk hartu gabe",
       "other": "{n} esteka gogor sortuta, leku berririk hartu gabe"
+    },
+    "symlinked": {
+      "one": "Esteka 1 sortu da",
+      "other": "{n} esteka sortu dira"
     },
     "noLink": "Esteka gogorra disko berean edo Pool berean bakarrik dabil",
     "clipCut": "Moztu",

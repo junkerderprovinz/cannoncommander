@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopioi",
     "move": "Siirrä",
+    "symlink": "Linkitä",
     "to": "Kohde",
     "way": "Tapa",
     "linkWay": "Luo kovana linkkinä",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "{n} kova linkki luotu, ei vie uutta tilaa",
       "other": "{n} kovaa linkkiä luotu, ei vie uutta tilaa"
+    },
+    "symlinked": {
+      "one": "1 linkki luotu",
+      "other": "{n} linkkiä luotu"
     },
     "noLink": "Kova linkki toimii vain samalla levyllä tai samassa Poolissa",
     "clipCut": "Leikkaa",

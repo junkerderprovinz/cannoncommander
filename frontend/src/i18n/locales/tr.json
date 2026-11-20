@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopyala",
     "move": "Taşı",
+    "symlink": "Bağla",
     "to": "Hedef",
     "way": "Yöntem",
     "linkWay": "Sabit bağlantı olarak oluştur",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "1 sabit bağlantı oluşturuldu, yeni yer kaplamaz",
       "other": "{n} sabit bağlantı oluşturuldu, yeni yer kaplamaz"
+    },
+    "symlinked": {
+      "one": "1 bağlantı oluşturuldu",
+      "other": "{n} bağlantı oluşturuldu"
     },
     "noLink": "Sabit bağlantı yalnızca aynı diskte ya da aynı Pool'da olur",
     "clipCut": "Kes",

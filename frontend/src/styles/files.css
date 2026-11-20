@@ -10,6 +10,9 @@
 /* A folder that takes its time: the old rows stay but step back, and the note floats over them, so nothing moves and
    a click on another folder still lands. */
 .list.waiting { opacity: .5; }
+/* What a drop would do, beside the pointer while a drag goes on. */
+.drag-op { position: fixed; top: 0; left: 0; z-index: 30; display: flex; align-items: center; gap: .45rem; height: 1.9rem; padding: 0 .75rem; font-size: 12px; font-weight: 600; color: var(--carbon-text); white-space: nowrap; pointer-events: none; }
+.drag-op svg { width: .85rem; height: .85rem; color: var(--accent-glyph); }
 .pwait { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 4; display: flex; align-items: center; gap: .55rem; height: 2.1rem; padding: 0 .9rem; font-size: 13px; color: var(--carbon-text); white-space: nowrap; pointer-events: none; }
 
 #col-q { flex: none; }

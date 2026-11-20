@@ -3322,6 +3322,7 @@
     },
     "copy": "Copiază",
     "move": "Mută",
+    "symlink": "Leagă",
     "to": "În",
     "way": "Mod",
     "linkWay": "Creează ca legătură fixă",
@@ -3438,6 +3439,11 @@
       "one": "1 legătură fixă creată, fără spațiu nou ocupat",
       "few": "{n} legături fixe create, fără spațiu nou ocupat",
       "other": "{n} de legături fixe create, fără spațiu nou ocupat"
+    },
+    "symlinked": {
+      "one": "A fost creată 1 legătură",
+      "few": "Au fost create {n} legături",
+      "other": "Au fost create {n} de legături"
     },
     "noLink": "O legătură fixă merge doar pe același disc sau în același Pool",
     "clipCut": "Decupează",

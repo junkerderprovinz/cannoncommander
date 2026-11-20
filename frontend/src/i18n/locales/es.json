@@ -3322,6 +3322,7 @@
     },
     "copy": "Copiar",
     "move": "Mover",
+    "symlink": "Enlazar",
     "to": "A",
     "way": "Modo",
     "linkWay": "Crear como enlace duro",
@@ -3438,6 +3439,11 @@
       "one": "1 enlace duro creado, no ocupa espacio nuevo",
       "many": "{n} enlaces duros creados, no ocupan espacio nuevo",
       "other": "{n} enlaces duros creados, no ocupan espacio nuevo"
+    },
+    "symlinked": {
+      "one": "Se creó 1 enlace",
+      "many": "Se crearon {n} enlaces",
+      "other": "Se crearon {n} enlaces"
     },
     "noLink": "Un enlace duro solo funciona en el mismo disco o en el mismo pool",
     "clipCut": "Cortar",

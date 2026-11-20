@@ -3322,6 +3322,7 @@
     },
     "copy": "Kopēt",
     "move": "Pārvietot",
+    "symlink": "Saistīt",
     "to": "Uz",
     "way": "Veids",
     "linkWay": "Izveidot kā cieto saiti",
@@ -3438,6 +3439,11 @@
       "zero": "Izveidotas {n} cietās saites, jaunu vietu neaizņem",
       "one": "Izveidota {n} cietā saite, jaunu vietu neaizņem",
       "other": "Izveidotas {n} cietās saites, jaunu vietu neaizņem"
+    },
+    "symlinked": {
+      "zero": "Izveidotas {n} saites",
+      "one": "Izveidota {n} saite",
+      "other": "Izveidotas {n} saites"
     },
     "noLink": "Cietā saite ir iespējama tikai tajā pašā diskā vai tajā pašā Pool",
     "clipCut": "Izgriezt",

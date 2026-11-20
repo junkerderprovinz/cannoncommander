@@ -1,11 +1,17 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Item } from '@/api/client';
+import { tools } from '@/api/tools';
 import { action } from '@/core/actions';
 import { host } from '@/core/host';
+import { addMessages } from '@/i18n';
+import de from '@/features/transfer/de.json';
+import en from '@/features/transfer/en.json';
 import { useListing } from '@/stores/listing';
 import { type Transfer, usePanels } from '@/stores/panels';
-import { installDragDrop } from './dnd';
+import { dragOp, installDragDrop } from './dnd';
+
+addMessages('transfer', { de, en });
 
 const HERE = '/home/jdp';
 const item = (name: string, dir = false): Item => ({ name, dir, size: 1, time: 0, mode: '0664', owner: 'jdp', group: 'jdp' });
@@ -97,5 +103,69 @@ describe('the window of the desktop app', () => {
     document.elementFromPoint = () => document.querySelector('.dcard');
     hooks().handlePlatformFileDrop(['C:\\Temp\\a.txt'], 10, 10);
     expect(dropped).toEqual([[['C:\\Temp\\a.txt'], '/C', 'auto']]);
+  });
+});
+
+const keys = (k: Partial<Record<'ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey', boolean>> = {}) => ({ ctrlKey: false, shiftKey: false, altKey: false, metaKey: false, ...k });
+
+describe('the keys held during a drag', () => {
+  it('copy without a key, copy with Ctrl, move with Shift and link with Alt or Ctrl and Shift', () => {
+    expect([keys(), keys({ ctrlKey: true }), keys({ shiftKey: true }), keys({ altKey: true }), keys({ ctrlKey: true, shiftKey: true })].map((k) => dragOp(k, false, true)))
+      .toEqual(['copy', 'copy', 'move', 'link', 'link']);
+  });
+
+  it('copy with Option, move with Command and link with both on a Mac', () => {
+    expect([keys({ altKey: true }), keys({ metaKey: true }), keys({ altKey: true, metaKey: true }), keys({ shiftKey: true })].map((k) => dragOp(k, true, true)))
+      .toEqual(['copy', 'move', 'link', 'move']);
+  });
+
+  it('copy instead of linking where a link cannot go', () => {
+    expect(dragOp(keys({ altKey: true }), false, false)).toBe('copy');
+  });
+});
+
+describe('a drag inside the browser', () => {
+  const ev = (type: string, k: Partial<Record<'ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey', boolean>> = {}) =>
+    Object.assign(new Event(type, { bubbles: true, cancelable: true }), { dataTransfer: { setData: () => {}, effectAllowed: '', dropEffect: '', types: [], files: [] }, clientX: 40, clientY: 40, ...keys(k) });
+  const badge = () => document.querySelector('.drag-op')?.textContent?.trim();
+  beforeEach(() => Object.assign(host, { desktop: false, os: 'linux' }));
+
+  it('shows what a drop would do and follows the keys while the drag goes on', () => {
+    const { folder, file } = panel();
+    file.dispatchEvent(ev('dragstart'));
+    const plain = ev('dragover');
+    folder.dispatchEvent(plain);
+    expect([plain.dataTransfer.dropEffect, badge()]).toEqual(['copy', 'Kopieren']);
+    const shifted = ev('dragover', { shiftKey: true });
+    folder.dispatchEvent(shifted);
+    expect([shifted.dataTransfer.dropEffect, badge()]).toEqual(['move', 'Verschieben']);
+    const ctrl = ev('dragover', { ctrlKey: true });
+    folder.dispatchEvent(ctrl);
+    expect([ctrl.dataTransfer.dropEffect, badge()]).toEqual(['copy', 'Kopieren']);
+    file.dispatchEvent(ev('dragend'));
+    expect(badge()).toBeUndefined();
+  });
+
+  it('does what the keys say at the moment of the drop', async () => {
+    const { folder, file } = panel();
+    file.dispatchEvent(ev('dragstart'));
+    folder.dispatchEvent(ev('dragover'));
+    folder.dispatchEvent(ev('drop', { shiftKey: true }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(moved.map((j) => [j.kind, j.dest])).toEqual([['move', HERE + '/Bilder']]);
+    expect(badge()).toBeUndefined();
+  });
+
+  it('links with Alt', async () => {
+    const linked = vi.spyOn(tools, 'symlink').mockResolvedValue({ path: HERE + '/Bilder/notes.txt' });
+    const { folder, file } = panel();
+    file.dispatchEvent(ev('dragstart'));
+    const over = ev('dragover', { altKey: true });
+    folder.dispatchEvent(over);
+    expect([over.dataTransfer.dropEffect, badge()]).toEqual(['link', 'Verknüpfen']);
+    folder.dispatchEvent(ev('drop', { altKey: true }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(linked).toHaveBeenCalledWith(HERE + '/notes.txt', HERE + '/Bilder/notes.txt');
+    expect(moved).toEqual([]);
   });
 });

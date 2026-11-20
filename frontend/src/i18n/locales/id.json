@@ -3120,6 +3120,7 @@
     },
     "copy": "Salin",
     "move": "Pindahkan",
+    "symlink": "Tautkan",
     "to": "Ke",
     "way": "Cara",
     "linkWay": "Buat sebagai hard link",
@@ -3224,6 +3225,9 @@
     },
     "linked": {
       "other": "{n} hard link dibuat, tanpa memakan ruang baru"
+    },
+    "symlinked": {
+      "other": "{n} tautan dibuat"
     },
     "noLink": "Hard link hanya bisa di disk yang sama atau di Pool yang sama",
     "clipCut": "Potong",

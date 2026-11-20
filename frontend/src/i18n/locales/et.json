@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopeeri",
     "move": "Teisalda",
+    "symlink": "Lingi",
     "to": "Sihtkoht",
     "way": "Viis",
     "linkWay": "Loo kõva lingina",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "{n} kõva link loodud, uut ruumi ei võta",
       "other": "{n} kõva linki loodud, uut ruumi ei võta"
+    },
+    "symlinked": {
+      "one": "Loodi 1 link",
+      "other": "Loodi {n} linki"
     },
     "noLink": "Kõva link töötab ainult samal kettal või samas Poolis",
     "clipCut": "Lõika",

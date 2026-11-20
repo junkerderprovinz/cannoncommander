@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopiera",
     "move": "Flytta",
+    "symlink": "Länka",
     "to": "Till",
     "way": "Sätt",
     "linkWay": "Skapa som hård länk",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "{n} hård länk skapad, tar ingen ny plats",
       "other": "{n} hårda länkar skapade, tar ingen ny plats"
+    },
+    "symlinked": {
+      "one": "1 länk skapad",
+      "other": "{n} länkar skapade"
     },
     "noLink": "En hård länk fungerar bara på samma disk eller i samma pool",
     "clipCut": "Klipp ut",

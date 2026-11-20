@@ -3,6 +3,7 @@
   "more": { "one": "and {n} more", "other": "and {n} more" },
   "copy": "Copy",
   "move": "Move",
+  "symlink": "Link",
   "to": "To",
   "way": "How",
   "linkWay": "Make a hard link",
@@ -96,6 +97,7 @@
     "move": "Move anyway"
   },
   "linked": { "one": "1 hard link made, taking no new space", "other": "{n} hard links made, taking no new space" },
+  "symlinked": { "one": "Made 1 link", "other": "Made {n} links" },
   "noLink": "A hard link only works on the same disk or in the same pool",
   "clipCut": "Cut",
   "clipCopy": "Copy to the clipboard",

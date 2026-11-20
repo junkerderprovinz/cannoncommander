@@ -3423,6 +3423,7 @@
     },
     "copy": "Kopiraj",
     "move": "Premakni",
+    "symlink": "Poveži",
     "to": "Kam",
     "way": "Način",
     "linkWay": "Ustvari kot trdo povezavo",
@@ -3545,6 +3546,12 @@
       "two": "Ustvarjeni {n} trdi povezavi, ne zasedata novega prostora",
       "few": "Ustvarjene {n} trde povezave, ne zasedajo novega prostora",
       "other": "Ustvarjenih {n} trdih povezav, ne zasedajo novega prostora"
+    },
+    "symlinked": {
+      "one": "Ustvarjena {n} povezava",
+      "two": "Ustvarjeni {n} povezavi",
+      "few": "Ustvarjene {n} povezave",
+      "other": "Ustvarjenih {n} povezav"
     },
     "noLink": "Trda povezava deluje samo na istem disku ali v istem Poolu",
     "clipCut": "Izreži",

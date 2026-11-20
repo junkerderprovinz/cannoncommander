@@ -3423,6 +3423,7 @@
     },
     "copy": "Kopírovať",
     "move": "Presunúť",
+    "symlink": "Prepojiť",
     "to": "Kam",
     "way": "Spôsob",
     "linkWay": "Vytvoriť ako pevný odkaz",
@@ -3545,6 +3546,12 @@
       "few": "Vytvorené {n} pevné odkazy, nezaberajú nové miesto",
       "many": "Vytvorených {n} pevného odkazu, nezaberajú nové miesto",
       "other": "Vytvorených {n} pevných odkazov, nezaberajú nové miesto"
+    },
+    "symlinked": {
+      "one": "Vytvorený 1 odkaz",
+      "few": "Vytvorené {n} odkazy",
+      "many": "Vytvoreného {n} odkazu",
+      "other": "Vytvorených {n} odkazov"
     },
     "noLink": "Pevný odkaz ide len na rovnakom disku alebo v rovnakom Poole",
     "clipCut": "Vystrihnúť",

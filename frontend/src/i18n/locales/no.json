@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopier",
     "move": "Flytt",
+    "symlink": "Lenke",
     "to": "Til",
     "way": "Måte",
     "linkWay": "Opprett som hard lenke",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "{n} hard lenke opprettet, tar ingen ny plass",
       "other": "{n} harde lenker opprettet, tar ingen ny plass"
+    },
+    "symlinked": {
+      "one": "1 lenke opprettet",
+      "other": "{n} lenker opprettet"
     },
     "noLink": "En hard lenke fungerer bare på samme disk eller i samme pool",
     "clipCut": "Klipp ut",

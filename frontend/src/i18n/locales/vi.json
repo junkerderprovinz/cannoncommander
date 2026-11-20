@@ -3120,6 +3120,7 @@
     },
     "copy": "Sao chép",
     "move": "Di chuyển",
+    "symlink": "Liên kết",
     "to": "Đến",
     "way": "Cách",
     "linkWay": "Tạo liên kết cứng",
@@ -3224,6 +3225,9 @@
     },
     "linked": {
       "other": "Đã tạo {n} liên kết cứng, không tốn thêm chỗ"
+    },
+    "symlinked": {
+      "other": "Đã tạo {n} liên kết"
     },
     "noLink": "Liên kết cứng chỉ dùng được trên cùng một Disk hoặc cùng một Pool",
     "clipCut": "Cắt",

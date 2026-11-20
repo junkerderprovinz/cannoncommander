@@ -3423,6 +3423,7 @@
     },
     "copy": "Kopijuoti",
     "move": "Perkelti",
+    "symlink": "Susieti",
     "to": "Į",
     "way": "Būdas",
     "linkWay": "Sukurti kaip kietąją nuorodą",
@@ -3545,6 +3546,12 @@
       "few": "Sukurtos {n} kietosios nuorodos, naujos vietos neužima",
       "many": "Sukurta {n} kietosios nuorodos, naujos vietos neužima",
       "other": "Sukurta {n} kietųjų nuorodų, naujos vietos neužima"
+    },
+    "symlinked": {
+      "one": "Sukurta {n} nuoroda",
+      "few": "Sukurtos {n} nuorodos",
+      "many": "Sukurta {n} nuorodos",
+      "other": "Sukurta {n} nuorodų"
     },
     "noLink": "Kietoji nuoroda galima tik tame pačiame diske arba tame pačiame Pool",
     "clipCut": "Iškirpti",

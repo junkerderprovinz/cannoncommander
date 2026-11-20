@@ -3221,6 +3221,7 @@
     },
     "copy": "Másolás",
     "move": "Áthelyezés",
+    "symlink": "Hivatkozás",
     "to": "Cél",
     "way": "Mód",
     "linkWay": "Létrehozás kemény hivatkozásként",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "1 kemény hivatkozás létrehozva, nem foglal új helyet",
       "other": "{n} kemény hivatkozás létrehozva, nem foglalnak új helyet"
+    },
+    "symlinked": {
+      "one": "1 hivatkozás létrehozva",
+      "other": "{n} hivatkozás létrehozva"
     },
     "noLink": "Kemény hivatkozás csak ugyanazon a lemezen vagy ugyanabban a Poolban működik",
     "clipCut": "Kivágás",

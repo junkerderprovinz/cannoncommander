@@ -3221,6 +3221,7 @@
     },
     "copy": "Afrita",
     "move": "Færa",
+    "symlink": "Tengja",
     "to": "Í",
     "way": "Aðferð",
     "linkWay": "Búa til harðan tengil",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "{n} harður tengill búinn til, tekur ekkert nýtt pláss",
       "other": "{n} harðir tenglar búnir til, taka ekkert nýtt pláss"
+    },
+    "symlinked": {
+      "one": "{n} tengill búinn til",
+      "other": "{n} tenglar búnir til"
     },
     "noLink": "Harður tengill virkar aðeins á sama diski eða í sama Pool",
     "clipCut": "Klippa",

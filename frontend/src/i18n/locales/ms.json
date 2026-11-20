@@ -3120,6 +3120,7 @@
     },
     "copy": "Salin",
     "move": "Alih",
+    "symlink": "Paut",
     "to": "Ke",
     "way": "Cara",
     "linkWay": "Cipta sebagai pautan keras",
@@ -3224,6 +3225,9 @@
     },
     "linked": {
       "other": "{n} pautan keras dicipta, tanpa menggunakan ruang baharu"
+    },
+    "symlinked": {
+      "other": "{n} pautan dibuat"
     },
     "noLink": "Pautan keras hanya boleh pada cakera yang sama atau dalam Pool yang sama",
     "clipCut": "Potong",

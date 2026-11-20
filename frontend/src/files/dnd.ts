@@ -1,18 +1,35 @@
-// Dragging rows copies onto a folder, a tab, a piece of the path, the sidebar or the other panel; Shift moves.
-// Holding still over a folder, tab or path piece opens it, so a drop can go deeper, as in Finder.
-// Files dragged in from outside go to the upload. In the desktop app they are files on the same computer instead: they
-// go onto the folder under the pointer as Explorer takes them, and rows dragged out of the window reach Explorer, the
-// desktop or any other program as the files themselves.
+// Dragging rows onto a folder, a tab, a piece of the path, the sidebar or the other panel copies them. Shift moves and
+// Alt links, and a badge at the pointer says which, following the keys while the drag goes on. Holding still over a
+// folder, tab or path piece opens it, so a drop can go deeper. Files dragged in from outside go to the upload. In the
+// desktop app they are files on the same computer instead: they go onto the folder under the pointer, and rows dragged
+// out of the window reach the desktop or any other program as the files themselves.
+import { tools } from '@/api/tools';
 import { run } from '@/core/actions';
+import { glyph } from '@/core/glyphs';
 import { host } from '@/core/host';
+import { toast } from '@/core/toast';
 import { prefs } from '@/core/prefs';
 import { view } from '@/core/views';
+import { plural, t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import type { Entry } from './entries';
 import { inArchive, join, nativePath } from './paths';
 
 interface Target { el: Element; dest: string; open?: () => void }
-interface Drag { from: number; items: Entry[]; folder: string; shift: boolean; native?: boolean }
+interface Drag { from: number; items: Entry[]; folder: string; op: DragOp; native?: boolean }
+
+export type DragOp = 'copy' | 'move' | 'link';
+type Keys = Pick<KeyboardEvent, 'ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey'>;
+
+// Ctrl copies, Shift moves, Alt or Ctrl with Shift links. A Mac has its own keys: Option copies, Command moves and both
+// together link. Without a key, or where a link cannot go, a drag copies.
+export function dragOp(k: Keys, mac: boolean, linkable: boolean): DragOp {
+  if (linkable && (mac ? k.altKey && k.metaKey : k.altKey || (k.ctrlKey && k.shiftKey))) return 'link';
+  if (mac ? k.altKey : k.ctrlKey) return 'copy';
+  return k.shiftKey || (mac && k.metaKey) ? 'move' : 'copy';
+}
+const onMac = () => host.os === 'darwin' || /^Mac/.test(navigator.platform);
+const OPS: Record<DragOp, [label: string, glyph: string]> = { copy: ['transfer.copy', 'IconCopy'], move: ['transfer.move', 'IconMove'], link: ['transfer.symlink', 'IconLink'] };
 
 // The window of the desktop app hands over dropped files through the hooks of Wails' runtime. The page defines them
 // itself, since the runtime would come from the page's own server, and says it is ready, after which the window
@@ -35,6 +52,27 @@ export function installDragDrop() {
   // Drops on Windows wait here for their paths, which come back from the window after the page passed it the files.
   const waiting: { dest: string; how: 'copy' | 'move' | 'auto' }[] = [];
   let spring: { el: Element | null; timer: ReturnType<typeof setTimeout> | undefined } = { el: null, timer: undefined };
+  let badge: HTMLElement | null = null;
+  function showOp(op: DragOp, x: number, y: number) {
+    if (!badge) badge = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'drag-op glim-card' }));
+    if (badge.dataset.op !== op) {
+      const [label, g] = OPS[op], d = glyph(g);
+      badge.dataset.op = op;
+      badge.innerHTML = `<svg viewBox="${d.viewBox}" fill="currentColor" aria-hidden="true">${d.svg}</svg><span></span>`;
+      badge.querySelector('span')!.textContent = t(label);
+    }
+    badge.style.translate = `${x + 14}px ${y + 18}px`;
+  }
+  const hideOp = () => { badge?.remove(); badge = null; };
+  const linkable = (d: Drag, dest: string) => !inArchive(dest) && !inArchive(d.folder) && d.items.every((k) => !inArchive(k.at || ''));
+  async function linkHere(d: Drag, dest: string) {
+    try {
+      for (const k of d.items) await tools.symlink(join(k.at || d.folder, k.name), join(dest, k.name));
+      toast(plural(d.items.length, 'transfer.symlinked'), 'ok');
+    } catch (e) {
+      toast((e as Error).message, 'warn');
+    }
+  }
 
   const panelOf = (el: Element | null) => (el ? +(el as HTMLElement).dataset.panel! : F.active);
   // Inside the app a drag skips its own folder and its own rows; one from outside lands on any folder.
@@ -81,6 +119,7 @@ export function installDragDrop() {
     drag = null;
     stopSpring();
     clearDrop();
+    hideOp();
   }
   const paths = (d: Drag) => d.items.map((k) => join(k.at || d.folder, k.name));
 
@@ -92,7 +131,7 @@ export function installDragDrop() {
     const tab = F.T(), k = F.entries()[+row.dataset.idx!];
     if (!k) return;
     if (!tab.marked.has(k.name)) tab.marked = new Set([k.name]);
-    drag = { from: F.active, items: F.sel(), folder: tab.path, shift: e.shiftKey };
+    drag = { from: F.active, items: F.sel(), folder: tab.path, op: dragOp(e, onMac(), false) };
     const onDisk = host.desktop && !inArchive(tab.path) && drag.items.every((k) => !inArchive(k.at || ''));
     // WebView2 drags only within the page, and a WebKitGTK drag cannot be read by GTK 4 programs such as Nautilus, so
     // there the system's own drag carries the files, inside the window as well, where the page sees it like any other
@@ -104,13 +143,12 @@ export function installDragDrop() {
       void Promise.resolve(run('dragOut', paths(d))).finally(() => { if (drag === d) endDrag(); });
       return;
     }
-    e.dataTransfer!.effectAllowed = 'copyMove';
+    e.dataTransfer!.effectAllowed = 'all';
     e.dataTransfer!.setData('text/plain', drag.items.map((x) => x.name).join('\n'));
     // Elsewhere the webview hands a URI list on to the system, where file managers take it as files.
     if (onDisk) e.dataTransfer!.setData('text/uri-list', paths(drag).map((p) => 'file://' + encodeURI(nativePath(p, false)).replace(/[?#]/g, encodeURIComponent)).join('\r\n'));
   });
   document.addEventListener('dragover', (e) => {
-    if (drag) drag.shift = e.shiftKey;
     const files = [...(e.dataTransfer?.types || [])].includes('Files');
     if (!drag && files && !host.desktop) {
       const list = (e.target as Element).closest?.('.list');
@@ -122,11 +160,17 @@ export function installDragDrop() {
     }
     const tgt = dropTarget(e.target as Element, drag);
     hover(drag || files ? tgt : null);
-    if (!tgt || (!drag && !files)) return;
+    if (!tgt || (!drag && !files)) return hideOp();
     e.preventDefault();
     // Files from another program are always taken as a copy there, so it never deletes them after a move: the app
     // moves them itself where it should.
-    e.dataTransfer!.dropEffect = !drag ? 'copy' : e.shiftKey ? 'move' : 'copy';
+    if (!drag) {
+      e.dataTransfer!.dropEffect = 'copy';
+      return;
+    }
+    drag.op = dragOp(e, onMac(), linkable(drag, tgt.dest));
+    e.dataTransfer!.dropEffect = drag.op;
+    showOp(drag.op, e.clientX, e.clientY);
   });
   document.addEventListener('dragend', endDrag);
   document.addEventListener('drop', (e) => {
@@ -152,7 +196,11 @@ export function installDragDrop() {
     e.preventDefault();
     const d = drag, tgt = dropTarget(e.target as Element, d);
     if (!d.native) drag = null;
-    if (tgt) F.transfer(e.shiftKey ? 'move' : 'copy', d.items, tgt.dest, d.folder);
+    hideOp();
+    if (!tgt) return;
+    const op = dragOp(e, onMac(), linkable(d, tgt.dest));
+    if (op === 'link') void linkHere(d, tgt.dest);
+    else F.transfer(op, d.items, tgt.dest, d.folder);
   });
 
   // The window's side of a drop. On Windows the page passed it the files and gets back their paths. On Linux the
@@ -171,7 +219,8 @@ export function installDragDrop() {
       endDrag();
       ended = null;
       const tgt = dropTarget(el, own);
-      if (tgt) F.transfer(own.shift ? 'move' : 'copy', own.items, tgt.dest, own.folder);
+      if (tgt && own.op === 'link') void linkHere(own, tgt.dest);
+      else if (tgt) F.transfer(own.op, own.items, tgt.dest, own.folder);
       return;
     }
     const tgt = dropTarget(el, null);

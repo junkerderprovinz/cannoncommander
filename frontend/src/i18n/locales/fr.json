@@ -3322,6 +3322,7 @@
     },
     "copy": "Copier",
     "move": "Déplacer",
+    "symlink": "Lier",
     "to": "Vers",
     "way": "Méthode",
     "linkWay": "Créer un lien physique",
@@ -3438,6 +3439,11 @@
       "one": "{n} lien physique créé, sans place supplémentaire",
       "many": "{n} liens physiques créés, sans place supplémentaire",
       "other": "{n} liens physiques créés, sans place supplémentaire"
+    },
+    "symlinked": {
+      "one": "{n} lien créé",
+      "many": "{n} liens créés",
+      "other": "{n} liens créés"
     },
     "noLink": "Un lien physique ne fonctionne que sur le même disque ou dans le même pool",
     "clipCut": "Couper",

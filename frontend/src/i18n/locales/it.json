@@ -3322,6 +3322,7 @@
     },
     "copy": "Copia",
     "move": "Sposta",
+    "symlink": "Collega",
     "to": "In",
     "way": "Modo",
     "linkWay": "Crea come hard link",
@@ -3438,6 +3439,11 @@
       "one": "1 hard link creato, non occupa nuovo spazio",
       "many": "{n} hard link creati, non occupano nuovo spazio",
       "other": "{n} hard link creati, non occupano nuovo spazio"
+    },
+    "symlinked": {
+      "one": "Creato 1 collegamento",
+      "many": "Creati {n} collegamenti",
+      "other": "Creati {n} collegamenti"
     },
     "noLink": "Un hard link funziona solo sullo stesso disco o nello stesso pool",
     "clipCut": "Taglia",

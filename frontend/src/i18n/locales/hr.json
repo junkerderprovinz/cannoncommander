@@ -3322,6 +3322,7 @@
     },
     "copy": "Kopiraj",
     "move": "Premjesti",
+    "symlink": "Poveži",
     "to": "U",
     "way": "Način",
     "linkWay": "Stvori čvrstu vezu",
@@ -3438,6 +3439,11 @@
       "one": "Stvorena je {n} čvrsta veza, bez novog prostora",
       "few": "Stvorene su {n} čvrste veze, bez novog prostora",
       "other": "Stvoreno je {n} čvrstih veza, bez novog prostora"
+    },
+    "symlinked": {
+      "one": "Stvorena je {n} poveznica",
+      "few": "Stvorene su {n} poveznice",
+      "other": "Stvoreno je {n} poveznica"
     },
     "noLink": "Čvrsta veza ide samo na istom disku ili u istom poolu",
     "clipCut": "Izreži",

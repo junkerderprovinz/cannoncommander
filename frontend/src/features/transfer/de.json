@@ -3,6 +3,7 @@
   "more": { "one": "und {n} weitere", "other": "und {n} weitere" },
   "copy": "Kopieren",
   "move": "Verschieben",
+  "symlink": "Verknüpfen",
   "to": "Nach",
   "way": "Art",
   "linkWay": "Als harten Link anlegen",
@@ -96,6 +97,7 @@
     "move": "Trotzdem verschieben"
   },
   "linked": { "one": "1 harter Link angelegt, belegt keinen neuen Platz", "other": "{n} harte Links angelegt, belegt keinen neuen Platz" },
+  "symlinked": { "one": "1 Verknüpfung angelegt", "other": "{n} Verknüpfungen angelegt" },
   "noLink": "Ein harter Link geht nur auf derselben Platte oder im selben Pool",
   "clipCut": "Ausschneiden",
   "clipCopy": "Kopieren in die Ablage",

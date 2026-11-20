@@ -3221,6 +3221,7 @@
     },
     "copy": "Kopiëren",
     "move": "Verplaatsen",
+    "symlink": "Koppelen",
     "to": "Naar",
     "way": "Hoe",
     "linkWay": "Als harde koppeling aanmaken",
@@ -3331,6 +3332,10 @@
     "linked": {
       "one": "1 harde koppeling aangemaakt, neemt geen nieuwe ruimte in",
       "other": "{n} harde koppelingen aangemaakt, nemen geen nieuwe ruimte in"
+    },
+    "symlinked": {
+      "one": "1 koppeling gemaakt",
+      "other": "{n} koppelingen gemaakt"
     },
     "noLink": "Een harde koppeling werkt alleen op dezelfde schijf of in dezelfde Pool",
     "clipCut": "Knippen",

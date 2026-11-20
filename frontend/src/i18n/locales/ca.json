@@ -3322,6 +3322,7 @@
     },
     "copy": "Copia",
     "move": "Mou",
+    "symlink": "Enllaça",
     "to": "A",
     "way": "Mode",
     "linkWay": "Crea com a enllaç dur",
@@ -3438,6 +3439,11 @@
       "one": "S'ha creat 1 enllaç dur, no ocupa espai nou",
       "many": "S'han creat {n} enllaços durs, no ocupen espai nou",
       "other": "S'han creat {n} enllaços durs, no ocupen espai nou"
+    },
+    "symlinked": {
+      "one": "S'ha creat 1 enllaç",
+      "many": "S'han creat {n} enllaços",
+      "other": "S'han creat {n} enllaços"
     },
     "noLink": "Un enllaç dur només funciona al mateix disc o al mateix pool",
     "clipCut": "Retalla",

@@ -3423,6 +3423,7 @@
     },
     "copy": "Kopiuj",
     "move": "Przenieś",
+    "symlink": "Połącz",
     "to": "Do",
     "way": "Sposób",
     "linkWay": "Utwórz jako twarde dowiązanie",
@@ -3545,6 +3546,12 @@
       "few": "Utworzono {n} twarde dowiązania, nie zajmują nowego miejsca",
       "many": "Utworzono {n} twardych dowiązań, nie zajmują nowego miejsca",
       "other": "Utworzono {n} twardego dowiązania, nie zajmują nowego miejsca"
+    },
+    "symlinked": {
+      "one": "Utworzono 1 dowiązanie",
+      "few": "Utworzono {n} dowiązania",
+      "many": "Utworzono {n} dowiązań",
+      "other": "Utworzono {n} dowiązania"
     },
     "noLink": "Twarde dowiązanie działa tylko na tym samym dysku albo w tym samym Pool",
     "clipCut": "Wytnij",

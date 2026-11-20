@@ -3322,6 +3322,7 @@
     },
     "copy": "Copiar",
     "move": "Mover",
+    "symlink": "Ligar",
     "to": "Para",
     "way": "Modo",
     "linkWay": "Criar como ligação física",
@@ -3438,6 +3439,11 @@
       "one": "1 ligação física criada, sem ocupar espaço novo",
       "many": "{n} ligações físicas criadas, sem ocupar espaço novo",
       "other": "{n} ligações físicas criadas, sem ocupar espaço novo"
+    },
+    "symlinked": {
+      "one": "Foi criada 1 ligação",
+      "many": "Foram criadas {n} ligações",
+      "other": "Foram criadas {n} ligações"
     },
     "noLink": "Uma ligação física só funciona no mesmo disco ou no mesmo pool",
     "clipCut": "Cortar",
