@@ -702,7 +702,7 @@
       },
       "p": {
         "smb": "SMB / Windows 共享",
-        "s3": "S3 兼容",
+        "s3": "自定义 S3",
         "crypt": "加密",
         "alias": "别名",
         "archive": "归档文件",

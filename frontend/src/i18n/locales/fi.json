@@ -737,7 +737,7 @@
       },
       "p": {
         "smb": "SMB / Windows-jako",
-        "s3": "S3-yhteensopiva",
+        "s3": "Oma S3",
         "crypt": "Salattu",
         "alias": "Alias",
         "archive": "Arkistotiedostot",

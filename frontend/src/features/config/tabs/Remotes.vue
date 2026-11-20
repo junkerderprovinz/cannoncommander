@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { segItems } from '@/ui/kit';
-import { Button, Card, ConnectionRow, EmptyState, FieldRow, Pill, Selector, Toggle, type ConnectionTest } from '@glimstone/vue';
+import { Button, Card, ConnectionRow, EmptyState, FieldRow, Pill, Selector, Toggle, type ConnectionAction, type ConnectionTest } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref, shallowRef } from 'vue';
 import { admin, type AppSettings, type Provider, type Rclone, type Remote, type RemoteTest } from '@/api/admin';
 import { glyphComponent } from '@/core/glyphs';
@@ -9,7 +9,6 @@ import { attempt, c, confirmWin } from '@/features/config/shared';
 import { reloadRemotes } from '@/features/remotes/store';
 import { loadCatalog, markOf, remoteKind, testVerdict } from '../remotes';
 import RemoteWin from '../wins/RemoteWin.vue';
-import RowActions, { type RowAction } from './RowActions.vue';
 
 type Mounting = AppSettings['remotes'];
 const remotes = ref<Remote[]>([]);
@@ -58,8 +57,7 @@ async function test(r: Remote) {
   tests[r.name] = got.question ? { tone: 'danger', title: c('remotes.notConnected') } : { tone: got.ok ? 'ok' : 'danger', title: testVerdict(got, r.path) };
 }
 const rowText = computed(() => ({ test: c('test'), edit: c('edit'), remove: c('remove') }));
-const ROW_KEYS = { test: 'IconCheck', edit: 'IconPencil', remove: 'IconTrash' };
-const actionsOf = (r: Remote): RowAction[] => [{
+const actionsOf = (r: Remote): ConnectionAction[] => [{
   id: 'mount', label: r.mounted ? c('remotes.unmount') : c('remotes.mount'), labelKey: r.mounted ? 'IconUnlink' : 'IconLink',
   busy: switching[r.name], onClick: () => { void mount(r); },
 }];
@@ -88,17 +86,14 @@ function remove(r: Remote) {
 <template>
   <Card :title="c('remotes.title')">
     <div v-if="remotes.length" class="a-conns">
-      <template v-for="r in remotes" :key="r.name">
-        <ConnectionRow :name="r.name" :mark="markFor(r)" :status="remoteKind(r, providers)" :test="tests[r.name]" :text="rowText" :label-keys="ROW_KEYS"
-          @test="test(r)" @edit="edit(r)" @remove="remove(r)">
-          <template #badges>
-            <Pill v-if="r.error" tone="warn" :title="c('remotes.mountFailed', { error: r.error })">{{ c('remotes.failedPill') }}</Pill>
-            <Pill v-else-if="!r.mounted" tone="state">{{ c('remotes.unmountedPill') }}</Pill>
-          </template>
-          <p class="a-conn-path mono">{{ r.mount }}</p>
-        </ConnectionRow>
-        <RowActions :actions="actionsOf(r)" />
-      </template>
+      <ConnectionRow v-for="r in remotes" :key="r.name" :name="r.name" :mark="markFor(r)" :status="remoteKind(r, providers)" :test="tests[r.name]"
+        :text="rowText" :actions="actionsOf(r)" @test="test(r)" @edit="edit(r)" @remove="remove(r)">
+        <template #badges>
+          <Pill v-if="r.error" tone="warn" :title="c('remotes.mountFailed', { error: r.error })">{{ c('remotes.failedPill') }}</Pill>
+          <Pill v-else-if="!r.mounted" tone="state">{{ c('remotes.unmountedPill') }}</Pill>
+        </template>
+        <p class="a-conn-path mono">{{ r.mount }}</p>
+      </ConnectionRow>
     </div>
     <EmptyState v-else-if="rclone && !rclone.installed" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noRclone')" :hint="c('remotes.noRcloneHint')" />
     <EmptyState v-else nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.none')" />

@@ -737,7 +737,7 @@
       },
       "p": {
         "smb": "SMB / Windows-sameign",
-        "s3": "Samhæft við S3",
+        "s3": "Eigið S3",
         "crypt": "Dulkóðað",
         "alias": "Samnefni",
         "archive": "Safnskrár",

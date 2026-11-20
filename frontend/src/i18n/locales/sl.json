@@ -807,7 +807,7 @@
       },
       "p": {
         "smb": "SMB / Windows skupna raba",
-        "s3": "Združljivo s S3",
+        "s3": "Lastni S3",
         "crypt": "Šifrirano",
         "alias": "Vzdevek",
         "archive": "Arhivske datoteke",

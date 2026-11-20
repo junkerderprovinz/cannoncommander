@@ -702,7 +702,7 @@
       },
       "p": {
         "smb": "SMB / thư mục chia sẻ Windows",
-        "s3": "Tương thích S3",
+        "s3": "S3 tùy chỉnh",
         "crypt": "Mã hóa",
         "alias": "Bí danh",
         "archive": "Tệp lưu trữ nén",

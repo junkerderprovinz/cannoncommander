@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createApp, nextTick } from 'vue';
+import { IconCheck, IconPencil, IconTrash } from '@glimstone/vue';
+import { type Component, createApp, h, nextTick, render } from 'vue';
 import type { Remote, RemoteCatalog, RemoteTest } from '@/api/admin';
-import { glyph } from '@/core/glyphs';
 import { addMessages, setLanguage } from '@/i18n';
 import en from '../en.json';
 import { loadMarks } from '../remotes';
@@ -114,10 +114,17 @@ describe('the list of remotes', () => {
     expect(row('backups').querySelector('.glim-connection-badges')?.textContent).toContain('Unmounted');
   });
 
-  it('wears the glyph GlimStone gives a test on the test button', async () => {
+  it('leaves the glyphs of Test, Edit and Remove to GlimStone', async () => {
     await open();
-    const drawn = (svg: string) => { const t = document.createElement('template'); t.innerHTML = `<svg>${svg}</svg>`; return t.content.querySelector('path')?.getAttribute('d'); };
-    expect(button('nextcloud', 'test').querySelector('.glim-btn-glyph path')?.getAttribute('d')).toBe(drawn(glyph('IconCheck').svg));
+    const drawn = (glyph: Component) => {
+      const box = document.createElement('div');
+      render(h(glyph), box);
+      return box.querySelector('path')?.getAttribute('d');
+    };
+    const shown = (which: string) => button('nextcloud', which).querySelector('.glim-btn-glyph path')?.getAttribute('d');
+    expect(shown('test')).toBe(drawn(IconCheck));
+    expect(shown('edit')).toBe(drawn(IconPencil));
+    expect(shown('remove')).toBe(drawn(IconTrash));
   });
 
   it('tests a saved remote under its own name and says in the button how it went', async () => {

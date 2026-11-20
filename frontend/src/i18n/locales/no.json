@@ -737,7 +737,7 @@
       },
       "p": {
         "smb": "SMB / Windows-deling",
-        "s3": "S3-kompatibel",
+        "s3": "Egen S3",
         "crypt": "Kryptert",
         "alias": "Alias",
         "archive": "Arkivfiler",

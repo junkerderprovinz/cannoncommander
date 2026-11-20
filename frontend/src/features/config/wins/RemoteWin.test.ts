@@ -24,6 +24,7 @@ const CATALOG: RemoteCatalog = {
   providers: [
     { id: 'nextcloud', backend: 'webdav', preset: { vendor: 'nextcloud' } },
     { id: 's3', backend: 's3' },
+    { id: 'minio', backend: 's3', preset: { provider: 'Minio' } },
     { id: 'smb', backend: 'smb' },
     { id: 'webdav', backend: 'webdav' },
     { id: 'crypt', backend: 'crypt' },
@@ -113,7 +114,7 @@ describe('the window that adds a remote', () => {
     expect(q('[data-glim-title]')?.getAttribute('data-glim-title')).toBe('Add a remote');
     expect(search().placeholder).toBe('Search providers');
     expect(eyebrows()).toEqual(['Clouds', 'Object storage', 'Servers and protocols', 'On another remote', 'Other rclone backends: 1']);
-    expect(tiles()).toEqual(['Nextcloud', 'S3 compatible', 'SMB', 'WebDAV', 'Encrypted', 'quatrix']);
+    expect(tiles()).toEqual(['Nextcloud', 'MinIO', 'Custom S3', 'SMB', 'WebDAV', 'Encrypted', 'quatrix']);
     expect(tile('SMB').querySelector('.glim-readme-btn-sub')?.textContent).toBe('Windows share');
     expect(footLabels()).toEqual(['Close']);
   });
@@ -124,10 +125,10 @@ describe('the window that adds a remote', () => {
     expect(tiles()).toEqual(['Nextcloud', 'WebDAV']);
     await type(search(), 'gopher');
     expect(tiles()).toEqual([]);
-    expect(q('.glim-pick-none')?.textContent).toBe('Nothing matches “gopher”. Most other services work with S3 compatible or WebDAV.');
+    expect(q('.glim-pick-none')?.textContent).toBe('Nothing matches “gopher”. Most other services work with Custom S3 or WebDAV.');
     await click(q('.glim-pick-search button'));
     expect(search().value).toBe('');
-    expect(tiles()).toHaveLength(6);
+    expect(tiles()).toHaveLength(7);
   });
 
   it('goes from a tile to its fields in the same window and back to the tiles', async () => {

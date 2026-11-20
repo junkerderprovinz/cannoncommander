@@ -772,7 +772,7 @@
       },
       "p": {
         "smb": "SMB / partajare Windows",
-        "s3": "Compatibil S3",
+        "s3": "S3 propriu",
         "crypt": "Criptat",
         "alias": "Alias",
         "archive": "Fișiere arhivă",

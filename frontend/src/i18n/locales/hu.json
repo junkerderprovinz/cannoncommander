@@ -737,7 +737,7 @@
       },
       "p": {
         "smb": "SMB / Windows-megosztás",
-        "s3": "S3-kompatibilis",
+        "s3": "Saját S3",
         "crypt": "Titkosított",
         "alias": "Alias",
         "archive": "Archívumfájlok",

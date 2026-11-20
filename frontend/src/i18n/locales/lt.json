@@ -807,7 +807,7 @@
       },
       "p": {
         "smb": "SMB / Windows bendrinimas",
-        "s3": "Suderinama su S3",
+        "s3": "Savas S3",
         "crypt": "Šifruota",
         "alias": "Slapyvardis",
         "archive": "Archyvų failai",

@@ -807,7 +807,7 @@
       },
       "p": {
         "smb": "SMB / udział Windows",
-        "s3": "Zgodny z S3",
+        "s3": "Własne S3",
         "crypt": "Zaszyfrowany",
         "alias": "Alias",
         "archive": "Pliki archiwów",

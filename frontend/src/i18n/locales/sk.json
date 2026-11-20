@@ -807,7 +807,7 @@
       },
       "p": {
         "smb": "SMB / zdieľaný priečinok Windows",
-        "s3": "Kompatibilné s S3",
+        "s3": "Vlastné S3",
         "crypt": "Šifrované",
         "alias": "Alias",
         "archive": "Archívne súbory",

@@ -772,7 +772,7 @@
       },
       "p": {
         "smb": "SMB / compartició de Windows",
-        "s3": "Compatible amb S3",
+        "s3": "S3 propi",
         "crypt": "Xifrat",
         "alias": "Àlies",
         "archive": "Fitxers d'arxiu",

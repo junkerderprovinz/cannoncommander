@@ -772,7 +772,7 @@
       },
       "p": {
         "smb": "SMB / Windows dijeljenje",
-        "s3": "Kompatibilno s S3",
+        "s3": "Vlastiti S3",
         "crypt": "Šifrirano",
         "alias": "Alias",
         "archive": "Arhivske datoteke",

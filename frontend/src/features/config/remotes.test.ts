@@ -20,7 +20,7 @@ const option = (name: string, more: Partial<RemoteType['options'][number]> = {})
   name, help: '', type: 'string', required: false, essential: false, secret: false, advanced: false, exclusive: false, ...more,
 });
 
-// What the list of remotes called each provider before the picker took its tiles from GlimStone's storage catalog.
+// What the list of remotes calls each provider, by the catalog's names and the reader's words for the ones that are words.
 const SHOWN: Record<string, string> = {
   alias: 'Alias', archive: 'Archive files', azureblob: 'Azure Blob Storage', azurefiles: 'Azure Files',
   b2: 'Backblaze B2', box: 'Box', cache: 'Cache', ceph: 'Ceph', chunker: 'Split into pieces',
@@ -31,13 +31,13 @@ const SHOWN: Record<string, string> = {
   hetznerobj: 'Hetzner Object Storage', hidrive: 'IONOS HiDrive', http: 'HTTP', huaweidrive: 'Huawei Drive',
   huaweiobs: 'Huawei Cloud OBS', icloud: 'iCloud Drive', idrivee2: 'IDrive e2', imagekit: 'ImageKit',
   internetarchive: 'Internet Archive', internxt: 'Internxt', ionosobj: 'IONOS Object Storage',
-  jottacloud: 'Jottacloud', koofr: 'Koofr', linkbox: 'Linkbox', linode: 'Linode Object Storage',
+  jottacloud: 'Jottacloud', koofr: 'Koofr', linkbox: 'TeleBox', linode: 'Linode Object Storage',
   mailru: 'Mail.ru Cloud', mega: 'MEGA', memory: 'In memory', minio: 'MinIO', netstorage: 'Akamai NetStorage',
   nextcloud: 'Nextcloud', onedrive: 'OneDrive', opencloud: 'OpenCloud', opendrive: 'OpenDrive',
   oracle: 'Oracle Object Storage', ovh: 'OVHcloud Object Storage', owncloud: 'ownCloud', oxicloud: 'OxiCloud',
   pcloud: 'pCloud', pikpak: 'PikPak', pixeldrain: 'Pixeldrain', premiumize: 'premiumize.me',
   protondrive: 'Proton Drive', putio: 'put.io', qingstor: 'QingStor', quatrix: 'Quatrix', r2: 'Cloudflare R2',
-  s3: 'S3 compatible', scaleway: 'Scaleway Object Storage', seafile: 'Seafile', seaweedfs: 'SeaweedFS', sftp: 'SFTP',
+  s3: 'Custom S3', scaleway: 'Scaleway Object Storage', seafile: 'Seafile', seaweedfs: 'SeaweedFS', sftp: 'SFTP',
   shade: 'Shade', sharefile: 'ShareFile', sia: 'Sia', smb: 'SMB / Windows share', spaces: 'DigitalOcean Spaces',
   storj: 'Storj', sugarsync: 'SugarSync', swift: 'OpenStack Swift', synologyc2: 'Synology C2', ulozto: 'Ulož.to',
   union: 'Merged remotes', wasabi: 'Wasabi', webdav: 'WebDAV', yandex: 'Yandex Disk', zoho: 'Zoho WorkDrive',
@@ -68,12 +68,26 @@ describe('the provider picker', () => {
     for (const id of own) expect(markOf(id).mark?.svg, id).toMatch(/^<svg /);
   });
 
-  it('calls Versity by its short name and still finds it by the long one', () => {
+  it("calls Versity by the catalog's short name and still finds it as an S3 gateway", () => {
     const [versity] = pick('versity').items;
     expect(versity!.label).toBe('Versity');
-    expect(versity!.terms).toContain('Versity S3 Gateway');
+    expect(versity!.terms).toContain('S3 Gateway');
     expect(providerName('versity')).toBe('Versity');
     expect(suggestName(productName('versity'), [])).toBe('versity');
+  });
+
+  it("puts Custom S3 last among the object stores, in the reader's language, and finds it as S3 compatible", () => {
+    const { items } = pick('s3', 'wasabi', 'minio', 'garage');
+    const custom = items.find((i) => i.id === 's3')!;
+    expect(items.filter((i) => i.last).map((i) => i.id)).toEqual(['s3']);
+    expect(custom.label).toBe('Custom S3');
+    expect(custom.terms).toContain('S3 compatible');
+    setLanguage('de');
+    try {
+      expect(pick('s3').items[0]!.label).toBe('Eigenes S3');
+    } finally {
+      setLanguage('en');
+    }
   });
 
   it('names a remote by its rclone type while its product is unknown', () => {
@@ -109,7 +123,7 @@ describe('the provider picker', () => {
   });
 
   it('says the names that are words in the reader language, with a kind as the second line, and keeps a brand as it is', () => {
-    expect(providerName('s3')).toBe('S3 compatible');
+    expect(providerName('s3')).toBe('Custom S3');
     expect(providerName('nextcloud')).toBe('Nextcloud');
     setLanguage('de');
     try {

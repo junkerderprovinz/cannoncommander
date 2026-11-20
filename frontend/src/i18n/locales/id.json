@@ -702,7 +702,7 @@
       },
       "p": {
         "smb": "SMB / berbagi pakai Windows",
-        "s3": "Kompatibel S3",
+        "s3": "S3 kustom",
         "crypt": "Terenkripsi",
         "alias": "Alias",
         "archive": "Berkas arsip",

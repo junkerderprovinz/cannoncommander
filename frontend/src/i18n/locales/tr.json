@@ -737,7 +737,7 @@
       },
       "p": {
         "smb": "SMB / Windows paylaşımı",
-        "s3": "S3 uyumlu",
+        "s3": "Özel S3",
         "crypt": "Şifreli",
         "alias": "Takma ad",
         "archive": "Arşiv dosyaları",
