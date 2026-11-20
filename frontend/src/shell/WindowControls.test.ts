@@ -3,7 +3,7 @@ import { createApp, nextTick } from 'vue';
 import { host } from '@/core/host';
 import { addMessages, setLanguage } from '@/i18n';
 import { drawsOwnFrame, edgeAt } from './frame';
-import WindowBar from './WindowBar.vue';
+import WindowControls from './WindowControls.vue';
 
 beforeAll(() => {
   setLanguage('de');
@@ -33,7 +33,7 @@ describe('the window frame', () => {
   });
 });
 
-describe('the title bar', () => {
+describe("the window's own buttons at the end of the head", () => {
   let maximised = false;
   let calls: string[] = [];
   let posted: string[] = [];
@@ -43,7 +43,7 @@ describe('the title bar', () => {
     await new Promise((done) => setTimeout(done));
     await nextTick();
   };
-  const bar = () => document.querySelector<HTMLElement>('.glim-window-bar')!;
+  const head = () => document.querySelector<HTMLElement>('.head')!;
   const button = (name: string) => document.querySelector<HTMLButtonElement>(`.glim-window-button[aria-label="${name}"]`)!;
   const mouse = (el: EventTarget, type: string, init: MouseEventInit = {}) => el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, ...init }));
 
@@ -58,10 +58,9 @@ describe('the title bar', () => {
       return new Response(null, { status: 204 });
     }));
     vi.stubGlobal('chrome', { webview: { postMessage: (m: string) => posted.push(m) } });
-    const el = document.createElement('div');
-    document.body.append(el);
-    app = createApp(WindowBar);
-    app.mount(el);
+    document.body.innerHTML = '<div class="app"><header class="head"><button class="settings">Einstellungen</button><span id="controls"></span></header></div>';
+    app = createApp(WindowControls);
+    app.mount('#controls');
     await settle();
   });
   afterEach(() => {
@@ -95,19 +94,34 @@ describe('the title bar', () => {
     expect(calls.at(-1)).toBe('PUT /api/v1/window {"maximised":false}');
   });
 
-  it('moves the window once a press on the bar moves, and keeps a click a click', () => {
-    mouse(bar(), 'mousedown', { button: 0 });
-    mouse(bar(), 'mouseup');
-    mouse(bar(), 'mousemove', { buttons: 1 });
+  it('moves the window once a press on the head moves, and keeps a click a click', () => {
+    mouse(head(), 'mousedown', { button: 0 });
+    mouse(head(), 'mouseup');
+    mouse(head(), 'mousemove', { buttons: 1 });
     expect(posted).toEqual([]);
-    mouse(bar(), 'mousedown', { button: 0 });
-    mouse(bar(), 'mousemove', { buttons: 1 });
+    mouse(head(), 'mousedown', { button: 0 });
+    mouse(head(), 'mousemove', { buttons: 1 });
     expect(posted).toEqual(['wails:drag']);
   });
 
-  it('maximises on a double click on the bar but not on a button', async () => {
+  it('moves the window from the edge of the app around the head as well', () => {
+    mouse(document.querySelector('.app')!, 'mousedown', { button: 0 });
+    mouse(document.querySelector('.app')!, 'mousemove', { buttons: 1 });
+    expect(posted).toEqual(['wails:drag']);
+  });
+
+  it('leaves a press on anything in the head to that thing', () => {
+    mouse(document.querySelector('.settings')!, 'mousedown', { button: 0 });
+    mouse(document.querySelector('.settings')!, 'mousemove', { buttons: 1 });
+    mouse(button('Minimieren'), 'mousedown', { button: 0 });
+    mouse(button('Minimieren'), 'mousemove', { buttons: 1 });
+    expect(posted).toEqual([]);
+  });
+
+  it('maximises on a double click on the head but not on a button', async () => {
     mouse(button('Minimieren'), 'dblclick');
-    mouse(bar(), 'dblclick');
+    mouse(document.querySelector('.settings')!, 'dblclick');
+    mouse(head(), 'dblclick');
     await settle();
     expect(calls.filter((c) => c.startsWith('PUT'))).toEqual(['PUT /api/v1/window {"maximised":true}']);
   });

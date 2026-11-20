@@ -7,10 +7,8 @@ import { currentView, view } from '@/core/views';
 import WindowHost from '@/core/WindowHost.vue';
 import BottomBar from '@/shell/BottomBar.vue';
 import FKeys from '@/shell/FKeys.vue';
-import { drawsOwnFrame } from '@/shell/frame';
 import Head from '@/shell/Head.vue';
 import { shell } from '@/shell/state';
-import WindowBar from '@/shell/WindowBar.vue';
 import { session } from '@/signin';
 import SignInPage from '@/signin/SignInPage.vue';
 import { useUser } from '@/stores/user';
@@ -20,7 +18,6 @@ const user = useUser();
 </script>
 
 <template>
-  <WindowBar v-if="drawsOwnFrame()" />
   <div v-if="def?.page" class="app glim-shell page-app">
     <Head /><main id="page" class="page"><component :is="def.component" :arg="view.arg" /></main><BottomBar />
   </div>

@@ -9,8 +9,10 @@ import { prefs } from '@/core/prefs';
 import { go, view } from '@/core/views';
 import { language, plural, t } from '@/i18n';
 import { useUser } from '@/stores/user';
+import { drawsOwnFrame } from './frame';
 import { HEAD_LOGO } from './logo';
 import { shell } from './state';
+import WindowControls from './WindowControls.vue';
 
 const user = useUser();
 const files = computed(() => view.id === 'files');
@@ -94,5 +96,6 @@ const layout = computed(() => (prefs.dual
     <Button v-if="files" class="head-layout" :compact="fold > 0" :compact-below="900" :label="layout.label" :label-key="null" :glyph="glyphComponent(layout.glyph)" :title="layout.tip" :data-run="layout.id" @click="run(layout.id)" />
     <Button :compact="fold > 0" :compact-below="900" :label="t('head.settings')" label-key="IconGear" data-run="settings" @click="run('settings')" />
     <Button class="avatar" compact :label="user.me.full" :label-key="null" :glyph="Initials" :title="shell.jobCount ? plural(shell.jobCount, 'head.running') : undefined" data-account @click="account"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }" aria-hidden="true">{{ shell.jobCount }}</span></template></Button>
+    <WindowControls v-if="drawsOwnFrame()" />
   </header>
 </template>
