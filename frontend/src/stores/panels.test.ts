@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, api, toItem } from '@/api/client';
 import { action, actions } from '@/core/actions';
 import { prefs } from '@/core/prefs';
@@ -11,6 +11,13 @@ import { useUser } from './user';
 
 const fx = createFixture();
 const closed = new Set<string>();
+// Folders whose listing waits until the test lets it through.
+const held = new Map<string, Promise<void>>();
+function holdBack(path: string) {
+  const gate = { open: () => {}, fail: (_e: unknown) => {} };
+  held.set(path, new Promise<void>((resolve, reject) => Object.assign(gate, { open: resolve, fail: reject })));
+  return gate;
+}
 const settle = () => new Promise((r) => setTimeout(r, 0));
 
 beforeEach(() => {
@@ -20,7 +27,9 @@ beforeEach(() => {
   Object.assign(prefs, { dual: true, syncBrowse: false, showHidden: false, foldersFirst: true, folderViews: {}, folderGroups: {}, folderTiles: {}, startFolder: '/mnt/user/downloads' });
   toasts.splice(0);
   closed.clear();
+  held.clear();
   vi.spyOn(api, 'fsList').mockImplementation(async (path) => {
+    await held.get(path);
     if (closed.has(path)) throw new ApiError(403);
     const got = fx.list(path);
     if (!got) throw new ApiError(404);
@@ -40,6 +49,70 @@ async function panels() {
   return F;
 }
 const names = (F: ReturnType<typeof usePanels>, i = 0) => F.entries(i).map((k) => k.name);
+
+describe('a folder that takes its time to read', () => {
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('says it is on its way only after a moment, with the old folder still shown', async () => {
+    const F = await panels();
+    vi.useFakeTimers();
+    const gate = holdBack('/mnt/user/filme');
+    const going = F.go('/mnt/user/filme');
+    await vi.advanceTimersByTimeAsync(299);
+    expect(F.waiting(0)).toBe('');
+    expect(F.T().path).toBe('/mnt/user/downloads');
+    await vi.advanceTimersByTimeAsync(1);
+    expect(F.waiting(0)).toBe('/mnt/user/filme');
+    expect(F.waiting(1)).toBe('');
+    gate.open();
+    expect(await going).toBe(true);
+    expect(F.waiting(0)).toBe('');
+    expect(F.T().path).toBe('/mnt/user/filme');
+  });
+
+  it('stays in the folder opened after it when it answers late', async () => {
+    const F = await panels();
+    vi.useFakeTimers();
+    const gate = holdBack('/mnt/user/filme');
+    const first = F.go('/mnt/user/filme');
+    await vi.advanceTimersByTimeAsync(300);
+    expect(await F.go('/mnt/user/isos')).toBe(true);
+    expect(F.waiting(0)).toBe('');
+    gate.open();
+    expect(await first).toBe(false);
+    expect(F.T().path).toBe('/mnt/user/isos');
+    expect(F.T().hist).toEqual(['/mnt/user/downloads']);
+  });
+
+  it('stays in a folder from the cache opened while another is on its way', async () => {
+    const F = await panels();
+    await F.go('/mnt/user/isos');
+    await F.go('/mnt/user/downloads');
+    vi.useFakeTimers();
+    const gate = holdBack('/mnt/user/filme');
+    const first = F.go('/mnt/user/filme');
+    await F.go('/mnt/user/isos');
+    await vi.advanceTimersByTimeAsync(400);
+    expect(F.waiting(0)).toBe('');
+    gate.open();
+    expect(await first).toBe(false);
+    expect(F.T().path).toBe('/mnt/user/isos');
+  });
+
+  it('stops waiting when the folder cannot be read', async () => {
+    const F = await panels();
+    vi.useFakeTimers();
+    const gate = holdBack('/mnt/user/filme');
+    const going = F.go('/mnt/user/filme');
+    await vi.advanceTimersByTimeAsync(300);
+    expect(F.waiting(0)).toBe('/mnt/user/filme');
+    gate.fail(new ApiError(500, { type: 'about:blank', title: 'Bad Gateway', status: 500, detail: 'Die Freigabe antwortet nicht' }));
+    expect(await going).toBe(false);
+    expect(F.waiting(0)).toBe('');
+    expect(F.T().path).toBe('/mnt/user/downloads');
+    expect(toasts.at(-1)).toMatchObject({ kind: 'warn' });
+  });
+});
 
 describe('panels', () => {
   it('opens the folder named in the address first', async () => {

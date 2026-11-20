@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // One panel: its tabs on the top edge, the path row with its tools, the list and the footer.
-import { GlyphField, IconButton, Meter } from '@glimstone/vue';
+import { BusyRing, GlyphField, IconButton, Meter } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { actions, run } from '@/core/actions';
 import { extend } from '@/core/extend';
@@ -32,9 +32,11 @@ const list = computed(() => F.entries(props.i));
 const v = computed(() => F.viewOf(tab.value));
 const active = computed(() => props.i === F.active);
 const vol = computed(() => F.volume(props.i));
+const waiting = computed(() => F.waiting(props.i));
 
 const labelOf = (tb: Tab) => extend.tabLabels.reduce<{ name: string; g?: string } | null>((got, fn) => got ?? fn(tb), null);
-const tabName = (tb: Tab) => labelOf(tb)?.name ?? (listing.placeLabel(tb.path) || split(tb.path).pop() || rootName()).replace('::', '');
+const folderName = (path: string) => (listing.placeLabel(path) || split(path).pop() || rootName()).replace('::', '');
+const tabName = (tb: Tab) => labelOf(tb)?.name ?? folderName(tb.path);
 const used = (free: number, total: number) => `${Math.round((1 - free / total) * 100)}%`;
 
 function activate() {
@@ -123,7 +125,8 @@ const count = computed(() => {
       </span>
     </div>
     <Render v-for="(bar, n) in extend.panelBars" :key="n" :node="bar(i)" />
-    <FileList :key="tab.path + v" :i="i" />
+    <FileList :key="tab.path + v" :i="i" :class="{ waiting }" :aria-busy="!!waiting" />
+    <div v-if="waiting" class="pwait glim-card" role="status"><BusyRing size="small" :delay="0" /><span>{{ t('files.opening', { name: folderName(waiting) }) }}</span></div>
     <div class="lfoot glim-num">
       <span v-if="marked.length">{{ markedText }}<button class="lclear" data-run="unselect" :data-tip="t('files.unselectTip')" :aria-label="t('files.unselect')" @click="run('unselect')"><G n="IconClose" /></button></span>
       <span v-else>{{ count }}</span>

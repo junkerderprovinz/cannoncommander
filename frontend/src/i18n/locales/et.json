@@ -4133,6 +4133,7 @@
     "thisPc": "See arvuti",
     "computer": "Arvuti",
     "missing": "Kausta {path} pole olemas",
+    "opening": "Avan kausta {name} …",
     "missingUp": "Kausta {path} pole olemas, seega oled nüüd kaustas {here}",
     "closedUp": "Kausta {path} ei tohi sa avada, seega oled nüüd kaustas {here}",
     "empty": "See kaust on tühi",

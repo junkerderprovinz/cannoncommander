@@ -3988,6 +3988,7 @@
     "thisPc": "PC này",
     "computer": "Máy tính",
     "missing": "Thư mục {path} không tồn tại",
+    "opening": "Đang mở {name} …",
     "missingUp": "Thư mục {path} không tồn tại, nên bạn đang ở {here}",
     "closedUp": "Bạn không được mở thư mục {path}, nên bạn đang ở {here}",
     "empty": "Thư mục này trống",

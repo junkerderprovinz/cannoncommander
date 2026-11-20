@@ -4423,6 +4423,7 @@
     "thisPc": "Ten komputer",
     "computer": "Komputer",
     "missing": "Folder {path} nie istnieje",
+    "opening": "Otwieranie {name} …",
     "missingUp": "Folder {path} nie istnieje, dlatego otwarto {here}",
     "closedUp": "Brak dostępu do folderu {path}, dlatego otwarto {here}",
     "empty": "Ten folder jest pusty",

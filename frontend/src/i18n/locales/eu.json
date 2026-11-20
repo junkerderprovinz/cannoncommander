@@ -4133,6 +4133,7 @@
     "thisPc": "PC hau",
     "computer": "Ordenagailua",
     "missing": "{path} karpeta ez dago",
+    "opening": "{name} irekitzen …",
     "missingUp": "{path} karpeta ez dago, beraz {here} karpetan zaude orain",
     "closedUp": "Ezin duzu {path} karpeta ireki, beraz {here} karpetan zaude orain",
     "empty": "Karpeta hau hutsik dago",

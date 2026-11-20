@@ -48,6 +48,9 @@ export interface RowMark { label: string; tone?: string }
 export interface TransferOptions { rule?: 'ask' | 'skip' | 'replace' | 'both' | 'newer'; verify?: boolean; keepAttrs?: boolean }
 export interface Transfer extends TransferOptions { kind: 'copy' | 'move' | 'link'; items: Entry[]; dest: string; from: string }
 
+// A folder that answers sooner opens without the panel saying it waits, so a quick one never flickers.
+const WAIT_SHOWN = 300;
+
 const ancestors = (path: string) => split(path).map((_, k, a) => '/' + a.slice(0, k + 1).join('/')).filter((p) => !p.includes('::'));
 
 export const newTab = (path: string): Tab => ({ path, marked: new Set(), cursor: 0, sort: 'name', dir: 1, filter: '', qf: false, hist: [], fwd: [], editPath: false });
@@ -134,11 +137,25 @@ export const usePanels = defineStore('panels', () => {
   }
   const cursorEntry = (i = active.value) => entries(i)[T(i).cursor];
 
+  // The folder a tab is on its way to, once it has taken long enough to say so. Every move of a tab supersedes the
+  // one before it, so a folder that answers late never takes the tab back from where it went since.
+  const turns = new WeakMap<Tab, number>();
+  const slow = reactive(new Map<Tab, string>());
+  function supersede(tab: Tab) {
+    const turn = (turns.get(tab) ?? 0) + 1;
+    turns.set(tab, turn);
+    slow.delete(tab);
+    return turn;
+  }
+  const current = (tab: Tab, turn: number) => turns.get(tab) === turn;
+  const waiting = (i = active.value) => slow.get(T(i)) ?? '';
+
   // Puts the tab into a folder at once and says whether it moved. go() calls it once the folder is read; on its own it
   // suits a folder already in the cache, such as one the test shim walks into and sets the cursor in right after.
   // Without show the view stays where it is, for a tab that moves while the user looks at something else.
   function enter(path: string, i = active.value, record = true, show = true): boolean {
     const tab = T(i);
+    supersede(tab);
     // A locked tab keeps its folder; going elsewhere from it opens the new folder in a tab beside it, as in Krusader.
     if (record && tab.locked && tab.path !== path && !following) {
       const p = P(i);
@@ -168,14 +185,20 @@ export const usePanels = defineStore('panels', () => {
   // whether the tab got there.
   async function go(path: string, i = active.value, record = true): Promise<boolean> {
     for (const hook of extend.beforeGo) if ((await hook(path, i)) === false) return false;
+    const tab = T(i), turn = supersede(tab);
     if (listing.lists.has(path)) listing.load(path).catch(() => {});
     else {
+      const shown = setTimeout(() => { if (current(tab, turn)) slow.set(tab, path); }, WAIT_SHOWN);
       try {
         await listing.load(path);
       } catch (e) {
-        toast(e instanceof ApiError && e.status !== 404 ? e.message : tr('files.missing', { path }), 'warn');
+        if (current(tab, turn)) toast(e instanceof ApiError && e.status !== 404 ? e.message : tr('files.missing', { path }), 'warn');
         return false;
+      } finally {
+        clearTimeout(shown);
+        if (current(tab, turn)) slow.delete(tab);
       }
+      if (!current(tab, turn) || T(i) !== tab) return false;
     }
     const from = T(i).path;
     if (!enter(path, i, record)) return false;
@@ -324,7 +347,7 @@ export const usePanels = defineStore('panels', () => {
   setBookmarkEntries(() => user.bookmarks.map((b) => ({ label: b.name, g: b.g, run: () => { goView('files'); reach(b.path); } })));
 
   return {
-    active, panels, openTree, visited, marks, clip, P, T, other, entries, volume, loaded, sel, cursorEntry, enter, go, reach, open, transfer,
+    active, panels, openTree, visited, marks, clip, P, T, other, entries, volume, loaded, waiting, sel, cursorEntry, enter, go, reach, open, transfer,
     viewOf: viewOfTab, setView, tileOf, setZoom, groupOf, setGroup,
   };
 });

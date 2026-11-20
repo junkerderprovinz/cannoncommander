@@ -4278,6 +4278,7 @@
     "thisPc": "Ovaj PC",
     "computer": "Računalo",
     "missing": "Mapa {path} ne postoji",
+    "opening": "Otvaram {name} …",
     "missingUp": "Mapa {path} ne postoji, pa ste sada u {here}",
     "closedUp": "Ne smijete otvoriti mapu {path}, pa ste sada u {here}",
     "empty": "Ova je mapa prazna",

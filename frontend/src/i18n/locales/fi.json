@@ -4133,6 +4133,7 @@
     "thisPc": "Tämä tietokone",
     "computer": "Tietokone",
     "missing": "Kansiota {path} ei ole olemassa",
+    "opening": "Avataan {name} …",
     "missingUp": "Kansiota {path} ei ole olemassa, joten olet nyt kansiossa {here}",
     "closedUp": "Et saa avata kansiota {path}, joten olet nyt kansiossa {here}",
     "empty": "Tämä kansio on tyhjä",

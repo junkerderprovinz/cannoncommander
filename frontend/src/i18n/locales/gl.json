@@ -4133,6 +4133,7 @@
     "thisPc": "Este PC",
     "computer": "Computador",
     "missing": "O cartafol {path} non existe",
+    "opening": "Abrindo {name} …",
     "missingUp": "O cartafol {path} non existe, así que agora estás en {here}",
     "closedUp": "Non podes abrir o cartafol {path}, así que agora estás en {here}",
     "empty": "Este cartafol está baleiro",

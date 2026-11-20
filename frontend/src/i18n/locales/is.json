@@ -4133,6 +4133,7 @@
     "thisPc": "Þessi tölva",
     "computer": "Tölva",
     "missing": "Mappan {path} er ekki til",
+    "opening": "Opna {name} …",
     "missingUp": "Mappan {path} er ekki til, svo þú ert núna í {here}",
     "closedUp": "Þú mátt ekki opna möppuna {path}, svo þú ert núna í {here}",
     "empty": "Þessi mappa er tóm",

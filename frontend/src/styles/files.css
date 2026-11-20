@@ -7,6 +7,10 @@
 .tjump.miss svg, .tjump.miss .mono { color: var(--status-fail-text, #ff8389); }
 @keyframes tjump-in { from { opacity: 0; translate: 0 var(--motion-jump-travel, .3rem); } }
 @media (prefers-reduced-motion: no-preference) { .tjump { animation: tjump-in var(--motion-jump-dur, .12s) ease-out; } }
+/* A folder that takes its time: the old rows stay but step back, and the note floats over them, so nothing moves and
+   a click on another folder still lands. */
+.list.waiting { opacity: .5; }
+.pwait { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 4; display: flex; align-items: center; gap: .55rem; height: 2.1rem; padding: 0 .9rem; font-size: 13px; color: var(--carbon-text); white-space: nowrap; pointer-events: none; }
 
 #col-q { flex: none; }
 .col-cols { columns: 13rem; column-gap: 2rem; }

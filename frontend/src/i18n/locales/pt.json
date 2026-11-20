@@ -4278,6 +4278,7 @@
     "thisPc": "Este PC",
     "computer": "Computador",
     "missing": "A pasta {path} não existe",
+    "opening": "A abrir {name} …",
     "missingUp": "A pasta {path} não existe, por isso está agora em {here}",
     "closedUp": "Não pode abrir a pasta {path}, por isso está agora em {here}",
     "empty": "Esta pasta está vazia",

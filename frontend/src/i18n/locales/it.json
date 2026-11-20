@@ -4278,6 +4278,7 @@
     "thisPc": "Questo PC",
     "computer": "Computer",
     "missing": "La cartella {path} non esiste",
+    "opening": "Apertura di {name} …",
     "missingUp": "La cartella {path} non esiste, quindi ora sei in {here}",
     "closedUp": "Non puoi aprire la cartella {path}, quindi ora sei in {here}",
     "empty": "Questa cartella è vuota",

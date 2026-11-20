@@ -4133,6 +4133,7 @@
     "thisPc": "Denne pc",
     "computer": "Computer",
     "missing": "Mappen {path} findes ikke",
+    "opening": "Åbner {name} …",
     "missingUp": "Mappen {path} findes ikke, så du er nu i {here}",
     "closedUp": "Du må ikke åbne mappen {path}, så du er nu i {here}",
     "empty": "Denne mappe er tom",

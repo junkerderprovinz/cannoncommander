@@ -4278,6 +4278,7 @@
     "thisPc": "Aquest ordinador",
     "computer": "Ordinador",
     "missing": "La carpeta {path} no existeix",
+    "opening": "S'està obrint {name} …",
     "missingUp": "La carpeta {path} no existeix, així que ara sou a {here}",
     "closedUp": "No podeu obrir la carpeta {path}, així que ara sou a {here}",
     "empty": "Aquesta carpeta és buida",

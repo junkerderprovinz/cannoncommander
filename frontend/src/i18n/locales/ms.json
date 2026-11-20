@@ -3988,6 +3988,7 @@
     "thisPc": "PC ini",
     "computer": "Komputer",
     "missing": "Folder {path} tidak wujud",
+    "opening": "Membuka {name} …",
     "missingUp": "Folder {path} tidak wujud, jadi anda kini berada di {here}",
     "closedUp": "Anda tidak dibenarkan membuka folder {path}, jadi anda kini berada di {here}",
     "empty": "Folder ini kosong",

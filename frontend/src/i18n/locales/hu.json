@@ -4133,6 +4133,7 @@
     "thisPc": "Ez a gép",
     "computer": "Számítógép",
     "missing": "A(z) {path} mappa nem létezik",
+    "opening": "{name} megnyitása …",
     "missingUp": "A(z) {path} mappa nem létezik, ezért most itt van: {here}",
     "closedUp": "A(z) {path} mappát nem nyithatja meg, ezért most itt van: {here}",
     "empty": "Ez a mappa üres",

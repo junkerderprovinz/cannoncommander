@@ -3988,6 +3988,7 @@
     "thisPc": "내 PC",
     "computer": "컴퓨터",
     "missing": "{path} 폴더가 없습니다",
+    "opening": "{name} 여는 중 …",
     "missingUp": "{path} 폴더가 없어서 {here}(으)로 이동했습니다",
     "closedUp": "{path} 폴더를 열 권한이 없어서 {here}(으)로 이동했습니다",
     "empty": "이 폴더는 비어 있습니다",

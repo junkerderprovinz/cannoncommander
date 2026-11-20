@@ -4133,6 +4133,7 @@
     "thisPc": "Deze pc",
     "computer": "Computer",
     "missing": "De map {path} bestaat niet",
+    "opening": "{name} openen …",
     "missingUp": "De map {path} bestaat niet, dus je bent nu in {here}",
     "closedUp": "Je mag de map {path} niet openen, dus je bent nu in {here}",
     "empty": "Deze map is leeg",

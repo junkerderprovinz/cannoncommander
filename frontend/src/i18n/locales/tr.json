@@ -4133,6 +4133,7 @@
     "thisPc": "Bu bilgisayar",
     "computer": "Bilgisayar",
     "missing": "{path} klasörü yok",
+    "opening": "{name} açılıyor …",
     "missingUp": "{path} klasörü yok, bu yüzden şimdi {here} içindesin",
     "closedUp": "{path} klasörünü açma iznin yok, bu yüzden şimdi {here} içindesin",
     "empty": "Bu klasör boş",

@@ -4423,6 +4423,7 @@
     "thisPc": "Ta računalnik",
     "computer": "Računalnik",
     "missing": "Mapa {path} ne obstaja",
+    "opening": "Odpiram {name} …",
     "missingUp": "Mapa {path} ne obstaja, zato ste zdaj v {here}",
     "closedUp": "Mape {path} ne smete odpreti, zato ste zdaj v {here}",
     "empty": "Ta mapa je prazna",

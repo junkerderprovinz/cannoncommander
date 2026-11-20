@@ -4278,6 +4278,7 @@
     "thisPc": "Acest PC",
     "computer": "Computer",
     "missing": "Dosarul {path} nu există",
+    "opening": "Se deschide {name} …",
     "missingUp": "Dosarul {path} nu există, așa că acum ești în {here}",
     "closedUp": "Nu ai voie să deschizi dosarul {path}, așa că acum ești în {here}",
     "empty": "Acest dosar este gol",

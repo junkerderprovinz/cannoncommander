@@ -4278,6 +4278,7 @@
     "thisPc": "Šis dators",
     "computer": "Dators",
     "missing": "Mapes {path} nav",
+    "opening": "Atver {name} …",
     "missingUp": "Mapes {path} nav, tāpēc tagad tu esi {here}",
     "closedUp": "Mapi {path} tu nedrīksti atvērt, tāpēc tagad tu esi {here}",
     "empty": "Šī mape ir tukša",

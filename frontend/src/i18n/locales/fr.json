@@ -4278,6 +4278,7 @@
     "thisPc": "Ce PC",
     "computer": "Ordinateur",
     "missing": "Le dossier {path} n'existe pas",
+    "opening": "Ouverture de {name} …",
     "missingUp": "Le dossier {path} n'existe pas, vous êtes donc maintenant dans {here}",
     "closedUp": "Vous ne pouvez pas ouvrir le dossier {path}, vous êtes donc maintenant dans {here}",
     "empty": "Ce dossier est vide",
