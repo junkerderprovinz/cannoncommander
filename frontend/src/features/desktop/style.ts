@@ -10,6 +10,7 @@ export type Style = 'explorer' | 'commander';
 
 export function useStyle(style: Style) {
   setPref('desktopStyle', style);
+  setPref('dual', style === 'commander');
   useLayout(style === 'explorer' ? 'explorer' : 'cc');
 }
 

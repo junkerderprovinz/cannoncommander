@@ -199,6 +199,17 @@ describe('first start', () => {
     expect(actions.sidePane!.key).toBe('Alt+P');
   });
 
+  it('shows one panel for the explorer way and both panels for the commander', () => {
+    Object.assign(prefs, { desktopStyle: '', dual: true, keys: null });
+    askStyle();
+    answer('Wie im Explorer');
+    expect(prefs.dual).toBe(false);
+    expect(JSON.parse(localStorage.getItem('cannoncommander-prefs')!).dual).toBe(false);
+    askStyle();
+    answer('Wie ein Commander');
+    expect(prefs.dual).toBe(true);
+  });
+
   it('stays a commander when the question is closed without an answer', () => {
     Object.assign(prefs, { desktopStyle: '', clickSelect: true, keys: null });
     askStyle();
