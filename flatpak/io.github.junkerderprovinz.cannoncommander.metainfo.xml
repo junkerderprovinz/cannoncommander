@@ -80,6 +80,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.3.1" date="2026-11-21">
+      <description>
+        <p>The desktop shortcut on Windows shows the current logo again, without the old white tile behind it, and an update brings the matching uninstaller along.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.3.1</url>
+    </release>
     <release version="1.3.0" date="2026-11-21">
       <description>
         <p>Copying, moving and deleting get calmer windows with a speed graph, and a conflict shows both versions side by side. A folder that takes its time says so, renaming happens right in the row, a welcome window lets you pick one or two windows, and a key held while dragging chooses copy, move or link.</p>
