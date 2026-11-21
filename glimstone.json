@@ -3,7 +3,7 @@
     {
       "name": "web",
       "mode": "npm",
-      "version": "4.8.1",
+      "version": "4.8.2",
       "package": "frontend/package.json"
     }
   ]
