@@ -19,6 +19,7 @@ const GET: Record<string, unknown> = {
   'methods/presets': { presets: [] },
 };
 const asked: string[] = [];
+const sent: unknown[] = [];
 
 beforeAll(() => {
   addMessages('config', { de });
@@ -30,6 +31,11 @@ beforeEach(() => {
   vi.stubGlobal('fetch', async (url: string, init: RequestInit = {}) => {
     const path = url.replace('/api/signin/v1/', '');
     asked.push(`${init.method ?? 'GET'} ${path}`);
+    if (init.method === 'PATCH') {
+      sent.push(JSON.parse(String(init.body)));
+      const service = (GET['methods/oidc'] as { services: object[] }).services[0];
+      return new Response(JSON.stringify({ service }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
     const body = GET[path];
     return new Response(JSON.stringify(body ?? { error: 'notFound' }), { status: body ? 200 : 404, headers: { 'Content-Type': 'application/json' } });
   });
@@ -61,12 +67,28 @@ describe('the account and security tab', () => {
     expect(asked).not.toContain('GET accounts');
   });
 
-  it('shows the service of config.yaml among the sign-in services and says where it is changed', async () => {
+  it('shows the service of config.yaml as coming from there, with nothing to edit, remove or switch', async () => {
     await mount();
-    const services = document.querySelector('[data-signin-card="services"]')!;
-    expect(services.textContent).toContain('OIDC');
-    expect(services.textContent).toContain('https://id.example');
-    expect(document.body.innerHTML).toContain('ändern kannst du ihn nur in dieser Datei');
+    const row = document.querySelector('[data-signin-card="services"] [data-signin-service="custom"]')!;
+    expect(row.textContent).toContain('OIDC');
+    expect(row.textContent).toContain('https://id.example · aus der config.yaml');
+    expect(row.textContent).not.toContain('Bearbeiten');
+    expect(row.querySelector('[role="switch"]')).toBeNull();
+  });
+
+  it('turns the service of config.yaml on again after a reset paused it', async () => {
+    const config = (GET['methods/oidc'] as { services: Record<string, unknown>[] }).services[0]!;
+    Object.assign(config, { on: false, paused: true });
+    try {
+      await mount();
+      const again = [...document.querySelectorAll<HTMLButtonElement>('[data-signin-service="custom"] button')].find((b) => b.textContent?.includes('Wieder einschalten'))!;
+      again.click();
+      await settle();
+      expect(asked).toContain('PATCH methods/oidc/config');
+      expect(sent.at(-1)).toEqual({ on: true });
+    } finally {
+      Object.assign(config, { on: true, paused: false });
+    }
   });
 
   it('names a session by its browser and system', async () => {

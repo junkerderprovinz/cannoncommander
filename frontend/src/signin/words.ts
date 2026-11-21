@@ -9,7 +9,7 @@ import { copyWords, eyeWords } from '@/ui/kit';
 import './texts';
 
 // Codes of CannonCommander's own beside the kit's, and those a browser answers with.
-export const ERROR_CODES = [...SIGN_IN_ERRORS, 'offline', 'cancelled', 'othersSignIn', 'fromConfig', 'passwordsOff', 'ownBlock', 'noSignIn'] as const;
+export const ERROR_CODES = [...SIGN_IN_ERRORS, 'offline', 'cancelled', 'othersSignIn', 'passwordsOff', 'ownBlock', 'noSignIn'] as const;
 export const ARRIVED_CODES = [...SIGN_IN_REDIRECTS, 'notAdmitted'] as const;
 
 const s = (key: string) => t('signin.' + key);
@@ -113,7 +113,8 @@ export function tileText(): SignInTileText {
       title: tile('services.title'), hint: tile('services.hint'), add: tile('services.add'), on: tile('twoFactor.on'),
       off: tile('twoFactor.off'), untested: tile('services.untested'), paused: tile('services.paused'), show: tile('services.show'),
       mustTest: tile('services.mustTest'), test: tile('services.test'), testing: tile('services.testing'), testOk: tile('services.testOk'),
-      testFailed: tile('services.testFailed'), tested: tile('services.tested'), edit: tile('services.edit'),
+      testFailed: tile('services.testFailed'), tested: tile('services.tested'), fromConfig: tile('services.fromConfig'),
+      confirmAgain: tile('services.confirmAgain'), edit: tile('services.edit'),
       removeText: tile('services.removeText'), removed: tile('services.removed'), turnedOn: tile('services.turnedOn'),
       turnedOff: tile('services.turnedOff'), updated: tile('services.updated'), pick: tile('services.add'),
       pickHint: tile('services.pickHint'), group: tile('services.group'), own: tile('services.own'), ownSub: 'OpenID Connect',
