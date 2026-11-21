@@ -3,7 +3,7 @@
 import { computed, ref, useId } from 'vue';
 import { fmtNumber, fmtSeconds, type Lang, type Sample, samplesTo, type State, type Texts } from './data';
 
-const props = defineProps<{ base: number; totalMB: number; pct: number; state: State; lang: Lang; t: Texts; current?: string; stacked?: boolean }>();
+const props = defineProps<{ base: number; totalMB: number; pct: number; state: State; lang: Lang; t: Texts; current?: string; stacked?: boolean; marker?: boolean }>();
 
 const samples = computed(() => samplesTo(props.base, props.totalMB, props.pct));
 const last = computed(() => samples.value.at(-1)!);
@@ -49,9 +49,9 @@ const tipSide = computed(() => (hover.value && hover.value.x > 70 ? 'end' : 'sta
           <line class="gr-base" x1="0" x2="100" y1="100" y2="100" />
           <path class="gr-area" :d="area" :fill="`url(#${fill})`" />
           <path class="gr-line" :d="line" />
-          <line v-if="stacked && live" class="gr-now-line" x1="0" x2="100" :y1="y(last.mbs)" :y2="y(last.mbs)" />
+          <line v-if="marker && live" class="gr-now-line" x1="0" x2="100" :y1="y(last.mbs)" :y2="y(last.mbs)" />
         </svg>
-        <span v-if="stacked && live" class="gr-now-label glim-num" :style="{ top: `${y(last.mbs)}%` }">{{ t.speed }} {{ fmtNumber(last.mbs, 0, lang) }} MB/s</span>
+        <span v-if="marker && live" class="gr-now-label glim-num" :style="{ top: `${y(last.mbs)}%` }">{{ t.speed }} {{ fmtNumber(last.mbs, 0, lang) }} MB/s</span>
         <span class="gr-point" :style="{ left: `${last.x}%`, top: `${y(last.mbs)}%` }"><i></i></span>
         <template v-if="hover">
           <span class="gr-cross" :style="{ left: `${hover.x}%` }"></span>

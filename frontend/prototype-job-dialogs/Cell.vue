@@ -73,7 +73,7 @@ const title = computed(() => (props.state === 'conflict' && props.variant === 'A
 
 <template>
   <Win :title="title" :foot="foot">
-    <template v-if="state !== 'confirm' && state !== 'conflict'" #start><Checkbox v-model="keep" :label="t.keep" /></template>
+    <template v-if="state !== 'confirm' && state !== 'conflict' && (variant !== 'G' || ui.details)" #start><Checkbox v-model="keep" :label="t.keep" /></template>
     <template #default>
       <!-- Every variant asks about a clash only when one happens, the same way. -->
       <template v-if="state === 'conflict'">
@@ -169,6 +169,23 @@ const title = computed(() => (props.state === 'conflict' && props.variant === 'A
         </template>
       </template>
 
+      <!-- G: the calm sheet to confirm, and a quiet bar that opens up into the graph across the whole window -->
+      <template v-else-if="variant === 'G'">
+        <template v-if="state === 'confirm'">
+          <div class="pe-line">
+            <span class="pe-tile"><G :n="job.glyph" /></span>
+            <span class="pe-say"><b>{{ t.ask[dialog] }}</b><span class="muted">{{ deleting ? `${name} · ${t.trashHint}` : `${name} ${t.into} ${where.to}` }}</span></span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="pd-line"><b>{{ name }}</b><span class="glim-num muted">{{ Math.round(pct) }} %</span></div>
+          <div v-if="finished" class="small muted">{{ resultLine }}</div>
+          <Meter stacked :dialog="dialog" :state="state" :pct="pct" :lang="lang" :t="t" :label="name">
+            <div v-if="state === 'errors'" class="pb-failed"><span v-for="f in job.failed" :key="f" class="small"><span class="mono">{{ f }}</span> · {{ t.error }}</span></div>
+          </Meter>
+        </template>
+      </template>
+
       <!-- F: a big share done, the route with flying files, and the graph with its numbers below when opened -->
       <template v-else>
         <template v-if="state === 'confirm'">
@@ -179,7 +196,7 @@ const title = computed(() => (props.state === 'conflict' && props.variant === 'A
         <template v-else>
           <div class="pf-head"><span class="pf-big glim-num">{{ Math.round(pct) }} % {{ t.doneOf }}</span><Badge :tone="tone" size="small">{{ t.badge[state as 'running'] }}</Badge></div>
           <div class="muted small">{{ finished ? resultLine : `${job.count} ${t.objects} · ${where.from} › ${where.to}` }}</div>
-          <Meter stacked :dialog="dialog" :state="state" :pct="pct" :lang="lang" :t="t" :label="name">
+          <Meter stacked marker :dialog="dialog" :state="state" :pct="pct" :lang="lang" :t="t" :label="name">
             <template v-if="!finished" #lead><Flow v-bind="flow" /></template>
             <template v-if="!finished" #facts><div class="muted small glim-num">{{ facts }}</div></template>
           </Meter>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Prototype: six layouts of the copy, move and delete windows in every state, switchable by ?variant= and the bar.
+// Prototype: seven layouts of the copy, move and delete windows in every state, switchable by ?variant= and the bar.
 import { applyOled } from '@glimstone/core';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { G } from '@/core/glyphs';
@@ -7,9 +7,9 @@ import Cell from './Cell.vue';
 import Inspiration from './Inspiration.vue';
 import { type Dialog, DIALOGS, type Lang, type State, STATES, texts } from './data';
 
-const VARIANTS = ['A', 'B', 'C', 'D', 'E', 'F'] as const;
+const VARIANTS = ['G', 'A', 'B', 'C', 'D', 'E', 'F'] as const;
 const params = new URLSearchParams(location.search);
-const variant = ref(VARIANTS.includes(params.get('variant') as never) ? params.get('variant')! : 'A');
+const variant = ref(VARIANTS.includes(params.get('variant') as never) ? params.get('variant')! : 'G');
 const lang = ref<Lang>(params.get('lang') === 'en' ? 'en' : 'de');
 const mode = ref(params.get('mode') ?? 'dark');
 const MOTIONS = ['off', 'subtle', 'wild', 'storm'] as const;
