@@ -4,6 +4,44 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.2.1 (2026-11-21)
+
+A folder that takes its time says so, renaming happens in the row, and a conflict takes one click. The remote picker follows GlimStone 4.8.1, and the download buttons say which machine each build is for.
+
+## ✨ Added
+
+- **A folder that takes its time says so.** When a large folder or a slow share needs more than a moment, its panel dims the rows on screen and shows a large Opening in the middle of the list, so you can tell it is working. Open another folder in the meantime and that one wins, even if the first answers later.
+- **Copy, move and delete windows stay with their job.** After you confirm, the window shows the running job with its progress until it is done, and closes by itself when it went well. Tick Keep this window open when done to read the result first. An error always keeps it open, and In the background sends it away while the job goes on in Jobs.
+- **Drag with a key to choose what happens.** While you drag files or folders onto a folder, Ctrl copies, Shift moves and Alt makes a link, and on a Mac Option, Command and both together do the same. A badge beside the pointer says what the drop will do and changes with the keys until you let go. Without a key a drag still copies, and a folder under the drag only lights up instead of opening.
+- **A welcome window greets your first visit.** The logo arrives with a small kick of its cannons, and you pick One window or Two windows from two cards, each with a little sketch of its layout at work. The pick takes effect behind the window straight away, and the arrow keys and Enter work as well. Help, Welcome window brings it back any time. The two ways go by these names everywhere now, in the View menu and in the settings too.
+
+## 🎨 Design
+
+- **GlimStone 4.8.1.** The tile for any other S3 store is called Custom S3 and stands last among the object stores, and a search for S3 compatible still finds it. Linkbox goes by its new name TeleBox, and Gofile, TeleBox, OpenDrive and Synology C2 wear their logos. A window keeps its buttons on one row at the bottom. In the list of remotes, a row's buttons stand out from the groove they sit in, its badges sit at the end of the name line, and a logo with the name written out takes the tile's full width.
+- **The download buttons name the architecture.** Windows, Linux and the AppImage say amd64 or ARM, the AppImage comes before the Flatpak, and the macOS button in the app says Apple and Intel, as the README does.
+- **Selected rows are tinted instead of framed.** A selected file or folder gets a soft wash of your accent colour behind the whole row, so its name, size and date read as before. The row the arrow keys move from is tinted a little more strongly in the active panel, and the folder tree, the column view and the bookmarks show their selection the same way, without any frame.
+- **The installer follows PommelPorter 1.2.5.**
+
+## ⚡ Improved
+
+- **Rename right in the row.** F2, the shortcut menu and the toolbar turn the name into a field where it stands, with the part before the extension selected, in the browser as in the desktop app. Enter or a click elsewhere keeps the new name, Escape keeps the old one. The field has neither a border nor a ground of its own, the selected name and the caret show where you type. A name that is taken or not allowed says why under the field, and what you typed stays. Several selected entries still open the window for renaming many at once.
+- **A conflict takes one click.** The conflict window shows one name at a time, with a red badge beside it saying it is already in the target, and Replace, Skip and Keep both as buttons at the bottom. A click moves on to the next name. The buttons wear clearer glyphs, two arrows in a circle for Replace and an arrow ahead for Skip, here and in the copy and unpack windows. Tick Use for all and one click answers every name left, with Replace only newer as a fourth button.
+- **Going back keeps your place.** Going up or back out of a folder, by key, mouse button or the path, puts the cursor on the folder you came from, or on the entry it stood on before, and scrolls it into view.
+- **The trash folder stays out of sight.** CannonCommander's own `.cc-trash` folder stays out of every list, tree and search, even with hidden files shown, and the number of entries a folder shows leaves it out too. Typing its path opens the Trash instead.
+
+## 🐛 Fixed
+
+- **The mouse's back and forward buttons move the panel you are in,** the one under the pointer, or else the active one. They moved the panel you had browsed in last, even after you switched to the other.
+- **The conflict window shows no stray scroll bar.** The answer buttons of a row slid past the right edge, so only a sliver of the first one showed, and it looked like a scroll bar.
+- **The window buttons of the desktop app no longer hang over the head.** On Windows and Linux, minimise, maximise and close hung over the menu, Settings and the account button. They sit at the end of the head now, right after the account button with the head's usual gap, and the free space of the head moves the window.
+- **The folder tree stays put while a copy or move runs.** Each change the job made emptied the folder's branch for a moment until it was read again, so the folders below jumped up and back. The tree keeps its rows and swaps in the new ones when they arrive.
+- **A cancelled copy no longer gets in the way of the same copy.** Started again with the same files and target, a cancelled or failed copy or move picks up where it stopped, and what it had already copied no longer turns up as conflicts.
+- **The desktop app's first start keeps the layout you pick.** Picking one window changed the keys and the clicks but left both panels on screen. It shows one now, at once and after a restart.
+
+## 🌐 Translations
+
+- **Custom S3, the macOS button, the note on a folder that is opening, the conflict counter, the drag badge and the job window** speak all 42 languages.
+
 ## v1.2.0 (2026-11-20)
 
 CannonCommander shows every drive with its history, colours the treemap by file type or age, and keeps what the server no longer uses in a storeroom before anything goes. Linux gets an AppImage.
