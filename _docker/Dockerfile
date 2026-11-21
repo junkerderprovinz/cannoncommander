@@ -41,6 +41,9 @@ LABEL org.opencontainers.image.title="cannoncommander" \
       org.opencontainers.image.source="https://github.com/junkerderprovinz/cannoncommander" \
       org.opencontainers.image.licenses="AGPL-3.0-only"
 COPY --from=ffmpeg [ "/ffmpeg", "/ffprobe", "/usr/local/bin/" ]
+# The upgrade takes the security fixes published since the base image was built.
+RUN apk upgrade --no-cache
+
 # tini reaps the rclone processes the server leaves behind if it dies.
 RUN apk --no-cache add ca-certificates mailcap tzdata curl setpriv 7zip tini mupdf-tools
 # rclone mounts the remotes below /remotes, outside the /mnt the container
