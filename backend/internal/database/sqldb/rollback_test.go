@@ -152,3 +152,23 @@ func TestSessionsOfTheOlderBuildLeaveTheFingerprintAlone(t *testing.T) {
 		t.Fatal("signing in and out on the older build tripped the fingerprint")
 	}
 }
+
+func TestABindingTheOlderVersionMadeChangesTheFingerprint(t *testing.T) {
+	store, _ := armedStore(t)
+	if _, err := store.DB().Exec(`CREATE TABLE oidc_identities (issuer TEXT, subject TEXT, user_id TEXT)`); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.ArmLegacyFingerprint(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := store.DB().Exec(`INSERT INTO oidc_identities VALUES ('https://idp.test', 's-1', '42')`); err != nil {
+		t.Fatal(err)
+	}
+	stored, current, err := store.LegacyFingerprint()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stored == current {
+		t.Fatal("a binding the older version made went unnoticed")
+	}
+}

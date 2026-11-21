@@ -158,7 +158,9 @@ func TestConfirmingTheOwnerWantsAFreshSignIn(t *testing.T) {
 	w.open()
 	confirm := func(cookie string) error {
 		var err error
-		w.auth.Guard(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) { err = accounts.ConfirmOwner(r) })).
+		w.auth.Guard(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+			err = accounts.ConfirmOwner(r, func() error { return nil })
+		})).
 			ServeHTTP(httptest.NewRecorder(), func() *http.Request {
 				r := httptest.NewRequest("POST", "http://"+host+"/api/v1/mcp/keys", nil)
 				r.Header.Set("Cookie", cookie)
@@ -237,5 +239,38 @@ func TestAStaleAdminGetsTheSignInsOwnAnswerForANewUser(t *testing.T) {
 	rec = w.req("PATCH", "/admin/users/carl", map[string]any{"password": "noch-ein-langes-passwort"}, header{"Cookie", stale})
 	if rec.Code != http.StatusForbidden || code(t, rec) != "signInAgain" || strings.Contains(rec.Body.String(), "title") {
 		t.Fatalf("a stale admin setting a password: %d %s", rec.Code, rec.Body)
+	}
+}
+
+func TestASessionEndsWithItsSignOutAndABlock(t *testing.T) {
+	w := newWorld(t).open()
+	anna := w.addUser("anna", "user", "/mnt/user")
+	session := func() string {
+		var id string
+		w.auth.Guard(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) { id, _ = accounts.SessionOf(r) })).
+			ServeHTTP(httptest.NewRecorder(), func() *http.Request {
+				r := httptest.NewRequest("GET", "http://"+host+"/me", nil)
+				r.Header.Set("Cookie", w.session("anna"))
+				return r
+			}())
+		return id
+	}
+	first := session()
+	if !accounts.Alive(first) {
+		t.Fatal("a session does not count right after the sign-in")
+	}
+	w.must(http.StatusOK, w.as("anna", "POST", "/api/signin/v1/logout", map[string]string{}))
+	delete(w.cookies, "anna")
+	if accounts.Alive(first) {
+		t.Fatal("a session outlives its sign-out")
+	}
+	second := session()
+	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"blocked": true}))
+	if accounts.Alive(second) || !accounts.Blocked(anna.ID) {
+		t.Fatal("a session outlives a block")
+	}
+	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"blocked": false}))
+	if accounts.Blocked(anna.ID) || accounts.Alive(second) {
+		t.Fatal("unblocking brought the session back, or the account stays blocked")
 	}
 }

@@ -123,11 +123,32 @@ func (h handlers) oldRecovery(hash, code string) bool {
 }
 
 // drop makes the version before unable to let account in on what the
-// sign-in ended: every token and session is revoked in its registry before
-// the token list goes, so no step leaves a token with more rights, and the
-// password becomes one nobody knows, never an empty one, which would open
-// that version. After another account's reset only sessions and tokens go.
+// sign-in ended. After another account's reset only sessions and tokens go,
+// since the password still stands.
 func (h handlers) drop(ctx context.Context, account string, what signin.Ending) error {
+	switch what {
+	case signin.EndResetOther:
+		return shutOut(ctx, account, oldSessions)
+	case signin.EndBlocked:
+		return shutOut(ctx, account, everyOldWay)
+	}
+	return shutOut(ctx, account, oldWaysButOIDC)
+}
+
+// How far shutOut goes.
+type oldWays int
+
+const (
+	oldSessions    oldWays = iota // the old sessions and tokens
+	oldWaysButOIDC                // also password, second factor, passkeys and recovery codes
+	everyOldWay                   // also the OIDC binding the version before signs in by
+)
+
+// shutOut takes ways into account away from the version before. Every
+// token and session is revoked in its registry before the token list goes,
+// so no step leaves a token with more rights, and the password becomes one
+// nobody knows, never an empty one, which would open that version.
+func shutOut(ctx context.Context, account string, how oldWays) error {
 	id, err := strconv.ParseUint(account, 10, 64)
 	if err != nil {
 		return nil
@@ -157,18 +178,18 @@ func (h handlers) drop(ctx context.Context, account string, what signin.Ending) 
 	fields := []string{"tokens"}
 	password := ""
 	gone := []string{"sessions", "token_use"}
-	if what != signin.EndResetOther {
+	if how >= oldWaysButOIDC {
 		password = unusablePassword()
 		u.OtpEnabled, u.PasskeyCredentials = false, nil
 		fields = append(fields, "password", "otpEnabled", "PasskeyCredentials")
 		gone = append(gone, "recovery_codes")
-		// A blocked account must not come back in through the provider of
-		// the older version, which binds an OIDC account by its name.
-		if what == signin.EndBlocked && u.LoginMethod == users.LoginMethodOidc {
-			u.LoginMethod = users.LoginMethodPassword
-			fields = append(fields, "loginMethod")
-			gone = append(gone, "oidc_identities")
-		}
+	}
+	// The version before binds an OIDC account by its name, so an account
+	// that is blocked or goes becomes one that signs in with a password.
+	if how == everyOldWay {
+		u.LoginMethod = users.LoginMethodPassword
+		fields = append(fields, "loginMethod")
+		gone = append(gone, "oidc_identities")
 	}
 	if err := state.UpdateUser(&u, password, fields...); err != nil {
 		return err

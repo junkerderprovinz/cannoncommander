@@ -220,3 +220,36 @@ func TestTheLogKeepsCallsButNoArguments(t *testing.T) {
 		t.Fatalf("the card shows %+v", list.Keys[0])
 	}
 }
+
+func TestTheKeyOfABlockedAccountStops(t *testing.T) {
+	e := newEnv(t)
+	key, _ := e.key("anna", false)
+	if code, _, _ := e.raw(http.MethodPost, mustJSON(t, map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}), "Authorization", "Bearer "+key); code != http.StatusOK {
+		t.Fatalf("the key before: %d", code)
+	}
+	anna, _ := e.byName("anna")
+	setBlocked(anna.ID, true)
+	t.Cleanup(func() { setBlocked(anna.ID, false) })
+	if code, _, _ := e.raw(http.MethodPost, mustJSON(t, map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}), "Authorization", "Bearer "+key); code != http.StatusUnauthorized {
+		t.Fatalf("the key of a blocked account: %d", code)
+	}
+}
+
+func TestAReimportRevokesEveryKeyAndGrant(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	e.key("anna", false)
+	e.key("chef", true)
+	client := e.registerClient()
+	if status, _ := e.exchange(client, e.consent("anna", client, false)); status != http.StatusOK {
+		t.Fatalf("grant: %d", status)
+	}
+	n, err := revokeEverything(t.Context(), e.srv.deps.DB)
+	if err != nil || n != 3 {
+		t.Fatalf("revoked %d, %v", n, err)
+	}
+	var live int
+	if err := e.srv.deps.DB.QueryRow(`SELECT COUNT(*) FROM mcp_keys WHERE revoked_at = 0`).Scan(&live); err != nil || live != 0 {
+		t.Fatalf("%d keys and grants still live, %v", live, err)
+	}
+}

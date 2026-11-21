@@ -60,8 +60,27 @@ func (rules) Effect(u *users.User, p string) ccfs.Effect {
 
 // fakeLogin stands for the sign-in: a request with X-Session has a session,
 // one with X-Token came with an API token, and one with X-Stale signed in too
-// long ago to make a lasting key.
+// long ago to make a lasting key. A session in ended has ended, and an
+// account in blocked is blocked.
 type fakeLogin struct{}
+
+var signInState = struct {
+	sync.Mutex
+	ended   map[string]bool
+	blocked map[uint64]bool
+}{ended: map[string]bool{}, blocked: map[uint64]bool{}}
+
+func endSession(session string) {
+	signInState.Lock()
+	defer signInState.Unlock()
+	signInState.ended[session] = true
+}
+
+func setBlocked(id uint64, blocked bool) {
+	signInState.Lock()
+	defer signInState.Unlock()
+	signInState.blocked[id] = blocked
+}
 
 func (fakeLogin) SessionHash(r *http.Request) (string, bool) {
 	h := r.Header.Get("X-Session")
@@ -74,11 +93,21 @@ func (fakeLogin) ClientIP(r *http.Request) string {
 	}
 	return "192.0.2.1"
 }
-func (fakeLogin) Confirm(r *http.Request) error {
+func (fakeLogin) Confirm(r *http.Request, then func() error) error {
 	if r.Header.Get("X-Stale") != "" {
 		return v1.Coded(http.StatusForbidden, "signInAgain", "sign in again, then try once more")
 	}
-	return nil
+	return then()
+}
+func (fakeLogin) Alive(session string) bool {
+	signInState.Lock()
+	defer signInState.Unlock()
+	return !signInState.ended[session]
+}
+func (fakeLogin) Blocked(userID uint64) bool {
+	signInState.Lock()
+	defer signInState.Unlock()
+	return signInState.blocked[userID]
 }
 
 // lan stands for the computers a desktop app reaches below /net. It counts

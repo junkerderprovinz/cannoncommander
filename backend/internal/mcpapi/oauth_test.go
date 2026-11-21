@@ -348,3 +348,19 @@ func TestEndingSessionsEndsGrantsAndEndingTokensEndsKeys(t *testing.T) {
 		t.Fatalf("another account's key = %d", status)
 	}
 }
+
+func TestACodeAllowedBeforeItsSignInEndedMakesNoGrant(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	client := e.registerClient()
+	code := e.consent("anna", client, false)
+	endSession("session-of-anna")
+	t.Cleanup(func() {
+		signInState.Lock()
+		delete(signInState.ended, "session-of-anna")
+		signInState.Unlock()
+	})
+	if status, body := e.exchange(client, code); status != http.StatusBadRequest || body["error"] != "invalid_grant" {
+		t.Fatalf("a code whose sign-in ended made a grant: %d %v", status, body)
+	}
+}

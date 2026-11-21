@@ -374,3 +374,21 @@ func TestEndingTwiceKeepsTheFirstReason(t *testing.T) {
 		t.Fatalf("got %d %s", s.code, s.reason)
 	}
 }
+
+func TestAShellOpenedWhileOpenEndsWithTheFirstPassword(t *testing.T) {
+	e := newEnv(t)
+	e.switchOn(true)
+	e.gate.mu.Lock()
+	e.gate.open = true
+	e.gate.mu.Unlock()
+	s := newSession("jdp", "")
+	if why := e.h.lost(t.Context(), s); why != "" {
+		t.Fatalf("a shell of the open server ended while it was open: %s", why)
+	}
+	e.gate.mu.Lock()
+	e.gate.open = false
+	e.gate.mu.Unlock()
+	if why := e.h.lost(t.Context(), s); why != "signedOut" {
+		t.Fatalf("a shell opened while the server was open outlives the first password: %q", why)
+	}
+}

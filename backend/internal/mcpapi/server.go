@@ -50,13 +50,15 @@ const (
 )
 
 // Login is what the endpoint needs from the sign-in. The accounts provide
-// it; tests put in their own. Confirm refuses unless the visitor signed in
-// moments ago or confirmed the password with the sign-in.
+// it; tests put in their own. Confirm runs then only when the visitor signed
+// in moments ago or confirmed the password, and no ending crosses it.
 type Login interface {
 	SessionHash(r *http.Request) (string, bool)
 	ByAPIToken(r *http.Request) bool
 	ClientIP(r *http.Request) string
-	Confirm(r *http.Request) error
+	Confirm(r *http.Request, then func() error) error
+	Alive(session string) bool
+	Blocked(userID uint64) bool
 }
 
 type accountsLogin struct{}
@@ -64,7 +66,11 @@ type accountsLogin struct{}
 func (accountsLogin) SessionHash(r *http.Request) (string, bool) { return accounts.SessionOf(r) }
 func (accountsLogin) ByAPIToken(r *http.Request) bool            { return accounts.ByToken(r) }
 func (accountsLogin) ClientIP(r *http.Request) string            { return accounts.ClientIP(r) }
-func (accountsLogin) Confirm(r *http.Request) error              { return accounts.ConfirmOwner(r) }
+func (accountsLogin) Confirm(r *http.Request, then func() error) error {
+	return accounts.ConfirmOwner(r, then)
+}
+func (accountsLogin) Alive(session string) bool  { return accounts.Alive(session) }
+func (accountsLogin) Blocked(userID uint64) bool { return accounts.Blocked(userID) }
 
 // Server is the MCP endpoint of one database and what it keeps between
 // requests.
@@ -278,7 +284,7 @@ func (s *Server) serveMCP(w http.ResponseWriter, r *http.Request) {
 	k, ok := s.match(ctx, presented, byToken, issuer, now)
 	var u *users.User
 	if ok && !conflict {
-		if u, err = s.user(k.UserID); err != nil || u.Username == "" {
+		if u, err = s.user(k.UserID); err != nil || u.Username == "" || s.login.Blocked(k.UserID) {
 			ok = false
 		}
 	}

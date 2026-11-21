@@ -323,3 +323,21 @@ func TestRenamingAUserTakesUndoStepsTrashAndJobsAlong(t *testing.T) {
 		t.Errorf("the stored job belongs to %q, %v", owner, err)
 	}
 }
+
+func TestARoleSetInTheAppReachesTheRowTheOlderVersionReads(t *testing.T) {
+	w := newWorld(t).open()
+	anna := w.addUser("anna", "admin", "/mnt/user")
+	permAdmin := func() (admin bool) {
+		if err := w.deps.DB.QueryRow(`SELECT perm_admin FROM users WHERE user_id = ?`, strconv.FormatUint(anna.ID, 10)).Scan(&admin); err != nil {
+			t.Fatal(err)
+		}
+		return admin
+	}
+	if !permAdmin() {
+		t.Fatal("a new admin is no admin in the row")
+	}
+	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"role": "user"}))
+	if permAdmin() {
+		t.Fatal("a demoted admin is still admin for the version before")
+	}
+}

@@ -121,10 +121,10 @@ func (s *Server) keysAllowedFrom(r *http.Request) bool {
 	return s.signIn() || hostAllowsKeys(r.Host)
 }
 
-// proveOwner makes sure the person at the keyboard owns the account before a
-// key is made, replaced or allowed to write: a session, no API token, and a
+// proveOwner runs then, which makes, replaces or lets a key write, once the
+// person at the keyboard owns the account: a session, no API token, and a
 // fresh sign-in or the password confirmed, as for an API token.
-func (s *Server) proveOwner(r *http.Request) error {
+func (s *Server) proveOwner(r *http.Request, then func() error) error {
 	if s.login.ByAPIToken(r) {
 		return errTokenRefused
 	}
@@ -132,12 +132,12 @@ func (s *Server) proveOwner(r *http.Request) error {
 		return errNeedsSignIn
 	}
 	if !s.signIn() {
-		return nil
+		return then()
 	}
 	if _, ok := s.login.SessionHash(r); !ok {
 		return errTokenRefused
 	}
-	return s.login.Confirm(r)
+	return s.login.Confirm(r, then)
 }
 
 // unusable names why a key no longer authenticates although nobody revoked
@@ -268,21 +268,26 @@ func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
 	if in.Client != "" && !clientID.MatchString(in.Client) {
 		return errClient
 	}
-	if err := s.proveOwner(r); err != nil {
-		return err
-	}
 	pepper := s.pepper()
 	if len(pepper) == 0 {
 		return errors.New("the server has no signing key")
 	}
 	key, id := newSecret(keyPrefix), newID()
-	k, err := s.st.createKey(r.Context(), Key{
-		ID: id, UserID: me.ID, Label: label, Client: in.Client,
-		Digest: hashKey(pepper, key), Hint: keyHint(key), Check: keyCheck(pepper, id),
-		CanWrite: in.CanWrite, CreatedAt: s.now().Unix(),
+	var k Key
+	err := s.proveOwner(r, func() error {
+		var err error
+		k, err = s.st.createKey(r.Context(), Key{
+			ID: id, UserID: me.ID, Label: label, Client: in.Client,
+			Digest: hashKey(pepper, key), Hint: keyHint(key), Check: keyCheck(pepper, id),
+			CanWrite: in.CanWrite, CreatedAt: s.now().Unix(),
+		})
+		if err != nil {
+			return keyProblem(err)
+		}
+		return nil
 	})
 	if err != nil {
-		return keyProblem(err)
+		return err
 	}
 	event := "made"
 	if k.CanWrite {
@@ -336,17 +341,24 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 		}
 		in.Label = &clean
 	}
+	save := func() error {
+		updated, saveErr := s.st.updateKey(r.Context(), k.ID, in.Label, in.CanWrite)
+		if saveErr != nil {
+			return keyProblem(saveErr)
+		}
+		k = updated
+		return nil
+	}
 	if in.CanWrite != nil && *in.CanWrite && !k.CanWrite {
 		if k.UserID != me.ID {
 			return errNotYourKey
 		}
-		if err = s.proveOwner(r); err != nil {
-			return err
-		}
+		err = s.proveOwner(r, save)
+	} else {
+		err = save()
 	}
-	k, err = s.st.updateKey(r.Context(), k.ID, in.Label, in.CanWrite)
 	if err != nil {
-		return keyProblem(err)
+		return err
 	}
 	if in.CanWrite != nil {
 		event := "switched to read only"
@@ -370,14 +382,18 @@ func (s *Server) rotate(w http.ResponseWriter, r *http.Request) error {
 	if k.Kind != kindKey || k.RevokedAt != 0 {
 		return errNoSuchKey
 	}
-	if err = s.proveOwner(r); err != nil {
-		return err
-	}
 	pepper := s.pepper()
 	key := newSecret(keyPrefix)
-	k, err = s.st.rotateKey(r.Context(), k.ID, hashKey(pepper, key), keyHint(key), keyCheck(pepper, k.ID), s.now().Unix())
+	err = s.proveOwner(r, func() error {
+		rotated, rotateErr := s.st.rotateKey(r.Context(), k.ID, hashKey(pepper, key), keyHint(key), keyCheck(pepper, k.ID), s.now().Unix())
+		if rotateErr != nil {
+			return keyProblem(rotateErr)
+		}
+		k = rotated
+		return nil
+	})
 	if err != nil {
-		return keyProblem(err)
+		return err
 	}
 	s.changed(r, k, "replaced")
 	w.Header().Set("Cache-Control", "no-store")
@@ -656,8 +672,9 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	me := v1.UserFrom(r)
+	// A refused proof leaves the ticket unspent, so it is asked for first.
 	if in.Allow {
-		if err = s.proveOwner(r); err != nil {
+		if err = s.proveOwner(r, func() error { return nil }); err != nil {
 			return err
 		}
 	}
@@ -698,9 +715,16 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 	pending := &pendingCode{
 		clientID: client.ID, redirectURI: t.Redirect, challenge: t.Challenge, resource: t.Resource,
 		label: label, known: client.Known, userID: me.ID, canWrite: in.CanWrite, expires: now.Add(codeTTL),
+		session: session,
 	}
-	if !s.oauth.putCode(hashOAuth(s.pepper(), "code", code), pending, now) {
-		return v1.Coded(http.StatusConflict, "oauthBusy", "too many sign-ins are waiting, try again in a minute")
+	err = s.proveOwner(r, func() error {
+		if !s.oauth.putCode(hashOAuth(s.pepper(), "code", code), pending, now) {
+			return v1.Coded(http.StatusConflict, "oauthBusy", "too many sign-ins are waiting, try again in a minute")
+		}
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 	logger.Infof("mcp: oauth: client %s was allowed by %s from %s", client.ID, me.Username, addr)
 	w.Header().Set("Cache-Control", "no-store")

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -308,5 +309,30 @@ func TestLeavingEveryGroupTakesTheAdminRoleAndAMissingClaimLeavesIt(t *testing.T
 	b, _ = w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna", Groups: []string{}})
 	if me, _ := w.meThrough(b); me.Role != "user" {
 		t.Fatalf("erna left every group and is %q", me.Role)
+	}
+}
+
+func TestAServerBehindItsOIDCGetsNoOwner(t *testing.T) {
+	w := newBareWorld(t)
+	w.withProvider("")
+	admin := w.oldUser(settings.PasswordAdminUsername(), "", true)
+	w.open()
+	if w.account(admin).Owner {
+		t.Fatal("the admin of a server behind its OIDC became the owner")
+	}
+}
+
+func TestWebDAVTakesNoPasswordWhilePasswordsAreOff(t *testing.T) {
+	w := newWorld(t)
+	w.withProvider("")
+	w.open()
+	r := httptest.NewRequest("PROPFIND", "http://"+host+"/dav/", nil)
+	r.SetBasicAuth("jdp", strong)
+	if _, err := accounts.BasicLogin(r, "jdp", strong); err != nil {
+		t.Fatalf("with passwords on: %v", err)
+	}
+	settings.Config.Auth.Methods.PasswordAuth.Enabled = false
+	if _, err := accounts.BasicLogin(r, "jdp", strong); err == nil {
+		t.Fatal("WebDAV took a password while passwords are off")
 	}
 }

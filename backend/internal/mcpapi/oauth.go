@@ -87,6 +87,9 @@ type pendingCode struct {
 	expires     time.Time
 	used        bool
 	grantID     string
+	// session is the session that allowed the client. An ending since makes
+	// the code worthless, as it does every grant there is.
+	session string
 }
 
 func newOAuthState() *oauthState {

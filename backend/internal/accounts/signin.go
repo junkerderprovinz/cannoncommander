@@ -70,10 +70,7 @@ func Open(ctx context.Context, d v1.Deps) (*signin.Auth, error) {
 	warnAboutConfig(ctx, h)
 	signIns.Store(auth)
 	state.UseSignIn(auth.Anyone)
-	shares.UseBlocked(func(id uint64) bool {
-		acc, err := auth.Account(context.Background(), strconv.FormatUint(id, 10))
-		return err != nil || acc.Blocked
-	})
+	shares.UseBlocked(Blocked)
 	return auth, nil
 }
 

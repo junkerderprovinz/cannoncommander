@@ -177,8 +177,15 @@ func (h handlers) ended(ctx context.Context, account string, what signin.Ending)
 		return nil
 	}
 	basicSeen.forget(account)
-	if what == signin.EndRemoved {
+	switch what {
+	case signin.EndRemoved:
 		return h.removed(ctx, id)
+	case signin.EndBlocked:
+		// The sign-in drops the old fields of an imported account only on
+		// its first ending, and accounts it made have none to drop.
+		if err := shutOut(ctx, account, everyOldWay); err != nil {
+			return err
+		}
 	}
 	switch what {
 	case signin.EndFirstPassword, signin.EndPassword, signin.EndReset:
@@ -221,6 +228,11 @@ func (h handlers) removed(ctx context.Context, id uint64) error {
 		return forgetRows(ctx, h, id)
 	}
 	if err != nil {
+		return err
+	}
+	// A hook that keeps failing must not leave a row the version before
+	// still lets in.
+	if err := shutOut(ctx, strconv.FormatUint(id, 10), everyOldWay); err != nil {
 		return err
 	}
 	if err := h.forget(ctx, &u); err != nil {

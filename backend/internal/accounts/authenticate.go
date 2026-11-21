@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -68,7 +69,8 @@ func ByToken(r *http.Request) bool {
 	return ok && v.Via == signin.ViaToken
 }
 
-// Alive reports whether the session with this id still signs in.
+// Alive reports whether the session with this id still signs in, under
+// every rule a session keeps: its life, its account's epoch and block.
 func Alive(id string) bool {
 	auth := SignIn()
 	return auth != nil && auth.Alive(context.Background(), id)
@@ -91,19 +93,31 @@ func UseClientIP(f func(r *http.Request) string) { clientIP = f }
 // ClientIP returns the address of the client behind r.
 func ClientIP(r *http.Request) string { return clientIP(r) }
 
-// ConfirmOwner makes sure the owner of the session is at the keyboard before
-// the account gets a new lasting credential of another package, such as a key
-// of the MCP server, so a stolen session cannot mint one.
-func ConfirmOwner(r *http.Request) error {
+// ConfirmOwner runs then, the making of a new lasting credential of another
+// package such as a key of the MCP server, once the owner of the session
+// is at the keyboard, so a stolen session cannot mint one. It holds the
+// lock a reset or a block waits for, so nothing made slips past them.
+func ConfirmOwner(r *http.Request, then func() error) error {
 	auth := SignIn()
 	if auth == nil {
-		return nil
+		return then()
 	}
-	err := auth.Mint(r, func() error { return nil })
+	err := auth.Mint(r, then)
 	if errors.Is(err, signin.ErrNotFresh) {
 		return signInAgain{auth}
 	}
 	return err
+}
+
+// Blocked reports whether the sign-in blocked the account with this id, or
+// knows no such account.
+func Blocked(userID uint64) bool {
+	auth := SignIn()
+	if auth == nil {
+		return false
+	}
+	acc, err := auth.Account(context.Background(), strconv.FormatUint(userID, 10))
+	return err != nil || acc.Blocked
 }
 
 // signInAgain answers a change that wants a fresh sign-in as the sign-in

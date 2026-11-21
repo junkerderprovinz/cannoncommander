@@ -387,6 +387,10 @@ func (s *Server) exchangeCode(w http.ResponseWriter, r *http.Request, client oau
 		oauthError(w, http.StatusBadRequest, "invalid_grant", "the account that allowed this client is gone")
 		return
 	}
+	if !s.login.Alive(code.session) {
+		oauthError(w, http.StatusBadRequest, "invalid_grant", "the sign-in that allowed this client has ended")
+		return
+	}
 	access, refresh, accessDigest, refreshDigest := s.newTokens()
 	if err := s.st.pruneOAuth(ctx, now.Unix()); err != nil {
 		logger.Errorf("mcp: oauth: prune: %v", err)
