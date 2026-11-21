@@ -4,9 +4,9 @@ import { ProgressBar } from '@glimstone/vue';
 import { computed } from 'vue';
 import { G } from '@/core/glyphs';
 import Graph from './Graph.vue';
-import { type Dialog, JOBS, type Lang, setDetails, type State, type Texts, ui } from './data';
+import { currentFile, type Dialog, JOBS, type Lang, setDetails, type State, type Texts, ui } from './data';
 
-const props = defineProps<{ dialog: Dialog; state: State; pct: number; lang: Lang; t: Texts; label: string }>();
+const props = defineProps<{ dialog: Dialog; state: State; pct: number; lang: Lang; t: Texts; label: string; stacked?: boolean }>();
 const job = computed(() => JOBS[props.dialog]);
 const open = computed(() => ui.details);
 const items = computed(() => ('items' in job.value ? job.value.items : []) as readonly string[]);
@@ -16,11 +16,11 @@ const doneCount = computed(() => Math.round((items.value.length * props.pct) / 1
 <template>
   <div class="meter" :class="{ open }">
     <div class="xp xp--bar" :class="{ shut: open }" :aria-hidden="open">
-      <div class="xp-bar"><ProgressBar :value="pct / 100" :label="label" :paused="state === 'paused'" :failed="state === 'errors'" /><slot name="facts" /></div>
+      <div class="xp-bar"><slot name="lead" /><ProgressBar :value="pct / 100" :label="label" :paused="state === 'paused'" :failed="state === 'errors'" /><slot name="facts" /></div>
     </div>
     <div class="xp xp--more" :class="{ shut: !open }" :aria-hidden="!open">
       <div>
-        <Graph v-if="dialog !== 'delete'" :base="job.speed" :total-m-b="job.totalMB" :pct="pct" :state="state" :lang="lang" :t="t" :current="job.run.current" />
+        <Graph v-if="dialog !== 'delete'" :base="job.speed" :total-m-b="job.totalMB" :pct="pct" :state="state" :lang="lang" :t="t" :current="currentFile(job.files)" :stacked="stacked" />
         <ul v-else class="mt-items">
           <li v-for="(n, i) in items" :key="n" :class="{ on: i < doneCount, now: i === doneCount && state === 'running' }">
             <span class="mt-mark"><G :n="i < doneCount ? 'IconCheck' : 'IconFile'" /></span>

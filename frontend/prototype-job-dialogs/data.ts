@@ -28,7 +28,8 @@ const T = {
     errorsLine: { copy: '10 von 12 Dateien kopiert, 2 fehlgeschlagen', move: '1 Datei nicht verschoben', delete: '2 von 3 Objekten im Papierkorb, 1 fehlgeschlagen' },
     cancelledLine: { copy: 'Nach 1,1 GB abgebrochen. Was schon kopiert ist, bleibt im Ziel.', move: 'Nach 2,3 GB abgebrochen. Die Quelle ist vollständig.', delete: 'Nach 1 von 3 Objekten abgebrochen.' },
     error: 'Kein Platz mehr auf dem Ziel',
-    variant: { A: 'Wie jetzt', B: 'Kompakt in einer Spalte', C: 'Zwei Zonen: Weg oben, Fortschritt unten', D: 'Schlicht, Details auf Wunsch' },
+    variant: { A: 'Wie jetzt', B: 'Kompakt in einer Spalte', C: 'Zwei Zonen: Weg oben, Fortschritt unten', D: 'Schlicht, Details auf Wunsch', E: 'Ruhig wie ein Mac-Blatt', F: 'Mit Graph wie unter Windows' },
+    doneOf: 'abgeschlossen', remaining: 'Verbleibend', stop: 'Stoppen', objects: 'Objekte', into: 'nach',
     all: 'Alle', light: 'Hell', dark: 'Dunkel', oled: 'OLED',
     motion: { off: 'Aus', subtle: 'Ruhig', wild: 'Wild', storm: 'Sturm' }, motionLabel: 'Bewegung',
   },
@@ -51,7 +52,8 @@ const T = {
     errorsLine: { copy: 'Copied 10 of 12 files, 2 failed', move: '1 file not moved', delete: '2 of 3 items in the trash, 1 failed' },
     cancelledLine: { copy: 'Cancelled after 1.1 GB. What is copied stays in the target.', move: 'Cancelled after 2.3 GB. The source is whole.', delete: 'Cancelled after 1 of 3 items.' },
     error: 'No room left on the target',
-    variant: { A: 'As it is', B: 'Compact, one column', C: 'Two zones: route on top, progress below', D: 'Plain, details on demand' },
+    variant: { A: 'As it is', B: 'Compact, one column', C: 'Two zones: route on top, progress below', D: 'Plain, details on demand', E: 'Calm like a Mac sheet', F: 'With a graph like on Windows' },
+    doneOf: 'complete', remaining: 'Remaining', stop: 'Stop', objects: 'items', into: 'to',
     all: 'All', light: 'Light', dark: 'Dark', oled: 'OLED',
     motion: { off: 'Off', subtle: 'Calm', wild: 'Wild', storm: 'Storm' }, motionLabel: 'Motion',
   },
@@ -66,14 +68,17 @@ export interface Clash { name: string; kind: 'image' | 'video' | 'folder'; fresh
 export const JOBS = {
   copy: { name: 'Urlaub 2026', count: '12', from: '/mnt/user/fotos', to: '/mnt/user/backups/fotos', total: '4,2 GB', totalMB: 4300, glyph: 'IconCopy', speed: 112,
     run: { pct: 43, current: 'IMG_20260812_1430.jpg' },
+    files: ['IMG_20260812_1430.jpg', 'IMG_20260812_1431.jpg', 'Strand bei Nacht.mp4', 'IMG_20260813_0902.heic', 'Reiseroute.pdf', 'IMG_20260813_1117.jpg', 'Tagebuch.txt', 'Rohdaten.zip'],
     failed: ['IMG_20260814_0912.jpg', 'Urlaub 2026.mp4'],
     clash: { name: 'IMG_20260812_1430.jpg', kind: 'image', fresh: { size: '2,1 MB', bytes: 2.1, date: '12.08.2026, 14:32', when: 2 }, there: { size: '2,0 MB', bytes: 2.0, date: '12.08.2026, 09:15', when: 1 } } as Clash },
   move: { name: 'Citizen Vigilante (2026).mkv', count: '1', from: '/mnt/user/downloads', to: '/mnt/user/medien/Filme', total: '8,4 GB', totalMB: 8600, glyph: 'IconMove', speed: 96,
     run: { pct: 27, current: 'Citizen Vigilante (2026).mkv' },
+    files: ['Citizen Vigilante (2026).mkv'],
     failed: ['Citizen Vigilante (2026).mkv'],
     clash: { name: 'Citizen Vigilante (2026).mkv', kind: 'video', fresh: { size: '8,4 GB', bytes: 8.4, date: '03.11.2026, 21:40', when: 2 }, there: { size: '8,1 GB', bytes: 8.1, date: '28.10.2026, 18:05', when: 1 } } as Clash },
   delete: { name: '3 Objekte', count: '3', from: '/mnt/user/dokumente', to: '', total: '38 MB', totalMB: 38, glyph: 'IconTrash', speed: 0,
     run: { pct: 33, current: 'Steuer 2024' },
+    files: ['Steuer 2024/', 'Notizen.txt', 'Belege 2025.ods'],
     failed: ['Belege 2025.ods'], items: ['Steuer 2024', 'Notizen.txt', 'Belege 2025.ods'],
     clash: { name: 'Steuer 2024', kind: 'folder', fresh: { size: '24 MB', bytes: 24, date: '20.11.2026, 10:12', when: 2 }, there: { size: '24 MB', bytes: 24, date: '02.04.2025, 16:48', when: 1 } } as Clash },
 } as const;
@@ -85,6 +90,8 @@ export const ui = reactive({
   details: safe(() => localStorage.getItem('cc-proto-job-details') === '1', false),
   tick: 0,
 });
+// The file the job is at, from a made-up stream that moves on every two seconds.
+export const currentFile = (files: readonly string[]) => files[Math.floor(ui.tick / 2) % files.length]!;
 export function setDetails(on: boolean) {
   ui.details = on;
   safe(() => localStorage.setItem('cc-proto-job-details', on ? '1' : '0'), undefined);
