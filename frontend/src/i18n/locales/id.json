@@ -4295,9 +4295,14 @@
         "title": "Ini perlu kata sandi dulu",
         "reason": "Atur kata sandi Anda sendiri di atas. Dengan itu Anda selalu bisa masuk, bahkan saat cara lain gagal."
       },
+      "notLocal": {
+        "title": "Ini diatur di layanan masuk Anda",
+        "reason": "Anda masuk lewat {name}. Atur autentikasi dua faktor dan kunci sandi di sana."
+      },
       "password": {
         "hint": "Kata sandi perlu setidaknya {min} karakter. Mengubahnya mengakhiri semua sesi lain.",
         "openHint": "Selama belum ada kata sandi, CannonCommander terbuka dan siapa pun yang mencapainya adalah admin.",
+        "viaService": "Anda masuk lewat {name}, jadi akun ini tidak punya kata sandi di sini.",
         "set": "Sudah diatur",
         "none": "Tidak ada",
         "change": "Ubah",

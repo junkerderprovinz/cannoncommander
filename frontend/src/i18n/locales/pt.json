@@ -4599,9 +4599,14 @@
         "title": "Primeiro é preciso uma palavra-passe",
         "reason": "Defina acima uma palavra-passe sua. Ela deixa-o sempre entrar, mesmo quando outra via falha."
       },
+      "notLocal": {
+        "title": "Isto depende do seu serviço de início de sessão",
+        "reason": "Inicia sessão com {name}. Configure lá a autenticação de dois fatores e as chaves de acesso."
+      },
       "password": {
         "hint": "Uma palavra-passe precisa de pelo menos {min} caracteres. Alterá-la termina todas as outras sessões.",
         "openHint": "Enquanto não houver palavra-passe, o CannonCommander está aberto e qualquer pessoa que o alcance é administrador.",
+        "viaService": "Inicia sessão com {name}, por isso esta conta não tem palavra-passe aqui.",
         "set": "Definida",
         "none": "Nenhuma",
         "change": "Alterar",

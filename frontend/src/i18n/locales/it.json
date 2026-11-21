@@ -4599,9 +4599,14 @@
         "title": "Serve prima una password",
         "reason": "Imposta qui sopra una password tua. Ti fa sempre entrare, anche quando un'altra via non funziona."
       },
+      "notLocal": {
+        "title": "Questo dipende dal tuo servizio di accesso",
+        "reason": "Accedi tramite {name}. Configura lì l'autenticazione a due fattori e le passkey."
+      },
       "password": {
         "hint": "Una password deve avere almeno {min} caratteri. Cambiarla chiude tutte le altre sessioni.",
         "openHint": "Finché non c'è una password, CannonCommander è aperto e chiunque lo raggiunga è amministratore.",
+        "viaService": "Accedi tramite {name}, quindi questo account qui non ha una password.",
         "set": "Impostata",
         "none": "Nessuna",
         "change": "Modifica",

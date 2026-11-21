@@ -4751,9 +4751,14 @@
         "title": "Najprv je potrebné heslo",
         "reason": "Nastavte vyššie vlastné heslo. S ním sa dostanete dnu vždy, aj keď iná cesta zlyhá."
       },
+      "notLocal": {
+        "title": "Toto patrí k vašej prihlasovacej službe",
+        "reason": "Prihlasujete sa cez {name}. Dvojfaktorové overenie a prístupové kľúče si nastavte tam."
+      },
       "password": {
         "hint": "Heslo musí mať aspoň {min} znakov. Jeho zmena ukončí všetky ostatné relácie.",
         "openHint": "Kým nie je nastavené heslo, je CannonCommander otvorený a každý, kto sa k nemu dostane, je správca.",
+        "viaService": "Prihlasujete sa cez {name}, takže tento účet tu nemá heslo.",
         "set": "Nastavené",
         "none": "Žiadne",
         "change": "Zmeniť",

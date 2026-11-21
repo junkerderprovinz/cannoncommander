@@ -92,6 +92,7 @@ function toService() {
     app-name="CannonCommander"
     :text="text"
     reset
+    :reset-name="many"
     :min-password="offer.minPassword"
     :note="note"
     :error="refused"

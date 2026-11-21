@@ -4599,9 +4599,14 @@
         "title": "Primer cal una contrasenya",
         "reason": "Poseu a dalt una contrasenya pròpia. Sempre us deixa entrar, encara que falli una altra via."
       },
+      "notLocal": {
+        "title": "Això ve del vostre servei d'inici de sessió",
+        "reason": "Inicieu la sessió amb {name}. Configureu-hi l'autenticació de dos factors i les claus d'accés."
+      },
       "password": {
         "hint": "Una contrasenya necessita almenys {min} caràcters. Canviar-la tanca totes les altres sessions.",
         "openHint": "Mentre no hi hagi contrasenya, CannonCommander és obert i qualsevol persona que hi arribi és administradora.",
+        "viaService": "Inicieu la sessió amb {name}, així que aquest compte no té contrasenya aquí.",
         "set": "Definida",
         "none": "Cap",
         "change": "Canvia",

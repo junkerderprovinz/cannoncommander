@@ -4599,9 +4599,14 @@
         "title": "Pentru asta e nevoie mai întâi de o parolă",
         "reason": "Setează mai sus o parolă proprie. Cu ea intri mereu, chiar și când altă cale nu merge."
       },
+      "notLocal": {
+        "title": "Asta ține de serviciul tău de conectare",
+        "reason": "Te conectezi prin {name}. Configurează acolo autentificarea cu doi factori și cheile de acces."
+      },
       "password": {
         "hint": "O parolă are nevoie de cel puțin {min} caractere. Schimbarea ei încheie toate celelalte sesiuni.",
         "openHint": "Cât timp nu e setată nicio parolă, CannonCommander e deschis și oricine ajunge la el e administrator.",
+        "viaService": "Te conectezi prin {name}, așa că acest cont nu are parolă aici.",
         "set": "Setată",
         "none": "Niciuna",
         "change": "Schimbă",

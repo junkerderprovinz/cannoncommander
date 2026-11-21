@@ -4599,9 +4599,14 @@
         "title": "Za ovo je najprije potrebna lozinka",
         "reason": "Gore postavite vlastitu lozinku. S njom uvijek ulazite, čak i kad drugi put zakaže."
       },
+      "notLocal": {
+        "title": "Ovo dolazi od vaše usluge za prijavu",
+        "reason": "Prijavljujete se putem {name}. Dvofaktorsku autentifikaciju i pristupne ključeve postavite ondje."
+      },
       "password": {
         "hint": "Lozinka treba imati barem {min} znakova. Njezina promjena završava sve ostale sesije.",
         "openHint": "Dok lozinka nije postavljena, CannonCommander je otvoren i svatko tko do njega dođe je administrator.",
+        "viaService": "Prijavljujete se putem {name}, pa ovaj račun ovdje nema lozinku.",
         "set": "Postavljena",
         "none": "Nema",
         "change": "Promijeni",

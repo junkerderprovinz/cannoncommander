@@ -13,7 +13,10 @@
   "newPassword": "Neues Passwort",
   "setPassword": "Passwort setzen",
   "saving": "Wird gespeichert …",
-  "short": { "one": "Das neue Passwort braucht mindestens {n} Zeichen.", "other": "Das neue Passwort braucht mindestens {n} Zeichen." },
+  "short": {
+    "one": "Das neue Passwort braucht mindestens {n} Zeichen.",
+    "other": "Das neue Passwort braucht mindestens {n} Zeichen."
+  },
   "resetRejected": "Der Code stimmt nicht oder ist abgelaufen. Ist er abgelaufen, steht jetzt ein neuer im Log.",
   "failed": "Das hat nicht geklappt. Versuch es bitte noch einmal.",
   "needBoth": "Gib Name und Passwort ein.",
@@ -30,9 +33,14 @@
       "title": "Dafür braucht es zuerst ein Passwort",
       "reason": "Setz oben ein eigenes Passwort. Damit kommst du immer herein, auch wenn ein anderer Weg mal nicht geht."
     },
+    "notLocal": {
+      "title": "Das läuft über deinen Anmeldedienst",
+      "reason": "Du meldest dich über {name} an. Zwei-Faktor-Authentifizierung und Passkeys richtest du dort ein."
+    },
     "password": {
       "hint": "Ein Passwort braucht mindestens {min} Zeichen. Wenn du es änderst, enden alle anderen Sitzungen.",
       "openHint": "Solange kein Passwort gesetzt ist, ist CannonCommander offen, und alle, die es erreichen, sind Admin.",
+      "viaService": "Du meldest dich über {name} an, deshalb hat dieses Konto hier kein Passwort.",
       "set": "Gesetzt",
       "none": "Keins",
       "change": "Ändern",
@@ -47,9 +55,15 @@
       "removeText": "Ohne Passwort öffnet CannonCommander für alle, die seine Adresse erreichen. Damit fällt auch weg:",
       "goes": {
         "twoFactor": "Zwei-Faktor-Authentifizierung",
-        "passkeys": { "one": "{n} Passkey", "other": "{n} Passkeys" },
+        "passkeys": {
+          "one": "{n} Passkey",
+          "other": "{n} Passkeys"
+        },
         "services": "Die Anmeldung mit {names}",
-        "tokens": { "one": "{n} API-Token", "other": "{n} API-Tokens" }
+        "tokens": {
+          "one": "{n} API-Token",
+          "other": "{n} API-Tokens"
+        }
       },
       "removed": "Passwort entfernt. CannonCommander öffnet ohne Anmeldung"
     },
@@ -68,7 +82,10 @@
       "off": "Aus",
       "setUp": "Einrichten",
       "codes": "Wiederherstellungscodes",
-      "codesLeft": { "one": "{n} übrig", "other": "{n} übrig" },
+      "codesLeft": {
+        "one": "{n} übrig",
+        "other": "{n} übrig"
+      },
       "newCodes": "Neu erzeugen",
       "turnOff": "Ausschalten",
       "setupTitle": "Zwei-Faktor-Authentifizierung einrichten",
@@ -142,7 +159,10 @@
       "nameHint": "Wofür das Token da ist. Es steht später in der Liste der Tokens.",
       "scope": "Rechte",
       "lifetime": "Gültig für",
-      "days": { "one": "{n} Tag", "other": "{n} Tage" },
+      "days": {
+        "one": "{n} Tag",
+        "other": "{n} Tage"
+      },
       "year": "1 Jahr",
       "never": "Immer",
       "make": "Erstellen",

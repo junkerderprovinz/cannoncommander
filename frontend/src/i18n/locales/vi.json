@@ -4295,9 +4295,14 @@
         "title": "Việc này cần có mật khẩu trước",
         "reason": "Đặt mật khẩu của riêng bạn ở trên. Với nó bạn luôn vào được, kể cả khi cách khác không dùng được."
       },
+      "notLocal": {
+        "title": "Phần này thuộc về dịch vụ đăng nhập của bạn",
+        "reason": "Bạn đăng nhập qua {name}. Hãy thiết lập xác thực hai yếu tố và khóa truy cập ở đó."
+      },
       "password": {
         "hint": "Mật khẩu cần ít nhất {min} ký tự. Đổi mật khẩu sẽ kết thúc mọi phiên khác.",
         "openHint": "Khi chưa đặt mật khẩu, CannonCommander đang mở và bất kỳ ai truy cập được đều là quản trị viên.",
+        "viaService": "Bạn đăng nhập qua {name}, nên tài khoản này không có mật khẩu ở đây.",
         "set": "Đã đặt",
         "none": "Không có",
         "change": "Đổi",

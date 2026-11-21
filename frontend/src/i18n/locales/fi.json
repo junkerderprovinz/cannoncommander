@@ -4447,9 +4447,14 @@
         "title": "Tähän tarvitaan ensin salasana",
         "reason": "Aseta yllä oma salasana. Sillä pääset aina sisään, vaikka jokin toinen tapa ei toimisi."
       },
+      "notLocal": {
+        "title": "Tämä hoituu kirjautumispalvelussasi",
+        "reason": "Kirjaudut palvelulla {name}. Ota kaksivaiheinen tunnistautuminen ja pääsyavaimet käyttöön siellä."
+      },
       "password": {
         "hint": "Salasanassa on oltava vähintään {min} merkkiä. Sen vaihtaminen päättää kaikki muut istunnot.",
         "openHint": "Niin kauan kuin salasanaa ei ole asetettu, CannonCommander on auki, ja jokainen sen tavoittava on ylläpitäjä.",
+        "viaService": "Kirjaudut palvelulla {name}, joten tällä tilillä ei ole täällä salasanaa.",
         "set": "Asetettu",
         "none": "Ei ole",
         "change": "Vaihda",

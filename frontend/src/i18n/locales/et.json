@@ -4447,9 +4447,14 @@
         "title": "Selleks on kõigepealt vaja parooli",
         "reason": "Määra ülal oma parool. Sellega pääsed alati sisse, isegi kui mõni muu tee ei toimi."
       },
+      "notLocal": {
+        "title": "See käib sinu sisselogimisteenuse kaudu",
+        "reason": "Sa logid sisse teenusega {name}. Seadista kaheastmeline autentimine ja pääsuvõtmed seal."
+      },
       "password": {
         "hint": "Paroolis peab olema vähemalt {min} märki. Selle muutmine lõpetab kõik teised seansid.",
         "openHint": "Kuni parooli pole määratud, on CannonCommander avatud ja igaüks, kes selleni jõuab, on administraator.",
+        "viaService": "Sa logid sisse teenusega {name}, seega sellel kontol pole siin parooli.",
         "set": "Määratud",
         "none": "Puudub",
         "change": "Muuda",

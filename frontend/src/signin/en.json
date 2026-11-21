@@ -33,9 +33,14 @@
       "title": "This needs a password first",
       "reason": "Set a password of your own above. It always gets you in, even when another way fails."
     },
+    "notLocal": {
+      "title": "This comes from your sign-in service",
+      "reason": "You sign in through {name}. Set up two-factor authentication and passkeys there."
+    },
     "password": {
       "hint": "A password needs at least {min} characters. Changing it ends every other session.",
       "openHint": "Until a password is set, CannonCommander is open, and everyone who reaches it is an admin.",
+      "viaService": "You sign in through {name}, so this account has no password here.",
       "set": "Set",
       "none": "None",
       "change": "Change",

@@ -4751,9 +4751,14 @@
         "title": "Najpierw potrzebne jest hasło",
         "reason": "Ustaw powyżej własne hasło. Z nim zawsze wejdziesz, nawet gdy inna droga zawiedzie."
       },
+      "notLocal": {
+        "title": "To należy do twojej usługi logowania",
+        "reason": "Logujesz się przez {name}. Uwierzytelnianie dwuskładnikowe i klucze dostępu ustawisz tam."
+      },
       "password": {
         "hint": "Hasło musi mieć co najmniej {min} znaków. Jego zmiana kończy wszystkie inne sesje.",
         "openHint": "Dopóki nie ma hasła, CannonCommander jest otwarty i każdy, kto do niego dotrze, jest administratorem.",
+        "viaService": "Logujesz się przez {name}, więc to konto nie ma tu hasła.",
         "set": "Ustawione",
         "none": "Brak",
         "change": "Zmień",

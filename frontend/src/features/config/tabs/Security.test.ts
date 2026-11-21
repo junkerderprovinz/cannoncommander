@@ -91,6 +91,19 @@ describe('the account and security tab', () => {
     }
   });
 
+  it('sends an account from a sign-in service there for its password, two-factor and passkeys', async () => {
+    const me = GET.me as Record<string, unknown>;
+    Object.assign(me, { password: false, via: 'service', service: 'config' });
+    try {
+      await mount();
+      expect(document.querySelector('[data-signin-card="password"]')?.textContent).toContain('Du meldest dich über OIDC an, deshalb hat dieses Konto hier kein Passwort.');
+      expect(document.querySelector('[data-signin-card="twoFactor"]')?.textContent).toContain('Das läuft über deinen Anmeldedienst');
+      expect(document.querySelector('[data-signin-card="passkeys"]')?.textContent).toContain('Zwei-Faktor-Authentifizierung und Passkeys richtest du dort ein.');
+    } finally {
+      Object.assign(me, { password: true, via: 'password', service: undefined });
+    }
+  });
+
   it('names a session by its browser and system', async () => {
     await mount();
     expect(document.querySelector('[data-signin-card="sessions"]')?.textContent).toContain('Firefox auf Windows');

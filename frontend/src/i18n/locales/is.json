@@ -4447,9 +4447,14 @@
         "title": "Til þess þarf fyrst lykilorð",
         "reason": "Settu eigið lykilorð hér fyrir ofan. Með því kemstu alltaf inn, líka þegar önnur leið bregst."
       },
+      "notLocal": {
+        "title": "Þetta kemur frá innskráningarþjónustunni þinni",
+        "reason": "Þú skráir þig inn með {name}. Settu upp tveggja þátta auðkenningu og aðgangslykla þar."
+      },
       "password": {
         "hint": "Lykilorð þarf að minnsta kosti {min} stafi. Ef þú breytir því lýkur öllum öðrum setum.",
         "openHint": "Á meðan ekkert lykilorð er stillt er CannonCommander opið og allir sem ná í það eru stjórnendur.",
+        "viaService": "Þú skráir þig inn með {name}, svo þessi aðgangur er ekki með lykilorð hér.",
         "set": "Stillt",
         "none": "Ekkert",
         "change": "Breyta",

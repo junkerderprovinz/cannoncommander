@@ -4447,9 +4447,14 @@
         "title": "Ehhez előbb jelszó kell",
         "reason": "Állítson be fent egy saját jelszót. Ezzel mindig bejut, akkor is, ha egy másik út nem működik."
       },
+      "notLocal": {
+        "title": "Ez a bejelentkezési szolgáltatásához tartozik",
+        "reason": "Ezzel jelentkezik be: {name}. A kéttényezős hitelesítést és az azonosítókulcsokat ott állítsa be."
+      },
       "password": {
         "hint": "A jelszónak legalább {min} karakterből kell állnia. A módosítása minden más munkamenetet lezár.",
         "openHint": "Amíg nincs jelszó beállítva, a CannonCommander nyitott, és mindenki rendszergazda, aki eléri.",
+        "viaService": "Ezzel jelentkezik be: {name}, ezért ennek a fióknak itt nincs jelszava.",
         "set": "Beállítva",
         "none": "Nincs",
         "change": "Módosítás",

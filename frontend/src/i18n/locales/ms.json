@@ -4295,9 +4295,14 @@
         "title": "Ini memerlukan kata laluan dahulu",
         "reason": "Tetapkan kata laluan anda sendiri di atas. Dengannya anda sentiasa boleh masuk, walaupun cara lain gagal."
       },
+      "notLocal": {
+        "title": "Ini datang daripada perkhidmatan log masuk anda",
+        "reason": "Anda log masuk melalui {name}. Sediakan pengesahan dua faktor dan kunci laluan di sana."
+      },
       "password": {
         "hint": "Kata laluan memerlukan sekurang-kurangnya {min} aksara. Menukarnya menamatkan semua sesi lain.",
         "openHint": "Selagi tiada kata laluan ditetapkan, CannonCommander terbuka dan sesiapa yang sampai kepadanya ialah pentadbir.",
+        "viaService": "Anda log masuk melalui {name}, jadi akaun ini tiada kata laluan di sini.",
         "set": "Sudah ditetapkan",
         "none": "Tiada",
         "change": "Ubah",

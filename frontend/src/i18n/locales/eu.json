@@ -4438,9 +4438,14 @@
         "title": "Horretarako pasahitz bat behar da lehenik",
         "reason": "Ezarri goian zure pasahitza. Horrekin beti sartzen zara, beste bide batek huts egiten duenean ere."
       },
+      "notLocal": {
+        "title": "Hau zure saio-hasierako zerbitzutik dator",
+        "reason": "{name} bidez hasten duzu saioa. Konfiguratu han bi faktoreko autentifikazioa eta sarbide-gakoak."
+      },
       "password": {
         "hint": "Pasahitzak gutxienez {min} karaktere behar ditu. Aldatzeak beste saio guztiak amaitzen ditu.",
         "openHint": "Pasahitzik ezarri ez den bitartean, CannonCommander irekita dago eta bertara iristen den edonor administratzailea da.",
+        "viaService": "{name} bidez hasten duzu saioa, beraz kontu honek ez du pasahitzik hemen.",
         "set": "Ezarrita",
         "none": "Bat ere ez",
         "change": "Aldatu",

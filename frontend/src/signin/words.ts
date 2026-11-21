@@ -23,7 +23,7 @@ export const arrivedWords = (): Record<string, string> => Object.fromEntries(ARR
 export function cardText(minPassword: number): SignInText {
   const field = componentText(language()).passwordField;
   return {
-    password: s('password'), signIn: s('signIn'), signingIn: s('signingIn'), passkey: '', forgot: s('forgot'),
+    name: s('name'), password: s('password'), signIn: s('signIn'), signingIn: s('signingIn'), passkey: '', forgot: s('forgot'),
     code: s('codeLabel'), codeHint: s('codeTip'), codeInvalid: s('badCode'), back: s('back'),
     resetCode: s('logCode'), resetCodeTip: s('logCodeTip'), newPassword: s('newPassword'), confirmPassword: field.confirm,
     setPassword: s('setPassword'), saving: s('saving'), mismatch: field.mismatch, tooShort: plural(minPassword, 'signin.short'),
@@ -58,8 +58,9 @@ export function tileText(): SignInTileText {
     save: t('config.save'), remove: t('config.remove'), ...eyeWords(), confirmPassword: field.confirm, mismatch: field.mismatch,
     failed: s('failed'),
     needsPassword: { title: tile('needsPassword.title'), reason: tile('needsPassword.reason') },
+    notLocal: { title: tile('notLocal.title'), reason: tile('notLocal.reason') },
     password: {
-      title: s('password'), hint: tile('password.hint'), openHint: tile('password.openHint'), state: s('password'),
+      title: s('password'), hint: tile('password.hint'), openHint: tile('password.openHint'), viaService: tile('password.viaService'), state: s('password'),
       set: tile('password.set'), none: tile('password.none'), change: tile('password.change'), add: tile('password.add'),
       current: tile('password.current'), next: s('newPassword'), save: tile('password.save'), saved: tile('password.saved'),
       first: tile('password.first'), wrongCurrent: tile('password.wrongCurrent'), tooShort: s('errors.passwordShort'),

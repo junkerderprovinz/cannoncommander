@@ -4447,9 +4447,14 @@
         "title": "Hiervoor is eerst een wachtwoord nodig",
         "reason": "Stel hierboven een eigen wachtwoord in. Daarmee kom je er altijd in, ook als een andere weg niet werkt."
       },
+      "notLocal": {
+        "title": "Dit regel je bij je inlogdienst",
+        "reason": "Je logt in via {name}. Stel tweestapsverificatie en toegangssleutels daar in."
+      },
       "password": {
         "hint": "Een wachtwoord heeft minstens {min} tekens nodig. Wijzigen beëindigt alle andere sessies.",
         "openHint": "Zolang er geen wachtwoord is, staat CannonCommander open en is iedereen die het bereikt beheerder.",
+        "viaService": "Je logt in via {name}, dus dit account heeft hier geen wachtwoord.",
         "set": "Ingesteld",
         "none": "Geen",
         "change": "Wijzigen",

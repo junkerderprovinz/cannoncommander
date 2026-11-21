@@ -4599,9 +4599,14 @@
         "title": "Il faut d'abord un mot de passe",
         "reason": "Définissez ci-dessus un mot de passe à vous. Il vous permet toujours d'entrer, même quand une autre voie échoue."
       },
+      "notLocal": {
+        "title": "Cela relève de votre service de connexion",
+        "reason": "Vous vous connectez avec {name}. Configurez-y l'authentification à deux facteurs et les clés d'accès."
+      },
       "password": {
         "hint": "Un mot de passe doit compter au moins {min} caractères. Le changer ferme toutes les autres sessions.",
         "openHint": "Tant qu'aucun mot de passe n'est défini, CannonCommander est ouvert et toute personne qui l'atteint est administrateur.",
+        "viaService": "Vous vous connectez avec {name}, ce compte n'a donc pas de mot de passe ici.",
         "set": "Défini",
         "none": "Aucun",
         "change": "Modifier",

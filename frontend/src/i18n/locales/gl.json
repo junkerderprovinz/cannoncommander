@@ -4447,9 +4447,14 @@
         "title": "Primeiro fai falta un contrasinal",
         "reason": "Pon arriba un contrasinal propio. Sempre te deixa entrar, aínda que falle outra vía."
       },
+      "notLocal": {
+        "title": "Isto depende do teu servizo de inicio de sesión",
+        "reason": "Inicias sesión con {name}. Configura alí a autenticación de dous factores e as chaves de acceso."
+      },
       "password": {
         "hint": "Un contrasinal necesita polo menos {min} caracteres. Cambialo pecha todas as outras sesións.",
         "openHint": "Mentres non haxa contrasinal, CannonCommander está aberto e calquera que chegue a el é administrador.",
+        "viaService": "Inicias sesión con {name}, así que esta conta non ten contrasinal aquí.",
         "set": "Definido",
         "none": "Ningún",
         "change": "Cambiar",

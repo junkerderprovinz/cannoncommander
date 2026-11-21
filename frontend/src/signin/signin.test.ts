@@ -150,10 +150,10 @@ describe('the sign in page', () => {
     expect(error()).toBe('Zu viele Versuche. Versuch es in 60 Sekunden noch einmal.');
   });
 
-  it('asks for the reset code without a name and says afterwards what the reset took away', async () => {
+  it('asks for the reset code, then for the name in the reset form, and says afterwards what the reset took away', async () => {
     script['POST reset-code'] = { body: {} };
     script['POST reset'] = { body: { visitor: { name: 'anna', role: 'admin', via: 'password' }, removed: { tokens: 2, passkeys: 1, twoFactor: true, services: 0 } } };
-    await mount({ was: 'anna' });
+    await mount();
     press('forgot');
     await settle();
     expect(sent.at(-1)).toEqual({ url: 'POST reset-code', body: {} });
@@ -161,6 +161,9 @@ describe('the sign in page', () => {
     type('#cl-reset-code', 'ABCD-EFGH-JKLM');
     type('#cl-new', 'ein-neues-langes-passwort');
     type('#cl-confirm', 'ein-neues-langes-passwort');
+    await settle();
+    expect($('[data-signin="set-password"]').disabled).toBe(true);
+    type('#cl-reset-name', 'anna');
     await settle();
     submit();
     await settle();
@@ -177,6 +180,7 @@ describe('the sign in page', () => {
     press('forgot');
     await settle();
     type('#cl-reset-code', 'ABCD-EFGH-JKLM');
+    type('#cl-reset-name', 'anna');
     type('#cl-new', 'ein-neues-langes-passwort');
     type('#cl-confirm', 'ein-neues-langes-passwort');
     await settle();

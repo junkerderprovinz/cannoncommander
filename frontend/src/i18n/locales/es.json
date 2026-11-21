@@ -4599,9 +4599,14 @@
         "title": "Primero hace falta una contraseña",
         "reason": "Pon arriba una contraseña propia. Siempre te deja entrar, aunque falle otra vía."
       },
+      "notLocal": {
+        "title": "Esto depende de tu servicio de inicio de sesión",
+        "reason": "Inicias sesión con {name}. Configura allí la autenticación de dos factores y las llaves de acceso."
+      },
       "password": {
         "hint": "Una contraseña necesita al menos {min} caracteres. Cambiarla cierra todas las demás sesiones.",
         "openHint": "Mientras no haya contraseña, CannonCommander está abierto y cualquiera que llegue a él es administrador.",
+        "viaService": "Inicias sesión con {name}, así que esta cuenta no tiene contraseña aquí.",
         "set": "Establecida",
         "none": "Ninguna",
         "change": "Cambiar",

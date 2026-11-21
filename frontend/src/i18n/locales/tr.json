@@ -4447,9 +4447,14 @@
         "title": "Bunun için önce bir parola gerekiyor",
         "reason": "Yukarıda kendi parolanı ayarla. Onunla, başka bir yol çalışmasa bile her zaman içeri girersin."
       },
+      "notLocal": {
+        "title": "Bu, giriş hizmetinden gelir",
+        "reason": "{name} üzerinden giriş yapıyorsun. İki faktörlü kimlik doğrulamayı ve geçiş anahtarlarını orada kur."
+      },
       "password": {
         "hint": "Bir parola en az {min} karakter olmalı. Değiştirmek diğer tüm oturumları kapatır.",
         "openHint": "Parola ayarlanmadığı sürece CannonCommander açıktır ve ona ulaşan herkes yöneticidir.",
+        "viaService": "{name} üzerinden giriş yapıyorsun, bu yüzden bu hesabın burada parolası yok.",
         "set": "Ayarlı",
         "none": "Yok",
         "change": "Değiştir",

@@ -4751,9 +4751,14 @@
         "title": "Najprej je potrebno geslo",
         "reason": "Zgoraj nastavite lastno geslo. Z njim vedno pridete noter, tudi ko druga pot odpove."
       },
+      "notLocal": {
+        "title": "To ureja vaša storitev za prijavo",
+        "reason": "Prijavljate se prek {name}. Dvostopenjsko preverjanje pristnosti in ključ za dostop nastavite tam."
+      },
       "password": {
         "hint": "Geslo mora imeti vsaj {min} znakov. Sprememba konča vse druge seje.",
         "openHint": "Dokler geslo ni nastavljeno, je CannonCommander odprt in vsak, ki ga doseže, je skrbnik.",
+        "viaService": "Prijavljate se prek {name}, zato ta račun tukaj nima gesla.",
         "set": "Nastavljeno",
         "none": "Brez",
         "change": "Spremeni",

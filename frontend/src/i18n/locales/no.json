@@ -4447,9 +4447,14 @@
         "title": "Dette krever først et passord",
         "reason": "Sett et eget passord ovenfor. Med det kommer du alltid inn, også når en annen vei svikter."
       },
+      "notLocal": {
+        "title": "Dette hører til innloggingstjenesten din",
+        "reason": "Du logger inn via {name}. Sett opp tofaktorautentisering og tilgangsnøkler der."
+      },
       "password": {
         "hint": "Et passord trenger minst {min} tegn. Endrer du det, avsluttes alle andre økter.",
         "openHint": "Så lenge det ikke er satt noe passord, er CannonCommander åpent, og alle som når det, er administrator.",
+        "viaService": "Du logger inn via {name}, så denne kontoen har ikke noe passord her.",
         "set": "Satt",
         "none": "Ingen",
         "change": "Endre",

@@ -4751,9 +4751,14 @@
         "title": "Pirmiausia reikia slaptažodžio",
         "reason": "Aukščiau nustatyk savo slaptažodį. Su juo visada prisijungsi, net jei kitas būdas neveiks."
       },
+      "notLocal": {
+        "title": "Tai tvarkoma tavo prisijungimo paslaugoje",
+        "reason": "Prisijungi per {name}. Dviejų veiksnių autentifikavimą ir prieigos raktus nustatyk ten."
+      },
       "password": {
         "hint": "Slaptažodyje turi būti bent {min} simbolių. Jį pakeitus užbaigiami visi kiti seansai.",
         "openHint": "Kol slaptažodis nenustatytas, CannonCommander atviras ir kiekvienas, kas jį pasiekia, yra administratorius.",
+        "viaService": "Prisijungi per {name}, todėl ši paskyra čia neturi slaptažodžio.",
         "set": "Nustatytas",
         "none": "Nėra",
         "change": "Keisti",

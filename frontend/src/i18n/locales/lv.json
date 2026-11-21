@@ -4599,9 +4599,14 @@
         "title": "Vispirms vajadzīga parole",
         "reason": "Augšā iestati savu paroli. Ar to vienmēr tiksi iekšā, pat ja kāds cits ceļš nedarbojas."
       },
+      "notLocal": {
+        "title": "Tas nāk no tava pierakstīšanās pakalpojuma",
+        "reason": "Tu pieraksties ar {name}. Divfaktoru autentifikāciju un piekļuves atslēgas iestati tur."
+      },
       "password": {
         "hint": "Parolē jābūt vismaz {min} rakstzīmēm. Tās maiņa beidz visas pārējās sesijas.",
         "openHint": "Kamēr parole nav iestatīta, CannonCommander ir atvērts un ikviens, kas to sasniedz, ir administrators.",
+        "viaService": "Tu pieraksties ar {name}, tāpēc šim kontam šeit nav paroles.",
         "set": "Iestatīta",
         "none": "Nav",
         "change": "Mainīt",
