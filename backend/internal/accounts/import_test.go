@@ -185,6 +185,7 @@ func TestImportedTokensKeepWhatTheyWereAllowed(t *testing.T) {
 	if me := decode[accounts.Me](t, w.must(http.StatusOK, w.req("GET", "/me", nil, bearer(reader)))); me.Token.Rights != "r" {
 		t.Fatalf("a read only token: %+v", me.Token)
 	}
+	w.must(http.StatusForbidden, w.req("GET", "/admin/users", nil, bearer(reader)))
 	if rec := w.req("POST", "/admin/groups", map[string]string{"name": "neu"}, bearer(reader)); rec.Code != http.StatusForbidden || code(t, rec) != "tokenReadOnly" {
 		t.Fatalf("a read only token wrote: %d %s", rec.Code, rec.Body)
 	}
@@ -238,5 +239,15 @@ func TestTwoNamesThatDifferInCaseStopTheStartWithBothNamed(t *testing.T) {
 	w.open()
 	if u, err := state.GetUserByUsername("anna2"); err != nil || u.ID != upper.ID {
 		t.Fatalf("the variable left set changed the account again: %v", err)
+	}
+}
+
+func TestAnOpenServersAdminNameMakesNoOwnerUnlessItIsAnAdmin(t *testing.T) {
+	w := newBareWorld(t)
+	named := w.oldUser(settings.PasswordAdminUsername(), "", false)
+	w.oldUser("anna", "", true)
+	w.open()
+	if w.account(named).Owner {
+		t.Fatal("an account that only carries the admin's name became the owner")
 	}
 }

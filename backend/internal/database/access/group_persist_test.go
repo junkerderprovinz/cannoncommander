@@ -2,7 +2,6 @@ package access_test
 
 import (
 	"errors"
-	"maps"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
@@ -28,47 +27,6 @@ func (s *stubGroupSQL) SaveHashedToken(string, uint64, bool, int64) error    { r
 func (s *stubGroupSQL) DeleteHashedToken(string) error                       { return nil }
 func (s *stubGroupSQL) DeleteHashedTokensByUserID(uint64) error {
 	return nil
-}
-
-type recordingGroupSQL struct {
-	groups    map[string]access.StringSet
-	saveCalls int
-	failOn    int
-}
-
-func (s *recordingGroupSQL) SaveGroup(name string, members access.StringSet) error {
-	if s.groups == nil {
-		s.groups = make(map[string]access.StringSet)
-	}
-	s.saveCalls++
-	if s.failOn > 0 && s.saveCalls == s.failOn {
-		return errors.New("save failed")
-	}
-	s.groups[name] = cloneStringSet(members)
-	return nil
-}
-func (s *recordingGroupSQL) DeleteGroup(name string) error {
-	if s.groups == nil {
-		s.groups = make(map[string]access.StringSet)
-	}
-	delete(s.groups, name)
-	return nil
-}
-func (s *recordingGroupSQL) SaveRevokedToken(string, int64) error                 { return nil }
-func (s *recordingGroupSQL) PersistImmediateTokenRevocation(string) error         { return nil }
-func (s *recordingGroupSQL) PersistTokenRetirement(string, int64, []string) error { return nil }
-func (s *recordingGroupSQL) DeleteRevokedToken(string) error                      { return nil }
-func (s *recordingGroupSQL) SaveHashedToken(string, uint64, bool, int64) error    { return nil }
-func (s *recordingGroupSQL) DeleteHashedToken(string) error                       { return nil }
-func (s *recordingGroupSQL) DeleteHashedTokensByUserID(uint64) error              { return nil }
-
-func cloneStringSet(src access.StringSet) access.StringSet {
-	if len(src) == 0 {
-		return nil
-	}
-	dst := make(access.StringSet, len(src))
-	maps.Copy(dst, src)
-	return dst
 }
 
 func TestAddUserToGroup_RollsBackOnSQLFailure(t *testing.T) {

@@ -2,6 +2,7 @@ package accounts_test
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -9,11 +10,13 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/junkerderprovinz/parleyport/kit/signin/signintest"
 )
@@ -167,6 +170,7 @@ func TestAnUnboundOIDCAccountIsClaimedOnceByItsName(t *testing.T) {
 		t.Fatal(err)
 	}
 	w.oldUser("carl", strong, false)
+	w.oldUser("dora", "", false)
 	w.open()
 
 	b, _ := w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "bert"})
@@ -176,8 +180,10 @@ func TestAnUnboundOIDCAccountIsClaimedOnceByItsName(t *testing.T) {
 	if b, to := w.throughProvider(p, signintest.Person{Subject: "s-2", Name: "bert"}); b.session() != "" {
 		t.Fatalf("a second person named bert got in, back to %s", to)
 	}
-	if b, _ := w.throughProvider(p, signintest.Person{Subject: "s-3", Name: "carl"}); b.session() != "" {
-		t.Fatal("a person named like a password account took it")
+	for _, name := range []string{"carl", "dora"} {
+		if b, _ := w.throughProvider(p, signintest.Person{Subject: "s-" + name, Name: name}); b.session() != "" {
+			t.Fatalf("a person named like the password account %s took it", name)
+		}
 	}
 }
 
@@ -217,5 +223,47 @@ func TestStartupNamesWhyTheConfigServiceCannotRun(t *testing.T) {
 	settings.Config.Auth.Methods.OidcAuth.DisableVerifyTLS = true
 	if _, err := accounts.Open(context.Background(), w.deps); err == nil || !strings.Contains(err.Error(), "caFile") {
 		t.Fatalf("no line about caFile: %v", err)
+	}
+}
+
+// resetCodes catches the reset code the sign-in writes to the log.
+type resetCodes struct {
+	slog.Handler
+	mu    *sync.Mutex
+	codes *[]string
+}
+
+func (h resetCodes) Handle(ctx context.Context, r slog.Record) error {
+	r.Attrs(func(a slog.Attr) bool {
+		if a.Key == "code" {
+			h.mu.Lock()
+			*h.codes = append(*h.codes, a.Value.String())
+			h.mu.Unlock()
+		}
+		return true
+	})
+	return nil
+}
+
+func (h resetCodes) Enabled(context.Context, slog.Level) bool { return true }
+
+func TestAResetGivesAnOIDCRowAPasswordNobodyKnows(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("")
+	var codes []string
+	saved := slog.Default()
+	slog.SetDefault(slog.New(resetCodes{Handler: saved.Handler(), mu: &sync.Mutex{}, codes: &codes}))
+	t.Cleanup(func() { slog.SetDefault(saved) })
+	w.open()
+	w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna"})
+
+	w.must(http.StatusOK, w.req("POST", "/api/signin/v1/reset-code", map[string]string{}))
+	if len(codes) != 1 {
+		t.Fatalf("reset codes in the log: %v", codes)
+	}
+	w.must(http.StatusOK, w.req("POST", "/api/signin/v1/reset", map[string]string{"code": codes[0], "password": strong, "name": "erna"}))
+	u, err := state.GetUserByUsername("erna")
+	if err != nil || u.LoginMethod != users.LoginMethodPassword || u.Password == "" || utils.CheckPwd(strong, u.Password) == nil {
+		t.Fatalf("after the reset the version before would bind erna by name or let her new password in: %s %q", u.LoginMethod, u.Password)
 	}
 }

@@ -197,7 +197,7 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	name := strings.TrimSpace(deref(in.Name))
-	if err := checkLoginName(name); err != nil {
+	if err = checkLoginName(name); err != nil {
 		return err
 	}
 	if _, err := state.GetUserByUsername(name); err == nil {
@@ -211,13 +211,13 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	if err := checkGroups(in.Groups); err != nil {
+	if err = checkGroups(in.Groups); err != nil {
 		return err
 	}
 	if in.Password == nil {
 		return v1.Coded(http.StatusBadRequest, "passwordMissing", "the password is missing")
 	}
-	if err := checkPassword(*in.Password); err != nil {
+	if err = checkPassword(*in.Password); err != nil {
 		return err
 	}
 	ctx := context.WithValue(r.Context(), newUserKey{}, &newUser{scopes: scopes})
@@ -230,13 +230,13 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	if err := setGroups(name, in.Groups); err != nil {
+	if err = setGroups(name, in.Groups); err != nil {
 		return err
 	}
-	if err := setName(r.Context(), h.db, acc.ID, strings.TrimSpace(deref(in.Full))); err != nil {
+	if err = setName(r.Context(), h.db, acc.ID, strings.TrimSpace(deref(in.Full))); err != nil {
 		return err
 	}
-	if err := passwordChanged(r.Context(), h.db, acc.ID); err != nil {
+	if err = passwordChanged(r.Context(), h.db, acc.ID); err != nil {
 		return err
 	}
 	activity.RecordUserMutation(r, &activity.Actor{User: v1.UserFrom(r)}, activitydb.EventUserCreate, u, nil)
@@ -264,7 +264,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	var in UserInput
-	if err := v1.DecodeJSON(r, &in); err != nil {
+	if err = v1.DecodeJSON(r, &in); err != nil {
 		return err
 	}
 	u, err := target(r)
@@ -292,7 +292,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		if self {
 			return v1.Coded(http.StatusBadRequest, "ownLoginName", "you cannot change your own login name")
 		}
-		if err := checkLoginName(name); err != nil {
+		if err = checkLoginName(name); err != nil {
 			return err
 		}
 		if _, err := state.GetUserByUsername(name); err == nil {
@@ -318,7 +318,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	if in.Groups != nil {
-		if err := checkGroups(in.Groups); err != nil {
+		if err = checkGroups(in.Groups); err != nil {
 			return err
 		}
 	}
@@ -329,58 +329,58 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		if !acc.Password {
 			return v1.Coded(http.StatusConflict, "userPasswordElsewhere", "this user signs in through a sign-in service, the password is kept there")
 		}
-		if err := checkPassword(*in.Password); err != nil {
+		if err = checkPassword(*in.Password); err != nil {
 			return err
 		}
 	}
 
 	if name != u.Username {
-		if err := auth.RenameAccount(r, id, name); err != nil {
+		if err = auth.RenameAccount(r, id, name); err != nil {
 			return fromSignIn(r, err)
 		}
 		fields = append(fields, "username")
 	}
 	if in.Role != nil && *in.Role != role {
-		if err := auth.SetRole(r, id, *in.Role); err != nil {
+		if err = auth.SetRole(r, id, *in.Role); err != nil {
 			return fromSignIn(r, err)
 		}
 		fields = append(fields, "permissions")
 	}
 	if scopes != nil {
-		fresh, err := state.GetUserByID(u.ID)
-		if err != nil {
-			return err
+		fresh, lookupErr := state.GetUserByID(u.ID)
+		if lookupErr != nil {
+			return lookupErr
 		}
 		fresh.BackendScopes = scopes
-		if err := state.UpdateUser(&fresh, "", "backendScopes"); err != nil {
+		if err = state.UpdateUser(&fresh, "", "backendScopes"); err != nil {
 			return v1.Errorf(http.StatusBadRequest, err.Error())
 		}
 		fields = append(fields, "backendScopes")
 	}
 	if in.Blocked != nil && *in.Blocked != acc.Blocked {
-		if err := auth.SetBlocked(r, id, *in.Blocked); err != nil {
+		if err = auth.SetBlocked(r, id, *in.Blocked); err != nil {
 			return fromSignIn(r, err)
 		}
 		fields = append(fields, "blocked")
 	}
 	if in.Groups != nil {
-		if err := setGroups(name, in.Groups); err != nil {
+		if err = setGroups(name, in.Groups); err != nil {
 			return err
 		}
 	}
 	if in.Full != nil {
-		if err := setName(r.Context(), h.db, id, strings.TrimSpace(*in.Full)); err != nil {
+		if err = setName(r.Context(), h.db, id, strings.TrimSpace(*in.Full)); err != nil {
 			return err
 		}
 	}
 	if in.Password != nil {
-		if err := auth.SetPassword(r, id, *in.Password); err != nil {
+		if err = auth.SetPassword(r, id, *in.Password); err != nil {
 			return fromSignIn(r, err)
 		}
 		fields = append(fields, "password")
 	}
 	if in.Revoke {
-		if err := auth.Revoke(r, id); err != nil {
+		if err = auth.Revoke(r, id); err != nil {
 			return fromSignIn(r, err)
 		}
 		fields = append(fields, "access")

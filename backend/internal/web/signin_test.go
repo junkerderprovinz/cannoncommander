@@ -297,3 +297,19 @@ func TestTheTerminalGateFollowsTheSession(t *testing.T) {
 		t.Fatal("the terminal outlives its session")
 	}
 }
+
+func TestWebDAVLeavesTheOldSessionCookieAlone(t *testing.T) {
+	var old string
+	h := newServer(t, func() {
+		withAdminPassword(t)()
+		admin, _ := state.GetUserByUsername("admin")
+		old = oldSessionOf(t, admin)
+	})
+	rec := send(t, h, "PROPFIND", "/dav/", nil, "Depth", "1", "Authorization", basic("admin", strong), "Cookie", accounts.OldCookie+"="+old)
+	if rec.Code != http.StatusMultiStatus || len(rec.Result().Cookies()) != 0 {
+		t.Fatalf("WebDAV took part in the sign-in: %d %v", rec.Code, rec.Result().Cookies())
+	}
+	if page := send(t, h, "GET", "/", nil, "Cookie", accounts.OldCookie+"="+old); len(page.Result().Cookies()) == 0 {
+		t.Fatal("the old session was used up on WebDAV")
+	}
+}

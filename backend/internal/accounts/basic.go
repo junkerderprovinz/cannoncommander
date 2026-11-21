@@ -1,6 +1,7 @@
 package accounts
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"errors"
@@ -70,7 +71,7 @@ func BasicLogin(r *http.Request, name, password string) (Basic, error) {
 		return Basic{}, ErrBasicRefused
 	}
 	name = strings.TrimSpace(name)
-	if acc, ok := basicSeen.knows(r, auth, name, password); ok {
+	if acc, ok := basicSeen.knows(ctx, auth.Account, name, password); ok {
 		u, err := userOf(signin.Visitor{Account: acc.ID, Role: acc.Role})
 		if err == nil {
 			return Basic{User: u}, nil
@@ -124,14 +125,16 @@ func (m *passwordMemory) digest(name, password string) [32]byte {
 	return sha256.Sum256([]byte(string(m.salt[:]) + name + "\x00" + password))
 }
 
-func (m *passwordMemory) knows(r *http.Request, auth *signin.Auth, name, password string) (signin.Account, bool) {
+// knows returns the account a remembered password stands for, as account
+// finds it now.
+func (m *passwordMemory) knows(ctx context.Context, account func(context.Context, string) (signin.Account, error), name, password string) (signin.Account, bool) {
 	m.mu.Lock()
 	e, ok := m.known[m.digest(name, password)]
 	m.mu.Unlock()
 	if !ok || !time.Now().Before(e.until) {
 		return signin.Account{}, false
 	}
-	acc, err := auth.Account(r.Context(), e.account)
+	acc, err := account(ctx, e.account)
 	if err != nil || acc.Blocked || acc.TwoFactor || !acc.Password || acc.Epoch != e.epoch {
 		return signin.Account{}, false
 	}
