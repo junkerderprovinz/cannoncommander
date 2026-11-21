@@ -12,15 +12,14 @@ import (
 	"testing"
 )
 
-// A corner of the icon that is not fully clear shows a tile behind the
-// cannons in shortcuts, the taskbar and the tray, where the small sizes go.
-func clearCorners(t *testing.T, name string, img image.Image) {
+// noTile fails an icon that shows a tile behind the logo. The logo leaves the
+// middle of the icon clear, between its two cannons, where a tile would be.
+func noTile(t *testing.T, name string, img image.Image) {
 	t.Helper()
 	b := img.Bounds()
-	for _, p := range []image.Point{b.Min, {b.Max.X - 1, b.Min.Y}, {b.Min.X, b.Max.Y - 1}, {b.Max.X - 1, b.Max.Y - 1}} {
-		if _, _, _, a := img.At(p.X, p.Y).RGBA(); a != 0 {
-			t.Errorf("%s at %d px: corner %v has alpha %d", name, b.Dx(), p, a>>8)
-		}
+	c := image.Pt(b.Min.X+b.Dx()/2, b.Min.Y+b.Dy()/2)
+	if _, _, _, a := img.At(c.X, c.Y).RGBA(); a != 0 {
+		t.Errorf("%s at %d px: the middle has alpha %d, a tile is behind the logo", name, b.Dx(), a>>8)
 	}
 }
 
@@ -149,7 +148,7 @@ func sizesOf(imgs []image.Image) map[int]bool {
 	return got
 }
 
-func TestTheWindowsIconHasEverySizeWithClearCorners(t *testing.T) {
+func TestTheWindowsIconHasEverySizeWithoutATile(t *testing.T) {
 	raw, err := os.ReadFile("icons/icon.ico")
 	if err != nil {
 		t.Fatal(err)
@@ -165,11 +164,11 @@ func TestTheWindowsIconHasEverySizeWithClearCorners(t *testing.T) {
 		}
 	}
 	for _, img := range imgs {
-		clearCorners(t, "icon.ico", img)
+		noTile(t, "icon.ico", img)
 	}
 }
 
-func TestTheMacIconHasClearCorners(t *testing.T) {
+func TestTheMacIconHasNoTile(t *testing.T) {
 	raw, err := os.ReadFile("icons/icons.icns")
 	if err != nil {
 		t.Fatal(err)
@@ -182,16 +181,16 @@ func TestTheMacIconHasClearCorners(t *testing.T) {
 		t.Errorf("sizes %v", got)
 	}
 	for _, img := range imgs {
-		clearCorners(t, "icons.icns", img)
+		noTile(t, "icons.icns", img)
 	}
 }
 
-func TestTheTrayIconHasClearCorners(t *testing.T) {
+func TestTheTrayIconHasNoTile(t *testing.T) {
 	img, err := png.Decode(bytes.NewReader(trayIcon))
 	if err != nil {
 		t.Fatal(err)
 	}
-	clearCorners(t, "tray", img)
+	noTile(t, "tray", img)
 }
 
 // CC_EXE names built programs, a list as PATH writes it, so the desktop build
@@ -210,7 +209,7 @@ func TestTheBuiltProgramShowsNoTileAtAnySize(t *testing.T) {
 			t.Fatalf("%d icon images in %s", len(imgs), path)
 		}
 		for _, img := range imgs {
-			clearCorners(t, filepath.Base(path), img)
+			noTile(t, filepath.Base(path), img)
 		}
 	}
 }

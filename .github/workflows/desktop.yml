@@ -129,9 +129,9 @@ jobs:
       - name: Build
         run: node scripts/desktop.mjs ${{ matrix.args }}
 
-      # Shortcuts, the taskbar and Explorer show the program's small icon
-      # sizes, so every size of the program and the installer has to keep its
-      # corners clear, or a tile shows behind the cannons.
+      # Shortcuts, the taskbar and Explorer show the program's icon at every
+      # size, so no size of the program or the installer may carry a tile
+      # behind the logo.
       - name: Check the icons
         if: runner.os == 'Windows'
         working-directory: desktop

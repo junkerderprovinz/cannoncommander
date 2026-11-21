@@ -15,8 +15,8 @@
  *   desktop/icons/icon-16.png ... icon-48.png      the small sizes of the Flatpak's menu entry
  *   desktop/installer/icon.png                     256, the Linux menu entry the installer writes
  *
- * Up to 48 px, and in the tray, the logo goes without its frame: there the frame fills the corners and reads as a tile
- * behind the cannons.
+ * Every size is drawn from the vector at its own size rather than shrunk from a large picture, which keeps the frame
+ * and the cannons sharp at 16 px.
  *
  * Deps (global): @resvg/resvg-js.
  * Run: node .github/assets/gen-icon.mjs
@@ -72,10 +72,7 @@ const maskable = `<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="$
 </svg>`;
 emit(join(icons, "app-maskable-512.png"), render(maskable, S));
 
-// The logo without its frame, the first group of the drawing.
-const bare = logo.replace(/(<g id="logo_v3">\s*)<g>[\s\S]*?<\/g>/, "$1");
-const SMALL = 48;
-const mark = (size) => render(size <= SMALL ? bare : logo, size);
+const mark = (size) => render(logo, size);
 
 // An .ico of PNG images, which Windows reads at every size.
 function ico(sizes) {
@@ -97,11 +94,10 @@ function ico(sizes) {
   return Buffer.concat([head, ...images.map((i) => i.png)]);
 }
 
-// An .icns of PNG entries. The retina entries of 16 and 32 points stand at 32 and 64 pixels but show small, so they
-// go without the frame too.
+// An .icns of PNG entries.
 function icns(entries) {
-  const parts = entries.map(([type, size, small]) => {
-    const png = render(small ? bare : logo, size);
+  const parts = entries.map(([type, size]) => {
+    const png = mark(size);
     const head = Buffer.alloc(8);
     head.write(type, 0, "ascii");
     head.writeUInt32BE(png.length + 8, 4);
@@ -117,9 +113,8 @@ function icns(entries) {
 const out = join(desktop, "icons");
 emit(join(out, "icon.ico"), ico([16, 24, 32, 48, 64, 128, 256]));
 emit(join(out, "icons.icns"), icns([
-  ["icp4", 16, true], ["icp5", 32, true], ["ic11", 32, true], ["ic12", 64, true],
-  ["icp6", 64, false], ["ic07", 128, false], ["ic08", 256, false], ["ic13", 256, false],
-  ["ic09", 512, false], ["ic14", 512, false], ["ic10", 1024, false],
+  ["icp4", 16], ["icp5", 32], ["ic11", 32], ["ic12", 64], ["icp6", 64], ["ic07", 128],
+  ["ic08", 256], ["ic13", 256], ["ic09", 512], ["ic14", 512], ["ic10", 1024],
 ]));
-emit(join(out, "tray.png"), render(bare, 64));
+emit(join(out, "tray.png"), mark(64));
 for (const size of [16, 24, 32, 48]) emit(join(out, `icon-${size}.png`), mark(size));
