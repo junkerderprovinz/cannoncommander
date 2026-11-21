@@ -10,6 +10,7 @@ import { type FootButton, isWayOut, type WinEntry } from './windows';
 const props = defineProps<{ w: WinEntry }>();
 const frame = ref<InstanceType<typeof Window> | null>(null);
 
+// Window counts its start slot once, at mount, so a body that brings one later says so through the text instead.
 const start = computed(() => props.w.foot.find((f) => f.start !== undefined)?.start);
 const actions = computed<WindowAction[]>(() => props.w.foot.flatMap((f, k) => (f.start !== undefined ? [] : [{
   label: f.label!,
@@ -40,7 +41,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <Window ref="frame" class="win" :class="w.cls" :title="w.title" :actions="actions" :start="start" :size="w.full ? 'full' : w.wide ? 'wide' : 'normal'" :text="text" @close="asked">
+  <Window ref="frame" class="win" :class="w.cls" :title="w.title" :actions="actions" :start="w.startBody ? ' ' : start" :size="w.full ? 'full' : w.wide ? 'wide' : 'normal'" :text="text" @close="asked">
+    <template v-if="w.startBody" #start><component :is="w.startBody" v-bind="w.props" :win="w" /></template>
     <template v-if="w.dot" #title>{{ w.title }}<i class="ce-dot" :aria-label="w.dot"></i></template>
     <div v-if="typeof w.body === 'string'" v-html="w.body"></div>
     <component :is="w.body" v-else v-bind="w.props" :close="w.close" :win="w" />

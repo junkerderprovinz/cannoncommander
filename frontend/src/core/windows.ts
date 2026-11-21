@@ -17,6 +17,8 @@ export interface WinOptions {
   body: string | Component;
   props?: Record<string, unknown>;
   foot?: FootButton[];
+  // A component at the start of the foot, before its buttons, which gets the same props as the body.
+  startBody?: Component;
   wide?: boolean;
   full?: boolean;
   cls?: string;
