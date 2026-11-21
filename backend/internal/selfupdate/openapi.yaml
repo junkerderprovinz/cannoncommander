@@ -1,0 +1,76 @@
+tag:
+  name: selfupdate
+  description: |
+    The desktop app's own update, which the Version card starts with Update
+    now once a newer release is out. A container is updated by its container
+    manager and a Flatpak by the software centre.
+paths:
+  /admin/app/update:
+    get:
+      operationId: appUpdateGet
+      summary: How the update started by hand goes
+      x-access: admin
+      responses:
+        "200":
+          description: The state of the update.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateState"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app, or a Flatpak (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [selfupdate]
+    post:
+      operationId: appUpdateStart
+      summary: Fetch the newest release now
+      description: |
+        The download runs in the background; GET /admin/app/update follows it.
+        The new version starts with the next start, which POST
+        /admin/app/restart brings about.
+      x-access: admin
+      responses:
+        "202":
+          description: The update has started or was running already.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateState"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app, or a Flatpak (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [selfupdate]
+components:
+  schemas:
+    UpdateState:
+      type: object
+      required: [busy, percent]
+      properties:
+        busy:
+          type: boolean
+        percent:
+          type: integer
+          minimum: -1
+          maximum: 100
+          description: How much of the download is in, -1 while that is unknown.
+        ready:
+          type: string
+          description: The version in place for the next start.
+          example: 1.4.0
+        failed:
+          type: string
+          description: Why the last update started by hand did not happen.

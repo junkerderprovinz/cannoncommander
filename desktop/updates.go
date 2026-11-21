@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/junkerderprovinz/cannoncommander/backend/cmd"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/appimage"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 	"github.com/junkerderprovinz/cannoncommander/desktop/update"
 )
@@ -41,6 +43,12 @@ type updater struct {
 	// swapping is held while the program is being replaced, and by stop for
 	// good, so the process never exits halfway through a swap.
 	swapping sync.Mutex
+
+	// mu guards the update started by hand.
+	mu      sync.Mutex
+	busy    bool
+	percent int
+	failed  string
 }
 
 func newUpdater(logger *log.Logger) *updater {
@@ -57,7 +65,9 @@ func newUpdater(logger *log.Logger) *updater {
 	if image := appimage.Path(); image != "" {
 		u.ForAppImage(image)
 	}
-	return &updater{log: logger, u: u}
+	up := &updater{log: logger, u: u, percent: -1}
+	u.Progress = up.progress
+	return up
 }
 
 // openUpdateLog appends to the log at path, since a windowed program on
@@ -100,7 +110,9 @@ func (up *updater) run(ctx context.Context, autoUpdate func() bool) {
 		case <-timer.C:
 		}
 		if autoUpdate() {
-			up.once(ctx)
+			if err := up.once(ctx); err != nil {
+				up.log.Printf("update: %v", err)
+			}
 		}
 		timer.Reset(checkEvery)
 	}
@@ -125,20 +137,19 @@ func (up *updater) follow(ctx context.Context) {
 	}
 }
 
-func (up *updater) once(ctx context.Context) {
+// once updates to the newest release, if there is a newer one.
+func (up *updater) once(ctx context.Context) error {
 	rel, err := up.u.Check(ctx)
 	if err != nil {
-		up.log.Printf("update: %v", err)
-		return
+		return err
 	}
 	if rel == nil {
 		up.log.Printf("update: no newer release")
-		return
+		return nil
 	}
 	download, err := up.u.Fetch(ctx, rel)
 	if err != nil {
-		up.log.Printf("update: not updating to %s: %v", rel.Version, err)
-		return
+		return fmt.Errorf("not updating to %s: %w", rel.Version, err)
 	}
 	defer os.Remove(download)
 
@@ -146,11 +157,65 @@ func (up *updater) once(ctx context.Context) {
 	err = up.u.Swap(download, rel)
 	up.swapping.Unlock()
 	if err != nil {
-		up.log.Printf("update: not updating to %s: %v", rel.Version, err)
-		return
+		return fmt.Errorf("not updating to %s: %w", rel.Version, err)
 	}
 	up.log.Printf("update: %s is in place and starts next time", rel.Version)
 	up.ready.Store(&rel.Version)
+	return nil
+}
+
+func (up *updater) progress(done, total int64) {
+	percent := -1
+	if total > 0 {
+		percent = int(done * 100 / total)
+	}
+	up.mu.Lock()
+	up.percent = percent
+	up.mu.Unlock()
+}
+
+// state is how the update started by hand goes.
+func (up *updater) state() desktop.UpdateState {
+	up.mu.Lock()
+	defer up.mu.Unlock()
+	return desktop.UpdateState{Busy: up.busy, Percent: up.percent, Ready: up.readyVersion(), Failed: up.failed}
+}
+
+// now is "Update now". The installed copy cannot write to its own folder, so
+// it runs the scheduled task's update with administrator rights and then
+// reads the new version from the uninstall entry.
+func (up *updater) now(installed bool) {
+	up.mu.Lock()
+	if up.busy {
+		up.mu.Unlock()
+		return
+	}
+	up.busy, up.percent, up.failed = true, -1, ""
+	up.mu.Unlock()
+
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+		defer cancel()
+		var err error
+		if installed {
+			if err = updateElevated(); err == nil {
+				if v := update.InstalledVersion(product); update.Newer(v, cmd.Version()) {
+					up.ready.Store(&v)
+				}
+			}
+		} else {
+			err = up.once(ctx)
+		}
+		if err != nil {
+			up.log.Printf("update: %v", err)
+		}
+		up.mu.Lock()
+		up.busy = false
+		if err != nil {
+			up.failed = err.Error()
+		}
+		up.mu.Unlock()
+	}()
 }
 
 // readyVersion is the version waiting for the next start, or "".

@@ -19,6 +19,10 @@ var (
 	CommitSHA string
 )
 
+// Installer is the PommelPorter release the desktop build's installer is
+// made with, set with -ldflags -X where there is one.
+var Installer string
+
 // archive is filled in by git archive through export-subst, so source handed
 // over as an archive, without its .git, still knows where it came from.
 //

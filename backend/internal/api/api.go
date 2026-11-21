@@ -26,6 +26,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/remotes"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/search"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/selfupdate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shellapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/storeroom"
@@ -67,6 +68,7 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	filemanager.Routes(r)
 	window.Routes(r)
 	modules.Routes(r)
+	selfupdate.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
 	mcpapi.Routes(r)

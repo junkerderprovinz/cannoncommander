@@ -44,7 +44,7 @@ func machineData() (string, error) {
 // updateInstalled is what the scheduled task runs as the system account, which
 // may write to Program Files: one update of the installed copy, without a
 // window, logged beside the switch it obeys.
-func updateInstalled() error {
+func updateInstalled(now bool) error {
 	dir, err := machineData()
 	if err != nil {
 		return err
@@ -62,13 +62,15 @@ func updateInstalled() error {
 		logger.Printf("update: %s is not a release build, so it does not update itself", cmd.Version())
 		return nil
 	}
-	if !readAutoUpdate(filepath.Join(dir, machineSettingsFile)) {
+	if !now && !readAutoUpdate(filepath.Join(dir, machineSettingsFile)) {
 		logger.Printf("update: Update automatically is off, so this run does nothing")
 		return nil
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
-	up.once(ctx)
+	if err := up.once(ctx); err != nil {
+		logger.Printf("update: %v", err)
+	}
 	version := cmd.Version()
 	if v := up.readyVersion(); v != "" {
 		version = "v" + v

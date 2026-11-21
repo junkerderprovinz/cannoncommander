@@ -51,6 +51,7 @@ func main() {
 func run() error {
 	quietConsole()
 	scheduled := flag.Bool("update", false, "update the copy installed for all users and exit, as the installer's scheduled task does")
+	now := flag.Bool("now", false, "with --update, update even while Update automatically is off, as Update now does")
 	after := flag.Int("after", 0, "wait for the process with this id to end first, as a restart does")
 	flag.Bool("home", false, "open the home folder in a new tab, as Win+E does")
 	fileManager := flag.String("file-manager", "", "on to open the computer's folders here, off to give them back, and exit")
@@ -59,7 +60,7 @@ func run() error {
 		return serveElevated()
 	}
 	if *scheduled {
-		return updateInstalled()
+		return updateInstalled(*now)
 	}
 	if *fileManager != "" {
 		return switchFileManager(*fileManager == "on")
@@ -232,6 +233,18 @@ func (s *shell) SetAutoUpdate(on bool) error {
 }
 
 func (s *shell) UpdateReady() string { return s.up.readyVersion() }
+
+func (s *shell) UpdateState() desktop.UpdateState { return s.up.state() }
+
+// UpdateNow is refused in a Flatpak, whose files only the software centre
+// replaces.
+func (s *shell) UpdateNow() error {
+	if flatpak.ID() != "" {
+		return errors.ErrUnsupported
+	}
+	s.up.now(s.machineFile != "")
+	return nil
+}
 
 func (s *shell) Restart() {
 	s.restart.Store(true)

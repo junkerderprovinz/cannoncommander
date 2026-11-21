@@ -27,7 +27,7 @@
 // the release instead; desktop.yml makes those zips.
 
 import { execFileSync, spawnSync } from 'node:child_process'
-import { cpSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -73,6 +73,11 @@ const versionFlags = [
   `-X github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=${stamp}`,
   commit ? `-X github.com/junkerderprovinz/cannoncommander/backend/internal/version.CommitSHA=${commit}` : '',
 ].filter(Boolean).join(' ')
+
+// The Components card names the installer on Windows and Linux; a Mac gets a
+// disk image.
+const pommelPorter = /github\.com\/junkerderprovinz\/pommelporter (v\S+)/.exec(readFileSync(join(desktop, 'installer', 'go.mod'), 'utf8'))?.[1]
+const installerFlag = pommelPorter ? `-X github.com/junkerderprovinz/cannoncommander/backend/internal/version.Installer=${pommelPorter}` : ''
 
 function run(command, commandArgs, { cwd = desktop, env = {} } = {}) {
   const res = spawnSync(command, commandArgs, { cwd, stdio: 'inherit', env: { ...process.env, ...env } })
@@ -199,7 +204,7 @@ if (process.platform === 'win32') {
   ])
   const exe = join(bin, 'CannonCommander.exe')
   try {
-    goBuild(exe, { goos: 'windows', goarch: arch, tags: 'production', cgo: '0', ldflags: '-H windowsgui' })
+    goBuild(exe, { goos: 'windows', goarch: arch, tags: 'production', cgo: '0', ldflags: `-H windowsgui ${installerFlag}` })
   } finally {
     // Go links every .syso in the package, and one left behind would end up in
     // the next build for the other architecture.
@@ -252,7 +257,7 @@ if (process.platform === 'win32') {
   run('codesign', ['--force', '--deep', '--sign', '-', join(bin, 'CannonCommander.app')])
 } else {
   // GTK 3 and WebKitGTK 4.1, which every current distribution ships.
-  goBuild(join(bin, 'CannonCommander'), { goos: 'linux', goarch: arch, tags: 'production,mupdf,gtk3' })
+  goBuild(join(bin, 'CannonCommander'), { goos: 'linux', goarch: arch, tags: 'production,mupdf,gtk3', ldflags: installerFlag })
   if (installer) {
     buildInstaller(join(bin, 'CannonCommander'), `CannonCommander-${arch}-installer`, { goos: 'linux', cgo: '1', tags: 'gtk3' })
   }

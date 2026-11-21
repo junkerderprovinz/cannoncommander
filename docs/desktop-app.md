@@ -45,11 +45,11 @@ Each brings the keys that go with it, which you can change any time under **Sett
 
 ## Updates {#updates}
 
-Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. An AppImage replaces its own file. Switch that off under **Settings > Info**.
+Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. An AppImage replaces its own file. Switch that off under **Settings > Info**. Once **Check for updates** there has found a newer release, **Update now** fetches it at once and **Restart** starts it. The copy installed for all users on Windows asks for administrator rights first. The Flatpak gets its updates from your software centre.
 
 ## Helper programs {#helpers}
 
-The app brings ffmpeg for thumbnails and videos, 7-Zip for 7z archives and MuPDF for PDF pages. On Windows and Linux they come as a download of their own, which the installer fetches and every update renews. A Mac has them inside the app. If one goes missing, **Settings > Info** fetches it again.
+The app brings ffmpeg for thumbnails and videos, 7-Zip for 7z archives and MuPDF for PDF pages. On Windows and Linux they come as a download of their own, which the installer fetches and every update renews. A Mac has them inside the app. The Components card under **Settings > Info** lists them with their versions, and if one goes missing, it fetches it again.
 
 To pack RAR archives the app uses WinRAR, or `rar` on Linux, when it is installed. The Windows build does not show PDF thumbnails yet.
 

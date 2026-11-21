@@ -408,6 +408,10 @@ components:
         flatpak:
           type: boolean
           description: Set when the desktop app runs in a Flatpak, which the software centre updates and which has no terminal of the computer to open.
+        installer:
+          type: string
+          description: The PommelPorter release the desktop build's installer is made with.
+          example: v1.2.5
         go:
           type: string
           example: go1.27.0

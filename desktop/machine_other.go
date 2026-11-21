@@ -12,6 +12,6 @@ func machineData() (string, error) {
 	return "", errors.New("only Windows has a folder for all users")
 }
 
-func updateInstalled() error {
+func updateInstalled(bool) error {
 	return errors.New("--update is what the Windows installer's scheduled task runs")
 }

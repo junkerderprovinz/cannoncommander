@@ -42,3 +42,13 @@ More on this under [Folders](../configuration/folders.md).
     Without `--device /dev/fuse` and `SYS_ADMIN` everything works except mounting remote storage. On Debian and Ubuntu, Docker's AppArmor profile blocks FUSE mounts, which is what `apparmor:unconfined` is for.
 
 Then set a password: [First start](first-start.md).
+
+## Updates {#updates}
+
+A container cannot replace itself, so you update it where you started it. With **Check for updates automatically** under **Settings > Info**, CannonCommander asks GitHub for a newer release each time that page opens and names it there.
+
+- On Unraid: the Docker tab shows **apply update** beside CannonCommander. Click it.
+- With Docker Compose: `docker compose pull` and then `docker compose up -d` in its folder.
+- With docker run: `docker pull junkerderprovinz/cannoncommander:latest`, remove the old container and start it again with the same command.
+
+Your settings and jobs live in `/config` and stay as they are.

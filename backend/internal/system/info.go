@@ -39,6 +39,8 @@ type Info struct {
 	// Flatpak says the desktop app runs in a Flatpak, which the software
 	// centre updates and whose sandbox holds no terminal of the computer.
 	Flatpak bool `json:"flatpak,omitempty"`
+	// Installer is the installer the desktop build ships with.
+	Installer string `json:"installer,omitempty"`
 }
 
 // Tool is a helper program the server runs.
@@ -208,6 +210,9 @@ func (s *service) info(ctx context.Context) (Info, error) {
 		in.Deployment = "desktop"
 		in.Flatpak = flatpak.ID() != ""
 		in.Feature.Terminal = !in.Flatpak
+		if !in.Flatpak {
+			in.Installer = version.Installer
+		}
 	}
 	if app.Office.Kind == OfficeNone {
 		in.Feature.Office.URL = ""

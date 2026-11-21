@@ -82,6 +82,9 @@ type Updater struct {
 	Path string
 	// Logf receives what Cleanup and Swap could not do but did not fail on.
 	Logf func(format string, args ...any)
+	// Progress hears how much of the release's zip Fetch has, and of how
+	// much; total is -1 while unknown.
+	Progress func(done, total int64)
 
 	// staged is the version Swap put in place during this run, so a later
 	// Check does not fetch it again.
@@ -205,7 +208,7 @@ func (u *Updater) Fetch(ctx context.Context, rel *Release) (string, error) {
 		return "", fmt.Errorf("%s of release %s lists no checksum for %s", ChecksumsFile, rel.Version, rel.asset)
 	}
 
-	if err := u.download(ctx, f, rel.url, rel.asset, want, nil); err != nil {
+	if err := u.download(ctx, f, rel.url, rel.asset, want, u.Progress); err != nil {
 		return "", err
 	}
 	if err := f.Close(); err != nil {
