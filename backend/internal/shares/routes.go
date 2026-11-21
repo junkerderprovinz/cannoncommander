@@ -96,7 +96,17 @@ type updateRequest struct {
 	Notify      *bool   `json:"notify"`
 }
 
-func mayShare(u *users.User) bool { return u.Permissions.Share || u.Permissions.Admin }
+// blocked reports whether the sign-in blocked the account with this id. A
+// blocked owner's links stop with its sign-ins.
+var blocked = func(uint64) bool { return false }
+
+// UseBlocked tells the links how to learn that an account is blocked. The
+// server calls it once before it starts serving.
+func UseBlocked(f func(id uint64) bool) { blocked = f }
+
+func mayShare(u *users.User) bool {
+	return (u.Permissions.Share || u.Permissions.Admin) && !blocked(u.ID)
+}
 
 var errMayNotShare = v1.Coded(http.StatusForbidden, "mayNotShare", "this account may not share files")
 

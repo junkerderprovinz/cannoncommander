@@ -98,3 +98,19 @@ func TestPromoteUserAllowsPasswordLoginMethod(t *testing.T) {
 		t.Fatal("expected admin after promote")
 	}
 }
+
+func TestTheCommandLineLeavesAccountsToTheSignIn(t *testing.T) {
+	setupCLIUserTest(t)
+	if _, err := state.MainDB().Exec(`INSERT INTO signin_docs (kind, id, data) VALUES ('meta', 'meta', '{}')`); err != nil {
+		t.Fatal(err)
+	}
+	if err := setUser("graham", "newpassword", true); err == nil || !strings.Contains(err.Error(), "sign-in keeps the accounts") {
+		t.Fatalf("setUser wrote an account behind the sign-in: %v", err)
+	}
+	if err := promoteUser("graham"); err == nil || !strings.Contains(err.Error(), "sign-in keeps the accounts") {
+		t.Fatalf("promoteUser wrote an account behind the sign-in: %v", err)
+	}
+	if _, err := state.GetUserByUsername("graham"); err == nil {
+		t.Fatal("the account was made anyway")
+	}
+}

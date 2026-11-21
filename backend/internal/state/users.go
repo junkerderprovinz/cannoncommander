@@ -590,16 +590,6 @@ func removeUserAccess(username string) error {
 	return nil
 }
 
-// TokenNameForRawToken returns the persisted token name when rawToken matches a stored API key.
-func TokenNameForRawToken(user *users.User, rawToken string) (string, bool) {
-	if user == nil {
-		return "", false
-	}
-	usersMux.RLock()
-	defer usersMux.RUnlock()
-	return users.TokenNameByRaw(user.Tokens, rawToken)
-}
-
 // AddUserToken adds an API token to a user
 func AddUserToken(ownerUsername string, token users.AuthToken) error {
 	usersMux.Lock()
@@ -622,35 +612,6 @@ func AddUserToken(ownerUsername string, token users.AuthToken) error {
 		user.Tokens = make(map[string]users.AuthToken)
 	}
 	users.StoreToken(user.Tokens, token)
-
-	if err := sqlDb.UpdateUser(user); err != nil {
-		return err
-	}
-
-	putUserInCache(user)
-
-	return nil
-}
-
-// DeleteUserToken removes an API token from a user
-func DeleteUserToken(ownerUsername string, tokenName string) error {
-	usersMux.Lock()
-	defer usersMux.Unlock()
-
-	user, err := loadExistingUserLocked(&users.User{FrontendUser: users.FrontendUser{Username: ownerUsername}})
-	if err != nil {
-		return fmt.Errorf("user not found in state")
-	}
-
-	// Check if token exists
-	if user.Tokens == nil {
-		return fmt.Errorf("user has no tokens")
-	}
-	if _, tokenExists := user.Tokens[tokenName]; !tokenExists {
-		return fmt.Errorf("token with name %s not found for user", tokenName)
-	}
-
-	users.RemoveTokenByName(user.Tokens, tokenName)
 
 	if err := sqlDb.UpdateUser(user); err != nil {
 		return err

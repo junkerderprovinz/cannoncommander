@@ -33,6 +33,10 @@ func init() {
 	})
 	accounts.OnSessionsEnd(endGrants)
 	accounts.OnTokensEnd(endKeys)
+	accounts.OnReimport(func(ctx context.Context, db *sql.DB) (int, error) {
+		gone, err := store{db: db}.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE revoked_at = 0`, "reimported", time.Now().Unix())
+		return len(gone), err
+	})
 }
 
 func endGrants(ctx context.Context, db *sql.DB, userID uint64) error {

@@ -103,37 +103,3 @@ func TestRemoveUserFromGroup_RollsBackOnSQLFailure(t *testing.T) {
 		t.Fatalf("expected in-memory rollback, alice groups = %#v", groups)
 	}
 }
-
-func TestSyncUserGroups_RollsBackOnPartialPersistFailure(t *testing.T) {
-	userStore := users.NewStorage(nil)
-	store := access.NewStorage(userStore)
-	store.Groups["groupA"] = access.StringSet{"alice": {}}
-	rec := &recordingGroupSQL{
-		failOn: 2,
-		groups: map[string]access.StringSet{
-			"groupA": {"alice": {}},
-		},
-	}
-	store.SetSQLStore(rec)
-
-	err := store.SyncUserGroups("alice", []string{"groupB"})
-	if err == nil {
-		t.Fatal("expected partial persist failure")
-	}
-	groups := store.GetUserGroups("alice")
-	if len(groups) != 1 || groups[0] != "groupA" {
-		t.Fatalf("expected in-memory rollback to groupA only, got %#v", groups)
-	}
-	if _, ok := store.Groups["groupB"]; ok {
-		t.Fatal("groupB should not remain in memory after rollback")
-	}
-	if rec.saveCalls != 3 {
-		t.Fatalf("saveCalls = %d, want 3 (groupA persist, groupB fail, groupA restore)", rec.saveCalls)
-	}
-	if _, ok := rec.groups["groupA"]["alice"]; !ok {
-		t.Fatalf("expected SQL rollback for groupA, got %#v", rec.groups["groupA"])
-	}
-	if _, ok := rec.groups["groupB"]; ok {
-		t.Fatalf("expected SQL groupB to be absent after rollback, got %#v", rec.groups["groupB"])
-	}
-}

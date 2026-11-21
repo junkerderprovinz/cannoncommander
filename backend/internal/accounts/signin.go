@@ -12,6 +12,7 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -69,6 +70,10 @@ func Open(ctx context.Context, d v1.Deps) (*signin.Auth, error) {
 	warnAboutConfig(ctx, h)
 	signIns.Store(auth)
 	state.UseSignIn(auth.Anyone)
+	shares.UseBlocked(func(id uint64) bool {
+		acc, err := auth.Account(context.Background(), strconv.FormatUint(id, 10))
+		return err != nil || acc.Blocked
+	})
 	return auth, nil
 }
 
@@ -197,5 +202,6 @@ func (h handlers) forgetSignIn(ctx context.Context, service *signin.ServiceSpec)
 var revokeAllKeys = func(context.Context, *sql.DB) (int, error) { return 0, nil }
 
 // OnReimport sets what revokes every MCP key and grant when the accounts are
-// imported again. It is meant for init functions.
+// imported again, and reports how many it revoked. It is meant for init
+// functions.
 func OnReimport(f func(ctx context.Context, db *sql.DB) (int, error)) { revokeAllKeys = f }

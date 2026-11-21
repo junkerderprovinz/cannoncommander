@@ -166,9 +166,6 @@ func (h handlers) updateGroup(w http.ResponseWriter, r *http.Request) error {
 		if err := h.svc.rules.renameWho(r.Context(), "@"+name, "@"+newName); err != nil {
 			return err
 		}
-		if _, err = h.db.ExecContext(r.Context(), `UPDATE synced_members SET group_name = ? WHERE group_name = ?`, newName, name); err != nil {
-			return err
-		}
 	}
 	if err := h.setNote(r.Context(), newName, note); err != nil {
 		return err
@@ -180,7 +177,9 @@ func (h handlers) updateGroup(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, g)
 }
 
-// dropGroup removes a group from the login system and its note.
+// dropGroup removes a group from the login system and its note. A group an
+// admin renames goes through here too and is the admin's from then on, so
+// a sign-in service takes nobody out of it.
 func (h handlers) dropGroup(ctx context.Context, name string) error {
 	if err := state.DeleteGroup(name); err != nil {
 		return err

@@ -211,11 +211,15 @@ func (h handlers) account(u *users.User, p profile, acc signin.Account) Account 
 	if !acc.Password {
 		method = users.LoginMethodOidc
 	}
+	role := acc.Role
+	if role == "" {
+		role = roleOf(u)
+	}
 	return Account{
 		ID:          idOf(u),
 		Name:        u.Username,
 		Full:        full,
-		Role:        roleOf(u),
+		Role:        role,
 		Scope:       commonFolder(h.scopePaths(u)),
 		Groups:      groups,
 		LoginMethod: string(method),

@@ -218,82 +218,6 @@ func (s *Storage) GetUserGroups(username string) []string {
 	return utils.NonNilSlice(groups)
 }
 
-// SyncUserGroups updates a user's group memberships.
-// It removes the user from groups not in the new list and adds them to new ones.
-// Changes are write-through to SQL when a sqlStore is configured.
-func (s *Storage) SyncUserGroups(username string, newGroups []string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-
-	// Create a set of new groups for efficient lookup
-	newGroupsSet := make(StringSet, len(newGroups))
-	for _, g := range newGroups {
-		if !IsUsableSyncedGroupName(g) {
-			continue
-		}
-		newGroupsSet[g] = struct{}{}
-	}
-
-	affected := make(map[string]struct{})
-	for group, members := range s.Groups {
-		_, userIsInGroup := members[username]
-		_, groupIsInNewSet := newGroupsSet[group]
-		if userIsInGroup && !groupIsInNewSet {
-			affected[group] = struct{}{}
-		}
-	}
-	for group := range newGroupsSet {
-		if _, ok := s.Groups[group]; !ok {
-			affected[group] = struct{}{}
-			continue
-		}
-		if _, ok := s.Groups[group][username]; !ok {
-			affected[group] = struct{}{}
-		}
-	}
-
-	before := make(map[string]StringSet, len(affected))
-	for group := range affected {
-		before[group] = cloneStringSet(s.Groups[group])
-	}
-
-	for group, members := range s.Groups {
-		_, userIsInGroup := members[username]
-		_, groupIsInNewSet := newGroupsSet[group]
-		if userIsInGroup && !groupIsInNewSet {
-			delete(s.Groups[group], username)
-		}
-	}
-	for group := range newGroupsSet {
-		if _, ok := s.Groups[group]; !ok {
-			s.Groups[group] = make(StringSet)
-		}
-		s.Groups[group][username] = struct{}{}
-	}
-
-	affectedGroups := slices.Sorted(maps.Keys(affected))
-	var persisted []string
-	for _, group := range affectedGroups {
-		if err := s.persistGroupSQLNL(group); err != nil {
-			for _, g := range persisted {
-				if restoreErr := s.restoreGroupSQLNL(g, before[g]); restoreErr != nil {
-					logger.Errorf("failed to restore group %q in sql after sync failure: %v", g, restoreErr)
-				}
-			}
-			for g, snap := range before {
-				if len(snap) == 0 {
-					delete(s.Groups, g)
-				} else {
-					s.Groups[g] = snap
-				}
-			}
-			return err
-		}
-		persisted = append(persisted, group)
-	}
-	return nil
-}
-
 func (s *Storage) restoreGroupSQLNL(groupname string, members StringSet) error {
 	if s.sqlStore == nil {
 		return nil
@@ -465,35 +389,6 @@ func (s *Storage) RevokeSessions(userID uint64, keep string) (int, error) {
 	return live, nil
 }
 
-// RetireToken lets a renewed session token work on for BearerTokenGrace, so
-// requests already on their way with it still pass. A token that is retired
-// or revoked already stays as it is.
-func (s *Storage) RetireToken(tokenString string) error {
-	tokenHash := utils.HashSHA256(tokenString)
-	now := time.Now().Unix()
-	var rollback tokenRevokeRollback
-	s.mux.Lock()
-	if _, done := s.RevokedTokens[tokenHash]; done {
-		s.mux.Unlock()
-		return nil
-	}
-	rollback.capture(s, tokenHash)
-	s.RevokedTokens[tokenHash] = now
-	sqlStore := s.sqlStore
-	s.mux.Unlock()
-
-	if sqlStore == nil {
-		return nil
-	}
-	if err := sqlStore.PersistTokenRetirement(tokenHash, now, nil); err != nil {
-		s.mux.Lock()
-		rollback.apply(s)
-		s.mux.Unlock()
-		return err
-	}
-	return nil
-}
-
 type tokenRevokeRollback struct {
 	tokenHash  string
 	hadHashed  bool
@@ -591,20 +486,6 @@ func (s *Storage) GetHashedTokenInfo(tokenString string) (HashedTokenInfo, bool)
 		return HashedTokenInfo{}, false
 	}
 	return info, true
-}
-
-// SessionAlive reports whether the session token with this hash still logs in:
-// it is registered as a session, not expired and not revoked. A retired token
-// counts as alive while its grace window lasts.
-func (s *Storage) SessionAlive(tokenHash string) bool {
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-	info, ok := s.HashedTokens[tokenHash]
-	if !ok || !info.IsSession || TokenExpiredPastGrace(info.ExpiresAt, time.Now()) {
-		return false
-	}
-	revokedAt, revoked := s.RevokedTokens[tokenHash]
-	return !revoked || (revokedAt != 0 && time.Since(time.Unix(revokedAt, 0)) < BearerTokenGrace)
 }
 
 // GetRevokedTokens returns a copy of the revocation map (hash → revocation unix time).

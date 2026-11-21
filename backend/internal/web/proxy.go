@@ -49,24 +49,3 @@ func requestHost(r *http.Request) string {
 	}
 	return r.Host
 }
-
-// requestSchemeForPublicURL picks scheme for absolute share URLs (HTTPS default when forwarded host is trusted).
-func requestSchemeForPublicURL(r *http.Request) string {
-	cfg := &settings.Config
-	if cfg.Http.TrustProxyHeaders {
-		if firstForwardedValue(r.Header.Get("X-Forwarded-Host")) != "" {
-			if proto := normalizeHTTPScheme(r.Header.Get("X-Forwarded-Proto")); proto != "" {
-				return proto
-			}
-			return "https"
-		}
-	}
-	return requestScheme(r)
-}
-
-func shareURLParams(r *http.Request) (host, scheme string) {
-	if r == nil {
-		return "", ""
-	}
-	return requestHost(r), requestSchemeForPublicURL(r)
-}

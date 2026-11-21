@@ -98,7 +98,9 @@ func (h handlers) adminView(r *http.Request, u *users.User, p profile) (Account,
 		return Account{}, err
 	}
 	a := h.account(u, p, acc)
-	if err == nil {
+	// The sign-in lists passkeys to admins with a session only, so an
+	// admin's API token sees the list without them.
+	if err == nil && !ByToken(r) {
 		keys, err := auth.Passkeys(r, acc.ID)
 		if err != nil {
 			return Account{}, fromSignIn(r, err)
@@ -297,7 +299,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 			return v1.Coded(http.StatusConflict, "loginNameTaken", "this login name is taken")
 		}
 	}
-	role := roleOf(&u)
+	role := acc.Role
 	if in.Role != nil && *in.Role != role {
 		if !validRole(*in.Role) {
 			return v1.Errorf(http.StatusBadRequest, "the role has to be admin, user or readonly")

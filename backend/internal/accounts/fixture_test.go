@@ -44,6 +44,9 @@ type world struct {
 	auth  *signin.Auth
 	share string
 	admin users.User
+	// scheme is https once a test gives the server an https address.
+	scheme     string
+	disk, boot string
 
 	cookies map[string]string
 }
@@ -53,7 +56,8 @@ const strong = "korrekt-pferd-batterie"
 // host is where the tests reach the server, so Origin matches it.
 const host = "cc.test"
 
-func newWorld(t *testing.T) *world {
+// newBareWorld is a server of the version before without accounts.
+func newBareWorld(t *testing.T) *world {
 	t.Helper()
 	base := t.TempDir()
 	saved := settings.Config
@@ -117,8 +121,16 @@ func newWorld(t *testing.T) *world {
 	if err != nil {
 		t.Fatal(err)
 	}
-	w := &world{t: t, base: base, fs: fs, deps: v1.Deps{FS: fs, DB: db, Hub: hub.New(hub.Options{})}, share: share, cookies: map[string]string{}}
-	w.admin = w.oldUser("jdp", strong, true, users.BackendScope{Path: share, Scope: "/"}, users.BackendScope{Path: disk, Scope: "/"}, users.BackendScope{Path: boot, Scope: "/"})
+	w := &world{t: t, base: base, scheme: "http", fs: fs, deps: v1.Deps{FS: fs, DB: db, Hub: hub.New(hub.Options{})}, share: share, cookies: map[string]string{}}
+	w.disk, w.boot = disk, boot
+	return w
+}
+
+// newWorld is a closed server of the version before, with the admin jdp.
+func newWorld(t *testing.T) *world {
+	t.Helper()
+	w := newBareWorld(t)
+	w.admin = w.oldUser("jdp", strong, true, users.BackendScope{Path: w.share, Scope: "/"}, users.BackendScope{Path: w.disk, Scope: "/"}, users.BackendScope{Path: w.boot, Scope: "/"})
 	return w
 }
 
@@ -197,11 +209,11 @@ func (w *world) req(method, target string, body any, headers ...header) *httptes
 		}
 		payload = string(raw)
 	}
-	r := httptest.NewRequest(method, "http://"+host+target, strings.NewReader(payload))
+	r := httptest.NewRequest(method, w.scheme+"://"+host+target, strings.NewReader(payload))
 	if payload != "" {
 		r.Header.Set("Content-Type", "application/json")
 	}
-	r.Header.Set("Origin", "http://"+host)
+	r.Header.Set("Origin", w.scheme+"://"+host)
 	for _, h := range headers {
 		if h[0] == "Cookie" {
 			r.Header.Add("Cookie", h[1])
@@ -253,7 +265,7 @@ func (e *signInError) Error() string { return http.StatusText(e.code) + ": " + e
 func sessionCookie(t *testing.T, rec *httptest.ResponseRecorder) string {
 	t.Helper()
 	for _, c := range rec.Result().Cookies() {
-		if c.Name == "cc_session" && c.MaxAge > 0 {
+		if (c.Name == "cc_session" || c.Name == "__Host-cc-session") && c.MaxAge > 0 {
 			return c.Name + "=" + c.Value
 		}
 	}
@@ -319,3 +331,47 @@ func (w *world) account(u users.User) signin.Account {
 	return acc
 }
 
+
+// public gives the server an https address, which passkeys and sign-in
+// services need.
+func (w *world) public() *world {
+	settings.Config.Http.ExternalUrl = "https://" + host
+	w.scheme = "https"
+	return w
+}
+
+// browser keeps the cookies the server sets, as a browser does across the
+// steps of a sign-in.
+type browser struct {
+	w   *world
+	jar map[string]string
+}
+
+func (w *world) browser() *browser { return &browser{w: w, jar: map[string]string{}} }
+
+func (b *browser) do(method, target string, body any) *httptest.ResponseRecorder {
+	b.w.t.Helper()
+	var hs []header
+	for name, value := range b.jar {
+		hs = append(hs, header{"Cookie", name + "=" + value})
+	}
+	rec := b.w.req(method, target, body, hs...)
+	for _, c := range rec.Result().Cookies() {
+		if c.MaxAge < 0 || c.Value == "" {
+			delete(b.jar, c.Name)
+			continue
+		}
+		b.jar[c.Name] = c.Value
+	}
+	return rec
+}
+
+// session is the session cookie the browser holds.
+func (b *browser) session() string {
+	for _, name := range []string{"cc_session", "__Host-cc-session"} {
+		if v, ok := b.jar[name]; ok {
+			return name + "=" + v
+		}
+	}
+	return ""
+}
