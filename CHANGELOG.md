@@ -4,12 +4,14 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## v1.2.1 (2026-11-21)
+## v1.3.0 (2026-11-21)
 
-A folder that takes its time says so, renaming happens in the row, and a conflict takes one click. The remote picker follows GlimStone 4.8.1, and the download buttons say which machine each build is for.
+A folder that takes its time says so, renaming happens in the row, and copying, moving and deleting get calmer windows with a speed graph and both versions of a conflict side by side. The remote picker follows GlimStone 4.8.1, and the download buttons say which machine each build is for.
 
 ## ✨ Added
 
+- **A running job shows its speed.** The copy, move and delete windows show the name, the share done and a thick bar, with small file icons flying from source to target, each showing the type of the file on its way. More details at the bottom left opens the window into a graph of the speed over the whole job, with the speed, the time left and the size on one line below it and the file being worked on. Point at the graph for the speed at any moment. The window remembers which way you like it, and Keep this window open when done sits right above the buttons there.
+- **Hard link has its own entry.** Right-click a file and choose Hard link for a second name of the same file in another folder on the same disk. It takes no extra space. Dragging with Alt still makes a link.
 - **A folder that takes its time says so.** When a large folder or a slow share needs more than a moment, its panel dims the rows on screen and shows a large Opening in the middle of the list, so you can tell it is working. Open another folder in the meantime and that one wins, even if the first answers later.
 - **Copy, move and delete windows stay with their job.** After you confirm, the window shows the running job with its progress until it is done, and closes by itself when it went well. Tick Keep this window open when done to read the result first. An error always keeps it open, and In the background sends it away while the job goes on in Jobs.
 - **Drag with a key to choose what happens.** While you drag files or folders onto a folder, Ctrl copies, Shift moves and Alt makes a link, and on a Mac Option, Command and both together do the same. A badge beside the pointer says what the drop will do and changes with the keys until you let go. Without a key a drag still copies, and a folder under the drag only lights up instead of opening.
@@ -20,6 +22,9 @@ A folder that takes its time says so, renaming happens in the row, and a conflic
 - **GlimStone 4.8.1.** The tile for any other S3 store is called Custom S3 and stands last among the object stores, and a search for S3 compatible still finds it. Linkbox goes by its new name TeleBox, and Gofile, TeleBox, OpenDrive and Synology C2 wear their logos. A window keeps its buttons on one row at the bottom. In the list of remotes, a row's buttons stand out from the groove they sit in, its badges sit at the end of the name line, and a logo with the name written out takes the tile's full width.
 - **The download buttons name the architecture.** Windows, Linux and the AppImage say amd64 or ARM, the AppImage comes before the Flatpak, and the macOS button in the app says Apple and Intel, as the README does.
 - **Selected rows are tinted instead of framed.** A selected file or folder gets a soft wash of your accent colour behind the whole row, so its name, size and date read as before. The row the arrow keys move from is tinted a little more strongly in the active panel, and the folder tree, the column view and the bookmarks show their selection the same way, without any frame.
+- **Calmer copy, move and delete windows.** Each asks one question, such as Copy? or Move to the trash?, with what goes where below it and the target to change. Names that already exist in the target are asked about when the job meets them, so there is no question up front and no switch for the way of copying.
+- **A conflict shows both versions.** The version you bring and the one in the target stand side by side as cards, pictures with a preview from the server and other files with their icon. What is newer or larger is marked, and the buttons to decide stay at the bottom.
+- **A job's end looks the same.** Done, done with errors and cancelled keep the same window, with Open target after a copy or move and Retry after an error or a cancel.
 - **The installer follows PommelPorter 1.2.5.**
 
 ## ⚡ Improved
@@ -28,6 +33,7 @@ A folder that takes its time says so, renaming happens in the row, and a conflic
 - **A conflict takes one click.** The conflict window shows one name at a time, with a red badge beside it saying it is already in the target, and Replace, Skip and Keep both as buttons at the bottom. A click moves on to the next name. The buttons wear clearer glyphs, two arrows in a circle for Replace and an arrow ahead for Skip, here and in the copy and unpack windows. Tick Use for all and one click answers every name left, with Replace only newer as a fourth button.
 - **Going back keeps your place.** Going up or back out of a folder, by key, mouse button or the path, puts the cursor on the folder you came from, or on the entry it stood on before, and scrolls it into view.
 - **The trash folder stays out of sight.** CannonCommander's own `.cc-trash` folder stays out of every list, tree and search, even with hidden files shown, and the number of entries a folder shows leaves it out too. Typing its path opens the Trash instead.
+- **Owners, permissions and times always come along.** A copy or move keeps the owner, permissions and modification time of every file and folder, so shares, backups and media scanners see the dates they expect. The switch for it is gone from the copy window. A target that cannot take a file's time, such as some network or cloud mounts, no longer stops the copy.
 
 ## 🐛 Fixed
 
@@ -40,7 +46,7 @@ A folder that takes its time says so, renaming happens in the row, and a conflic
 
 ## 🌐 Translations
 
-- **Custom S3, the macOS button, the note on a folder that is opening, the conflict counter, the drag badge and the job window** speak all 42 languages.
+- **Custom S3, the macOS button, the note on a folder that is opening, the conflict counter, the drag badge, the new job windows, the speed graph and Hard link** speak all 42 languages.
 
 ## v1.2.0 (2026-11-20)
 
