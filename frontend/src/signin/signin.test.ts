@@ -147,7 +147,7 @@ describe('the sign in page', () => {
     await settle();
     submit();
     await settle();
-    expect(error()).toContain('Zu viele Versuche');
+    expect(error()).toBe('Zu viele Versuche. Versuch es in 60 Sekunden noch einmal.');
   });
 
   it('asks for the reset code without a name and says afterwards what the reset took away', async () => {

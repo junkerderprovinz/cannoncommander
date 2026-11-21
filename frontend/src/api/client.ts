@@ -12,7 +12,17 @@ export class ApiError extends Error {
   }
 }
 
-// A 401 outside the sign in means the session ended, and the app shows the sign in again.
+// Where a route hands a refusal on from the sign-in, the body is the kit's own, {"error": code} with its fields
+// beside it, and it reads like any other problem with a code. retry is the throttled sentence's {retry}.
+function problemOf(status: number, body: unknown, retryAfter?: number): Problem | undefined {
+  if (!body || typeof body !== 'object') return undefined;
+  const { error, ...params } = body as Record<string, unknown>;
+  if (typeof error !== 'string' || 'code' in params) return body as Problem;
+  const retry = typeof params.retryAfter === 'number' ? params.retryAfter : retryAfter;
+  return { type: '', title: '', status, code: error, params: retry === undefined ? params : { ...params, retry } };
+}
+
+// A 401 means the session ended, and the app shows the sign in again.
 let signedOut = () => {};
 export const onSignedOut = (fn: () => void) => { signedOut = fn; };
 
@@ -35,9 +45,10 @@ export async function call<T>(path: string, init: RequestInit & { etag?: string 
   const res = await fetch(BASE + path, { ...init, headers });
   if (res.status === 304) return { body: null, etag: init.etag };
   if (!res.ok) {
-    const problem = res.headers.get('Content-Type')?.includes('json') ? await res.json().catch(() => undefined) : undefined;
-    if (res.status === 401 && !path.startsWith('/auth/')) signedOut();
-    throw new ApiError(res.status, problem, Number(res.headers.get('Retry-After')) || undefined);
+    const body = res.headers.get('Content-Type')?.includes('json') ? await res.json().catch(() => undefined) : undefined;
+    const retryAfter = Number(res.headers.get('Retry-After')) || undefined;
+    if (res.status === 401) signedOut();
+    throw new ApiError(res.status, problemOf(res.status, body, retryAfter), retryAfter);
   }
   return { body: res.status === 204 ? null : await res.json(), etag: res.headers.get('ETag') ?? undefined };
 }
