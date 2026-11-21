@@ -3223,8 +3223,6 @@
     "clash": "Om filen redan finns",
     "clashTip": "Med Fråga bestämmer du för varje fil, annars gäller ditt val för alla utan att du tillfrågas.",
     "moreOptions": "Fler alternativ",
-    "keepAttrs": "Behåll behörigheter och tidsstämplar",
-    "keepAttrsTip": "Ägare, behörigheter och ändringstid förblir som i originalet. Utan det här reglaget ägs nya filer av nobody:users (99:100).",
     "verify": "Kontrollera efteråt",
     "verifyTip": "Läser målet en gång till efter kopieringen och jämför kontrollsummorna.",
     "background": "Körs som jobb i bakgrunden",

@@ -3324,8 +3324,6 @@
     "clash": "Ja fails jau eksistē",
     "clashTip": "Ar Jautāt izlem par katru failu atsevišķi, citādi tava izvēle bez jautāšanas attiecas uz visiem.",
     "moreOptions": "Vairāk opciju",
-    "keepAttrs": "Saglabāt atļaujas un laikspiedolus",
-    "keepAttrsTip": "Īpašnieks, atļaujas un izmaiņu datums paliek kā oriģinālā. Bez šī slēdža jaunie faili pieder nobody:users (99:100).",
     "verify": "Pēc tam pārbaudīt",
     "verifyTip": "Pēc kopēšanas vēlreiz nolasa galamērķi un salīdzina kontrolsummas.",
     "background": "Darbojas kā uzdevums fonā",

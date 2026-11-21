@@ -3425,8 +3425,6 @@
     "clash": "Keď súbor už existuje",
     "clashTip": "Pri Spýtať sa rozhodujete o každom súbore zvlášť, inak platí vaša voľba bez pýtania pre všetky.",
     "moreOptions": "Ďalšie možnosti",
-    "keepAttrs": "Zachovať povolenia a časové pečiatky",
-    "keepAttrsTip": "Vlastník, povolenia a dátum zmeny zostanú ako v origináli. Bez tohto prepínača patria nové súbory nobody:users (99:100).",
     "verify": "Potom overiť",
     "verifyTip": "Po skopírovaní znova prečíta cieľ a porovná kontrolné súčty.",
     "background": "Beží ako úloha na pozadí",

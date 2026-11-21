@@ -3122,8 +3122,6 @@
     "clash": "Jika berkas sudah ada",
     "clashTip": "Dengan Tanya, Anda memutuskan untuk setiap berkas, jika tidak, pilihan Anda berlaku untuk semuanya tanpa bertanya.",
     "moreOptions": "Opsi lainnya",
-    "keepAttrs": "Pertahankan izin dan stempel waktu",
-    "keepAttrsTip": "Pemilik, izin, dan waktu perubahan tetap seperti aslinya. Tanpa sakelar ini, berkas baru dimiliki nobody:users (99:100).",
     "verify": "Periksa setelahnya",
     "verifyTip": "Membaca tujuan sekali lagi setelah menyalin dan membandingkan checksum-nya.",
     "background": "Berjalan sebagai tugas di latar belakang",

@@ -3,6 +3,7 @@
 package fileops
 
 import (
+	"errors"
 	"io/fs"
 	"os"
 	"syscall"
@@ -33,4 +34,10 @@ func Chown(p string, info fs.FileInfo) {
 	if st, ok := info.Sys().(*syscall.Stat_t); ok {
 		_ = os.Lchown(p, int(st.Uid), int(st.Gid))
 	}
+}
+
+// timesRefused reports a target that cannot take a file's times, such as some
+// remote and network mounts. The copy goes on there with the time it got.
+func timesRefused(err error) bool {
+	return errors.Is(err, syscall.ENOTSUP) || errors.Is(err, syscall.EOPNOTSUPP) || errors.Is(err, syscall.EPERM) || errors.Is(err, syscall.ENOSYS)
 }

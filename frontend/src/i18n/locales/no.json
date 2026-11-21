@@ -3223,8 +3223,6 @@
     "clash": "Hvis filen finnes fra før",
     "clashTip": "Med Spør bestemmer du for hver fil, ellers gjelder valget ditt for alle uten at du blir spurt.",
     "moreOptions": "Flere alternativer",
-    "keepAttrs": "Behold tillatelser og tidsstempler",
-    "keepAttrsTip": "Eier, tillatelser og endringstid blir som i originalen. Uten denne bryteren eies nye filer av nobody:users (99:100).",
     "verify": "Kontroller etterpå",
     "verifyTip": "Leser målet én gang til etter kopieringen og sammenligner kontrollsummene.",
     "background": "Kjører som jobb i bakgrunnen",

@@ -3425,8 +3425,6 @@
     "clash": "Jei failas jau yra",
     "clashTip": "Su Klausti sprendi dėl kiekvieno failo atskirai, kitaip tavo pasirinkimas be klausimų galioja visiems.",
     "moreOptions": "Daugiau parinkčių",
-    "keepAttrs": "Perimti teises ir laiko žymas",
-    "keepAttrsTip": "Savininkas, teisės ir pakeitimo data lieka kaip originale. Be šio jungiklio nauji failai priklauso nobody:users (99:100).",
     "verify": "Po to patikrinti",
     "verifyTip": "Nukopijavus dar kartą perskaito paskirtį ir palygina kontrolines sumas.",
     "background": "Vyksta kaip užduotis fone",

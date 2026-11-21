@@ -3669,8 +3669,6 @@
     "clash": "Fitxategia lehendik badago",
     "clashTip": "Galdetu aukerarekin fitxategi bakoitzerako erabakitzen duzu, bestela zure aukerak guztietarako balio du galdetu gabe.",
     "moreOptions": "Aukera gehiago",
-    "keepAttrs": "Gorde baimenak eta data-zigiluak",
-    "keepAttrsTip": "Jabea, baimenak eta aldaketa-data jatorrizkoan bezala geratzen dira. Etengailu hau gabe, fitxategi berriak nobody:users (99:100) erabiltzailearenak dira.",
     "verify": "Egiaztatu ondoren",
     "verifyTip": "Kopiatu ondoren helburua berriro irakurtzen du eta kontrol-baturak konparatzen ditu.",
     "background": "Lan gisa exekutatzen da atzeko planoan",

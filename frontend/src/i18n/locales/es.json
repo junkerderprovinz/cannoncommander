@@ -3324,8 +3324,6 @@
     "clash": "Si el archivo ya existe",
     "clashTip": "Con Preguntar decides archivo por archivo; si no, tu elección vale para todos sin preguntar.",
     "moreOptions": "Más opciones",
-    "keepAttrs": "Conservar permisos y marcas de tiempo",
-    "keepAttrsTip": "Propietario, permisos y fecha de modificación se quedan como en el original. Sin esta opción, los archivos nuevos pertenecen a nobody:users (99:100).",
     "verify": "Comprobar después",
     "verifyTip": "Vuelve a leer el destino después de copiar y compara las sumas de verificación.",
     "background": "Se ejecuta como tarea en segundo plano",

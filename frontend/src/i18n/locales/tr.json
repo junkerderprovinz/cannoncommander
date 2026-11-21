@@ -3223,8 +3223,6 @@
     "clash": "Dosya zaten varsa",
     "clashTip": "Sor ile her dosya için ayrı karar verirsin, yoksa seçimin sormadan hepsi için geçerli olur.",
     "moreOptions": "Diğer seçenekler",
-    "keepAttrs": "İzinleri ve zaman damgalarını koru",
-    "keepAttrsTip": "Sahip, izinler ve değiştirilme tarihi asıldaki gibi kalır. Bu anahtar kapalıyken yeni dosyalar nobody:users (99:100) kullanıcısına ait olur.",
     "verify": "Sonra doğrula",
     "verifyTip": "Kopyalamadan sonra hedefi yeniden okur ve sağlama toplamlarını karşılaştırır.",
     "background": "Arka planda iş olarak çalışır",

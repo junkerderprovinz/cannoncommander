@@ -315,6 +315,33 @@ func (e *env) trashItems() []trash.Item {
 
 var old = time.Date(2025, 6, 1, 12, 0, 0, 0, time.UTC)
 
+func TestCopyAlwaysKeepsModeAndTimesOfFilesAndFolders(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/Urlaub/a.jpg", "sonne", old)
+	if err := os.Chmod(e.real("/mnt/user/fotos/Urlaub/a.jpg"), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chtimes(e.real("/mnt/user/fotos/Urlaub"), old, old); err != nil {
+		t.Fatal(err)
+	}
+	e.run("copy", fileops.TransferParams{Sources: []string{"/mnt/user/fotos/Urlaub"}, Dest: "/mnt/user/backups"})
+	file, _ := os.Stat(e.real("/mnt/user/backups/Urlaub/a.jpg"))
+	dir, _ := os.Stat(e.real("/mnt/user/backups/Urlaub"))
+	if file.Mode().Perm() != 0o640 || !file.ModTime().Equal(old) || !dir.ModTime().Equal(old) {
+		t.Fatalf("file %s %s, folder %s", file.Mode().Perm(), file.ModTime(), dir.ModTime())
+	}
+}
+
+func TestTransferRefusesAnAttributeSwitch(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.jpg", "sonne", old)
+	params := map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": "/mnt/user/backups", "keepAttrs": false}
+	status := e.call("anna", "POST", "/jobs", map[string]any{"kind": "copy", "params": params}, nil)
+	if status != http.StatusBadRequest {
+		t.Fatalf("status %d", status)
+	}
+}
+
 func TestCopyKeepsContentAndTimesAndCanBeTakenBack(t *testing.T) {
 	e := newEnv(t)
 	e.write("/mnt/user/fotos/Urlaub/a.jpg", "sonne", old)

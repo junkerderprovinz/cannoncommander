@@ -3324,8 +3324,6 @@
     "clash": "Ako datoteka već postoji",
     "clashTip": "S „Pitaj“ odlučujete za svaku datoteku zasebno, inače vaš odabir vrijedi za sve bez pitanja.",
     "moreOptions": "Još mogućnosti",
-    "keepAttrs": "Zadrži dozvole i vremenske oznake",
-    "keepAttrsTip": "Vlasnik, dozvole i datum izmjene ostaju kao u izvorniku. Bez ovog prekidača nove datoteke pripadaju nobody:users (99:100).",
     "verify": "Poslije provjeri",
     "verifyTip": "Nakon kopiranja još jednom čita odredište i uspoređuje kontrolne zbrojeve.",
     "background": "Radi kao zadatak u pozadini",

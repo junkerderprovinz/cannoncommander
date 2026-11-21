@@ -95,7 +95,7 @@ func runGather(ctx context.Context, run *jobs.Run) error {
 	run.Measure(it.Seq, plan.Move, int64(plan.Moves))
 	run.Begin(it.Seq)
 
-	t := &transfer{s: s, run: run, move: true, keep: true, hash: true, resumed: it.Resumed}
+	t := &transfer{s: s, run: run, move: true, hash: true, resumed: it.Resumed}
 	res := GatherResult{Partial: plan.Partial}
 	emptied := map[string]bool{}
 	for _, m := range plan.MoveList() {

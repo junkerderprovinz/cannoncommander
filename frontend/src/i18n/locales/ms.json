@@ -3122,8 +3122,6 @@
     "clash": "Jika fail sudah wujud",
     "clashTip": "Dengan Tanya, anda membuat keputusan untuk setiap fail, jika tidak, pilihan anda terpakai untuk semuanya tanpa bertanya.",
     "moreOptions": "Lagi pilihan",
-    "keepAttrs": "Kekalkan kebenaran dan cap masa",
-    "keepAttrsTip": "Pemilik, kebenaran dan masa pengubahsuaian kekal seperti asal. Tanpa suis ini, fail baharu dimiliki oleh nobody:users (99:100).",
     "verify": "Semak selepas itu",
     "verifyTip": "Membaca destinasi sekali lagi selepas menyalin dan membandingkan checksum.",
     "background": "Berjalan sebagai tugas di latar belakang",

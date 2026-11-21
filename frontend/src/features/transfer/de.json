@@ -11,8 +11,6 @@
   "clash": "Wenn es die Datei schon gibt",
   "clashTip": "Mit Fragen entscheidest du für jede Datei einzeln, sonst gilt deine Wahl ohne Rückfrage für alle.",
   "moreOptions": "Weitere Optionen",
-  "keepAttrs": "Rechte und Zeitstempel übernehmen",
-  "keepAttrsTip": "Besitzer, Rechte und Änderungsdatum bleiben wie im Original. Ohne diesen Schalter gehören neue Dateien nobody:users (99:100).",
   "verify": "Danach prüfen",
   "verifyTip": "Liest das Ziel nach dem Kopieren noch einmal und vergleicht die Prüfsummen.",
   "background": "Läuft als Aufgabe im Hintergrund",

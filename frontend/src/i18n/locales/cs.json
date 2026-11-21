@@ -3425,8 +3425,6 @@
     "clash": "Když soubor už existuje",
     "clashTip": "U Zeptat se rozhodujete o každém souboru zvlášť, jinak platí vaše volba bez ptaní pro všechny.",
     "moreOptions": "Další možnosti",
-    "keepAttrs": "Zachovat oprávnění a časová razítka",
-    "keepAttrsTip": "Vlastník, oprávnění a datum změny zůstanou jako v originálu. Bez tohoto přepínače patří nové soubory nobody:users (99:100).",
     "verify": "Potom ověřit",
     "verifyTip": "Po zkopírování znovu přečte cíl a porovná kontrolní součty.",
     "background": "Běží jako úloha na pozadí",

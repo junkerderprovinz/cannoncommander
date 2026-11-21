@@ -3223,8 +3223,6 @@
     "clash": "Als het bestand al bestaat",
     "clashTip": "Met Vragen beslis je per bestand, anders geldt je keuze zonder te vragen voor alle.",
     "moreOptions": "Meer opties",
-    "keepAttrs": "Rechten en tijdstempels behouden",
-    "keepAttrsTip": "Eigenaar, rechten en wijzigingsdatum blijven zoals in het origineel. Zonder deze schakelaar zijn nieuwe bestanden van nobody:users (99:100).",
     "verify": "Daarna controleren",
     "verifyTip": "Leest het doel na het kopiëren nog een keer en vergelijkt de controlesommen.",
     "background": "Loopt als taak op de achtergrond",

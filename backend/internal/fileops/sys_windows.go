@@ -10,3 +10,5 @@ func device(fs.FileInfo) (uint64, bool) { return 0, false }
 
 // Chown does nothing here, see freeSpace.
 func Chown(string, fs.FileInfo) {}
+
+func timesRefused(error) bool { return false }

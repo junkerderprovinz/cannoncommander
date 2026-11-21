@@ -3223,8 +3223,6 @@
     "clash": "Se o ficheiro xa existe",
     "clashTip": "Con Preguntar decides ficheiro a ficheiro, se non, a túa escolla vale para todos sen preguntar.",
     "moreOptions": "Máis opcións",
-    "keepAttrs": "Manter permisos e datas",
-    "keepAttrsTip": "O propietario, os permisos e a data de modificación quedan como no orixinal. Sen este interruptor, os ficheiros novos pertencen a nobody:users (99:100).",
     "verify": "Comprobar despois",
     "verifyTip": "Le de novo o destino despois de copiar e compara as sumas de verificación.",
     "background": "Execútase como tarefa en segundo plano",

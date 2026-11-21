@@ -3324,8 +3324,6 @@
     "clash": "Dacă fișierul există deja",
     "clashTip": "Cu Întreabă decizi pentru fiecare fișier, altfel alegerea ta se aplică tuturor fără întrebări.",
     "moreOptions": "Mai multe opțiuni",
-    "keepAttrs": "Păstrează permisiunile și marcajele de timp",
-    "keepAttrsTip": "Proprietarul, permisiunile și data modificării rămân ca la original. Fără acest comutator, fișierele noi aparțin lui nobody:users (99:100).",
     "verify": "Verifică după aceea",
     "verifyTip": "Citește din nou destinația după copiere și compară sumele de control.",
     "background": "Rulează ca sarcină în fundal",

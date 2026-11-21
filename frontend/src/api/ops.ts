@@ -53,7 +53,6 @@ export interface TransferParams {
   rule?: Rule;
   decisions?: Record<string, Choice>;
   verify?: boolean;
-  keepAttrs?: boolean;
 }
 export interface JobCreate { kind: string; params: unknown; cap?: number; waitForParity?: boolean }
 

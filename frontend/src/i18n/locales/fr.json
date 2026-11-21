@@ -3324,8 +3324,6 @@
     "clash": "Si le fichier existe déjà",
     "clashTip": "Avec Demander, vous décidez pour chaque fichier, sinon votre choix s'applique à tous sans autre question.",
     "moreOptions": "Plus d'options",
-    "keepAttrs": "Conserver permissions et horodatages",
-    "keepAttrsTip": "Propriétaire, permissions et date de modification restent comme dans l'original. Sans cette option, les nouveaux fichiers appartiennent à nobody:users (99:100).",
     "verify": "Vérifier ensuite",
     "verifyTip": "Relit la destination après la copie et compare les sommes de contrôle.",
     "background": "S'exécute comme tâche en arrière-plan",

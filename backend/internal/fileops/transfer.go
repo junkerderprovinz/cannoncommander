@@ -63,8 +63,6 @@ type TransferParams struct {
 	Decisions map[string]string `json:"decisions,omitempty"`
 	// Verify reads every copied file back and compares checksums.
 	Verify bool `json:"verify,omitempty"`
-	// KeepAttrs keeps owner, mode and times. It is on unless set to false.
-	KeepAttrs *bool `json:"keepAttrs,omitempty"`
 	// NewFolder makes Dest first. Taking the job back also removes it again,
 	// so the two count as one step.
 	NewFolder bool `json:"newFolder,omitempty"`
@@ -100,10 +98,6 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 		if !jobs.ValidChoice(c) || k == "" {
 			return ccfs.Location{}, nil, v1.Errorf(http.StatusBadRequest, "decisions must be skip, replace, both or newer")
 		}
-	}
-	if p.KeepAttrs == nil {
-		keep := true
-		p.KeepAttrs = &keep
 	}
 	destPerm := destPermFor(p.Rule)
 	dest, err := fsys.Reach(u, p.Dest, destPerm)
@@ -248,7 +242,6 @@ type transfer struct {
 	s    *Service
 	run  *jobs.Run
 	move bool
-	keep bool
 	hash bool
 	// resumed is set while an item runs that was cut off before, so
 	// files this job already wrote are not taken for conflicts.
@@ -280,7 +273,7 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 		if err != nil {
 			return err
 		}
-		t := &transfer{s: s, run: run, move: move, keep: p.KeepAttrs == nil || *p.KeepAttrs, hash: p.Verify,
+		t := &transfer{s: s, run: run, move: move, hash: p.Verify,
 			srcPerm: srcPermFor(move), dstPerm: destPermFor(p.Rule)}
 		if p.NewFolder {
 			// A restart finds the folder there already.
@@ -607,7 +600,7 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 			first = cmpOr(first, err)
 		}
 	}
-	if created && t.keep {
+	if created {
 		_ = os.Chmod(dst.real, info.Mode().Perm())
 		Chown(dst.real, info)
 		_ = os.Chtimes(dst.real, info.ModTime(), info.ModTime())
@@ -635,9 +628,7 @@ func (t *transfer) link(ctx context.Context, src, dst node, info fs.FileInfo, re
 	if err := os.Symlink(target, dst.real); err != nil {
 		return err
 	}
-	if t.keep {
-		Chown(dst.real, info)
-	}
+	Chown(dst.real, info)
 	t.remember(src, dst, inNew)
 	fschange.Created(dst.api)
 	if t.move {
@@ -664,12 +655,10 @@ func (t *transfer) file(ctx context.Context, src, dst node, info fs.FileInfo, re
 			return err
 		}
 	}
-	if t.keep {
-		_ = os.Chmod(part, info.Mode().Perm())
-		Chown(part, info)
-		if err := os.Chtimes(part, info.ModTime(), info.ModTime()); err != nil {
-			return err
-		}
+	_ = os.Chmod(part, info.Mode().Perm())
+	Chown(part, info)
+	if err := os.Chtimes(part, info.ModTime(), info.ModTime()); err != nil && !timesRefused(err) {
+		return err
 	}
 	if replace {
 		if err := t.discard(ctx, dst); err != nil {

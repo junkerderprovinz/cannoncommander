@@ -45,7 +45,7 @@ export interface Panel { tabs: Tab[]; cur: number }
 // A short word on a row, such as "kopiert", that a feature puts there and the next folder change takes away.
 export interface RowMark { label: string; tone?: string }
 // The kind link puts hard links instead of copies; the options are what the transfer window asked.
-export interface TransferOptions { rule?: 'ask' | 'skip' | 'replace' | 'both' | 'newer'; verify?: boolean; keepAttrs?: boolean }
+export interface TransferOptions { rule?: 'ask' | 'skip' | 'replace' | 'both' | 'newer'; verify?: boolean }
 export interface Transfer extends TransferOptions { kind: 'copy' | 'move' | 'link'; items: Entry[]; dest: string; from: string }
 
 // A folder that answers sooner opens without the panel saying it waits, so a quick one never flickers.

@@ -3223,8 +3223,6 @@
     "clash": "Jos tiedosto on jo olemassa",
     "clashTip": "Kysy-valinnalla päätät jokaisesta tiedostosta erikseen, muuten valintasi koskee kaikkia kysymättä.",
     "moreOptions": "Lisäasetukset",
-    "keepAttrs": "Säilytä oikeudet ja aikaleimat",
-    "keepAttrsTip": "Omistaja, oikeudet ja muokkausaika pysyvät samoina kuin alkuperäisessä. Ilman tätä kytkintä uudet tiedostot kuuluvat nobody:users (99:100).",
     "verify": "Tarkista jälkeenpäin",
     "verifyTip": "Lukee kohteen kopioinnin jälkeen uudelleen ja vertaa tarkistussummia.",
     "background": "Ajetaan taustatyönä",

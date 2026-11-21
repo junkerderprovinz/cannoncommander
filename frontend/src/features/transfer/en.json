@@ -11,8 +11,6 @@
   "clash": "When the file exists",
   "clashTip": "With Ask you decide for each file, otherwise your choice holds for all of them without asking.",
   "moreOptions": "More options",
-  "keepAttrs": "Keep permissions and timestamps",
-  "keepAttrsTip": "Owner, permissions and modification time stay as in the original. Without this switch new files belong to nobody:users (99:100).",
   "verify": "Check afterwards",
   "verifyTip": "Reads the target again after copying and compares the checksums.",
   "background": "Runs as a job in the background",

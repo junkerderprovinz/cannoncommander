@@ -3223,8 +3223,6 @@
     "clash": "Ha a fájl már létezik",
     "clashTip": "A Rákérdezésnél minden fájlról külön dönt, különben a választása kérdés nélkül mindre érvényes.",
     "moreOptions": "További beállítások",
-    "keepAttrs": "Jogosultságok és időbélyegek megtartása",
-    "keepAttrsTip": "A tulajdonos, a jogosultságok és a módosítás dátuma az eredetivel egyezik. E kapcsoló nélkül az új fájlok a nobody:users (99:100) tulajdonai.",
     "verify": "Utána ellenőrzés",
     "verifyTip": "Másolás után újra beolvassa a célt, és összeveti az ellenőrzőösszegeket.",
     "background": "Feladatként fut a háttérben",

@@ -3324,8 +3324,6 @@
     "clash": "Se il file esiste già",
     "clashTip": "Con Chiedi decidi file per file, altrimenti la tua scelta vale per tutti senza chiedere.",
     "moreOptions": "Altre opzioni",
-    "keepAttrs": "Mantieni permessi e date",
-    "keepAttrsTip": "Proprietario, permessi e data di modifica restano come nell'originale. Senza questa opzione i nuovi file appartengono a nobody:users (99:100).",
     "verify": "Verifica dopo",
     "verifyTip": "Dopo la copia rilegge la destinazione e confronta i checksum.",
     "background": "Viene eseguito come lavoro in background",

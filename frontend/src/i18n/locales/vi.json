@@ -3122,8 +3122,6 @@
     "clash": "Nếu tệp đã tồn tại",
     "clashTip": "Với Hỏi, bạn quyết định riêng cho từng tệp, nếu không thì lựa chọn của bạn áp dụng cho tất cả mà không hỏi lại.",
     "moreOptions": "Thêm tùy chọn",
-    "keepAttrs": "Giữ quyền và dấu thời gian",
-    "keepAttrsTip": "Chủ sở hữu, quyền và ngày sửa giữ như bản gốc. Nếu tắt, tệp mới sẽ thuộc về nobody:users (99:100).",
     "verify": "Kiểm tra sau đó",
     "verifyTip": "Đọc lại đích sau khi sao chép và so sánh mã kiểm tra.",
     "background": "Chạy như một công việc nền",

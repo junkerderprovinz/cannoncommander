@@ -3425,8 +3425,6 @@
     "clash": "Če datoteka že obstaja",
     "clashTip": "Pri Vprašaj se odločite za vsako datoteko posebej, sicer vaša izbira brez vprašanja velja za vse.",
     "moreOptions": "Več možnosti",
-    "keepAttrs": "Ohrani dovoljenja in časovne žige",
-    "keepAttrsTip": "Lastnik, dovoljenja in datum spremembe ostanejo kot v izvirniku. Brez tega stikala nove datoteke pripadajo nobody:users (99:100).",
     "verify": "Nato preveri",
     "verifyTip": "Po kopiranju še enkrat prebere cilj in primerja kontrolne vsote.",
     "background": "Teče kot opravilo v ozadju",

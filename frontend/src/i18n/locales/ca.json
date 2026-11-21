@@ -3324,8 +3324,6 @@
     "clash": "Si el fitxer ja existeix",
     "clashTip": "Amb Pregunta decidiu fitxer per fitxer; si no, la vostra tria val per a tots sense preguntar.",
     "moreOptions": "Més opcions",
-    "keepAttrs": "Conserva els permisos i les dates",
-    "keepAttrsTip": "El propietari, els permisos i la data de modificació es queden com a l'original. Sense aquesta opció, els fitxers nous pertanyen a nobody:users (99:100).",
     "verify": "Comprova després",
     "verifyTip": "Torna a llegir la destinació després de copiar i compara les sumes de verificació.",
     "background": "S'executa com a tasca en segon pla",

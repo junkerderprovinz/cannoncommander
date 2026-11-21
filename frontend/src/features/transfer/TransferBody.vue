@@ -22,7 +22,6 @@ export interface TransferState {
   from: string;
   dest: string;
   rule: Rule;
-  keepAttrs: boolean;
   verify: boolean;
   pf: Preflight | null;
 }
@@ -58,7 +57,6 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
       <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :trigger-attrs="{ 'data-val': st.rule }" :options="selectOptions(RULES())" /></FieldRow>
     </FieldRowGroup>
     <details class="xmore"><summary>{{ t('transfer.moreOptions') }}</summary>
-      <FieldRow :label="t('transfer.keepAttrs')" :hint="t('transfer.keepAttrsTip')"><Toggle v-model="st.keepAttrs" /></FieldRow>
       <FieldRow :label="t('transfer.verify')" :hint="t('transfer.verifyTip')"><Toggle v-model="st.verify" /></FieldRow>
     </details>
   </SubCard>

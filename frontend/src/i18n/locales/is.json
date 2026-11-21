@@ -3223,8 +3223,6 @@
     "clash": "Ef skráin er þegar til",
     "clashTip": "Með Spyrja ákveðurðu fyrir hverja skrá, annars gildir val þitt fyrir allar án þess að spurt sé.",
     "moreOptions": "Fleiri valkostir",
-    "keepAttrs": "Halda heimildum og tímastimplum",
-    "keepAttrsTip": "Eigandi, heimildir og breytingartími haldast eins og í upprunanum. Án þessa rofa eru nýjar skrár í eigu nobody:users (99:100).",
     "verify": "Sannreyna á eftir",
     "verifyTip": "Les áfangastaðinn aftur eftir afritun og ber saman gátsummurnar.",
     "background": "Keyrir sem verk í bakgrunni",

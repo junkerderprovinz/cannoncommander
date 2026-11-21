@@ -3223,8 +3223,6 @@
     "clash": "Kui fail on juba olemas",
     "clashTip": "Valikuga Küsi otsustad iga faili eraldi, muidu kehtib sinu valik kõigile ilma küsimata.",
     "moreOptions": "Rohkem valikuid",
-    "keepAttrs": "Säilita õigused ja ajatemplid",
-    "keepAttrsTip": "Omanik, õigused ja muutmisaeg jäävad samaks nagu originaalil. Ilma selle lülitita kuuluvad uued failid kasutajale nobody:users (99:100).",
     "verify": "Kontrolli pärast",
     "verifyTip": "Loeb sihtkoha pärast kopeerimist uuesti ja võrdleb kontrollsummasid.",
     "background": "Töötab taustatööna",

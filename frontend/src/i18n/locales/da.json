@@ -3223,8 +3223,6 @@
     "clash": "Hvis filen findes i forvejen",
     "clashTip": "Med Spørg beslutter du for hver fil, ellers gælder dit valg for alle uden at spørge.",
     "moreOptions": "Flere indstillinger",
-    "keepAttrs": "Bevar rettigheder og tidsstempler",
-    "keepAttrsTip": "Ejer, rettigheder og ændringstidspunkt forbliver som i originalen. Uden denne kontakt tilhører nye filer nobody:users (99:100).",
     "verify": "Tjek bagefter",
     "verifyTip": "Læser målet igen efter kopieringen og sammenligner kontrolsummerne.",
     "background": "Kører som job i baggrunden",

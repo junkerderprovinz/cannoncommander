@@ -40,7 +40,7 @@ const warn = (e: unknown) => toast(e instanceof ApiError ? e.message : String(e)
 function paramsOf(job: Transfer): TransferParams {
   return {
     sources: job.items.map((k) => pathOf(k, job.from)), dest: job.dest,
-    rule: job.rule ?? 'ask', verify: !!job.verify, keepAttrs: job.keepAttrs ?? true,
+    rule: job.rule ?? 'ask', verify: !!job.verify,
   };
 }
 
@@ -89,7 +89,7 @@ function sameFileWindow(job: Transfer, pf: Preflight) {
     w.foot = w.foot.map((f) => (f.primary ? { ...f, disabled: nothing } : f));
   }, { immediate: true });
   async function go() {
-    const F = usePanels(), options = { rule: job.rule, verify: job.verify, keepAttrs: job.keepAttrs };
+    const F = usePanels(), options = { rule: job.rule, verify: job.verify };
     if (st.way === 'share') return F.transfer(kind, job.items, shareTo, shareFrom, options);
     const to = `/mnt/${st.disk}` + sub(relDest), names = new Set(job.items.map((k) => k.name));
     const found = (await useListing().load(diskFrom).catch(() => null))?.items.filter((k) => names.has(k.name)).map(toEntry) ?? [];
@@ -169,13 +169,13 @@ function transferWindow(kind: 'copy' | 'move') {
   const items = F.sel(), from = F.T().path;
   const st: TransferState = reactive({
     kind, way: kind, items, from, dest: prefs.dual ? F.T(F.other()).path : parent(from),
-    rule: 'ask', keepAttrs: true, verify: false, pf: null,
+    rule: 'ask', verify: false, pf: null,
   });
   const verb = verbOf(kind);
   const primary = () => ({
     label: st.pf?.unraid?.space ? t(`transfer.anyway.${kind}`) : verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true,
     run: () => {
-      void Promise.resolve(F.transfer(st.way, items, st.dest.trim().replace(/(.)\/$/, '$1'), from, { rule: st.rule, keepAttrs: st.keepAttrs, verify: st.verify }))
+      void Promise.resolve(F.transfer(st.way, items, st.dest.trim().replace(/(.)\/$/, '$1'), from, { rule: st.rule, verify: st.verify }))
         .then((job) => (job && typeof job === 'object' && 'id' in job ? followJob(w, job as Job) : w.close()));
       return false;
     },

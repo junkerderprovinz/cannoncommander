@@ -159,7 +159,7 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 		return err
 	}
 	s := For(run.Deps())
-	t := &transfer{s: s, run: run, move: true, keep: true, srcPerm: srcPermFor(true), dstPerm: ccfs.Create}
+	t := &transfer{s: s, run: run, move: true, srcPerm: srcPermFor(true), dstPerm: ccfs.Create}
 	var errs []error
 	for _, m := range slices.Backward(data.Moved) {
 		to, u, err := run.EntryCarried(m.To, t.srcPerm)
