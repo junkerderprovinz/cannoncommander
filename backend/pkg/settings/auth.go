@@ -1,34 +1,11 @@
 package settings
 
 import (
-	"context"
-	"crypto/tls"
 	"errors"
-	"fmt"
-	"net/http"
 	"strings"
 
-	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 )
-
-// userAgentTransport wraps an http.RoundTripper to add a User-Agent header
-type userAgentTransport struct {
-	base      http.RoundTripper
-	userAgent string
-}
-
-// RoundTrip implements the http.RoundTripper interface
-func (t *userAgentTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	// Clone the request to avoid modifying the original
-	reqCopy := req.Clone(req.Context())
-	// Set User-Agent header if not already set
-	if reqCopy.Header.Get("User-Agent") == "" {
-		reqCopy.Header.Set("User-Agent", t.userAgent)
-	}
-	return t.base.RoundTrip(reqCopy)
-}
 
 // AuthCommon contains fields shared across multiple authentication methods
 type AuthCommon struct {
@@ -122,12 +99,11 @@ func MigrateLegacyPasswordAdminFromAuth() {
 // OpenID OAuth2.0
 type OidcConfig struct {
 	AuthCommon   `json:",inline"`
-	ClientID     string                `json:"clientId"`     // secret: client id of the OIDC application
-	ClientSecret string                `json:"clientSecret"` // secret: client secret of the OIDC application
-	IssuerUrl    string                `json:"issuerUrl"`    // authorization URL of the OIDC provider
-	Scopes       string                `json:"scopes"`       // scopes to request from the OIDC provider
-	Provider     *oidc.Provider        `json:"-"`            // OIDC provider
-	Verifier     *oidc.IDTokenVerifier `json:"-"`            // OIDC verifier
+	ClientID     string `json:"clientId"`     // secret: client id of the OIDC application
+	ClientSecret string `json:"clientSecret"` // secret: client secret of the OIDC application
+	IssuerUrl    string `json:"issuerUrl"`    // authorization URL of the OIDC provider
+	Scopes       string `json:"scopes"`       // scopes to request from the OIDC provider
+	CaFile       string `json:"caFile"`       // PEM file of a certificate authority to trust for this provider, such as your own
 }
 
 // PasskeyAuthConfig configures passkeys. They are always on, so Enabled is
@@ -140,9 +116,10 @@ type PasskeyAuthConfig struct {
 	LoginButtonText string   `json:"loginButtonText"` // custom text for the passkey login button
 }
 
-// ValidateOidcAuth processes the OIDC callback and retrieves user identity
+// validateOidcAuth fills in what the OIDC section leaves out. The sign-in
+// speaks to the provider itself.
 func validateOidcAuth() error {
-	oidcCfg := &Config.Auth.Methods.OidcAuth // Use a pointer to modify the original config
+	oidcCfg := &Config.Auth.Methods.OidcAuth
 	applyAuthCommonDefaults(&oidcCfg.AuthCommon)
 	if oidcCfg.UserIdentifier == "" {
 		oidcCfg.UserIdentifier = "preferred_username"
@@ -150,40 +127,8 @@ func validateOidcAuth() error {
 	if oidcCfg.Scopes == "" {
 		oidcCfg.Scopes = "openid email profile"
 	}
-
 	if !oidcCfg.Enabled {
 		return errors.New("OIDC is not enabled")
 	}
-	ctx := context.Background()
-
-	// Create a custom HTTP client with proper User-Agent to avoid being blocked by bot protection
-	transport := &http.Transport{
-		Proxy: http.ProxyFromEnvironment, // Respect HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables
-	}
-
-	// If disableVerifyTLS is true, disable TLS verification
-	if oidcCfg.DisableVerifyTLS {
-		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		logger.Warning("OIDC TLS verification is disabled.")
-	}
-
-	// Create custom client with User-Agent header to bypass bot protection (like Cloudflare Bot Fight Mode)
-	customClient := &http.Client{
-		Transport: &userAgentTransport{
-			base:      transport,
-			userAgent: fmt.Sprintf("CannonCommander %s (OIDC client)", version.Version),
-		},
-	}
-
-	// Use oidc.ClientContext to pass the custom client to the OIDC library
-	ctx = oidc.ClientContext(ctx, customClient)
-
-	provider, err := oidc.NewProvider(ctx, oidcCfg.IssuerUrl)
-	if err != nil {
-		return fmt.Errorf("url '%v' failed to create OIDC provider: %w", oidcCfg.IssuerUrl, err)
-	}
-	oidcCfg.Provider = provider
-	oidcCfg.Verifier = provider.Verifier(&oidc.Config{ClientID: oidcCfg.ClientID})
-
 	return nil
 }

@@ -269,7 +269,6 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 	}
 
 	putUserInCache(user)
-	recountSignIns()
 
 	return nil
 }
@@ -364,7 +363,6 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 	if err := commitUserUpdate(existingUser, storedSnapshot); err != nil {
 		return err
 	}
-	recountSignIns()
 	if FieldListIncludes(fields, "password") && storedSnapshot.Username == settings.PasswordAdminUsername() {
 		forgetFirstAdminPassword()
 	}
@@ -550,7 +548,6 @@ func DeleteUser(id uint64) error {
 	if accessDb != nil {
 		_ = accessDb.RemoveHashedTokensForUser(id)
 	}
-	recountSignIns()
 
 	return nil
 }
@@ -578,7 +575,6 @@ func DeleteUserByUsername(username string) error {
 	if accessDb != nil && uid != 0 {
 		_ = accessDb.RemoveHashedTokensForUser(uid)
 	}
-	recountSignIns()
 	return nil
 }
 

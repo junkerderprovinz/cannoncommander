@@ -122,9 +122,9 @@ func (s *Server) keysAllowedFrom(r *http.Request) bool {
 }
 
 // proveOwner makes sure the person at the keyboard owns the account before a
-// key is made, replaced or allowed to write: a session, no API token, and the
-// password or a fresh sign-in, as for an API token.
-func (s *Server) proveOwner(r *http.Request, u *users.User, password string) error {
+// key is made, replaced or allowed to write: a session, no API token, and a
+// fresh sign-in or the password confirmed, as for an API token.
+func (s *Server) proveOwner(r *http.Request) error {
 	if s.login.ByAPIToken(r) {
 		return errTokenRefused
 	}
@@ -137,7 +137,7 @@ func (s *Server) proveOwner(r *http.Request, u *users.User, password string) err
 	if _, ok := s.login.SessionHash(r); !ok {
 		return errTokenRefused
 	}
-	return s.login.Confirm(r, u, password)
+	return s.login.Confirm(r)
 }
 
 // unusable names why a key no longer authenticates although nobody revoked
@@ -253,7 +253,6 @@ type createRequest struct {
 	Label    string `json:"label"`
 	Client   string `json:"client"`
 	CanWrite bool   `json:"canWrite"`
-	Password string `json:"password"`
 }
 
 func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
@@ -269,7 +268,7 @@ func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
 	if in.Client != "" && !clientID.MatchString(in.Client) {
 		return errClient
 	}
-	if err := s.proveOwner(r, me, in.Password); err != nil {
+	if err := s.proveOwner(r); err != nil {
 		return err
 	}
 	pepper := s.pepper()
@@ -316,7 +315,6 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 	var in struct {
 		Label    *string `json:"label"`
 		CanWrite *bool   `json:"canWrite"`
-		Password string  `json:"password"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -342,7 +340,7 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 		if k.UserID != me.ID {
 			return errNotYourKey
 		}
-		if err := s.proveOwner(r, me, in.Password); err != nil {
+		if err = s.proveOwner(r); err != nil {
 			return err
 		}
 	}
@@ -362,14 +360,6 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 
 func (s *Server) rotate(w http.ResponseWriter, r *http.Request) error {
 	me := v1.UserFrom(r)
-	var in struct {
-		Password string `json:"password"`
-	}
-	if r.ContentLength != 0 {
-		if err := v1.DecodeJSON(r, &in); err != nil {
-			return err
-		}
-	}
 	k, err := s.keyFor(r, me)
 	if err != nil {
 		return err
@@ -380,7 +370,7 @@ func (s *Server) rotate(w http.ResponseWriter, r *http.Request) error {
 	if k.Kind != kindKey || k.RevokedAt != 0 {
 		return errNoSuchKey
 	}
-	if err := s.proveOwner(r, me, in.Password); err != nil {
+	if err = s.proveOwner(r); err != nil {
 		return err
 	}
 	pepper := s.pepper()
@@ -636,7 +626,6 @@ func (s *Server) consentInfo(w http.ResponseWriter, r *http.Request) error {
 			"redirectHost": u.Hostname(), "loopback": loopback(u.Hostname()),
 		},
 		"account":      me.Username,
-		"password":     me.LoginMethod == users.LoginMethodPassword,
 		"ticket":       ticket,
 		"limitReached": others >= keyLimit,
 		"grantLimit":   keyLimit,
@@ -645,7 +634,7 @@ func (s *Server) consentInfo(w http.ResponseWriter, r *http.Request) error {
 
 // consent takes the user's answer. Allow hands the client a code for the
 // token endpoint, which makes a lasting credential like a key, so it asks for
-// the password or a fresh sign-in as making a key does. A refused proof
+// a fresh sign-in or the password confirmed, as making a key does. A refused proof
 // leaves the ticket unspent, so the page can ask again. Deny tells the client
 // access_denied.
 func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
@@ -653,7 +642,6 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 		Ticket   string `json:"ticket"`
 		Allow    bool   `json:"allow"`
 		CanWrite bool   `json:"canWrite"`
-		Password string `json:"password"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -669,7 +657,7 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 	}
 	me := v1.UserFrom(r)
 	if in.Allow {
-		if err := s.proveOwner(r, me, in.Password); err != nil {
+		if err = s.proveOwner(r); err != nil {
 			return err
 		}
 	}

@@ -58,9 +58,9 @@ func (rules) Effect(u *users.User, p string) ccfs.Effect {
 	return ccfs.Open
 }
 
-// fakeLogin stands for the sign-in system: a request with X-Session has a
-// session, one with X-Token came with an API token, and the password is
-// "richtig".
+// fakeLogin stands for the sign-in: a request with X-Session has a session,
+// one with X-Token came with an API token, and one with X-Stale signed in too
+// long ago to make a lasting key.
 type fakeLogin struct{}
 
 func (fakeLogin) SessionHash(r *http.Request) (string, bool) {
@@ -74,9 +74,9 @@ func (fakeLogin) ClientIP(r *http.Request) string {
 	}
 	return "192.0.2.1"
 }
-func (fakeLogin) Confirm(_ *http.Request, _ *users.User, password string) error {
-	if password != "richtig" {
-		return v1.Coded(http.StatusForbidden, "currentPasswordWrong", "the current password is not right")
+func (fakeLogin) Confirm(r *http.Request) error {
+	if r.Header.Get("X-Stale") != "" {
+		return v1.Coded(http.StatusForbidden, "signInAgain", "sign in again, then try once more")
 	}
 	return nil
 }
@@ -309,7 +309,7 @@ func (e *env) key(user string, canWrite bool) (key, id string) {
 		Key  string  `json:"key"`
 		Item KeyView `json:"item"`
 	}
-	if code := e.api(user, http.MethodPost, "/mcp/keys", map[string]any{"label": user + " " + randomLabel(), "canWrite": canWrite, "password": "richtig"}, &out); code != http.StatusCreated {
+	if code := e.api(user, http.MethodPost, "/mcp/keys", map[string]any{"label": user + " " + randomLabel(), "canWrite": canWrite}, &out); code != http.StatusCreated {
 		e.t.Fatalf("make a key for %s: %d", user, code)
 	}
 	return out.Key, out.Item.ID

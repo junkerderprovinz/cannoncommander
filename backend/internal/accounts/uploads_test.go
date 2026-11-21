@@ -48,7 +48,7 @@ func (w *world) uploadOwner() string {
 }
 
 func TestANewUserOfAnOldNameFindsNoOpenUpload(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	part := w.openUpload("anna")
 
@@ -63,7 +63,7 @@ func TestANewUserOfAnOldNameFindsNoOpenUpload(t *testing.T) {
 }
 
 func TestRenamingAUserTakesOpenUploadsAlong(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	w.openUpload("anna")
 

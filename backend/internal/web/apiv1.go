@@ -39,15 +39,17 @@ var (
 
 // mountAPIv1 serves /api/v1. The more specific prefix wins over /api/ in
 // the ServeMux.
-func mountAPIv1(router *http.ServeMux) error {
+// It returns what finds the visitor of each request, which goes in front of
+// the whole router.
+func mountAPIv1(ctx context.Context, router *http.ServeMux) (func(http.Handler) http.Handler, error) {
 	db := state.MainDB()
 	rules, err := accounts.Rules(db)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	resolver, err := ccfs.FromSettings(&settings.Config, rules)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	svc := unraid.Default()
 	var devices []string
@@ -62,11 +64,16 @@ func mountAPIv1(router *http.ServeMux) error {
 	resolver = places.Follow(resolver, eventHub)
 	index := fsindex.Scanned()
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index, Users: currentUser}
-	accounts.UseLogin(sessionLogin{})
-	terminal.UseGate(terminalGate{guard: originGuard()})
-	h, err := api.NewRouter(deps, mcpapi.Authenticate(accounts.Track(deps.DB, authenticateV1))).Handler()
+	guard, err := mountSignIn(ctx, router, deps)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	system.OnShutdown(accounts.Close)
+	accounts.UseClientIP(GetRemoteIP)
+	terminal.UseGate(terminalGate{guard: originGuard()})
+	h, err := api.NewRouter(deps, mcpapi.Authenticate(accounts.Authenticate)).Handler()
+	if err != nil {
+		return nil, err
 	}
 	// Hooks run last added first, so running jobs stop before the trash and
 	// the share links they may still write to.
@@ -90,7 +97,7 @@ func mountAPIv1(router *http.ServeMux) error {
 		s.Mount(router, settings.Config.Http.BaseURL, h)
 	}
 	mountDAV(router, deps)
-	return nil
+	return guard, nil
 }
 
 func currentUser(name string) (*users.User, error) {
@@ -99,27 +106,6 @@ func currentUser(name string) (*users.User, error) {
 		return nil, err
 	}
 	return &u, nil
-}
-
-// authenticateV1 runs the same login checks as the older API, so a session
-// cookie, an API token and proxy or JWT logins all work for /api/v1.
-func authenticateV1(w http.ResponseWriter, r *http.Request) (*users.User, error) {
-	d := &requestContext{Ctx: r.Context()}
-	var user *users.User
-	status, err := withUserHelper(func(_ http.ResponseWriter, _ *http.Request, d *requestContext) (int, error) {
-		user = d.User
-		return 0, nil
-	})(w, r, d)
-	if user != nil {
-		return user, nil
-	}
-	switch status {
-	case http.StatusUnauthorized, 0:
-		return nil, v1.Coded(http.StatusUnauthorized, "signInNeeded", "login required")
-	case http.StatusForbidden:
-		return nil, v1.Coded(http.StatusForbidden, "denied", "access denied")
-	}
-	return nil, err
 }
 
 // labelMover lets labels follow files that something outside the app

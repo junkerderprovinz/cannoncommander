@@ -47,54 +47,37 @@ type HashedTokenRecord struct {
 // PersistImmediateTokenRevocation records an immediate revocation and removes the
 // owner mapping in one transaction (revocation row first, then hashed_tokens).
 func (s *SQLStore) PersistImmediateTokenRevocation(tokenHash string) error {
-	tx, err := s.db.Begin()
-	if err != nil {
-		return fmt.Errorf("begin immediate token revocation transaction: %w", err)
-	}
-	defer func() { _ = tx.Rollback() }()
-
-	if err := execSaveRevokedToken(tx, tokenHash, 0); err != nil {
-		return err
-	}
-	if err := execDeleteHashedToken(tx, tokenHash); err != nil {
-		return err
-	}
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit immediate token revocation transaction: %w", err)
-	}
-	return nil
+	return s.InLegacyTx(func(tx *sql.Tx) error {
+		if err := execSaveRevokedToken(tx, tokenHash, 0); err != nil {
+			return err
+		}
+		return execDeleteHashedToken(tx, tokenHash)
+	})
 }
 
 // PersistTokenRetirement records a grace-window revocation and removes expired
 // revocation rows and owner mappings atomically.
 func (s *SQLStore) PersistTokenRetirement(tokenHash string, revokedAt int64, pruned []string) error {
-	tx, err := s.db.Begin()
-	if err != nil {
-		return fmt.Errorf("begin token retirement transaction: %w", err)
-	}
-	defer func() { _ = tx.Rollback() }()
-
-	if err := execSaveRevokedToken(tx, tokenHash, revokedAt); err != nil {
-		return err
-	}
-	for _, hash := range pruned {
-		if err := execDeleteHashedToken(tx, hash); err != nil {
+	return s.InLegacyTx(func(tx *sql.Tx) error {
+		if err := execSaveRevokedToken(tx, tokenHash, revokedAt); err != nil {
 			return err
 		}
-		if err := execDeleteRevokedToken(tx, hash); err != nil {
-			return err
+		for _, hash := range pruned {
+			if err := execDeleteHashedToken(tx, hash); err != nil {
+				return err
+			}
+			if err := execDeleteRevokedToken(tx, hash); err != nil {
+				return err
+			}
 		}
-	}
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit token retirement transaction: %w", err)
-	}
-	return nil
+		return nil
+	})
 }
 
 // SaveRevokedToken persists a revocation. revokedAt is the Unix timestamp of the
 // revocation; 0 marks an immediate revocation (no grace window).
 func (s *SQLStore) SaveRevokedToken(tokenHash string, revokedAt int64) error {
-	return execSaveRevokedToken(s.db, tokenHash, revokedAt)
+	return s.InLegacyTx(func(tx *sql.Tx) error { return execSaveRevokedToken(tx, tokenHash, revokedAt) })
 }
 
 // IsTokenRevoked checks if a token hash is in the revoked tokens table
@@ -140,7 +123,7 @@ func (s *SQLStore) GetAllRevokedTokens() (map[string]int64, error) {
 
 // DeleteRevokedToken removes a token hash from the revoked tokens table
 func (s *SQLStore) DeleteRevokedToken(tokenHash string) error {
-	return execDeleteRevokedToken(s.db, tokenHash)
+	return s.InLegacyTx(func(tx *sql.Tx) error { return execDeleteRevokedToken(tx, tokenHash) })
 }
 
 // SaveHashedToken saves a token hash to owner user_id mapping (decimal text).

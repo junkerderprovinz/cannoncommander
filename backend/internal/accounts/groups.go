@@ -166,6 +166,9 @@ func (h handlers) updateGroup(w http.ResponseWriter, r *http.Request) error {
 		if err := h.svc.rules.renameWho(r.Context(), "@"+name, "@"+newName); err != nil {
 			return err
 		}
+		if _, err = h.db.ExecContext(r.Context(), `UPDATE synced_members SET group_name = ? WHERE group_name = ?`, newName, name); err != nil {
+			return err
+		}
 	}
 	if err := h.setNote(r.Context(), newName, note); err != nil {
 		return err
@@ -180,6 +183,9 @@ func (h handlers) updateGroup(w http.ResponseWriter, r *http.Request) error {
 // dropGroup removes a group from the login system and its note.
 func (h handlers) dropGroup(ctx context.Context, name string) error {
 	if err := state.DeleteGroup(name); err != nil {
+		return err
+	}
+	if _, err := h.db.ExecContext(ctx, `DELETE FROM synced_members WHERE group_name = ?`, name); err != nil {
 		return err
 	}
 	_, err := h.db.ExecContext(ctx, `DELETE FROM group_notes WHERE name = ?`, name)

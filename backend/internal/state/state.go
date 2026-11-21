@@ -51,6 +51,11 @@ func initialize(dbPath string) (bool, error) {
 		return false, fmt.Errorf("failed to initialize SQL database: %w", err)
 	}
 	sqlDb = store
+	if err = checkRollback(); err != nil {
+		_ = store.Close()
+		sqlDb = nil
+		return existingDb, err
+	}
 	firstAdminPasswordFile = filepath.Join(filepath.Dir(dbPath), "first-admin-password")
 
 	if err = InitSourceAccessDefaults(); err != nil {
@@ -70,7 +75,6 @@ func initialize(dbPath string) (bool, error) {
 			return existingDb, fmt.Errorf("failed to run initial setup: %w", err)
 		}
 	}
-	recountSignIns()
 
 	logger.Debugf("Loading index data into memory...")
 
@@ -166,7 +170,7 @@ func Close() error {
 
 	users.SetUsernameToID(nil)
 	clearUserRecordCache()
-	nobodySignsIn.Store(false)
+	signInOpen.Store(nil)
 	StopActivityRecorder()
 
 	var err error

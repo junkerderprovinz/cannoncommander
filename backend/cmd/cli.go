@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"cmp"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -20,7 +21,13 @@ var (
 	configPath string
 )
 
+// errSignInKeepsAccounts refuses a change the sign-in would not know about.
+var errSignInKeepsAccounts = fmt.Errorf("the sign-in keeps the accounts: change them in the app, and reset a forgotten password through the reset code in the log")
+
 func setUser(username, password string, asAdmin bool) error {
+	if keeps, err := state.SignInKeepsAccounts(); err != nil || keeps {
+		return cmp.Or(err, errSignInKeepsAccounts)
+	}
 	user, err := state.GetUserByUsername(username)
 	if err != nil {
 		newUser := users.User{
@@ -75,6 +82,9 @@ func setUser(username, password string, asAdmin bool) error {
 }
 
 func promoteUser(username string) error {
+	if keeps, err := state.SignInKeepsAccounts(); err != nil || keeps {
+		return cmp.Or(err, errSignInKeepsAccounts)
+	}
 	user, err := state.GetUserByUsername(username)
 	if err != nil {
 		return fmt.Errorf("user %s not found", username)

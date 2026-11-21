@@ -181,8 +181,9 @@ tags:
 
       These operations manage the keys of the signed-in account. Admins also
       see and revoke the keys of everybody else. Making a key, replacing one
-      and switching writing on need a session, never an API token, and the
-      account's password or a fresh sign-in.
+      and switching writing on need a session, never an API token, and a
+      fresh sign-in. Without one they answer 403 signInAgain, and the page
+      confirms the password at the sign-in's me/confirm and tries again.
 paths:
   /fs/list:
     get:
@@ -2832,7 +2833,9 @@ paths:
     get:
       operationId: meGet
       summary: The logged in user
-      description: With an API token, token names it and its rights.
+      description: |
+        What CannonCommander keeps about the account. The sign-in tells the
+        rest at /api/signin/v1/me. With an API token, token tells its rights.
       responses:
         "200":
           description: The user.
@@ -2842,709 +2845,6 @@ paths:
                 $ref: "#/components/schemas/Me"
         "401":
           $ref: "#/components/responses/Unauthorized"
-      tags: [accounts]
-  /me/password:
-    put:
-      operationId: mePassword
-      summary: Set or change the own password, which ends the other sessions
-      description: |
-        Needs the current password, unless the account has none yet. Every
-        other session of the account is logged out, this one stays, and the
-        first password signs this browser in. API tokens keep working. Not
-        possible with an API token. Five wrong current passwords block the
-        change for 15 minutes.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [next]
-              properties:
-                current:
-                  type: string
-                next:
-                  type: string
-                  minLength: 12
-      responses:
-        "200":
-          description: Changed.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ended]
-                properties:
-                  ended:
-                    type: integer
-                    description: How many other sessions were logged out.
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          description: The current password is wrong, the password is locked, or the request came with an API token.
-        "409":
-          description: The account signs in somewhere else, such as OIDC.
-        "429":
-          description: Too many wrong passwords.
-      tags: [accounts]
-    delete:
-      operationId: mePasswordRemove
-      summary: Remove the own password, so the server opens without a sign in
-      description: |
-        Needs the current password. Takes the second factor, the recovery
-        codes and the passkeys with it and ends every session. Refused while
-        another account here still signs in, which would then decide alone.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [current]
-              properties:
-                current:
-                  type: string
-      responses:
-        "200":
-          description: Removed.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ended]
-                properties:
-                  ended:
-                    type: integer
-                    description: How many sessions were logged out.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          description: The current password is wrong, the password is locked, or the request came with an API token.
-        "409":
-          description: Another account still signs in here, the account signs in somewhere else, or it has no password.
-        "429":
-          description: Too many wrong passwords.
-      tags: [accounts]
-  /me/sessions:
-    get:
-      operationId: sessionsList
-      summary: Open sessions
-      description: |
-        The logins of the own account that are still valid, the one used
-        last first. A session shows up once it made a request to this API.
-      responses:
-        "200":
-          description: The sessions.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items]
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Session"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-      tags: [accounts]
-  /me/sessions/{id}:
-    delete:
-      operationId: sessionEnd
-      summary: End a session
-      description: Logs that session out at once. Ending the current session logs out this client.
-      responses:
-        "204":
-          description: Ended.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-      tags: [accounts]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-  /me/tokens:
-    get:
-      operationId: tokensList
-      summary: API tokens
-      description: The tokens of the own account by name, without their secrets.
-      responses:
-        "200":
-          description: The tokens.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items]
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Token"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-      tags: [accounts]
-    post:
-      operationId: tokenCreate
-      summary: Create an API token with limited rights
-      description: |
-        A token never has more rights than its owner. One with the rights r
-        may only read: it cannot change files, and every other method than
-        GET and HEAD is refused. The secret is in this answer only. Not
-        possible with an API token. An account with a password sends its
-        current password, five wrong ones block it for 15 minutes together
-        with the password change. An account without one, such as OIDC,
-        needs a session that signed in less than five minutes ago.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [name, rights]
-              properties:
-                name:
-                  type: string
-                  maxLength: 64
-                rights:
-                  type: string
-                  enum: [r, rw]
-                  description: r reads, rw also writes.
-                days:
-                  type: [integer, "null"]
-                  minimum: 0
-                  maximum: 3650
-                  description: How long the token lives. Null, 0 or left out means it never runs out.
-                password:
-                  type: string
-                  description: The current password. Needed when the account signs in with one.
-      responses:
-        "201":
-          description: Created.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NewToken"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/FreshProof"
-        "409":
-          description: A token with this name exists.
-        "429":
-          description: Too many wrong passwords.
-      tags: [accounts]
-  /me/tokens/{id}:
-    delete:
-      operationId: tokenDelete
-      summary: Revoke an API token
-      description: The id comes from the list. Whatever uses the token loses access at once.
-      responses:
-        "204":
-          description: Revoked.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-      tags: [accounts]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-  /me/passkeys:
-    get:
-      operationId: passkeysList
-      summary: Passkeys
-      responses:
-        "200":
-          description: |
-            The passkeys. blocked says why no passkey can be added from
-            here and is missing when one can: the account signs in
-            elsewhere or has no password, the server takes no passwords, or
-            the page is open on an IP address, where browsers keep no
-            passkey.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items]
-                properties:
-                  blocked:
-                    $ref: "#/components/schemas/Problem"
-                  items:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Passkey"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-      tags: [accounts]
-    post:
-      operationId: passkeyRegister
-      summary: Register a passkey
-      description: |
-        Two steps on the same path. With a name and the current password
-        the answer carries the options for navigator.credentials.create,
-        good for five minutes. Five wrong passwords block the first step
-        for 15 minutes together with the password change. Sending the same
-        name with the credential the browser returned, as JSON, adds the
-        passkey, this step needs no password. It only works under the host
-        it was registered on. Not possible with an API token.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [name]
-              properties:
-                name:
-                  type: string
-                  maxLength: 64
-                password:
-                  type: string
-                  description: The current password, for the first step.
-                credential:
-                  type: object
-                  description: The PublicKeyCredential of the browser, for the second step.
-      responses:
-        "200":
-          description: The first step, with the options.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [options]
-                properties:
-                  options:
-                    type: object
-                    description: CredentialCreationOptions with a publicKey member, binary fields as base64url.
-        "201":
-          description: The passkey was added.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [passkey]
-                properties:
-                  passkey:
-                    $ref: "#/components/schemas/Passkey"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/FreshProof"
-        "409":
-          description: The account signs in elsewhere or has no password, the server takes no passwords, the page is open on an IP address, the name or the passkey is taken, or the first step ran out.
-        "429":
-          description: Too many wrong passwords.
-      tags: [accounts]
-  /me/passkeys/{id}:
-    delete:
-      operationId: passkeyDelete
-      summary: Remove a passkey
-      responses:
-        "204":
-          description: Removed.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-      tags: [accounts]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-  /me/totp:
-    post:
-      operationId: totpSetup
-      summary: Turn on two factor login
-      description: |
-        Three steps on the same path. An empty object starts the setup with
-        a fresh secret. The first code from the app within ten minutes
-        turns two factor login on, and the answer holds eight recovery
-        codes, each of which logs in once instead of a code. A code with
-        regenerate replaces the recovery codes with new ones. Codes are
-        shown this once. Not possible with an API token.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                code:
-                  type: string
-                  description: Six digits from the app. With regenerate, a recovery code works too.
-                regenerate:
-                  type: boolean
-      responses:
-        "200":
-          description: The secret when starting, the recovery codes otherwise.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/TotpSetup"
-                  - $ref: "#/components/schemas/RecoveryCodes"
-        "400":
-          description: The code does not match.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "409":
-          description: Two factor login is on already or off, the setup ran out, or the account signs in somewhere else.
-        "429":
-          description: Too many wrong codes.
-      tags: [accounts]
-    delete:
-      operationId: totpDisable
-      summary: Turn off two factor login
-      description: Needs a code from the app or a recovery code. The recovery codes go with it.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CodeInput"
-      responses:
-        "204":
-          description: Off.
-        "400":
-          description: The code does not work.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "409":
-          description: Two factor login is off already, or the server asks everyone for it.
-        "429":
-          description: Too many wrong codes.
-      tags: [accounts]
-  /auth/reset-code:
-    post:
-      operationId: resetCodeRequest
-      summary: Ask for a code to reset a forgotten password
-      description: |
-        Writes a code to the container log, where only the admin of the
-        server can read it. It works for ten minutes, and until then asking
-        again writes nothing. The answer is the same for every name, so it
-        cannot be used to find accounts.
-      x-access: public
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [username]
-              properties:
-                username:
-                  type: string
-      responses:
-        "202":
-          description: Taken.
-        "400":
-          $ref: "#/components/responses/BadRequest"
-      tags: [accounts]
-      security: []
-  /auth/reset:
-    post:
-      operationId: passwordReset
-      summary: Set a new password with a code from the log
-      description: |
-        Also ends every session, turns off two factor login and removes
-        every passkey and API token of the account. The client is logged in
-        with a new session cookie afterwards. Five wrong codes from one
-        address block it for 15 minutes.
-      x-access: public
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [code, password]
-              properties:
-                code:
-                  type: string
-                  example: K7QM-3XRP-9DTA
-                password:
-                  type: string
-                  minLength: 12
-      responses:
-        "200":
-          description: The new password counts, and this is the account.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Me"
-        "400":
-          description: The code is wrong or ran out, or the password is too short.
-        "429":
-          description: Too many wrong codes.
-      tags: [accounts]
-      security: []
-  /auth/options:
-    get:
-      operationId: signInOptions
-      summary: What the sign in page can offer
-      description: |
-        Which ways in this server takes, the name of the server and the
-        version, for the page shown before anyone is signed in. With
-        OpenID Connect on, oidc links to the sign in of the older API.
-      x-access: public
-      responses:
-        "200":
-          description: The ways in.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignInOptions"
-      tags: [accounts]
-      security: []
-  /auth/login:
-    post:
-      operationId: signIn
-      summary: Sign in with name and password
-      description: |
-        A right password either finishes the sign in or names the next
-        step with a challenge for it: totp when two factor login is on,
-        password when a new password is due, totpSetup when the server asks
-        everyone for two factor login and the account has none yet. A
-        challenge works for five minutes. With remember the session lasts
-        through browser restarts until it goes unused for the days of the
-        setting stayDays (30 when unset), as a visit once a day renews its
-        token. Without it the session ends with the browser and after 12
-        hours at most. Five wrong passwords for one name from one
-        address, or twenty from one address, wait 15 minutes.
-      x-access: public
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [username, password]
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                remember:
-                  type: boolean
-      responses:
-        "200":
-          description: Signed in, with the session cookie set, or one step to go.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignIn"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          description: The name or the password is not right. The answer is the same for names that do not exist.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "403":
-          description: This server does not take passwords.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "429":
-          $ref: "#/components/responses/SignInBlocked"
-      tags: [accounts]
-      security: []
-  /auth/totp:
-    post:
-      operationId: signInTotp
-      summary: Second step with a code
-      description: |
-        For totp the code comes from the authenticator app or is one of
-        the recovery codes. A code from the app works once, a recovery
-        code is used up. A wrong code keeps the challenge, five wrong codes
-        wait 15 minutes. For totpSetup the code from the app turns two
-        factor login on, and the answer carries the new recovery codes.
-      x-access: public
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [challenge, code]
-              properties:
-                challenge:
-                  type: string
-                code:
-                  type: string
-                  example: "492817"
-      responses:
-        "200":
-          description: Signed in.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignIn"
-        "400":
-          description: The code does not work.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "410":
-          $ref: "#/components/responses/SignInStale"
-        "429":
-          $ref: "#/components/responses/SignInBlocked"
-      tags: [accounts]
-      security: []
-  /auth/password:
-    post:
-      operationId: signInPassword
-      summary: Set the new password a sign in asks for
-      description: |
-        After the first start the admin password comes from the log and
-        has to be replaced. The answer goes on like POST /auth/login.
-      x-access: public
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [challenge, password]
-              properties:
-                challenge:
-                  type: string
-                password:
-                  type: string
-                  minLength: 12
-      responses:
-        "200":
-          description: Signed in, or the next step.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignIn"
-        "400":
-          description: The password is too short or the old one.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "410":
-          $ref: "#/components/responses/SignInStale"
-      tags: [accounts]
-      security: []
-  /auth/passkey/options:
-    post:
-      operationId: signInPasskeyOptions
-      summary: Start a sign in with a passkey
-      description: |
-        The options go to navigator.credentials.get. The browser offers
-        the passkeys it keeps for this site, so no name is needed. The
-        challenge works once, for five minutes.
-      x-access: public
-      responses:
-        "200":
-          description: The options.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PasskeyChallenge"
-        "409":
-          description: The server takes no passwords, which passkeys come with, or the page is open on an IP address.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "429":
-          $ref: "#/components/responses/SignInBlocked"
-      tags: [accounts]
-      security: []
-  /auth/passkey:
-    post:
-      operationId: signInPasskey
-      summary: Finish a sign in with a passkey
-      description: |
-        A passkey stands for both factors, so two factor login asks for no
-        code here. remember works as with POST /auth/login. Twenty passkeys
-        that do not sign in from one address wait 15 minutes.
-      x-access: public
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [challenge, credential]
-              properties:
-                challenge:
-                  type: string
-                credential:
-                  type: object
-                  description: The PublicKeyCredential from the browser, as JSON.
-                remember:
-                  type: boolean
-      responses:
-        "200":
-          description: Signed in.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignIn"
-        "401":
-          description: The passkey does not sign in here.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "409":
-          description: The server takes no passwords, which passkeys come with, or the page is open on an IP address.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "410":
-          $ref: "#/components/responses/SignInStale"
-        "429":
-          $ref: "#/components/responses/SignInBlocked"
-      tags: [accounts]
-      security: []
-  /auth/logout:
-    post:
-      operationId: signOut
-      summary: Sign out
-      description: Ends this session and clears its cookie. Not possible with an API token.
-      responses:
-        "204":
-          description: Signed out.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
       tags: [accounts]
   /admin/users:
     get:
@@ -3573,7 +2873,12 @@ paths:
       operationId: userCreate
       summary: Create a user
       x-access: admin
-      description: The user signs in with the password. Login name, scopes and password are needed.
+      description: |
+        The user signs in with the password. Login name, scopes and password
+        are needed. Like every new password set by an admin it needs a fresh
+        sign-in of the admin, otherwise the answer is 403 signInAgain with
+        askPassword, and the page confirms at /api/signin/v1/me/confirm and
+        sends the request once more.
       requestBody:
         required: true
         content:
@@ -3628,13 +2933,17 @@ paths:
       x-access: admin
       description: |
         Fields left out stay as they are. A new password logs the user out
-        everywhere, API tokens and passkeys stay unless revoke is true.
+        everywhere, API tokens and passkeys stay unless revoke is true. It
+        needs a fresh sign-in of the admin, as creating a user does. blocked
+        ends every session and API token of the user, and a lower role does
+        too.
         revoke ends every session, API token and passkey of the user, with
         or without a new password, and is not possible with an API token.
         Renaming moves the user's rules, jobs, undo steps and trash along.
         Nobody can change their own login name or password here, revoke
         their own access, or take away their own admin role, so there is
-        always an admin left.
+        always an admin left. Nobody blocks themselves, and the owner keeps
+        the admin role and cannot be blocked.
       requestBody:
         required: true
         content:
@@ -7327,9 +6636,6 @@ paths:
                 canWrite:
                   type: boolean
                   default: false
-                password:
-                  type: string
-                  description: The account's password. An account without one signs in again instead.
       responses:
         "201":
           $ref: "#/components/responses/McpKeySecret"
@@ -7348,7 +6654,7 @@ paths:
     patch:
       operationId: mcpKeyUpdate
       summary: Rename a key or set its write switch
-      description: Only the owner switches writing on, with the password. An admin may switch it off for anybody.
+      description: Only the owner switches writing on, with a fresh sign-in. An admin may switch it off for anybody.
       requestBody:
         required: true
         content:
@@ -7360,8 +6666,6 @@ paths:
                   type: string
                 canWrite:
                   type: boolean
-                password:
-                  type: string
       responses:
         "200":
           description: The key as it is now.
@@ -7413,15 +6717,7 @@ paths:
     post:
       operationId: mcpKeyRotate
       summary: Replace a key
-      description: The key keeps its name, switch and log; the old one stops working at once. Only the owner.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
+      description: The key keeps its name, switch and log; the old one stops working at once. Only the owner, with a fresh sign-in.
       responses:
         "200":
           $ref: "#/components/responses/McpKeySecret"
@@ -7577,9 +6873,6 @@ paths:
                 canWrite:
                   type: boolean
                   default: false
-                password:
-                  type: string
-                  description: Needed to allow, as for making a key. An account without a password signs in again instead.
       responses:
         "200":
           description: Where the browser goes on to.
@@ -7748,32 +7041,6 @@ components:
                 $ref: "#/components/schemas/Job"
     ToolFailed:
       description: The tool cannot do it, the detail says why, such as a file too big, a missing password or ArrowLoop not answering.
-      content:
-        application/problem+json:
-          schema:
-            $ref: "#/components/schemas/Problem"
-    FreshProof:
-      description: |
-        The current password is wrong, or the request came with an API
-        token. For an account without a password, a problem with the type
-        fresh-sign-in means the session signed in more than five minutes
-        ago: sign in again, then send the request once more.
-      content:
-        application/problem+json:
-          schema:
-            $ref: "#/components/schemas/Problem"
-    SignInBlocked:
-      description: Too many wrong tries. Retry-After says when to go on.
-      headers:
-        Retry-After:
-          schema:
-            type: integer
-      content:
-        application/problem+json:
-          schema:
-            $ref: "#/components/schemas/Problem"
-    SignInStale:
-      description: The challenge ran out or was used, the sign in starts again.
       content:
         application/problem+json:
           schema:
@@ -9798,61 +9065,9 @@ components:
         current:
           type: boolean
           description: The session this request came with.
-    SignIn:
-      type: object
-      required: [next]
-      properties:
-        next:
-          type: string
-          enum: [done, totp, password, totpSetup]
-        challenge:
-          type: string
-          description: Carries the sign in to its next step.
-        me:
-          $ref: "#/components/schemas/Me"
-        setup:
-          $ref: "#/components/schemas/TotpSetup"
-        codes:
-          type: array
-          items:
-            type: string
-          description: Recovery codes of a two factor login set up during the sign in, shown this once.
-    SignInOptions:
-      type: object
-      required: [password, passkey, oidc, server, version, minPassword]
-      properties:
-        password:
-          type: boolean
-        passkey:
-          type: boolean
-        oidc:
-          type: object
-          nullable: true
-          required: [label, url]
-          properties:
-            label:
-              type: string
-            url:
-              type: string
-        server:
-          type: string
-          description: The name of the Unraid server, or of the host.
-        version:
-          type: string
-        minPassword:
-          type: integer
-    PasskeyChallenge:
-      type: object
-      required: [challenge, options]
-      properties:
-        challenge:
-          type: string
-        options:
-          type: object
-          description: The options for navigator.credentials.get, with publicKey.
     Account:
       type: object
-      required: [id, name, full, role, scope, groups, loginMethod, twofa, passkeys, last, pwChanged]
+      required: [id, name, full, role, scope, groups, loginMethod, twofa, passkeys, blocked, owner, last, pwChanged]
       properties:
         id:
           type: string
@@ -9876,14 +9091,21 @@ components:
         loginMethod:
           type: string
           enum: [password, oidc]
+          description: oidc for an account without a password, which signs in through a sign-in service.
         twofa:
           type: boolean
         passkeys:
           type: integer
+        blocked:
+          type: boolean
+          description: A blocked account signs in nowhere until an admin unblocks it.
+        owner:
+          type: boolean
+          description: The owner set the first password. Its role stays admin, and nobody blocks or removes it.
         last:
           type: [string, "null"]
           format: date-time
-          description: The last request of a session, null for never.
+          description: The last sign-in, null for never.
         pwChanged:
           type: [string, "null"]
           format: date-time
@@ -9891,29 +9113,22 @@ components:
       allOf:
         - $ref: "#/components/schemas/Account"
         - type: object
-          required: [home, recovery, lockPassword, signIn, hasPassword]
+          required: [home, signIn, hasPassword]
           properties:
             signIn:
               type: boolean
-              description: Whether this server asks anyone to sign in. Without a password or passkey on any account it opens for everyone as the admin.
+              description: Whether this server asks anyone to sign in. Without a password on any account it opens for everyone as the admin, unless OIDC in the config guards it.
             hasPassword:
               type: boolean
               description: Whether the account has a password.
             home:
               type: string
               description: The folder the file manager opens when the user picked no start folder, the user shares or the first other source the user may open.
-            recovery:
-              type: integer
-              description: Recovery codes that are left.
-            lockPassword:
-              type: boolean
-              description: Only an admin may change the password.
             token:
               type: object
-              required: [name, rights]
+              description: The API token the request came with.
+              required: [rights]
               properties:
-                name:
-                  type: string
                 rights:
                   type: string
                   enum: [r, rw]
@@ -9943,6 +9158,9 @@ components:
         password:
           type: string
           minLength: 12
+        blocked:
+          type: boolean
+          description: In a change, blocks or unblocks the user. Blocking ends every session and API token.
         revoke:
           type: boolean
           description: In a change, ends every session, API token and passkey of the user.
@@ -9968,15 +9186,6 @@ components:
           type: [string, "null"]
           format: date-time
           description: Last use to the minute, null for never.
-    NewToken:
-      allOf:
-        - $ref: "#/components/schemas/Token"
-        - type: object
-          required: [secret]
-          properties:
-            secret:
-              type: string
-              description: The token itself, sent as a bearer token.
     Passkey:
       type: object
       required: [id, name, origin, created, last]
@@ -9994,35 +9203,6 @@ components:
         last:
           type: [string, "null"]
           format: date-time
-    TotpSetup:
-      type: object
-      required: [secret, uri, qr]
-      properties:
-        secret:
-          type: string
-          description: Base32, for typing it into the app.
-        uri:
-          type: string
-          description: The otpauth URI.
-        qr:
-          type: string
-          description: The URI as a QR code, an SVG document.
-    CodeInput:
-      type: object
-      required: [code]
-      properties:
-        code:
-          type: string
-          description: Six digits from the app, or a recovery code like K7QM-3XRP.
-    RecoveryCodes:
-      type: object
-      required: [codes]
-      properties:
-        codes:
-          type: array
-          items:
-            type: string
-            example: K7QM-3XRP
     Group:
       type: object
       required: [name, note, members]
@@ -11909,7 +11089,7 @@ components:
           type: string
     McpConsent:
       type: object
-      required: [client, ticket, account, password, limitReached, grantLimit]
+      required: [client, ticket, account, limitReached, grantLimit]
       properties:
         client:
           type: object
@@ -11927,9 +11107,6 @@ components:
               type: boolean
         account:
           type: string
-        password:
-          type: boolean
-          description: The account signs in with a password, which Allow then asks for. Any other account needs a sign-in from the last minutes instead.
         ticket:
           type: string
         limitReached:

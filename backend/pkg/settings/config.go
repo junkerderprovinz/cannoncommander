@@ -132,16 +132,6 @@ func warnHttpProxyConfig() {
 	}
 }
 
-func warnOidcProxyHeaders() {
-	if !Config.Auth.Methods.OidcAuth.Enabled {
-		return
-	}
-	if Config.Http.TrustProxyHeaders {
-		return
-	}
-	logger.Warning("OIDC is enabled but http.trustProxyHeaders is false. Behind a reverse proxy, the server builds the OIDC redirect_uri from the incoming request; set trustProxyHeaders: true and configure your proxy to send X-Forwarded-Proto and X-Forwarded-Host. http.externalUrl does not apply to OIDC redirects.")
-}
-
 func setupFs() {
 	// Convert permission values (like 644, 755) to octal interpretation
 	filePermOctal, err := strconv.ParseUint(Config.Server.Filesystem.CreateFilePermission, 8, 32)
@@ -498,10 +488,6 @@ func setupAuth(generate bool) {
 		err := validateOidcAuth()
 		if err != nil && !generate {
 			logger.Fatalf("Error validating OIDC auth: %v", err)
-		}
-		logger.Info("OIDC Auth configured successfully")
-		if !generate {
-			warnOidcProxyHeaders()
 		}
 	}
 

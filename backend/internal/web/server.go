@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	_ "net/http/pprof"
@@ -53,13 +54,14 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 
 	router := http.NewServeMux()
 	configureHTTPRouter(router)
-	if err := mountAPIv1(router); err != nil {
+	guard, err := mountAPIv1(ctx, router)
+	if err != nil {
 		logger.Fatalf("Could not set up /api/v1: %v", err)
 	}
 
 	srv := &http.Server{
 		Addr:        settings.HTTPListenAddr(settings.Config.Http.ListenAddress, settings.Config.Http.Port),
-		Handler:     desktop.Guard(muxWithMiddleware(securityHeaders(crossOrigin(router)))),
+		Handler:     desktop.Guard(muxWithMiddleware(securityHeaders(crossOrigin(guard(router))))),
 		ConnContext: settings.AttachConnContext,
 	}
 	limitSlowClients(srv)
@@ -173,7 +175,14 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 // browser headers, such as a document server, pass.
 func crossOrigin(next http.Handler) http.Handler {
 	guard := originGuard()
+	// The sign-in holds its own writes to stricter rules and answers in its
+	// contract.
+	signIn := settings.Config.Http.BaseURL + "api/signin/v1/"
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, signIn) {
+			next.ServeHTTP(w, r)
+			return
+		}
 		seen := r.WithContext(r.Context())
 		seen.Host = requestHost(r)
 		if err := guard.Check(seen); err != nil {

@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
+	"github.com/junkerderprovinz/parleyport/kit/signin"
 )
 
 // The roles of the app. Admins may do everything, users work with the files
@@ -33,7 +34,8 @@ const (
 const minPassword = 12
 
 // Account is a user as the app shows it. Name is the login name, Full the
-// name to show, and Scope the folder the user sees.
+// name to show, and Scope the folder the user sees. LoginMethod is oidc for
+// an account without a password, which signs in through a sign-in service.
 type Account struct {
 	ID          string     `json:"id"`
 	Name        string     `json:"name"`
@@ -44,6 +46,8 @@ type Account struct {
 	LoginMethod string     `json:"loginMethod"`
 	Twofa       bool       `json:"twofa"`
 	Passkeys    int        `json:"passkeys"`
+	Blocked     bool       `json:"blocked"`
+	Owner       bool       `json:"owner"`
 	Last        *time.Time `json:"last"`
 	PwChanged   *time.Time `json:"pwChanged"`
 }
@@ -188,12 +192,6 @@ func passwordChanged(ctx context.Context, db *sql.DB, id string) error {
 	return err
 }
 
-func seenNow(ctx context.Context, db *sql.DB, id string, at int64) error {
-	_, err := db.ExecContext(ctx, `INSERT INTO account_profiles (user_id, seen_at) VALUES (?, ?)
-		ON CONFLICT (user_id) DO UPDATE SET seen_at = excluded.seen_at`, id, at)
-	return err
-}
-
 func unixTime(s int64) *time.Time {
 	if s == 0 {
 		return nil
@@ -202,13 +200,17 @@ func unixTime(s int64) *time.Time {
 	return &t
 }
 
-func (h handlers) account(u *users.User, p profile) Account {
+func (h handlers) account(u *users.User, p profile, acc signin.Account) Account {
 	full := p.name
 	if full == "" {
 		full = u.Username
 	}
 	groups := state.GetUserGroups(u.Username)
 	slices.Sort(groups)
+	method := users.LoginMethodPassword
+	if !acc.Password {
+		method = users.LoginMethodOidc
+	}
 	return Account{
 		ID:          idOf(u),
 		Name:        u.Username,
@@ -216,10 +218,11 @@ func (h handlers) account(u *users.User, p profile) Account {
 		Role:        roleOf(u),
 		Scope:       commonFolder(h.scopePaths(u)),
 		Groups:      groups,
-		LoginMethod: string(u.LoginMethod),
-		Twofa:       u.TOTPSecret != "",
-		Passkeys:    len(u.PasskeyCredentials),
-		Last:        unixTime(p.seenAt),
+		LoginMethod: string(method),
+		Twofa:       acc.TwoFactor,
+		Blocked:     acc.Blocked,
+		Owner:       acc.Owner,
+		Last:        timeOrNil(acc.Seen),
 		PwChanged:   unixTime(p.passwordAt),
 	}
 }

@@ -146,3 +146,12 @@ func SetGroupMembers(group string, usernames []string) error {
 func DeleteGroup(group string) error {
 	return accessDb.DeleteGroup(group)
 }
+
+// ForgetTokenOwner removes every token hash that points at the user, so
+// nothing the version before issued signs in as that account.
+func ForgetTokenOwner(userID uint64) error {
+	if accessDb == nil {
+		return fmt.Errorf("access storage not available")
+	}
+	return accessDb.RemoveHashedTokensForUser(userID)
+}

@@ -49,23 +49,22 @@ const (
 	invalidRequest = -32600
 )
 
-// Login is what the endpoint needs from the sign-in system. The accounts
-// provide it; tests put in their own.
+// Login is what the endpoint needs from the sign-in. The accounts provide
+// it; tests put in their own. Confirm refuses unless the visitor signed in
+// moments ago or confirmed the password with the sign-in.
 type Login interface {
 	SessionHash(r *http.Request) (string, bool)
 	ByAPIToken(r *http.Request) bool
 	ClientIP(r *http.Request) string
-	Confirm(r *http.Request, u *users.User, password string) error
+	Confirm(r *http.Request) error
 }
 
-type accountsLogin struct{ deps v1.Deps }
+type accountsLogin struct{}
 
-func (accountsLogin) SessionHash(r *http.Request) (string, bool) { return accounts.SessionHash(r) }
-func (accountsLogin) ByAPIToken(r *http.Request) bool            { return accounts.ByAPIToken(r) }
+func (accountsLogin) SessionHash(r *http.Request) (string, bool) { return accounts.SessionOf(r) }
+func (accountsLogin) ByAPIToken(r *http.Request) bool            { return accounts.ByToken(r) }
 func (accountsLogin) ClientIP(r *http.Request) string            { return accounts.ClientIP(r) }
-func (l accountsLogin) Confirm(r *http.Request, u *users.User, password string) error {
-	return accounts.ConfirmOwner(r, l.deps.DB, u, password)
-}
+func (accountsLogin) Confirm(r *http.Request) error              { return accounts.ConfirmOwner(r) }
 
 // Server is the MCP endpoint of one database and what it keeps between
 // requests.
@@ -128,7 +127,7 @@ func newServer(d v1.Deps) *Server {
 	s := &Server{
 		deps:  d,
 		st:    store{db: d.DB},
-		login: accountsLogin{deps: d},
+		login: accountsLogin{},
 		user: func(id uint64) (*users.User, error) {
 			u, err := state.GetUserByID(id)
 			if err != nil {
