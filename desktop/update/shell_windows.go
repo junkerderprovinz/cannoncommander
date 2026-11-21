@@ -15,10 +15,10 @@ const (
 	shcnfPathW        = 0x0005
 )
 
-// shellChanged tells Explorer that the program at path was replaced. Without
+// ShellChanged tells Explorer that the program at path was replaced. Without
 // it, shortcuts and the Start menu keep the picture the shell cached for the
 // program before, which can be the icon of a long gone version.
-var shellChanged = func(path string) {
+var ShellChanged = func(path string) {
 	p, err := windows.UTF16PtrFromString(path)
 	if err != nil {
 		return

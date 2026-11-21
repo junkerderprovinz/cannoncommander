@@ -280,9 +280,9 @@ func TestAnUpdateReplacesTheProgramAndIsNotFetchedTwice(t *testing.T) {
 
 func TestAnUpdateTellsTheShellThatTheProgramChanged(t *testing.T) {
 	var told []string
-	was := shellChanged
-	shellChanged = func(path string) { told = append(told, path) }
-	t.Cleanup(func() { shellChanged = was })
+	was := ShellChanged
+	ShellChanged = func(path string) { told = append(told, path) }
+	t.Cleanup(func() { ShellChanged = was })
 	u := newUpdater(t, serve(t, release(t, "v1.4.0").withSums(keep)), "v1.3.0")
 	ctx := context.Background()
 	rel, err := u.Check(ctx)
@@ -301,26 +301,48 @@ func TestAnUpdateTellsTheShellThatTheProgramChanged(t *testing.T) {
 	}
 }
 
-func TestTheFirstStartAfterAnUpdateTellsTheShellToo(t *testing.T) {
-	var told []string
-	was := shellChanged
-	shellChanged = func(path string) { told = append(told, path) }
-	t.Cleanup(func() { shellChanged = was })
-	dir := t.TempDir()
-	prog := filepath.Join(dir, "prog")
-	if err := os.WriteFile(prog, []byte("x"), 0o644); err != nil {
+func TestAnUpdateOfTheInstalledCopyBringsTheNewUninstaller(t *testing.T) {
+	rel := release(t, "v1.4.0")
+	rel.files["prog-installer.exe"] = []byte("installer v1.4.0")
+	u := newUpdater(t, serve(t, rel.withSums(keep)), "v1.3.0")
+	u.Uninstaller = "prog-installer.exe"
+	un := filepath.Join(filepath.Dir(u.Path), "uninstall.exe")
+	if err := os.WriteFile(un, []byte("installer v1.0.0"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	(&Updater{Path: prog, Logf: t.Logf}).Cleanup()
-	if len(told) != 0 {
-		t.Fatalf("told the shell %v without an update", told)
-	}
-	if err := os.WriteFile(prog+".old", []byte("x"), 0o644); err != nil {
+	if err := u.ReplaceUninstaller(context.Background(), "v1.4.0"); err != nil {
 		t.Fatal(err)
 	}
-	(&Updater{Path: prog, Logf: t.Logf}).Cleanup()
-	if len(told) != 1 || told[0] != prog {
-		t.Errorf("told the shell about %v, want %s", told, prog)
+	if got := readFile(t, un); got != "installer v1.4.0" {
+		t.Errorf("uninstall.exe holds %q", got)
+	}
+	if got := dirEntries(t, filepath.Dir(u.Path)); len(got) != 2 {
+		t.Errorf("left %v", got)
+	}
+}
+
+func TestACopyWithoutAnUninstallerGetsNone(t *testing.T) {
+	rel := release(t, "v1.4.0")
+	rel.files["prog-installer.exe"] = []byte("installer v1.4.0")
+	u := newUpdater(t, serve(t, rel.withSums(keep)), "v1.3.0")
+	u.Uninstaller = "prog-installer.exe"
+	if err := u.ReplaceUninstaller(context.Background(), "v1.4.0"); err != nil {
+		t.Fatal(err)
+	}
+	if got := dirEntries(t, filepath.Dir(u.Path)); len(got) != 1 {
+		t.Errorf("a portable copy got %v", got)
+	}
+}
+
+func TestTheReleasePublishesTheInstallersTheUpdateBrings(t *testing.T) {
+	yml, err := os.ReadFile(filepath.Join("..", "..", ".github", "workflows", "release.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for target, name := range Uninstallers {
+		if !strings.Contains(string(yml), "bundles/"+name) {
+			t.Errorf("Uninstallers maps %s to %s, which release.yml does not publish", target, name)
+		}
 	}
 }
 

@@ -164,6 +164,7 @@ func run() error {
 	} else {
 		go sh.up.run(ctx, sh.AutoUpdate)
 	}
+	go shellKnows(filepath.Join(dir, "shell-version"))
 	go sh.catchUp(ctx)
 
 	window = openWindow(app, state)

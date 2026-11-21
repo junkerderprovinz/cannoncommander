@@ -50,6 +50,14 @@ var AppImages = map[string]string{
 	"linux/arm64": "cannoncommander-linux-arm64.AppImage",
 }
 
+// Uninstallers names the installer release.yml publishes for each Windows
+// machine. The installer copies itself into the installation as
+// uninstall.exe, so an update of the installed copy puts the new one there.
+var Uninstallers = map[string]string{
+	"windows/amd64": "cannoncommander-windows-amd64-installer.exe",
+	"windows/arm64": "cannoncommander-windows-arm64-installer.exe",
+}
+
 // Updater holds what an update needs to know about the program. API, Client
 // and Path fall back to GitHub, http.DefaultClient and the running program.
 type Updater struct {
@@ -64,6 +72,9 @@ type Updater struct {
 	// HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall whose
 	// DisplayVersion follows an update of the installed copy.
 	UninstallKey string
+	// Uninstaller names the release file that takes the place of
+	// uninstall.exe beside the program, where an installer left one.
+	Uninstaller string
 
 	API    string
 	Client *http.Client

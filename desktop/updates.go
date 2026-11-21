@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -164,4 +165,21 @@ func (up *updater) readyVersion() string {
 // starts while the program exits.
 func (up *updater) stop() {
 	up.swapping.Lock()
+}
+
+// shellKnows tells the shell once per version, from the person's own session,
+// that the program changed, so shortcuts drop the icon they cached for an
+// earlier one. The scheduled task that updates the installed copy runs as the
+// system account, and what it tells the shell never reaches the desktop. mark
+// keeps the version last told.
+func shellKnows(mark string) {
+	if data, err := os.ReadFile(mark); err == nil && strings.TrimSpace(string(data)) == cmd.Version() {
+		return
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		return
+	}
+	update.ShellChanged(exe)
+	_ = os.WriteFile(mark, []byte(cmd.Version()), 0o644)
 }
