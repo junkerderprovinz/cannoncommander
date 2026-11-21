@@ -100,6 +100,7 @@ func (h handlers) config(ctx context.Context, service *signin.ServiceSpec) (sign
 		Store:       store,
 		Seal:        seal,
 		Roles:       roles,
+		ServiceRole: roleUser,
 		TokenPrefix: "cc",
 		Public:      publicURL,
 		Base:        settings.Config.Http.BaseURL,

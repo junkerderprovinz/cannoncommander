@@ -59,8 +59,8 @@ func configService() (*signin.ServiceSpec, error) {
 var errOutsideUserGroups = errors.New("not in any of auth.methods.oidc.userGroups")
 
 // admit applies userGroups and adminGroup of config.yaml to the config
-// service, on every sign-in and renewal. Services added in the app let in
-// whoever they let through, as admins.
+// service, on every sign-in and renewal. Services added in the app give
+// newcomers the role chosen in their form.
 func admit(_ context.Context, in signin.Arrival) (string, error) {
 	if in.Service != configServiceID {
 		return "", nil
