@@ -313,3 +313,18 @@ func TestWebDAVLeavesTheOldSessionCookieAlone(t *testing.T) {
 		t.Fatal("the old session was used up on WebDAV")
 	}
 }
+
+func TestWebDAVSaysHowLongToWaitAsTheSignInCounts(t *testing.T) {
+	h := newServer(t, withAdminPassword(t))
+	wrong := basic("admin", "falsch-falsch-falsch")
+	var rec *httptest.ResponseRecorder
+	for range 6 {
+		rec = send(t, h, "PROPFIND", "/dav/", nil, "Depth", "1", "Authorization", wrong)
+	}
+	if rec.Code != http.StatusTooManyRequests {
+		t.Fatalf("after six wrong passwords: %d", rec.Code)
+	}
+	if wait := rec.Header().Get("Retry-After"); wait == "" || len(wait) > 1 {
+		t.Fatalf("Retry-After %q is not the sign-in's wait of a second or two", wait)
+	}
+}

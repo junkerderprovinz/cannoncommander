@@ -111,8 +111,19 @@ func ProblemFor(err error) *Problem {
 	return &Problem{Title: http.StatusText(http.StatusInternalServerError), Status: http.StatusInternalServerError}
 }
 
+// Answer is an error that answers the request itself, in a contract
+// other than this one.
+type Answer interface {
+	error
+	Answer(w http.ResponseWriter, r *http.Request)
+}
+
 // WriteError answers with the problem for err.
 func WriteError(w http.ResponseWriter, r *http.Request, err error) {
+	if a, ok := errors.AsType[Answer](err); ok {
+		a.Answer(w, r)
+		return
+	}
 	// Packages keep common problems in variables, so the instance goes on a copy.
 	p := *ProblemFor(err)
 	if p.Status >= 500 && p.Status != http.StatusNotImplemented {

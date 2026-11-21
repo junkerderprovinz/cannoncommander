@@ -3,14 +3,18 @@ package accounts_test
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
+	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/parleyport/kit/signin"
@@ -163,8 +167,8 @@ func TestConfirmingTheOwnerWantsAFreshSignIn(t *testing.T) {
 		return err
 	}
 	stale := sessionCookie(t, w.must(http.StatusOK, w.req("GET", "/me", nil, oldCookie(old))))
-	if err := confirm(stale); err == nil {
-		t.Fatal("a sign-in from an hour ago made a lasting key")
+	if _, ok := errors.AsType[v1.Answer](confirm(stale)); !ok {
+		t.Fatal("a sign-in from an hour ago made a lasting key, or was not told as the sign-in tells it")
 	}
 	if err := confirm(w.session("jdp")); err != nil {
 		t.Fatalf("a fresh sign-in: %v", err)
@@ -211,4 +215,27 @@ func TestLinksOfABlockedOwnerStopServing(t *testing.T) {
 	}
 	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"blocked": false}))
 	w.must(http.StatusOK, w.req("GET", "/s/"+link.Slug, nil))
+}
+
+func TestAStaleAdminGetsTheSignInsOwnAnswerForANewUser(t *testing.T) {
+	w := newWorld(t)
+	old := w.oldSession(w.admin, time.Now().Add(-time.Hour))
+	w.open()
+	stale := sessionCookie(t, w.must(http.StatusOK, w.req("GET", "/me", nil, oldCookie(old))))
+	rec := w.req("POST", "/admin/users", map[string]any{"name": "bert", "role": "user", "scope": "/mnt/user", "password": strong}, header{"Cookie", stale})
+	var answer struct {
+		Error       string
+		AskPassword *bool
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &answer); err != nil || rec.Code != http.StatusForbidden || answer.Error != "signInAgain" || answer.AskPassword == nil || !*answer.AskPassword {
+		t.Fatalf("a stale admin: %d %s", rec.Code, rec.Body)
+	}
+	if _, err := state.GetUserByUsername("bert"); err == nil {
+		t.Fatal("the user was made anyway")
+	}
+	w.addUser("carl", "user", "/mnt/user")
+	rec = w.req("PATCH", "/admin/users/carl", map[string]any{"password": "noch-ein-langes-passwort"}, header{"Cookie", stale})
+	if rec.Code != http.StatusForbidden || code(t, rec) != "signInAgain" || strings.Contains(rec.Body.String(), "title") {
+		t.Fatalf("a stale admin setting a password: %d %s", rec.Code, rec.Body)
+	}
 }

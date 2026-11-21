@@ -80,7 +80,7 @@ func BasicLogin(r *http.Request, name, password string) (Basic, error) {
 	v, err := auth.CheckPassword(r, basicBucket, name, password)
 	var no *signin.Refusal
 	if errors.As(err, &no) && no.Code == "throttled" {
-		return Basic{}, &TooManyTries{Wait: time.Minute}
+		return Basic{}, &TooManyTries{Wait: no.Retry}
 	}
 	if err != nil {
 		return Basic{}, ErrBasicRefused

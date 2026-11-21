@@ -267,3 +267,46 @@ func TestAResetGivesAnOIDCRowAPasswordNobodyKnows(t *testing.T) {
 		t.Fatalf("after the reset the version before would bind erna by name or let her new password in: %s %q", u.LoginMethod, u.Password)
 	}
 }
+
+func TestLeavingEveryGroupEndsTheProviderMembershipsAndAMissingClaimChangesNothing(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("")
+	w.open()
+	w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna", Groups: []string{"fotos"}})
+	w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna"})
+	if got := state.GetUserGroups("erna"); !slices.Equal(got, []string{"fotos"}) {
+		t.Fatalf("a sign-in without a groups claim changed the groups: %v", got)
+	}
+	w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna", Groups: []string{}})
+	if got := state.GetUserGroups("erna"); len(got) != 0 {
+		t.Fatalf("erna left every group and kept %v", got)
+	}
+}
+
+func TestLeavingEveryGroupIsRefusedUnderUserGroups(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("", "familie")
+	w.open()
+	first, _ := w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "anna", Groups: []string{"familie"}})
+	if b, to := w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "anna", Groups: []string{}}); b.session() != "" || to.Query().Get("signin") != "notAdmitted" {
+		t.Fatalf("anna without any group got in, back to %s", to)
+	}
+	if _, ok := w.meThrough(first); ok {
+		t.Fatal("the earlier session of anna still works")
+	}
+}
+
+func TestLeavingEveryGroupTakesTheAdminRoleAndAMissingClaimLeavesIt(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("chefs")
+	w.open()
+	w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna", Groups: []string{"chefs"}})
+	b, _ := w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna"})
+	if me, _ := w.meThrough(b); me.Role != "admin" {
+		t.Fatalf("a sign-in without a groups claim made erna %q", me.Role)
+	}
+	b, _ = w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna", Groups: []string{}})
+	if me, _ := w.meThrough(b); me.Role != "user" {
+		t.Fatalf("erna left every group and is %q", me.Role)
+	}
+}

@@ -55,7 +55,7 @@ func fromSignIn(r *http.Request, err error) error {
 	case errors.As(err, &no):
 		return v1.Coded(no.Status, no.Code, no.Code)
 	case errors.Is(err, signin.ErrNotFresh):
-		return ConfirmOwner(r)
+		return signInAgain{SignIn()}
 	case errors.Is(err, signin.ErrNotFound):
 		return errNoSuchUser
 	}
@@ -98,9 +98,7 @@ func (h handlers) adminView(r *http.Request, u *users.User, p profile) (Account,
 		return Account{}, err
 	}
 	a := h.account(u, p, acc)
-	// The sign-in lists passkeys to admins with a session only, so an
-	// admin's API token sees the list without them.
-	if err == nil && !ByToken(r) {
+	if err == nil {
 		keys, err := auth.Passkeys(r, acc.ID)
 		if err != nil {
 			return Account{}, fromSignIn(r, err)

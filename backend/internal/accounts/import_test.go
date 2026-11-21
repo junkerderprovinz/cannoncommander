@@ -146,6 +146,11 @@ func TestImportedPasskeysSignInWithTheirOldHandleAndBackupFlags(t *testing.T) {
 	if rec := b.do("POST", "/api/signin/v1/login/passkey", json.RawMessage(assertion)); rec.Code != http.StatusOK {
 		t.Fatalf("the imported passkey does not sign in: %d %s", rec.Code, rec.Body)
 	}
+
+	tok := decode[struct{ Value string }](t, w.must(http.StatusOK, w.as("jdp", "POST", "/api/signin/v1/me/tokens", map[string]any{"name": "liste", "scopes": []string{"all"}})))
+	if got := decode[accounts.Account](t, w.must(http.StatusOK, w.req("GET", "/admin/users/anna", nil, bearer(tok.Value)))); got.Passkeys != 1 {
+		t.Fatalf("an admin's token sees %d passkeys of anna", got.Passkeys)
+	}
 }
 
 // oldToken registers an API token of the version before for u.

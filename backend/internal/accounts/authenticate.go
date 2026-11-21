@@ -101,12 +101,19 @@ func ConfirmOwner(r *http.Request) error {
 	}
 	err := auth.Mint(r, func() error { return nil })
 	if errors.Is(err, signin.ErrNotFresh) {
-		v, _ := visitor(r)
-		acc, accErr := auth.Account(r.Context(), v.Account)
-		return v1.Coded(http.StatusForbidden, "signInAgain", "sign in again, then try once more").With("askPassword", accErr == nil && acc.Password)
+		return signInAgain{auth}
 	}
 	return err
 }
+
+// signInAgain answers a change that wants a fresh sign-in as the sign-in
+// does, so the page asks for the password or a new sign-in the same way
+// for every change.
+type signInAgain struct{ auth *signin.Auth }
+
+func (signInAgain) Error() string { return "sign in again first" }
+
+func (s signInAgain) Answer(w http.ResponseWriter, r *http.Request) { s.auth.SignInAgain(w, r) }
 
 // Handler is the sign-in's handler with what CannonCommander adds to it.
 // Its routes for admins also want an admin in the users table, so a row and
