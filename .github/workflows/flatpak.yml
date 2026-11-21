@@ -6,6 +6,17 @@ name: Flatpak
 on:
   workflow_dispatch:
   workflow_call:
+  # A dependency update changes what the offline sources must hold, and the
+  # release is too late to find out that node-sources.json or go-sources.json
+  # fell behind.
+  pull_request:
+    paths:
+      - frontend/package-lock.json
+      - backend/go.mod
+      - backend/go.sum
+      - desktop/go.mod
+      - desktop/go.sum
+      - flatpak/**
 
 permissions:
   contents: read
