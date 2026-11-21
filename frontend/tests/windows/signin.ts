@@ -1,5 +1,5 @@
 // node tests/windows/signin.ts <server-url> <admin> <admin-password> [shots-dir]: signs in through the page against a
-// built server with passkeys on for localhost, without and with two factor login and with a passkey, then opens a
+// built server on localhost, with and without two-factor authentication and with a passkey, then opens a
 // share link with a password as a visitor, looks at a file, downloads one file and the folder as zip and uploads a
 // file. The admin needs a source with a folder Urlaub holding Reiseplan.md and a subfolder. It changes the server's
 // accounts and links as it goes, so it wants a fresh server.
@@ -34,21 +34,23 @@ function totp(secret: string, at = Date.now()) {
 }
 
 const api = await request.newContext({ baseURL: base });
-const send = async (method: string, path: string, body?: unknown) => {
-  const res = await api.fetch('/api/v1' + path, { method, data: body });
-  return { status: res.status(), body: res.headers()['content-type']?.includes('json') ? await res.json() : null };
-};
+// The sign-in takes changes only from the app's own pages, which a browser says in these headers.
+const own = { Origin: base, 'Sec-Fetch-Site': 'same-origin' };
+type Reply = { status(): number; headers(): Record<string, string>; json(): Promise<unknown> };
+const answer = async (res: Reply) => ({ status: res.status(), body: res.headers()['content-type']?.includes('json') ? ((await res.json()) as any) : null });
+const send = async (method: string, path: string, body?: unknown) => answer(await api.fetch('/api/v1' + path, { method, data: body, headers: own }));
+const kit = async (method: string, path: string, body?: unknown) => answer(await api.fetch('/api/signin/v1/' + path, { method, data: body, headers: own }));
 
-const signedIn = await send('POST', '/auth/login', { username: admin, password: adminPw });
-check('the admin signs in through the API', signedIn.body?.next === 'done', signedIn.body);
-const scope: string = signedIn.body.me.scope;
+const signedIn = await kit('POST', 'login', { name: admin, password: adminPw });
+check('the admin signs in through the sign-in', signedIn.status === 200 && signedIn.body?.visitor?.role === 'admin', signedIn.body);
+const scope: string = (await send('GET', '/me')).body.scope;
 const urlaub = scope.replace(/\/$/, '') + '/Urlaub';
 check('the source has the folder Urlaub', (await send('GET', '/fs/list?path=' + encodeURIComponent(urlaub))).status === 200, urlaub);
 const anna = await send('POST', '/admin/users', { name: 'anna', full: 'Anna', role: 'user', scope, password: 'anna-ihr-langes-passwort' });
 check('anna is created', anna.status === 201, anna.body);
-const setup = await send('POST', '/me/totp', {});
-const codes = await send('POST', '/me/totp', { code: totp(setup.body.secret) });
-check('two factor login is on for the admin', codes.status === 200 && codes.body.codes.length === 8, codes.body);
+const setup = await kit('POST', 'me/totp', {});
+const codes = await kit('POST', 'me/totp/confirm', { code: totp(setup.body.secret) });
+check('two-factor authentication is on for the admin', codes.status === 200 && codes.body.codes.length > 0, codes.body);
 
 const browser = await chromium.launch();
 const errors: string[] = [];
@@ -58,9 +60,11 @@ async function newPage() {
   page.on('pageerror', (e: Error) => errors.push(String(e).slice(0, 300)));
   return { context, page };
 }
-const sessionCookie = async (context: { cookies(): Promise<{ name: string; expires: number }[]> }) => (await context.cookies()).find((c) => c.name === 'cannoncommander_session');
+const sessionCookie = async (context: { cookies(): Promise<{ name: string }[]> }) => (await context.cookies()).find((c) => c.name.endsWith('session'));
+const hooks = (page: { locator(sel: string): { evaluateAll<T>(f: (els: Element[]) => T): Promise<T> } }, sel: string, key: string) =>
+  page.locator(sel).evaluateAll((els) => els.map((x) => (x as HTMLElement).dataset[key]).join());
 
-// Without two factor login and without staying signed in: the cookie ends with the browser.
+// Name and password, a wrong password first, then signing out again.
 {
   const { context, page } = await newPage();
   await page.goto(base + '/');
@@ -68,9 +72,9 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.screenshot({ path: join(shots, 'signin.png') });
   check('the name field has the focus', await page.evaluate(() => document.activeElement?.id === 'cl-user'));
   check('Sign in waits for a password', await page.isDisabled('[data-signin="submit"]'));
+  check('the page offers Sign in and Forgot password? and nothing else', (await hooks(page, '#root button[data-signin]', 'signin')) === 'submit,forgot');
   await page.fill('#cl-user', 'anna');
   await page.fill('#cl-password', 'nicht-das-richtige');
-  await page.click('#cl-keep');
   // The shake lasts a moment, so whether the button wore it is noted as it happens.
   await page.evaluate(() => {
     new MutationObserver(() => {
@@ -79,7 +83,7 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   });
   await page.click('[data-signin="submit"]');
   await page.waitForSelector('.glim-signin-error');
-  check('a wrong password is explained', (await page.textContent('.glim-signin-error'))?.includes('Name oder Passwort stimmt nicht'));
+  check('a wrong password is explained', (await page.textContent('.glim-signin-error'))?.includes('Passwort stimmt nicht'));
   await page.waitForFunction(() => document.body.dataset.shook === 'yes', null, { timeout: 3000 }).catch(() => {});
   check('a wrong password shakes Sign in', await page.evaluate(() => document.body.dataset.shook === 'yes'));
   check('the password stays selected for the next try', await page.evaluate(() => {
@@ -91,9 +95,8 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.click('[data-signin="submit"]');
   await page.waitForSelector('#app', { timeout: 30000 });
   await page.waitForTimeout(600);
-  check('anna sees the file manager with a greeting', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('Hallo Anna')));
-  const cookie = await sessionCookie(context);
-  check('the session ends with the browser', cookie && cookie.expires === -1, cookie);
+  check('anna sees the file manager with a greeting', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('Hallo')));
+  check('the browser keeps a session of the sign-in', !!(await sessionCookie(context)));
   await page.screenshot({ path: join(shots, 'app-anna.png') });
   await page.locator('.glim-menubar-item', { hasText: 'Datei' }).click();
   await page.getByRole('menuitem', { name: /Abmelden/ }).click();
@@ -104,7 +107,7 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await context.close();
 }
 
-// With two factor login and staying signed in, then a passkey for the next time.
+// Two-factor authentication, a passkey and an API token from the account tab.
 {
   const { context, page } = await newPage();
   await page.goto(base + '/');
@@ -122,69 +125,63 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.fill('#cl-code', totp(setup.body.secret, Date.now() + 30000));
   await page.keyboard.press('Enter');
   await page.waitForSelector('#app', { timeout: 30000 });
-  const cookie = await sessionCookie(context);
-  const days = cookie ? (cookie.expires * 1000 - Date.now()) / 86400000 : 0;
-  check('staying signed in keeps the cookie for 30 days', days > 29.9 && days < 30.1, days);
   await page.screenshot({ path: join(shots, 'app-admin.png') });
 
-  const cdp = await context.newCDPSession(page);
-  await cdp.send('WebAuthn.enable');
-  await cdp.send('WebAuthn.addVirtualAuthenticator', { options: { protocol: 'ctap2', transport: 'internal', hasResidentKey: true, hasUserVerification: true, isUserVerified: true } });
-  const asked = await page.evaluate(async (pw) => {
-    const post = (body: unknown) => fetch('/api/v1/me/passkeys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.status);
-    return [await post({ name: 'Testgerät' }), await post({ name: 'Testgerät', password: pw + '-falsch' })];
-  }, adminPw);
-  check('a passkey wants the current password, and the right one', asked[0] === 400 && asked[1] === 403, asked);
-  const added = await page.evaluate(async (pw) => {
-    const b64 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4)), (c) => c.charCodeAt(0));
-    const post = (body: unknown) => fetch('/api/v1/me/passkeys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const { options } = await (await post({ name: 'Testgerät', password: pw })).json();
-    const pk = options.publicKey;
-    const credential = await navigator.credentials.create({ publicKey: { ...pk, challenge: b64(pk.challenge), user: { ...pk.user, id: b64(pk.user.id) }, excludeCredentials: [] } });
-    return (await post({ name: 'Testgerät', credential: (credential as PublicKeyCredential & { toJSON(): unknown }).toJSON() })).status;
-  }, adminPw);
-  check('a passkey is registered', added === 201, added);
-  await page.evaluate(() => fetch('/api/v1/auth/logout', { method: 'POST' }));
-  await page.goto(base + '/');
-  await page.waitForSelector('[data-signin="passkey"]');
-  await page.click('[data-signin="passkey"]');
-  await page.waitForSelector('#app', { timeout: 30000 });
-  check('the passkey signs in without name and code', (await page.evaluate(() => fetch('/api/v1/me').then((r) => r.json()))).name === admin);
-
-  // A token from the security tab asks for the password and says so when it is wrong.
-  const top = () => page.locator('.win').last();
+  const top = () => page.locator('[data-glim="Window"], .win').last();
   const settingsTab = async (name: string) => {
     await page.locator('.head [data-run="settings"]').click();
     await page.getByText(name, { exact: true }).first().click();
     await page.waitForTimeout(400);
   };
-  await settingsTab('Konto & Sicherheit');
-  await page.click('[data-tadd]');
-  await top().locator('#a-tkname').fill('backup-skript');
-  await page.screenshot({ path: join(shots, 'token-password.png') });
-  await top().getByRole('button', { name: 'Erstellen' }).click();
-  await page.waitForTimeout(500);
-  check('a token without the password is held back', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('aktuelle Passwort fehlt')));
-  await top().locator('#a-tkpw').fill(adminPw + '-falsch');
-  await top().getByRole('button', { name: 'Erstellen' }).click();
-  await page.waitForTimeout(800);
-  check('a wrong password is explained in the token window', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('stimmt nicht')) && (await top().locator('#a-tkpw').count()) === 1);
-  await top().locator('#a-tkpw').fill(adminPw);
-  await top().getByRole('button', { name: 'Erstellen' }).click();
-  await top().locator('.glim-copy-field, input[readonly]').first().waitFor({ timeout: 10000 }).catch(() => {});
-  check('the right password makes the token', (await send('GET', '/me/tokens')).body?.items?.some((t: { name: string }) => t.name === 'backup-skript'));
-  await top().getByRole('button', { name: 'Fertig' }).click();
+  const toasts = () => page.locator('.glim-toast').allInnerTexts();
 
-  // Anna's own session and token, seen and ended by the admin.
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('WebAuthn.enable');
+  await cdp.send('WebAuthn.addVirtualAuthenticator', { options: { protocol: 'ctap2', transport: 'internal', hasResidentKey: true, hasUserVerification: true, isUserVerified: true } });
+  await settingsTab('Konto & Sicherheit');
+  check('the tile draws its cards without the accounts', (await hooks(page, '[data-signin-card]', 'signinCard')) === 'password,askPassword,twoFactor,passkeys,sessions,tokens,services');
+  await page.click('[data-signin-tile="passkey-ask-add"]');
+  await page.click('[data-signin-tile="passkey-add"]');
+  await page.waitForTimeout(1500);
+  check('a passkey is added from the tile', (await kit('GET', 'me/passkeys')).body?.passkeys?.length === 1 && (await toasts()).some((t: string) => t.includes('Passkey hinzugefügt')));
+  await page.screenshot({ path: join(shots, 'passkey-added.png') });
+
+  await page.click('[data-signin-tile="token-ask"]');
+  await top().locator('input').first().fill('backup-skript');
+  await page.click('[data-signin-tile="token-make"]');
+  await page.waitForTimeout(800);
+  check('a token from the tile shows once', (await top().textContent())?.includes('Dein neues Token'));
+  await page.screenshot({ path: join(shots, 'token-shown.png') });
+  check('the token is listed', (await kit('GET', 'me/tokens')).body?.tokens?.some((t: { name: string }) => t.name === 'backup-skript'));
+  await top().getByRole('button', { name: 'Habe ich kopiert' }).click();
+
+  // The browser offers the passkey in the password field, which a test runner cannot pick, so the page asks for it itself.
+  await page.evaluate(() => fetch('/api/signin/v1/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }));
+  await page.goto(base + '/');
+  await page.waitForSelector('#cl-password');
+  check('the password field lets the browser offer passkeys', (await page.getAttribute('#cl-password', 'autocomplete')) === 'current-password webauthn');
+  check('the page has no passkey button', (await page.locator('[data-signin="passkey"]').count()) === 0);
+  const viaPasskey = await page.evaluate(async () => {
+    const b64 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4)), (c) => c.charCodeAt(0));
+    const post = (path: string, body: unknown) => fetch('/api/signin/v1/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const { publicKey } = await (await post('login/passkey/options', {})).json();
+    const cred = (await navigator.credentials.get({ publicKey: { ...publicKey, challenge: b64(publicKey.challenge), allowCredentials: [] } })) as PublicKeyCredential & { toJSON(): unknown };
+    return (await post('login/passkey', cred.toJSON())).status;
+  });
+  check('the passkey signs in without name and code', viaPasskey === 200 && (await page.evaluate(() => fetch('/api/v1/me').then((r) => r.json()))).name === admin, viaPasskey);
+  await page.goto(base + '/');
+  await page.waitForSelector('#app', { timeout: 30000 });
+
+  // Anna's own session and token, seen and ended by the admin, and then her account blocked.
   const annaApi = await request.newContext({ baseURL: base });
-  await annaApi.post('/api/v1/auth/login', { data: { username: 'anna', password: 'anna-ihr-langes-passwort' } });
-  const annaToken = await annaApi.post('/api/v1/me/tokens', { data: { name: 'fotos-sync', rights: 'r', password: 'anna-ihr-langes-passwort' } });
-  check('anna makes a token with her password', annaToken.status() === 201, annaToken.status());
+  await annaApi.post('/api/signin/v1/login', { data: { name: 'anna', password: 'anna-ihr-langes-passwort' }, headers: own });
+  const annaToken = await annaApi.post('/api/signin/v1/me/tokens', { data: { name: 'fotos-sync', scopes: ['read'], days: 30 }, headers: own });
+  check('anna makes a token', annaToken.status() === 200, annaToken.status());
   await settingsTab('Benutzer & Gruppen');
-  await page.locator('.glim-list-row, [data-uopen]', { hasText: 'Anna' }).first().click();
+  const annaRow = () => page.locator('.glim-list-row, [data-uopen]', { hasText: 'Anna' }).first();
+  await annaRow().click();
   await top().locator('[data-uaccess]').waitFor();
   await page.waitForTimeout(600);
-  await page.screenshot({ path: join(shots, 'user-access-row.png') });
   await top().locator('[data-uaccess]').click();
   await top().locator('[data-acc-token]').waitFor({ timeout: 10000 }).catch(() => {});
   check("the admin sees anna's session and token", (await top().locator('[data-acc-session]').count()) === 1 && (await top().locator('[data-acc-token]').count()) === 1);
@@ -192,12 +189,21 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await top().locator('[data-acc-token]').click();
   await top().getByRole('button', { name: 'Widerrufen' }).click();
   await page.waitForTimeout(800);
-  check("the admin revokes anna's token", (await top().locator('[data-acc-token]').count()) === 0 && (await annaApi.get('/api/v1/me', { headers: { Authorization: 'Bearer ' + (await annaToken.json()).secret } })).status() === 401);
+  const secret = ((await annaToken.json()) as { value: string }).value;
+  check("the admin revokes anna's token", (await top().locator('[data-acc-token]').count()) === 0 && (await annaApi.get('/api/v1/me', { headers: { Authorization: 'Bearer ' + secret } })).status() === 401);
   await top().locator('[data-acc-all]').click();
   await top().getByRole('button', { name: 'Beenden', exact: true }).click();
   await page.waitForTimeout(800);
   check('ending all access signs anna out', (await top().locator('[data-acc-session]').count()) === 0 && (await annaApi.get('/api/v1/me')).status() === 401);
-  await page.screenshot({ path: join(shots, 'user-access-ended.png') });
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape');
+  await annaRow().click();
+  await top().locator('#a-ublocked').click();
+  await top().locator('[data-f]').last().click();
+  await page.waitForTimeout(800);
+  const again = await annaApi.post('/api/signin/v1/login', { data: { name: 'anna', password: 'anna-ihr-langes-passwort' }, headers: own });
+  check('a blocked anna is marked and cannot sign in', (await annaRow().textContent())?.includes('Gesperrt') && again.status() === 403, again.status());
+  await page.screenshot({ path: join(shots, 'user-blocked.png') });
   await annaApi.dispose();
   await context.close();
 }
