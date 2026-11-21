@@ -3,7 +3,7 @@
 import { computed, ref, useId } from 'vue';
 import { fmtNumber, fmtSeconds, type Lang, type Sample, samplesTo, type State, type Texts } from './data';
 
-const props = defineProps<{ base: number; totalMB: number; pct: number; state: State; lang: Lang; t: Texts; current?: string; stacked?: boolean; marker?: boolean }>();
+const props = defineProps<{ base: number; totalMB: number; pct: number; state: State; lang: Lang; t: Texts; current?: string; stacked?: boolean; marker?: boolean; inline?: boolean }>();
 
 const samples = computed(() => samplesTo(props.base, props.totalMB, props.pct));
 const last = computed(() => samples.value.at(-1)!);
@@ -32,7 +32,7 @@ const tipSide = computed(() => (hover.value && hover.value.x > 70 ? 'end' : 'sta
 </script>
 
 <template>
-  <div class="gr" :class="{ live, ended, stacked }">
+  <div class="gr" :class="{ live, ended, stacked, inline }">
     <div class="gr-chart">
       <div class="gr-plot" tabindex="0" role="img"
         :aria-label="`${t.speed}: ${fmtNumber(last.mbs, 0, lang)} MB/s, ${t.progress} ${Math.round(pct)} %`"
@@ -66,11 +66,17 @@ const tipSide = computed(() => (hover.value && hover.value.x > 70 ? 'end' : 'sta
       </div>
       <div class="gr-x glim-num" aria-hidden="true"><span>0 %</span><span>100 %</span></div>
     </div>
-    <dl class="gr-read">
+    <p v-if="inline" class="gr-oneline glim-num">
+      <span>{{ live ? `${fmtNumber(last.mbs, 0, lang)} MB/s` : ended ? t.badge[state as 'done'] : t.badge.paused }}</span>
+      <span v-if="!ended">{{ t.leftInline }} {{ fmtSeconds(leftS, lang) }}</span>
+      <span>{{ fmtNumber(doneMB / 1024, 1, lang) }} {{ t.of }} {{ gb(totalMB) }}</span>
+      <span v-if="current && !ended" class="mono">{{ current }}</span>
+    </p>
+    <dl v-else class="gr-read">
       <div><dt>{{ t.speed }}</dt><dd class="glim-num">{{ live ? `${fmtNumber(last.mbs, 0, lang)} MB/s` : ended ? '…' : t.badge.paused }}</dd></div>
       <div><dt>{{ t.left }}</dt><dd class="glim-num">{{ ended ? '…' : fmtSeconds(leftS, lang) }}</dd></div>
       <div><dt>{{ t.size }}</dt><dd class="glim-num">{{ gb(doneMB) }} <span>{{ t.of }} {{ gb(totalMB) }}</span></dd></div>
     </dl>
-    <p v-if="current && !ended" class="gr-now"><span>{{ t.now }}</span><span class="mono">{{ current }}</span></p>
+    <p v-if="current && !ended && !inline" class="gr-now"><span>{{ t.now }}</span><span class="mono">{{ current }}</span></p>
   </div>
 </template>

@@ -6,7 +6,7 @@ import { G } from '@/core/glyphs';
 import Graph from './Graph.vue';
 import { currentFile, type Dialog, JOBS, type Lang, setDetails, type State, type Texts, ui } from './data';
 
-const props = defineProps<{ dialog: Dialog; state: State; pct: number; lang: Lang; t: Texts; label: string; stacked?: boolean; marker?: boolean }>();
+const props = defineProps<{ dialog: Dialog; state: State; pct: number; lang: Lang; t: Texts; label: string; stacked?: boolean; marker?: boolean; inline?: boolean }>();
 const job = computed(() => JOBS[props.dialog]);
 const open = computed(() => ui.details);
 const items = computed(() => ('items' in job.value ? job.value.items : []) as readonly string[]);
@@ -20,7 +20,7 @@ const doneCount = computed(() => Math.round((items.value.length * props.pct) / 1
     </div>
     <div class="xp xp--more" :class="{ shut: !open }" :aria-hidden="!open">
       <div>
-        <Graph v-if="dialog !== 'delete'" :base="job.speed" :total-m-b="job.totalMB" :pct="pct" :state="state" :lang="lang" :t="t" :current="currentFile(job.files)" :stacked="stacked" :marker="marker" />
+        <Graph v-if="dialog !== 'delete'" :base="job.speed" :total-m-b="job.totalMB" :pct="pct" :state="state" :lang="lang" :t="t" :current="currentFile(job.files)" :stacked="stacked" :marker="marker" :inline="inline" />
         <ul v-else class="mt-items">
           <li v-for="(n, i) in items" :key="n" :class="{ on: i < doneCount, now: i === doneCount && state === 'running' }">
             <span class="mt-mark"><G :n="i < doneCount ? 'IconCheck' : 'IconFile'" /></span>
@@ -31,7 +31,7 @@ const doneCount = computed(() => Math.round((items.value.length * props.pct) / 1
         <slot />
       </div>
     </div>
-    <button class="meter-toggle" :aria-expanded="open" @click="setDetails(!open)">
+    <button v-if="!inline" class="meter-toggle" :aria-expanded="open" @click="setDetails(!open)">
       <G n="IconExpand" />{{ open ? t.lessDetails : t.moreDetails }}
     </button>
   </div>

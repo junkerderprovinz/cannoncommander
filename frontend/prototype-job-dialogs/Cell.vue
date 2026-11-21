@@ -3,7 +3,7 @@
 import { Badge, Checkbox, Pill, Toggle } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { G } from '@/core/glyphs';
-import { currentFile, type Dialog, fmtNumber, fmtSeconds, JOBS, type Lang, speedAt, type State, texts, ui } from './data';
+import { currentFile, type Dialog, fmtNumber, fmtSeconds, JOBS, type Lang, setDetails, speedAt, type State, texts, ui } from './data';
 import Flow from './Flow.vue';
 import Meter from './Meter.vue';
 import Versions from './Versions.vue';
@@ -73,7 +73,10 @@ const title = computed(() => (props.state === 'conflict' && props.variant === 'A
 
 <template>
   <Win :title="title" :foot="foot">
-    <template v-if="state !== 'confirm' && state !== 'conflict' && (variant !== 'G' || ui.details)" #start><Checkbox v-model="keep" :label="t.keep" /></template>
+    <template v-if="variant === 'G' && working" #start>
+      <button class="meter-toggle meter-toggle--foot" :aria-expanded="ui.details" @click="setDetails(!ui.details)"><G n="IconExpand" />{{ ui.details ? t.lessDetails : t.moreDetails }}</button>
+    </template>
+    <template v-else-if="state !== 'confirm' && state !== 'conflict' && variant !== 'G'" #start><Checkbox v-model="keep" :label="t.keep" /></template>
     <template #default>
       <!-- Every variant asks about a clash only when one happens, the same way. -->
       <template v-if="state === 'conflict'">
@@ -180,8 +183,9 @@ const title = computed(() => (props.state === 'conflict' && props.variant === 'A
         <template v-else>
           <div class="pd-line"><b>{{ name }}</b><span class="glim-num muted">{{ Math.round(pct) }} %</span></div>
           <div v-if="finished" class="small muted">{{ resultLine }}</div>
-          <Meter stacked :dialog="dialog" :state="state" :pct="pct" :lang="lang" :t="t" :label="name">
+          <Meter stacked inline :dialog="dialog" :state="state" :pct="pct" :lang="lang" :t="t" :label="name">
             <div v-if="state === 'errors'" class="pb-failed"><span v-for="f in job.failed" :key="f" class="small"><span class="mono">{{ f }}</span> · {{ t.error }}</span></div>
+            <Checkbox v-model="keep" class="pg-keep" :label="t.keep" />
           </Meter>
         </template>
       </template>

@@ -327,3 +327,13 @@ body { background: var(--carbon-bg); color: var(--carbon-text); font-family: var
 .kx-actions button { display: inline-flex; gap: 6px; align-items: center; height: 26px; padding: 0 8px; border-radius: 3px; background: transparent; color: #fcfcfc; font: inherit; font-size: 12px; }
 .kx-actions button svg { width: 10px; height: 10px; }
 .kx-actions button[aria-label] { width: 26px; padding: 0; justify-content: center; }
+
+/* G, the numbers on one short line under the graph, and the toggle at the very bottom */
+.gr-oneline { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .55rem; margin: 0; font-size: 13px; color: var(--carbon-text-sub); }
+.gr-oneline > span:first-child { color: var(--carbon-text); font-weight: 600; }
+.gr-oneline > span + span::before { content: '·'; margin-inline-end: .55rem; color: var(--carbon-text-muted); }
+.gr-oneline .mono { min-width: 0; max-width: 100%; font-size: 12px; color: var(--carbon-text-muted); }
+.gr.inline { row-gap: .7rem; }
+.meter-toggle--foot { margin: 0 0 0 -.5rem; }
+.pg-keep { align-self: flex-start; margin: .15rem 0 0 -.45rem; }
+.meter-toggle--foot[aria-expanded="true"] svg { transform: none; }
