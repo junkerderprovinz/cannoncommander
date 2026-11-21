@@ -1,52 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    "helpers:pinGitHubActionDigests",
-    "docker:pinDigests",
-    ":semanticCommits",
-    ":dependencyDashboard",
-    ":enableVulnerabilityAlertsWithLabel(security)"
+    "local>junkerderprovinz/junkerderprovinz//renovate/base",
+    "local>junkerderprovinz/junkerderprovinz//renovate/components"
   ],
-  "timezone": "Europe/Vienna",
-  "schedule": ["before 6am on monday"],
-  "labels": ["dependencies"],
-  "prHourlyLimit": 4,
-  "prConcurrentLimit": 6,
   "packageRules": [
     {
-      "description": "Node stays on 24 until 26 is tested. This covers the node image, node-version in setup-node (looked up as actions/node-versions), .nvmrc, engines and @types/node.",
-      "matchPackageNames": ["node", "actions/node-versions", "@types/node"],
-      "allowedVersions": "<25"
-    },
-    {
       "description": "The Go devcontainer tag carries the image version and the Go version, as in 2-1.27-bookworm. Only the image version moves here, Go goes up together with go.mod.",
-      "matchManagers": ["devcontainer"],
-      "matchPackageNames": ["mcr.microsoft.com/devcontainers/go"],
+      "matchManagers": [
+        "devcontainer"
+      ],
+      "matchPackageNames": [
+        "mcr.microsoft.com/devcontainers/go"
+      ],
       "versioning": "regex:^(?<major>\\d+)-(?<compatibility>\\d+\\.\\d+-bookworm)$"
-    },
-    {
-      "description": "GitHub Actions: auto-merge minor, patch and digest updates",
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "automerge": true,
-      "automergeType": "branch",
-      "commitMessagePrefix": "ci:",
-      "labels": ["github-actions"]
-    },
-    {
-      "description": "Docker: auto-merge digest pins and digest refreshes (same tag, new build). Major and minor stay open for review.",
-      "matchManagers": ["dockerfile"],
-      "matchUpdateTypes": ["pinDigest", "digest"],
-      "automerge": true,
-      "automergeType": "branch",
-      "commitMessagePrefix": "ci:",
-      "labels": ["docker"]
-    },
+    },
     {
       "description": "The compose file is for people to copy, so it follows the app's own latest tag instead of a digest that goes stale every build",
-      "matchManagers": ["docker-compose"],
-      "matchPackageNames": ["junkerderprovinz/cannoncommander"],
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "matchPackageNames": [
+        "junkerderprovinz/cannoncommander"
+      ],
       "enabled": false
     }
   ]
