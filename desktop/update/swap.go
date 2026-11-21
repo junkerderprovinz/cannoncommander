@@ -33,6 +33,7 @@ func (u *Updater) Swap(download string, rel *Release) error {
 		return err
 	}
 	u.staged = rel.Version
+	shellChanged(target)
 	if u.UninstallKey != "" {
 		if err := recordVersion(u.UninstallKey, target, rel.Version); err != nil {
 			u.logf("update: recording version %s for the uninstall entry: %v", rel.Version, err)
@@ -69,6 +70,11 @@ func (u *Updater) Cleanup() {
 	if err != nil {
 		u.logf("update: %v", err)
 		return
+	}
+	// The first start of a new version also tells the shell, as the version
+	// that swapped it in may not have.
+	if _, err := os.Lstat(target + ".old"); err == nil {
+		shellChanged(target)
 	}
 	leftovers, _ := filepath.Glob(filepath.Join(filepath.Dir(target), downloadPrefix(target)+"*"))
 	for _, p := range append(leftovers, target+".old") {
