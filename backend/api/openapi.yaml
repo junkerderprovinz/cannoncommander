@@ -8381,6 +8381,10 @@ components:
         verify:
           type: boolean
           description: Read every copied file back and compare checksums.
+        keepAttrs:
+          type: boolean
+          deprecated: true
+          description: Ignored, as owner, mode and times are always kept. Older clients may still send it.
         newFolder:
           type: boolean
           description: Only for a move. The job makes dest first, and taking the job back also removes it again, so both are one step.

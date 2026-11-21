@@ -63,6 +63,9 @@ type TransferParams struct {
 	Decisions map[string]string `json:"decisions,omitempty"`
 	// Verify reads every copied file back and compares checksums.
 	Verify bool `json:"verify,omitempty"`
+	// KeepAttrs is read and passed over, so older clients that still send it
+	// keep working. Owner, mode and times are always kept.
+	KeepAttrs *bool `json:"keepAttrs,omitempty"`
 	// NewFolder makes Dest first. Taking the job back also removes it again,
 	// so the two count as one step.
 	NewFolder bool `json:"newFolder,omitempty"`

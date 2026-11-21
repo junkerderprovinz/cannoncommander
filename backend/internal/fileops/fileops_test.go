@@ -332,12 +332,24 @@ func TestCopyAlwaysKeepsModeAndTimesOfFilesAndFolders(t *testing.T) {
 	}
 }
 
-func TestTransferRefusesAnAttributeSwitch(t *testing.T) {
+func TestCopyTakesTheOldAttributeSwitchAndKeepsAttributesAnyway(t *testing.T) {
 	e := newEnv(t)
 	e.write("/mnt/user/fotos/a.jpg", "sonne", old)
-	params := map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": "/mnt/user/backups", "keepAttrs": false}
-	status := e.call("anna", "POST", "/jobs", map[string]any{"kind": "copy", "params": params}, nil)
-	if status != http.StatusBadRequest {
+	if err := os.Chmod(e.real("/mnt/user/fotos/a.jpg"), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	e.run("copy", map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": "/mnt/user/backups", "keepAttrs": false})
+	info, _ := os.Stat(e.real("/mnt/user/backups/a.jpg"))
+	if info.Mode().Perm() != 0o640 || !info.ModTime().Equal(old) {
+		t.Fatalf("copy %s %s", info.Mode().Perm(), info.ModTime())
+	}
+}
+
+func TestTransferRefusesAnUnknownField(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.jpg", "sonne", old)
+	params := map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": "/mnt/user/backups", "keepOwners": true}
+	if status := e.call("anna", "POST", "/jobs", map[string]any{"kind": "copy", "params": params}, nil); status != http.StatusBadRequest {
 		t.Fatalf("status %d", status)
 	}
 }
