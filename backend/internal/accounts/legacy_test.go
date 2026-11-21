@@ -327,3 +327,22 @@ func TestWhatTheOlderVersionRetiredStaysOut(t *testing.T) {
 	w.must(http.StatusUnauthorized, w.req("GET", "/me", nil, oldCookie(session)))
 	w.must(http.StatusUnauthorized, w.req("GET", "/me", nil, bearer(token)))
 }
+
+func TestDroppingARemovedOIDCAccountShutsItOutOfTheOldVersion(t *testing.T) {
+	w := newWorld(t)
+	bert := w.oldUser("bert", "", false)
+	bert.LoginMethod = users.LoginMethodOidc
+	if err := state.UpdateUser(&bert, "", "loginMethod"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := w.deps.DB.Exec(`INSERT INTO oidc_identities (issuer, subject, user_id) VALUES ('https://idp.test', 's-1', ?)`, strconv.FormatUint(bert.ID, 10)); err != nil {
+		t.Fatal(err)
+	}
+	w.open()
+	if err := accounts.Drop(w.deps)(t.Context(), strconv.FormatUint(bert.ID, 10), signin.EndRemoved); err != nil {
+		t.Fatal(err)
+	}
+	if u, bound := w.oldRow("bert"); u.LoginMethod != users.LoginMethodPassword || u.Password == "" || bound != 0 {
+		t.Fatalf("the version before would let removed bert in: %s, %d bindings", u.LoginMethod, bound)
+	}
+}

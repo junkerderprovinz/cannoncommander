@@ -129,7 +129,7 @@ func (h handlers) drop(ctx context.Context, account string, what signin.Ending) 
 	switch what {
 	case signin.EndResetOther:
 		return shutOut(ctx, account, oldSessions)
-	case signin.EndBlocked:
+	case signin.EndBlocked, signin.EndRemoved:
 		return shutOut(ctx, account, everyOldWay)
 	}
 	return shutOut(ctx, account, oldWaysButOIDC)

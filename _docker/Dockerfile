@@ -31,6 +31,9 @@ RUN go build -tags mupdf,musl -ldflags="-w -s \
 FROM --platform=$BUILDPLATFORM node:24-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS nbuild
 WORKDIR /build/frontend
 COPY ./frontend/package.json ./frontend/package-lock.json ./
+# Packages not yet on the registry come along as tarballs the lock file
+# points at.
+COPY ./frontend/vendor/ ./vendor/
 RUN npm ci
 COPY ./frontend/ ./
 RUN npm run build:docker

@@ -16,3 +16,13 @@ func Ended(d v1.Deps) func(ctx context.Context, account string, what signin.Endi
 	}
 	return handlers{db: d.DB, fs: d.FS, deps: d, svc: svc}.ended
 }
+
+// Drop is what CannonCommander does with the old fields of an imported
+// account when the sign-in ended one of its ways in.
+func Drop(d v1.Deps) func(ctx context.Context, account string, what signin.Ending) error {
+	svc, err := serviceFor(d.DB)
+	if err != nil {
+		panic(err)
+	}
+	return handlers{db: d.DB, fs: d.FS, deps: d, svc: svc}.drop
+}
