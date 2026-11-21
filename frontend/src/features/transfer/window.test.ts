@@ -58,7 +58,7 @@ describe('a hard link', () => {
   it('has its own row in the right-click menu', () => {
     vi.spyOn(usePanels(), 'sel').mockReturnValue(files);
     rowMenu(10, 10);
-    expect((menuState.list ?? []).some((e) => e === 'hardlink' || (typeof e === 'object' && 'id' in e && e.id === 'hardlink'))).toBe(true);
+    expect((menuState.list ?? []).some((e) => typeof e === 'object' && 'id' in e && e.id === 'hardlink')).toBe(true);
   });
 
   it('opens its own window that says what a hard link is', async () => {
