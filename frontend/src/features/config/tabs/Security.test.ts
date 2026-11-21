@@ -17,6 +17,7 @@ const GET: Record<string, unknown> = {
   'me/passkeys': { passkeys: [] },
   'methods/oidc': { services: [{ id: 'config', provider: 'custom', name: 'OIDC', issuer: 'https://id.example', clientId: 'cc', secretSet: true, scopes: 'openid', nameClaim: 'preferred_username', groupsClaim: 'groups', ca: false, on: true, paused: false, tested: true, redirect: 'https://cc.example/api/auth/oidc/callback', fromConfig: true }] },
   'methods/presets': { presets: [] },
+  roles: { roles: ['admin', 'user', 'readonly'], serviceRole: 'user' },
 };
 const asked: string[] = [];
 const sent: unknown[] = [];
@@ -31,6 +32,10 @@ beforeEach(() => {
   vi.stubGlobal('fetch', async (url: string, init: RequestInit = {}) => {
     const path = url.replace('/api/signin/v1/', '');
     asked.push(`${init.method ?? 'GET'} ${path}`);
+    if (init.method === 'POST' && path === 'methods/oidc') {
+      sent.push(JSON.parse(String(init.body)));
+      return new Response(JSON.stringify({ error: 'issuerInvalid' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    }
     if (init.method === 'PATCH') {
       sent.push(JSON.parse(String(init.body)));
       const service = (GET['methods/oidc'] as { services: object[] }).services[0];
@@ -102,6 +107,34 @@ describe('the account and security tab', () => {
     } finally {
       Object.assign(me, { password: true, via: 'password', service: undefined });
     }
+  });
+
+  it('gives newcomers from a new sign-in service the role User unless the form picks another', async () => {
+    await mount();
+    document.querySelector<HTMLButtonElement>('[data-signin-tile="service-pick"]')!.click();
+    await settle();
+    [...document.querySelectorAll<HTMLElement>('[data-glim="PickerWindow"] button')].find((b) => b.textContent?.includes('Anderer Anmeldedienst'))!.click();
+    await settle();
+    const quiet = () => document.querySelector('.glim-signin-tile-quiet')?.textContent ?? '';
+    const role = document.querySelector('[data-signin-field="role"]')!;
+    expect(role.textContent).toContain('Admin');
+    expect(role.textContent).toContain('Nur lesen');
+    expect(quiet()).toContain('bekommt hier die Rolle Nutzer');
+    [...role.querySelectorAll<HTMLElement>('button, [role="radio"]')].find((b) => b.textContent?.trim() === 'Admin')!.click();
+    await settle();
+    expect(quiet()).toContain('bekommt hier die Rolle Admin');
+    const field = (name: string) => {
+      const el = document.querySelector<HTMLElement>(`[data-signin-field="${name}"]`)!;
+      return (el.tagName === 'INPUT' ? el : el.querySelector('input')) as HTMLInputElement;
+    };
+    for (const [name, value] of [['label', 'Haus-ID'], ['issuer', 'https://id.example'], ['clientId', 'cc'], ['secret', 'geheim']]) {
+      field(name!).value = value!;
+      field(name!).dispatchEvent(new Event('input'));
+    }
+    await settle();
+    document.querySelector<HTMLButtonElement>('[data-signin-tile="service-test"]')!.click();
+    await settle();
+    expect(sent.at(-1)).toMatchObject({ provider: 'custom', name: 'Haus-ID', role: 'admin' });
   });
 
   it('names a session by its browser and system', async () => {

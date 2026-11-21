@@ -121,7 +121,7 @@ export function tileText(): SignInTileText {
       pickHint: tile('services.pickHint'), group: tile('services.group'), own: tile('services.own'), ownSub: 'OpenID Connect',
       ownHint: tile('services.ownHint'), search: tile('services.search'), searchNone: tile('services.searchNone'),
       clear: tile('services.clear'), saved: tile('services.saved'), formHint: tile('services.formHint'),
-      whoGetsIn: tile('services.whoGetsIn'), issuer: tile('services.issuer'), issuerHint: tile('services.issuerHint'),
+      whoGetsIn: tile('services.whoGetsIn'), role: tile('services.role'), roleHint: tile('services.roleHint'), issuer: tile('services.issuer'), issuerHint: tile('services.issuerHint'),
       clientId: tile('services.clientId'), secret: tile('services.secret'), secretKept: tile('services.secretKept'),
       redirect: tile('services.redirect'), redirectHint: tile('services.redirectHint'), label: tile('services.label'),
       scopes: tile('services.scopes'), nameClaim: tile('services.nameClaim'), groupsClaim: tile('services.groupsClaim'),
@@ -129,6 +129,7 @@ export function tileText(): SignInTileText {
     },
     // The Users tab manages the accounts, so the tile never draws their card.
     accounts: signInTileTextEn.accounts,
+    roles: Object.fromEntries(['admin', 'user', 'readonly'].map((r) => [r, t('config.roles.' + r)])),
     via: {
       open: tile('via.open'), password: s('password'), passkey: tile('via.passkey'), service: '{name}',
       token: tile('via.token'), door: tile('via.door'),
