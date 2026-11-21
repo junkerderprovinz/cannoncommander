@@ -491,17 +491,17 @@
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/github.com/gtsteffaniak/go-ffmpeg/@v/v1.6.2.mod",
+        "url": "https://proxy.golang.org/github.com/gtsteffaniak/go-ffmpeg/@v/v1.7.0.mod",
         "sha256": "3b382ede6472139780dd8a99bebcf439c09695c01693450f5b30719a40ae7a87",
         "dest": "gomod/github.com/gtsteffaniak/go-ffmpeg/@v",
-        "dest-filename": "v1.6.2.mod"
+        "dest-filename": "v1.7.0.mod"
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/github.com/gtsteffaniak/go-ffmpeg/@v/v1.6.2.zip",
-        "sha256": "285ad07ef1168aefddfa61c0571dc5e2f8f60fc767a217fa126183c2cbf5b6b7",
+        "url": "https://proxy.golang.org/github.com/gtsteffaniak/go-ffmpeg/@v/v1.7.0.zip",
+        "sha256": "e47e3cd914f95d0dd3cbe86af753029832ade31e8d0b06dcb37808a60c2cf4af",
         "dest": "gomod/github.com/gtsteffaniak/go-ffmpeg/@v",
-        "dest-filename": "v1.6.2.zip"
+        "dest-filename": "v1.7.0.zip"
     },
     {
         "type": "file",
@@ -533,17 +533,17 @@
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/github.com/klauspost/compress/@v/v1.20.4.mod",
+        "url": "https://proxy.golang.org/github.com/klauspost/compress/@v/v1.20.5.mod",
         "sha256": "0d4e90d99acbc19eea5706e7390f8c925b26b1f5861385bb4f1321d454a1d48c",
         "dest": "gomod/github.com/klauspost/compress/@v",
-        "dest-filename": "v1.20.4.mod"
+        "dest-filename": "v1.20.5.mod"
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/github.com/klauspost/compress/@v/v1.20.4.zip",
-        "sha256": "680860caaacbb74f2010f32e4eb81f14cdc597e8a4633c7316946ab7cca5895a",
+        "url": "https://proxy.golang.org/github.com/klauspost/compress/@v/v1.20.5.zip",
+        "sha256": "2cb95c464f1c1522b3299759fe0dca47470451b0563274235f5910e5c8867847",
         "dest": "gomod/github.com/klauspost/compress/@v",
-        "dest-filename": "v1.20.4.zip"
+        "dest-filename": "v1.20.5.zip"
     },
     {
         "type": "file",
@@ -1065,17 +1065,17 @@
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/lukechampine.com/blake3/@v/v1.4.1.mod",
+        "url": "https://proxy.golang.org/lukechampine.com/blake3/@v/v1.5.1.mod",
         "sha256": "7b41d59c762222bd8c5f250c8507175ce8c0eafc7082bfbcaf568c8d1b604bd3",
         "dest": "gomod/lukechampine.com/blake3/@v",
-        "dest-filename": "v1.4.1.mod"
+        "dest-filename": "v1.5.1.mod"
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/lukechampine.com/blake3/@v/v1.4.1.zip",
-        "sha256": "b3a3338a6e830b79fb2ff1d263f07f3fe0adcfbafd04b65e5fe14415613e2e4d",
+        "url": "https://proxy.golang.org/lukechampine.com/blake3/@v/v1.5.1.zip",
+        "sha256": "af1da6424e3143e215d4f8d113d677083bd09f9915f02e40bb9741540062521b",
         "dest": "gomod/lukechampine.com/blake3/@v",
-        "dest-filename": "v1.4.1.zip"
+        "dest-filename": "v1.5.1.zip"
     },
     {
         "type": "file",

@@ -71,6 +71,7 @@ modules:
       - install -Dm644 flatpak/$FLATPAK_ID.metainfo.xml $FLATPAK_DEST/share/metainfo/$FLATPAK_ID.metainfo.xml
       - install -Dm644 desktop/installer/logo.svg $FLATPAK_DEST/share/icons/hicolor/scalable/apps/$FLATPAK_ID.svg
       - install -Dm644 desktop/installer/icon.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
+      - for s in 16 24 32 48; do install -Dm644 desktop/icons/icon-$s.png $FLATPAK_DEST/share/icons/hicolor/${s}x${s}/apps/$FLATPAK_ID.png; done
       - install -Dm644 LICENSE $FLATPAK_DEST/share/licenses/$FLATPAK_ID/LICENSE
       - install -Dm644 NOTICE $FLATPAK_DEST/share/licenses/$FLATPAK_ID/NOTICE
     sources:

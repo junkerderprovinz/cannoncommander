@@ -21,10 +21,10 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/go-cmp v0.7.0
 	github.com/gtsteffaniak/go-cache v1.1.0
-	github.com/gtsteffaniak/go-ffmpeg v1.6.2
+	github.com/gtsteffaniak/go-ffmpeg v1.7.0
 	github.com/gtsteffaniak/go-logger v1.1.0
 	github.com/junkerderprovinz/parleyport/kit v1.0.6-0.20261121154535-94358153f0b4
-	github.com/klauspost/compress v1.20.4
+	github.com/klauspost/compress v1.20.5
 	github.com/kovidgoyal/imaging v1.9.0
 	github.com/mattn/go-sqlite3 v1.14.53
 	github.com/modelcontextprotocol/go-sdk v1.8.0
@@ -44,7 +44,7 @@ require (
 	golang.org/x/time v0.16.0
 	golang.org/x/tools v0.53.0
 	gopkg.in/yaml.v3 v3.0.1
-	lukechampine.com/blake3 v1.4.1
+	lukechampine.com/blake3 v1.5.1
 	modernc.org/sqlite v1.62.0
 )
 

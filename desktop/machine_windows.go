@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -55,6 +56,7 @@ func updateInstalled() error {
 	}
 	up := newUpdater(logger)
 	up.u.UninstallKey = product
+	up.u.Uninstaller = update.Uninstallers[runtime.GOOS+"/"+runtime.GOARCH]
 	up.u.Cleanup()
 	if !update.IsRelease(cmd.Version()) {
 		logger.Printf("update: %s is not a release build, so it does not update itself", cmd.Version())
@@ -70,6 +72,9 @@ func updateInstalled() error {
 	version := cmd.Version()
 	if v := up.readyVersion(); v != "" {
 		version = "v" + v
+		if err := up.u.ReplaceUninstaller(ctx, version); err != nil {
+			logger.Printf("update: the uninstaller of %s: %v", version, err)
+		}
 	}
 	refreshInstalled(ctx, logger, up.u, version)
 	return nil

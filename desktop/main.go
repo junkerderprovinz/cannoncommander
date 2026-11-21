@@ -39,6 +39,9 @@ import (
 //go:embed build/appicon.png
 var appIcon []byte
 
+//go:embed icons/tray.png
+var trayIcon []byte
+
 func main() {
 	if err := run(); err != nil {
 		log.Fatal(err)
@@ -161,6 +164,7 @@ func run() error {
 	} else {
 		go sh.up.run(ctx, sh.AutoUpdate)
 	}
+	go shellKnows(filepath.Join(dir, "shell-version"))
 	go sh.catchUp(ctx)
 
 	window = openWindow(app, state)

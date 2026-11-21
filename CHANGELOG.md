@@ -4,6 +4,14 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.3.1 (2026-11-21)
+
+The desktop shortcut shows the current logo again.
+
+## 🐛 Fixed
+
+- **No old tile behind the logo on Windows.** A shortcut from CannonCommander 1.0 could keep the logo on its old white tile, because Windows held on to the icon it read back then. Each new version now tells Windows once that the program changed, and an update brings the matching uninstaller along. The icons are drawn from the logo at every size, so the frame stays sharp down to 16 pixels.
+
 ## v1.3.0 (2026-11-21)
 
 A folder that takes its time says so, renaming happens in the row, and copying, moving and deleting get calmer windows with a speed graph and both versions of a conflict side by side. The remote picker follows GlimStone 4.8.1, and the download buttons say which machine each build is for.

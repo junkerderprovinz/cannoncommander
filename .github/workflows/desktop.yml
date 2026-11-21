@@ -129,6 +129,20 @@ jobs:
       - name: Build
         run: node scripts/desktop.mjs ${{ matrix.args }}
 
+      # Shortcuts, the taskbar and Explorer show the program's icon at every
+      # size, so no size of the program or the installer may carry a tile
+      # behind the logo.
+      - name: Check the icons
+        if: runner.os == 'Windows'
+        working-directory: desktop
+        shell: bash
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          export CC_EXE="$(cygpath -w "$GITHUB_WORKSPACE/desktop/build/bin/CannonCommander.exe")"
+          for f in "$GITHUB_WORKSPACE"/desktop/build/installer/CannonCommander-*-installer.exe; do CC_EXE="$CC_EXE;$(cygpath -w "$f")"; done
+          go test -tags desktop -run TestTheBuiltProgramShowsNoTileAtAnySize -v .
+
       # A bundle that builds can still die on start. The app runs for a while
       # on a throwaway data folder and has to be alive with no crash in its
       # log.

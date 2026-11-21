@@ -2,6 +2,7 @@ package update
 
 import (
 	"archive/zip"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -33,6 +34,7 @@ func (u *Updater) Swap(download string, rel *Release) error {
 		return err
 	}
 	u.staged = rel.Version
+	ShellChanged(target)
 	if u.UninstallKey != "" {
 		if err := recordVersion(u.UninstallKey, target, rel.Version); err != nil {
 			u.logf("update: recording version %s for the uninstall entry: %v", rel.Version, err)
@@ -270,4 +272,31 @@ func Rename(from, to string) error {
 		err = os.Rename(from, to)
 	}
 	return err
+}
+
+// ReplaceUninstaller puts the uninstaller of the release tagged tag in place
+// of the one beside the program, which would otherwise stay as old as the
+// installation, with that version's icon and its way of uninstalling. A copy
+// without an uninstaller gets none.
+func (u *Updater) ReplaceUninstaller(ctx context.Context, tag string) error {
+	if u.Uninstaller == "" {
+		return nil
+	}
+	target, err := u.target()
+	if err != nil {
+		return err
+	}
+	un := filepath.Join(filepath.Dir(target), "uninstall.exe")
+	if _, err := os.Stat(un); err != nil {
+		return nil
+	}
+	fresh, err := u.FetchFile(ctx, tag, u.Uninstaller, filepath.Dir(target), nil)
+	if err != nil {
+		return err
+	}
+	if err := os.Rename(fresh, un); err != nil {
+		os.Remove(fresh)
+		return err
+	}
+	return nil
 }
