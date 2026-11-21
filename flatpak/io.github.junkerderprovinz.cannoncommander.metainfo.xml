@@ -80,6 +80,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.2.1" date="2026-11-21">
+      <description>
+        <p>A folder that takes its time says so, renaming happens right in the row, and a conflict takes one click. A welcome window lets you pick one or two windows, and a key held while dragging chooses copy, move or link.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.2.1</url>
+    </release>
     <release version="1.2.0" date="2026-11-20">
       <description>
         <p>Disk usage shows every drive with its history and colours the treemap by file type or age. On Unraid a storeroom keeps unused templates, compose stacks, appdata folders and Docker leftovers before anything goes, and Linux gets an AppImage.</p>
