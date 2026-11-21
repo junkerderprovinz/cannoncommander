@@ -2,10 +2,13 @@ import { createPinia, setActivePinia } from 'pinia';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SignInReauthWindow } from '@glimstone/vue';
 import { createApp, h, nextTick } from 'vue';
 import WindowHost from '@/core/WindowHost.vue';
 import { winStack } from '@/core/windows';
 import { addMessages } from '@/i18n';
+import { reauthClient } from '@/signin/kit';
+import { reauthText } from '@/signin/words';
 import { useUser } from '@/stores/user';
 import { withoutLayers } from '@/testing/layers';
 import de from '../de.json';
@@ -14,7 +17,9 @@ import McpCard from './McpCard.vue';
 type Sent = { method: string; path: string; body: Record<string, unknown> };
 let sent: Sent[] = [];
 let list: Record<string, unknown>;
-let loginMethod = 'password';
+// The session's sign-in is old until the password is confirmed, and askPassword says whether the account has one.
+let fresh = false;
+let askPassword = true;
 
 const key = (id: string, label: string, more: Record<string, unknown> = {}) => ({
   id: id.padEnd(32, '0'), owner: 'jdp', own: true, viaOAuth: false, label, client: 'claude-code', hint: 'q7Xe', canWrite: false, createdAt: 1_700_000_000,
@@ -29,18 +34,22 @@ async function server(url: string, init: RequestInit = {}) {
   const path = u.pathname.replace('/api/v1', ''), method = init.method ?? 'GET';
   const body = init.body ? JSON.parse(String(init.body)) : {};
   if (method !== 'GET') sent.push({ method, path, body });
-  if (path === '/me') return answer(200, { name: 'jdp', full: 'jdp', role: 'admin', loginMethod, last: null, pwChanged: null, recovery: 8, lockPassword: false });
+  if (path === '/api/signin/v1/me/confirm') {
+    fresh = body.password === 'geheim';
+    return fresh ? answer(200, {}) : answer(401, { error: 'wrongPassword' });
+  }
+  const stale = () => answer(403, { status: 403, code: 'signInAgain', params: { askPassword }, detail: 'sign in again' });
   if (path === '/mcp/keys' && method === 'GET') {
     const all = u.searchParams.get('all') === 'true';
     const others = all ? [key('b', 'LM Studio', { owner: 'anna', own: false, client: 'lmstudio' })] : [];
     return answer(200, { ...list, keys: [...(list.keys as unknown[]), ...others] });
   }
   if (path === '/mcp/keys' && method === 'POST') {
-    if (list.signIn && body.password !== 'geheim') return answer(403, { status: 403, code: 'currentPasswordWrong' });
+    if (list.signIn && !fresh) return stale();
     return answer(201, { key: 'ccmcp_fresh', item: key('c', String(body.label), { canWrite: body.canWrite }) });
   }
   if (/^\/mcp\/keys\/\w+$/.test(path) && method === 'PATCH') {
-    if (body.canWrite && list.signIn && body.password !== 'geheim') return answer(403, { status: 403, code: 'currentPasswordWrong' });
+    if (body.canWrite && list.signIn && !fresh) return stale();
     return answer(200, key('a', 'Claude Code', { canWrite: body.canWrite }));
   }
   return answer(204);
@@ -60,11 +69,13 @@ beforeEach(() => {
   setActivePinia(createPinia());
   sent = [];
   list = settings();
-  loginMethod = 'password';
+  fresh = false;
+  askPassword = true;
   vi.stubGlobal('fetch', vi.fn(server));
 });
 let app: ReturnType<typeof createApp> | undefined;
 afterEach(() => {
+  reauthClient.reauth.cancel();
   app?.unmount();
   winStack.splice(0);
   document.body.innerHTML = '';
@@ -78,7 +89,7 @@ const settle = async () => {
 };
 async function mount(role = 'user') {
   useUser().me = { name: 'jdp', full: 'jdp', role };
-  app = createApp({ render: () => [h(McpCard), h(WindowHost)] });
+  app = createApp({ render: () => [h(McpCard), h(WindowHost), h(SignInReauthWindow, { api: reauthClient, text: reauthText() })] });
   app.mount(document.body.appendChild(document.createElement('div')));
   await settle();
 }
@@ -95,6 +106,10 @@ const type = async (sel: string, text: string) => {
   input.dispatchEvent(new Event('input'));
   await settle();
 };
+async function confirmPassword(password: string) {
+  await type('[data-glim="SignInReauthWindow"] input[type="password"]', password);
+  await click(q('[data-signin-reauth="confirm"]'));
+}
 const cardTitles = () => [...document.querySelectorAll('.glim-notch-card > h2')].map((x) => x.textContent?.trim());
 
 describe('the MCP server card', () => {
@@ -106,29 +121,31 @@ describe('the MCP server card', () => {
     expect(document.body.innerHTML).toContain('http://localhost:3000/mcp');
   });
 
-  it('makes a new key that only reads unless the switch is turned on, and asks for the password', async () => {
+  it('makes a new key that only reads unless the switch is turned on, after the password when the sign-in is old', async () => {
     await mount();
     await click(q('#mcp-choose'));
     await click(q('[data-client="cursor"] button'));
     const toggle = q('[data-mcp="newWrite"]');
     expect(toggle?.getAttribute('aria-checked')).toBe('false');
-    expect(q('#mcp-cpw')).not.toBeNull();
-    await type('#mcp-cpw', 'geheim');
     await click(q('#mcp-make'));
-    expect(sent.at(-1)).toEqual({ method: 'POST', path: '/mcp/keys', body: { label: 'Cursor', client: 'cursor', canWrite: false, password: 'geheim' } });
+    await confirmPassword('geheim');
+    const made = { method: 'POST', path: '/mcp/keys', body: { label: 'Cursor', client: 'cursor', canWrite: false } };
+    expect(sent).toEqual([made, { method: 'POST', path: '/api/signin/v1/me/confirm', body: { password: 'geheim' } }, made]);
     expect(document.body.innerHTML).toContain('ccmcp_fresh');
   });
 
-  it('asks for the password before a key may write, and sends nothing without it', async () => {
+  it('lets a key write once the password is confirmed, and keeps asking while it is wrong', async () => {
     await mount();
     await click(q('[data-mcp="write"]'));
     expect(winStack).toHaveLength(1);
     expect(sent).toEqual([]);
     await click(primary());
-    expect(sent).toEqual([]);
-    await type('#mcp-pw', 'geheim');
-    await click(primary());
-    expect(sent).toEqual([{ method: 'PATCH', path: '/mcp/keys/a0000000000000000000000000000000', body: { canWrite: true, password: 'geheim' } }]);
+    await confirmPassword('falsch');
+    expect(q('[data-glim="SignInReauthWindow"]')?.textContent).toContain('Das Passwort stimmt nicht');
+    await confirmPassword('geheim');
+    const write = { method: 'PATCH', path: '/mcp/keys/a0000000000000000000000000000000', body: { canWrite: true } };
+    expect(sent.filter((x) => x.method === 'PATCH')).toEqual([write, write]);
+    expect(q('[data-glim="SignInReauthWindow"]')).toBeNull();
     expect(winStack).toHaveLength(0);
   });
 
@@ -140,11 +157,13 @@ describe('the MCP server card', () => {
     expect(sent).toEqual([{ method: 'PATCH', path: '/mcp/keys/a0000000000000000000000000000000', body: { canWrite: false } }]);
   });
 
-  it('asks an account that signs in elsewhere for no password', async () => {
-    loginMethod = 'oidc';
+  it('asks an account that signs in elsewhere for no password, and keeps the window for a new sign-in', async () => {
+    askPassword = false;
     await mount();
     await click(q('[data-mcp="write"]'));
-    expect(q('#mcp-pw')).toBeNull();
+    await click(primary());
+    expect(q('[data-glim="SignInReauthWindow"]')).toBeNull();
+    expect(winStack).toHaveLength(1);
   });
 
   it('shows an admin everybody else\'s keys with their owner, and the sign-in through OAuth', async () => {
@@ -163,7 +182,7 @@ describe('the MCP server card', () => {
     expect(sent).toEqual([{ method: 'POST', path: '/mcp/keys/b0000000000000000000000000000000/revoke', body: {} }]);
   });
 
-  it('in the desktop app says the port may change, asks for no password and leaves out the cloud', async () => {
+  it('in the desktop app says the port may change and leaves out the cloud', async () => {
     list = settings({ signIn: false, desktop: true, oauth: { possible: false, enabled: false, issuer: '', active: false, grantLimit: 10 } });
     await mount('admin');
     expect(q('[data-mcp="port"]')).not.toBeNull();
@@ -172,7 +191,7 @@ describe('the MCP server card', () => {
     expect(q('[data-group="cloud"]')).toBeNull();
     expect(q('[data-group="local"]')).not.toBeNull();
     await click(q('[data-client="zed"] button'));
-    expect(q('#mcp-cpw')).toBeNull();
+    expect(q('#mcp-make')).not.toBeNull();
   });
 
   it('shows one mark on every client tile, the single colour one waiting for the pointer', async () => {

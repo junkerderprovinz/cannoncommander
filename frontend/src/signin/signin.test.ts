@@ -3,27 +3,33 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { session } from '.';
 import SignInPage from './SignInPage.vue';
 
-type Answer = { status?: number; body?: unknown; headers?: Record<string, string> };
+const { left } = vi.hoisted(() => ({ left: { to: [] as string[], reloads: 0 } }));
+vi.mock('./leave', () => ({ leaveFor: (url: string) => left.to.push(url), reload: () => { left.reloads++; } }));
+
+type Answer = { status?: number; body?: unknown };
 let script: Record<string, Answer | Answer[]> = {};
 const sent: { url: string; body: unknown }[] = [];
+const offer = (more: Record<string, unknown> = {}) => ({ open: false, owner: false, minPassword: 12, signedIn: false, passkeys: false, services: [], ...more });
 
 beforeEach(() => {
-  script = {};
+  script = { 'GET options': { body: offer() } };
   sent.length = 0;
   vi.stubGlobal('fetch', async (url: string, init: RequestInit = {}) => {
-    const key = `${init.method ?? 'GET'} ${url.replace('/api/v1', '')}`;
+    const key = `${init.method ?? 'GET'} ${url.replace('/api/signin/v1/', '')}`;
     sent.push({ url: key, body: init.body ? JSON.parse(String(init.body)) : undefined });
     const entry = script[key];
-    const a = (Array.isArray(entry) ? entry.shift() : entry) ?? { status: 404, body: { title: 'Not Found', status: 404 } };
-    const status = a.status ?? 200;
-    const type = status >= 400 ? 'application/problem+json' : 'application/json';
-    return new Response(status === 204 ? null : JSON.stringify(a.body ?? {}), { status, headers: { 'Content-Type': type, ...a.headers } });
+    const a = (Array.isArray(entry) ? entry.shift() : entry) ?? { status: 404, body: { error: 'notFound' } };
+    return new Response(JSON.stringify(a.body ?? {}), { status: a.status ?? 200, headers: { 'Content-Type': 'application/json' } });
   });
-  script['GET /auth/options'] = { body: { password: true, passkey: false, oidc: null, server: 'Bottich', version: '1.0', minPassword: 12 } };
+  left.to = [];
+  left.reloads = 0;
+  history.replaceState(null, '', '/');
+  session.out = false;
 });
 afterEach(() => {
   vi.unstubAllGlobals();
   document.body.innerHTML = '';
+  sessionStorage.clear();
 });
 
 const settle = async () => {
@@ -39,8 +45,9 @@ function type(sel: string, value: string) {
 const submit = () => $('#root form').dispatchEvent(new Event('submit', { cancelable: true }));
 const press = (hook: string) => (document.querySelector(`[data-signin="${hook}"]`) as HTMLButtonElement).click();
 const error = () => document.querySelector('.glim-signin-error')?.textContent ?? '';
+const buttons = () => [...document.querySelectorAll<HTMLElement>('#root button[data-signin]')].map((b) => b.dataset.signin);
 
-async function mount(props: Record<string, unknown>) {
+async function mount(props: Record<string, unknown> = {}) {
   const el = Object.assign(document.createElement('div'), { id: 'root' });
   document.body.append(el);
   createApp(SignInPage, props).mount(el);
@@ -49,15 +56,14 @@ async function mount(props: Record<string, unknown>) {
 
 describe('the sign in page', () => {
   it('shows the logo above the name and no version under the card', async () => {
-    await mount({});
+    await mount();
     expect(document.querySelector('.glim-signin-logo img')?.getAttribute('src')).toContain('cannoncommander');
     expect(document.querySelector('h1')?.textContent).toBe('CannonCommander');
     expect(document.body.textContent).not.toContain('Version');
-    expect(document.body.textContent).not.toContain('Bottich');
   });
 
   it('starts in the name field and keeps Sign in off until a password is typed', async () => {
-    await mount({});
+    await mount();
     expect(document.activeElement).toBe($('#cl-user'));
     expect($('[data-signin="submit"]').disabled).toBe(true);
     type('#cl-password', 'x');
@@ -65,25 +71,48 @@ describe('the sign in page', () => {
     expect($('[data-signin="submit"]').disabled).toBe(false);
   });
 
+  it('asks for no name where one account signs in', async () => {
+    script['GET options'] = { body: offer({ owner: true }) };
+    script['POST login'] = { body: { visitor: { name: 'jdp', role: 'admin', via: 'password' } } };
+    await mount();
+    expect($('#cl-user')).toBeNull();
+    type('#cl-password', 'mein-passwort');
+    await settle();
+    submit();
+    await settle();
+    expect(sent.find((s) => s.url === 'POST login')?.body).toEqual({ password: 'mein-passwort' });
+    expect(left.reloads).toBe(1);
+  });
+
   it('shakes Sign in on a wrong password and selects the password', async () => {
-    script['POST /auth/login'] = { status: 401, body: { title: 'Unauthorized', status: 401 } };
-    await mount({});
+    script['POST login'] = { status: 401, body: { error: 'wrongPassword' } };
+    await mount();
     type('#cl-user', 'anna');
     type('#cl-password', 'falsch');
     await settle();
     submit();
     await settle();
     await frames();
-    expect(error()).toContain('Name oder Passwort stimmt nicht');
+    expect(sent.find((s) => s.url === 'POST login')?.body).toEqual({ name: 'anna', password: 'falsch' });
+    expect(error()).toContain('Das Passwort stimmt nicht');
     expect($('[data-signin="submit"]').classList).toContain('glim-shake');
     expect(document.activeElement).toBe($('#cl-password'));
-    expect([$('#cl-password').selectionStart, $('#cl-password').selectionEnd]).toEqual([0, 6]);
+  });
+
+  it('wants the name before it sends anything where several accounts sign in', async () => {
+    await mount();
+    type('#cl-password', 'passwort');
+    await settle();
+    submit();
+    await settle();
+    expect(error()).toContain('Gib Name und Passwort ein');
+    expect(sent.some((s) => s.url === 'POST login')).toBe(false);
   });
 
   it('asks for the code after the password and gives the app back when the session ran out', async () => {
     session.out = true;
-    script['POST /auth/login'] = { body: { next: 'totp', challenge: 'c1' } };
-    script['POST /auth/totp'] = [{ status: 400, body: { title: 'Bad Request', status: 400 } }, { body: { next: 'done', me: { name: 'anna', full: 'Anna', role: 'user' } } }];
+    script['POST login'] = { body: { step: 'code' } };
+    script['POST login/totp'] = [{ status: 401, body: { error: 'wrongCode' } }, { body: { visitor: { name: 'anna', role: 'user', via: 'password' } } }];
     await mount({ overlay: true, was: 'anna' });
     expect($('#cl-user').value).toBe('anna');
     expect(document.activeElement).toBe($('#cl-password'));
@@ -93,93 +122,58 @@ describe('the sign in page', () => {
     await settle();
     submit();
     await settle();
-    expect(sent.find((s) => s.url === 'POST /auth/login')?.body).toEqual({ username: 'anna', password: 'anna-ihr-passwort', remember: true });
     expect(document.activeElement).toBe($('#cl-code'));
 
     type('#cl-code', '000000');
     await settle();
     submit();
     await settle();
-    await frames();
     expect(error()).toContain('Code passt nicht');
-    expect($('#cl-code').value).toBe('');
-    expect($('[data-signin="submit"]').classList).toContain('glim-shake');
 
     type('#cl-code', '123456');
     await settle();
     submit();
     await settle();
-    expect(sent.filter((s) => s.url === 'POST /auth/totp').map((s) => s.body)).toEqual([{ challenge: 'c1', code: '000000' }, { challenge: 'c1', code: '123456' }]);
+    expect(sent.filter((s) => s.url === 'POST login/totp').map((s) => s.body)).toEqual([{ code: '000000' }, { code: '123456' }]);
     expect(session.out).toBe(false);
+    expect(left.reloads).toBe(0);
   });
 
-  it('takes a recovery code in the code field', async () => {
-    session.out = true;
-    script['POST /auth/login'] = { body: { next: 'totp', challenge: 'c2' } };
-    script['POST /auth/totp'] = { body: { next: 'done', me: { name: 'anna', full: 'Anna', role: 'user' } } };
-    await mount({ overlay: true, was: 'anna' });
-    type('#cl-password', 'anna-ihr-passwort');
-    await settle();
-    submit();
-    await settle();
-    type('#cl-code', 'k7qm-3xrp');
-    await settle();
-    submit();
-    await settle();
-    expect(sent.at(-1)).toEqual({ url: 'POST /auth/totp', body: { challenge: 'c2', code: 'k7qm-3xrp' } });
-    expect(session.out).toBe(false);
-  });
-
-  it('says how long to wait after too many tries', async () => {
-    script['POST /auth/login'] = { status: 429, body: { title: 'Too Many Requests', status: 429 }, headers: { 'Retry-After': '120' } };
-    await mount({});
+  it('says to wait after too many tries', async () => {
+    script['POST login'] = { status: 429, body: { error: 'throttled', retryAfter: 60 } };
+    await mount();
     type('#cl-user', 'anna');
     type('#cl-password', 'falsch');
     await settle();
     submit();
     await settle();
-    expect(error()).toContain('warte 2 Minuten');
+    expect(error()).toContain('Zu viele Versuche');
   });
 
-  it('starts over when a step ran out', async () => {
-    script['POST /auth/login'] = { body: { next: 'password', challenge: 'c3' } };
-    script['POST /auth/password'] = { status: 410, body: { title: 'Gone', status: 410 } };
-    await mount({});
-    type('#cl-user', 'neu');
-    type('#cl-password', 'aus-dem-log');
-    await settle();
-    submit();
-    await settle();
-    expect(document.querySelector('h2')?.textContent).toBe('Eigenes Passwort');
-    type('#cl-new', 'ein-eigenes-passwort');
-    type('#cl-new2', 'ein-anderes-passwort');
-    submit();
-    await settle();
-    expect(error()).toContain('nicht gleich');
-    type('#cl-new2', 'ein-eigenes-passwort');
-    submit();
-    await settle();
-    expect(document.querySelector('#cl-user')).not.toBeNull();
-    expect(document.querySelector('.glim-signin-note')?.textContent).toContain('zu lange gedauert');
-  });
-
-  it('wants the name before it asks for a reset code', async () => {
-    script['POST /auth/reset-code'] = { status: 202 };
-    await mount({});
+  it('asks for the reset code without a name and says afterwards what the reset took away', async () => {
+    script['POST reset-code'] = { body: {} };
+    script['POST reset'] = { body: { visitor: { name: 'anna', role: 'admin', via: 'password' }, removed: { tokens: 2, passkeys: 1, twoFactor: true, services: 0 } } };
+    await mount({ was: 'anna' });
     press('forgot');
     await settle();
-    expect(error()).toContain('zuerst deinen Namen');
-    type('#cl-user', 'anna');
-    press('forgot');
-    await settle();
-    expect(sent.at(-1)).toEqual({ url: 'POST /auth/reset-code', body: { username: 'anna' } });
+    expect(sent.at(-1)).toEqual({ url: 'POST reset-code', body: {} });
     expect(document.activeElement).toBe($('#cl-reset-code'));
+    type('#cl-reset-code', 'ABCD-EFGH-JKLM');
+    type('#cl-new', 'ein-neues-langes-passwort');
+    type('#cl-confirm', 'ein-neues-langes-passwort');
+    await settle();
+    submit();
+    await settle();
+    expect(sent.at(-1)).toEqual({ url: 'POST reset', body: { code: 'ABCD-EFGH-JKLM', password: 'ein-neues-langes-passwort', name: 'anna' } });
+    expect(sessionStorage.getItem('cannoncommander-signin-note')).toBe(
+      'Dein neues Passwort ist gesetzt, und alle anderen Sitzungen sind beendet. Ebenfalls weg: Zwei-Faktor-Authentifizierung, 1 Passkey und 2 API-Tokens.');
+    expect(left.reloads).toBe(1);
   });
 
   it('shakes Set password on a wrong code from the log', async () => {
-    script['POST /auth/reset-code'] = { status: 202 };
-    script['POST /auth/reset'] = { status: 400, body: { title: 'Bad Request', status: 400 } };
-    await mount({ was: 'anna' });
+    script['POST reset-code'] = { body: {} };
+    script['POST reset'] = { status: 401, body: { error: 'resetRefused' } };
+    await mount();
     press('forgot');
     await settle();
     type('#cl-reset-code', 'ABCD-EFGH-JKLM');
@@ -189,39 +183,39 @@ describe('the sign in page', () => {
     submit();
     await settle();
     await frames();
-    expect(sent.at(-1)).toEqual({ url: 'POST /auth/reset', body: { code: 'ABCDEFGHJKLM', password: 'ein-neues-langes-passwort' } });
-    expect(error()).toContain('stimmt nicht oder ist abgelaufen');
+    expect(error()).toContain('Ist er abgelaufen, steht jetzt ein neuer im Log');
     expect($('[data-signin="set-password"]').classList).toContain('glim-shake');
-    expect(document.activeElement).toBe($('#cl-reset-code'));
   });
 
-  it('says nothing when the passkey prompt is closed', async () => {
-    script['GET /auth/options'] = { body: { password: true, passkey: true, oidc: null, server: '', version: '', minPassword: 12 } };
-    script['POST /auth/passkey/options'] = { body: { challenge: 'p1', options: { publicKey: { challenge: 'AAAA', allowCredentials: [] } } } };
-    vi.stubGlobal('PublicKeyCredential', class {});
-    vi.stubGlobal('navigator', { ...navigator, credentials: { get: () => Promise.reject(new DOMException('closed', 'NotAllowedError')) } });
-    await mount({});
-    press('passkey');
-    await settle();
-    expect(document.querySelector('.glim-signin-error')).toBeNull();
+  it('offers two buttons at most: Sign in and the sign-in service, with Forgot password as a plain link', async () => {
+    script['GET options'] = { body: offer({ passkeys: true, services: [{ id: 's1', provider: 'authentik', name: 'authentik' }, { id: 's2', provider: 'custom', name: 'Zweiter' }] }) };
+    await mount();
+    expect(buttons()).toEqual(['submit', 'service', 'forgot']);
+    expect(document.querySelector('[data-signin="service"]')?.textContent).toContain('authentik');
+    expect(document.querySelector('[data-signin="service"] svg')).not.toBeNull();
+    expect(document.querySelector('[data-signin="forgot"]')?.classList).toContain('glim-signin-forgot');
+    press('service');
+    expect(left.to).toEqual(['/signin/oidc/s1?return=%2F']);
   });
 
-  it('asks only for the name and the password and keeps the session for the days chosen under Security', async () => {
-    script['POST /auth/login'] = { body: { next: 'done', me: { name: 'anna', full: 'Anna', role: 'user' } } };
-    await mount({});
-    expect($('#cl-keep')).toBeNull();
-    type('#cl-user', 'anna');
-    type('#cl-password', 'anna-ihr-passwort');
-    await settle();
-    submit();
-    await settle();
-    expect(sent.find((s) => s.url === 'POST /auth/login')?.body).toEqual({ username: 'anna', password: 'anna-ihr-passwort', remember: true });
+  it('starts the service of config.yaml where it always started', async () => {
+    script['GET options'] = { body: offer({ services: [{ id: 'config', provider: 'custom', name: 'OIDC' }] }) };
+    await mount();
+    press('service');
+    expect(left.to).toEqual(['/api/auth/oidc/login?redirect=%2F']);
   });
 
-  it('offers no passkey in a browser that keeps none here', async () => {
-    script['GET /auth/options'] = { body: { password: true, passkey: true, oidc: null, server: '', version: '', minPassword: 12 } };
-    vi.stubGlobal('PublicKeyCredential', undefined);
-    await mount({});
+  it('lets the browser offer passkeys in the password field, without a button', async () => {
+    script['GET options'] = { body: offer({ passkeys: true }) };
+    await mount();
+    expect($('#cl-password').getAttribute('autocomplete')).toBe('current-password webauthn');
     expect(document.querySelector('[data-signin="passkey"]')).toBeNull();
+  });
+
+  it('says what a sign-in service sent back, once', async () => {
+    history.replaceState(null, '', '/?signin=notAdmitted');
+    await mount();
+    expect(error()).toContain('keine deiner Gruppen dort darf CannonCommander benutzen');
+    expect(location.search).toBe('');
   });
 });

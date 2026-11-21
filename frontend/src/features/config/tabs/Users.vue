@@ -53,12 +53,14 @@ function removeGroup(g: Group) {
         <template #tile><i class="a-initials">{{ initials(u) }}</i></template>
         <template #badges>
           <Pill v-if="u.name === myName()" tone="state">{{ c('users.you') }}</Pill>
+          <Pill v-if="u.owner" tone="state">{{ c('users.owner') }}</Pill>
+          <Pill v-if="u.blocked" tone="warn">{{ c('users.blocked') }}</Pill>
           <Pill>{{ roleName(u.role) }}</Pill><Pill class="mono">{{ u.scope }}</Pill>
           <Pill>{{ u.last ? ago(u.last) : c('users.never') }}</Pill>
         </template>
         <template #actions>
           <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-uopen="i" @click="editUser(u)" />
-          <IconButton :absent="u.name === myName()" :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeUser(u)" />
+          <IconButton :absent="u.name === myName() || u.owner" :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeUser(u)" />
         </template>
       </ListRow>
     </div>

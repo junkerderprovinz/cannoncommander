@@ -4,7 +4,6 @@
 // writing away or revoke them, and switch the sign-in through OAuth.
 import { Button, Card, CopyField, EmptyState, FieldRow, IconButton, ListRow, Pill, SubCard, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { type Account, me } from '@/api/admin';
 import { mcp, type McpKey, type McpKeys, type McpOAuth } from '@/api/mcp';
 import { on } from '@/api/sse';
 import { fmtDate } from '@/core/format';
@@ -14,8 +13,6 @@ import { win } from '@/core/windows';
 import { ago, attempt, c, cn, confirmWin } from '@/features/config/shared';
 import { useUser } from '@/stores/user';
 import { copyWords } from '@/ui/kit';
-import { takePending } from '../proof';
-import { type Step, takeStep } from './again';
 import ClientMark from './ClientMark.vue';
 import ClientWin from './ClientWin.vue';
 import { clientById, type McpClient } from './clients';
@@ -27,7 +24,7 @@ import ProofWin from './ProofWin.vue';
 import { mcpUrl } from './snippets';
 
 const user = useUser();
-const data = ref<McpKeys | null>(null), every = ref<McpKeys | null>(null), acc = ref<Account | null>(null);
+const data = ref<McpKeys | null>(null), every = ref<McpKeys | null>(null);
 const showRevoked = ref(false);
 const admin = computed(() => user.admin());
 
@@ -46,10 +43,6 @@ const status = computed(() => {
   if (data.value?.oauth.active) return c('mcp.statusOAuth');
   return keys.value.length ? c('mcp.statusNone') : c('mcp.statusOff');
 });
-// New keys, replacements and writing ask for the password of an account that has one; one that signs in elsewhere
-// signs in afresh instead, and a server nobody signs in to asks for nothing.
-const password = computed(() => !!data.value?.signIn && acc.value?.loginMethod !== 'oidc');
-
 const host = location.hostname;
 const base = () => new URL(import.meta.env.BASE_URL, location.href).pathname;
 const endpointParts = computed(() => ({ origin: location.origin + base(), endpointPath: data.value?.endpointPath ?? 'mcp' }));
@@ -73,28 +66,28 @@ function connect(client: McpClient) {
   win({
     title: c('mcp.dialogTitle', { name: client.name || c('mcp.other') }), wide: true, body: ClientWin,
     props: {
-      client, state: () => data.value, reload: load, password: password.value, admin: admin.value, endpoint: endpointParts.value, connector: connector.value,
+      client, state: () => data.value, reload: load, admin: admin.value, endpoint: endpointParts.value, connector: connector.value,
       made: (got: { item: McpKey }) => { toast(c('mcp.made', { name: got.item.label })); void load(); }, oauthChanged,
     },
   });
 }
 const choose = () => win({ title: c('mcp.choose'), wide: true, body: PickWin, props: { cloud: !data.value?.desktop, pick: connect } });
 
-function proof(title: string, text: string[], verb: string, glyph: string, step: Step, run: (password?: string) => Promise<string | void>, done: () => void) {
-  win({ title, body: ProofWin, props: { text, verb, glyph, password: password.value, step, run, done } });
+function proof(title: string, text: string[], verb: string, glyph: string, run: () => Promise<string | void>, done: () => void) {
+  win({ title, body: ProofWin, props: { text, verb, glyph, run, done } });
 }
 function setWrite(k: McpKey, allow: boolean) {
   if (!allow) {
     void attempt(mcp.update(k.id, { canWrite: false })).then((ok) => { if (ok) toast(c('mcp.writeOff', { name: k.label })); return load(); });
     return;
   }
-  proof(c('mcp.writeTitle'), [c('mcp.writeAsk', { name: k.label }), c('mcp.writeTip', limits.value)], c('mcp.consent.allow'), 'IconUnlock', { do: 'write', id: k.id },
-    async (pw) => { await mcp.update(k.id, { canWrite: true, password: pw }); },
+  proof(c('mcp.writeTitle'), [c('mcp.writeAsk', { name: k.label }), c('mcp.writeTip', limits.value)], c('mcp.consent.allow'), 'IconUnlock',
+    async () => { await mcp.update(k.id, { canWrite: true }); },
     () => { toast(c('mcp.writeOn', { name: k.label })); void load(); });
 }
 function replace(k: McpKey) {
-  proof(c('mcp.replaceTitle'), [c('mcp.replaceText', { name: k.label })], c('mcp.replace'), 'IconRetry', { do: 'rotate', id: k.id },
-    async (pw) => (await mcp.rotate(k.id, pw)).key,
+  proof(c('mcp.replaceTitle'), [c('mcp.replaceText', { name: k.label })], c('mcp.replace'), 'IconRetry',
+    async () => (await mcp.rotate(k.id)).key,
     () => { toast(c('mcp.replaced', { name: k.label })); void load(); });
 }
 const rename = (k: McpKey) => win({
@@ -111,25 +104,10 @@ function purge(k: McpKey) {
     run: async () => { if (!(await attempt(mcp.purge(k.id)))) return; toast(c('removed', { name: k.label })); await load(); } });
 }
 
-// Back from a fresh sign-in, the step that asked for it is taken up again.
-function resume(step: Step | null) {
-  if (!step) return;
-  if (step.do === 'create') {
-    const client = clientById(step.client);
-    if (client) connect(client);
-    return;
-  }
-  const k = keys.value.find((x) => x.id === step.id);
-  if (k && step.do === 'write') setWrite(k, true);
-  else if (k) replace(k);
-}
-
 let stop = () => {};
 onMounted(async () => {
   stop = on('mcp.changed', () => { void load(); });
-  const [, a] = await Promise.allSettled([load(), me.account()]);
-  if (a.status === 'fulfilled') acc.value = a.value;
-  if (takePending() === 'mcp') resume(takeStep());
+  await load().catch(() => {});
 });
 onBeforeUnmount(() => stop());
 // The account is known a moment after the page starts, and only then does an admin's list come.

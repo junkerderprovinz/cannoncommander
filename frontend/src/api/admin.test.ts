@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { admin, me } from './admin';
+import { admin } from './admin';
 
 const sent: { url: string; method: string; body: unknown }[] = [];
 function answer(status: number, body: unknown) {
@@ -47,15 +47,6 @@ describe('settings calls', () => {
     answer(201, {});
     await admin.addRemote({ name: 'nas', type: 'smb', path: 'archiv', mount: '/remotes/nas', params: { host: 'keller', pass: 'geheim' } });
     expect(sent[0]!.body).toEqual({ name: 'nas', type: 'smb', path: 'archiv', mount: '/remotes/nas', params: { host: 'keller', pass: 'geheim' } });
-  });
-
-  it('read passkeys together with why none can be added here', async () => {
-    answer(200, { blocked: { title: 'Conflict', status: 409, code: 'passkeyNeedsHostName' }, items: [{ id: 'p1', name: 'Handy', origin: 'tower.lan', created: '2026-11-01T00:00:00Z', last: null }] });
-    const keys = await me.passkeys();
-    expect(keys.blocked?.code).toBe('passkeyNeedsHostName');
-    expect(keys.items[0]!.created).toBe(Date.parse('2026-11-01T00:00:00Z'));
-    answer(200, { items: [] });
-    expect((await me.passkeys()).blocked).toBeNull();
   });
 
   it('ask for the activity of the last week in one page', async () => {

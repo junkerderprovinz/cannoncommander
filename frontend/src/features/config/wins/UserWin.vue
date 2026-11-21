@@ -5,7 +5,9 @@ import { nextTick, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, win, type WinEntry } from '@/core/windows';
+import { withPassword } from '@/signin/kit';
 import { useUser } from '@/stores/user';
+import { t } from '@/i18n';
 import { attempt, c, cn, fail, stepFoot } from '@/features/config/shared';
 import { eyeWords, segItems } from '@/ui/kit';
 import { ROLES, roleName } from '../roles';
@@ -16,7 +18,7 @@ const u = props.user, isNew = !u;
 const self = !!u && u.name === useUser().me.name;
 const d = reactive({ name: u?.name ?? '', full: u?.full ?? '', role: (u?.role ?? 'user') as Role, scope: u?.scope ?? '/mnt/user' });
 const inGroup = reactive(Object.fromEntries(props.groups.map((g) => [g.name, !!u?.groups.includes(g.name)])));
-const pwOpen = ref(isNew), pw1 = ref(''), pw2 = ref(''), revoke = ref(false);
+const pwOpen = ref(isNew), pw1 = ref(''), pw2 = ref(''), revoke = ref(false), blocked = ref(!!u?.blocked);
 // How many sessions, tokens and passkeys the person has, null until the server answered.
 const ways = ref<number | null>(null);
 const at = (sel: string) => props.win.el?.querySelector(sel) ?? null;
@@ -34,6 +36,7 @@ async function save() {
   if (props.users.some((x) => x !== u && x.name === name)) return fail(c('users.nameTaken'), at('#a-uname'));
   if (!(await exists(scope))) return fail(c('noFolder'), at('#a-uscope'));
   if (self && d.role !== 'admin') return fail(c('users.ownAdmin'), at('#a-urole'));
+  if (u?.owner && d.role !== 'admin') return fail(t('signin.errors.accountOwner'), at('#a-urole'));
   if (u && u.role === 'admin' && d.role !== 'admin' && admins().length === 1) return fail(c('users.needAdmin'), at('#a-urole'));
   if (pwOpen.value) {
     if (pw1.value.length < 12) return fail(c('users.pwShort'), at('#a-upw'));
@@ -41,8 +44,11 @@ async function save() {
   }
   const groups = props.groups.filter((g) => inGroup[g.name]).map((g) => g.name);
   const body = { name, full: d.full.trim() || name, role: d.role, scope, groups };
-  const change = pwOpen.value ? { password: pw1.value, ...(revoke.value ? { revoke: true } : {}) } : {};
-  const done = await attempt(u ? admin.updateUser(u.name, { ...body, ...change }) : admin.createUser({ ...body, password: pw1.value }), at('#a-uname'));
+  const change = {
+    ...(pwOpen.value ? { password: pw1.value, ...(revoke.value ? { revoke: true } : {}) } : {}),
+    ...(u && blocked.value !== u.blocked ? { blocked: blocked.value } : {}),
+  };
+  const done = await attempt(withPassword(() => (u ? admin.updateUser(u.name, { ...body, ...change }) : admin.createUser({ ...body, password: pw1.value }))), at('#a-uname'));
   if (!done) return;
   props.win.close();
   toast(isNew ? c('users.created', { name: body.full }) : pwOpen.value ? c(revoke.value ? 'access.savedPwEnded' : 'users.savedPw') : c('saved'));
@@ -86,6 +92,7 @@ onMounted(() => {
     <FieldRow v-else :label="c('users.password')" :hint="self ? c('users.ownPwTip') : c('users.newPwTip')">
       <Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="openPassword" />
     </FieldRow>
+    <FieldRow v-if="!isNew && !u?.owner" :label="c('users.blocked')" :hint="c('users.blockedTip')"><Toggle id="a-ublocked" v-model="blocked" /></FieldRow>
     <FieldRow v-if="!isNew" :label="c('access.ways')" :hint="c('access.waysTip')">
       <Pill v-if="ways !== null">{{ ways === 0 ? c('access.none') : cn(ways, 'access.active') }}</Pill>
       <Button data-uaccess :label="c('access.show')" label-key="IconKeyRevoke" @click="showAccess" />

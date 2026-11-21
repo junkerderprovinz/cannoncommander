@@ -30,8 +30,8 @@ beforeAll(() => {
   // The README buttons fit their words to their width, which jsdom does not measure.
   vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
   addMessages('config', { de });
-  // The address the sign in provider sends the person back to, for the token window.
-  history.replaceState(null, '', '/?again=token');
+  // The address a test sign-in comes back to, which opens the account's tile.
+  history.replaceState(null, '', '/?signin=testOk');
   setup();
   // The context menu's tile comes first here, so the order cannot rest on which feature loads first.
   setupShellMenu();
@@ -78,7 +78,7 @@ describe('the settings', () => {
     }
   });
 
-  it('lead to the account after signing in again and from the news', () => {
+  it('lead to the account after a test sign-in and from the news', () => {
     expect(view).toMatchObject({ id: 'settings', arg: 'security' });
     go('files');
     NEWS.find((n) => n.id === 'security')!.go();

@@ -9,7 +9,7 @@ export const DEFAULT_PREFS = {
   theme: 'system', accent: DEFAULT_ACCENT, shape: 'round', motion: 'subtle', quietToasts: false,
   labelsButtons: DEFAULT_LABEL_MODE, labelsSidebar: DEFAULT_LABEL_MODE, labelsTabs: DEFAULT_LABEL_MODE, labelsBottombar: DEFAULT_LABEL_MODE,
   rainbow: false, reactive: false, rotate: false, rotateSeed: 0, disco: false, tabOrder: [] as string[],
-  accentPresets: ACCENTS.map((a) => a.hex), palette: [...RAINBOW], jobMode: 'serial', newsSeen: [] as string[], stayDays: 30,
+  accentPresets: ACCENTS.map((a) => a.hex), palette: [...RAINBOW], jobMode: 'serial', newsSeen: [] as string[],
   speedCap: 0, parityWait: true, notifyDone: false, notifyUnraid: false, notifyAfter: 60,
   columns: ['name', 'size', 'modified'], colWidths: {} as Record<string, number>,
   density: 'medium', showHidden: false, showSystem: false, showExt: true, syncBrowse: false, folderSizes: true, foldersFirst: true, liveRefresh: true, dblclick: 'open', clickSelect: false, desktopStyle: '', fkeys: false, side: true, dual: true,
