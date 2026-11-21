@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { Button, Card, FieldRow, FieldRowGroup, Pill, Toggle } from '@glimstone/vue';
-import { GLIMSTONE_RELEASE_URL, GLIMSTONE_VERSION } from '@glimstone/core';
+import { Card, InfoComponentsCard, InfoVersionCard } from '@glimstone/vue';
+import { componentText, type ComponentRow, type UpdateRoute, type UpdateState } from '@glimstone/core';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { admin, type AppSettings, type Modules, type System, type Tool, type UpdateCheck } from '@/api/admin';
+import { admin, type AppSettings, type Modules, type SelfUpdate, type System, type Tool, type UpdateCheck } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
-import { NEWS, unseen } from '../help';
+import { language } from '@/i18n';
+import { unseen } from '../help';
 import { c } from '@/features/config/shared';
-import { bugReport, DISCORD, REPO, versionLink } from '../support';
+import { bugReport, DISCORD, DOCS, REPO } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
 import CryptoWin from '../wins/CryptoWin.vue';
 import PaypalWin from '../wins/PaypalWin.vue';
 
 const sys = ref<System | null>(null), app = ref<AppSettings | null>(null);
-const update = ref<'idle' | 'busy' | 'ok' | 'newer'>('idle');
-const latest = ref<UpdateCheck | null>(null);
+const words = computed(() => componentText(language()));
 onMounted(() => {
   admin.system().then((s) => { sys.value = s; }, () => {});
   admin.app().then((a) => { app.value = a; }, () => {});
@@ -27,31 +27,71 @@ const saveUpdates = (change: Partial<AppSettings['updates']>) => {
   Object.assign(app.value!.updates, change);
   admin.saveApp({ updates: change }).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
 };
-const autoCheck = computed({ get: () => !!app.value?.updates.autoCheck, set: (v: boolean) => saveUpdates({ autoCheck: v }) });
-// Only the desktop app can put a new version in place itself, and not as a Flatpak, which the software centre updates.
-const desktop = computed(() => sys.value?.deployment === 'desktop');
-const selfUpdating = computed(() => desktop.value && !sys.value?.flatpak);
-const autoUpdate = computed({ get: () => selfUpdating.value && !!app.value?.updates.autoUpdate, set: (v: boolean) => { if (selfUpdating.value) saveUpdates({ autoUpdate: v }); } });
 
-// A version number is a plain link to its release page, as in every app of the workshop. GlimStone's opens its newest
-// release, since a patch tag may have folded into the next minor.
-const plain = (v?: string) => v?.replace(/^v/, '');
-const rclone = computed(() => plain(sys.value?.tools.rclone?.version));
-const versions = computed(() => [
-  { name: 'CannonCommander', v: plain(sys.value?.version), href: sys.value ? versionLink(sys.value) : undefined },
-  { name: 'GlimStone', v: plain(GLIMSTONE_VERSION), href: GLIMSTONE_RELEASE_URL, tip: c('info.glimstoneTip') },
-  { name: 'rclone', v: rclone.value, href: 'https://github.com/rclone/rclone/releases/tag/v' + rclone.value, tip: c('info.rcloneTip') },
-]);
-const n = computed(() => unseen());
+// The desktop app installs its own updates, a Flatpak leaves them to the software centre, and a container is updated
+// by its container manager.
+const route = computed<UpdateRoute>(() => (sys.value?.deployment !== 'desktop' ? 'guide' : sys.value.flatpak ? 'store' : 'install'));
+// One switch, the one this kind of copy has: installing by itself, or only looking.
+const autoUpdate = computed({
+  get: () => (!app.value ? undefined : route.value === 'install' ? app.value.updates.autoUpdate : route.value === 'guide' ? app.value.updates.autoCheck : undefined),
+  set: (v: boolean | undefined) => saveUpdates(route.value === 'install' ? { autoUpdate: !!v } : { autoCheck: !!v }),
+});
+
+const plain = (v?: string) => v?.replace(/^v/, '') ?? '';
+const latest = ref<UpdateCheck | null>(null);
+const checked = ref<UpdateState>({ kind: 'current' });
+const own = ref<SelfUpdate | null>(null);
+
+// A check nobody pressed for stays quiet when GitHub does not answer.
+async function check(quiet = false) {
+  checked.value = { kind: 'checking' };
+  if (own.value) own.value = { ...own.value, failed: undefined };
+  const got = await admin.checkUpdate().catch(() => null);
+  latest.value = got;
+  if (!got) checked.value = quiet ? { kind: 'current' } : { kind: 'failed', reason: c('app.noAnswer') };
+  else checked.value = got.updateAvailable ? { kind: 'available', version: plain(got.latest) } : { kind: 'current', checkedAt: new Date() };
+}
+// Once as the page opens while the switch is on, and once more when it is turned on.
+watch(autoUpdate, (on) => { if (on) void check(true); });
+
+// The desktop app's own update, followed every second while it downloads.
+let ownPoll: number | undefined;
+function followOwn() {
+  window.clearTimeout(ownPoll);
+  ownPoll = window.setTimeout(async () => {
+    const got = await admin.selfUpdate().catch(() => null);
+    if (got) own.value = got;
+    if (got?.busy) followOwn();
+  }, 1000);
+}
+watch(route, (r) => {
+  if (r === 'install') admin.selfUpdate().then((s) => { own.value = s; if (s.busy) followOwn(); }, () => {});
+});
+async function updateNow() {
+  const got = await admin.updateNow().catch(() => null);
+  if (!got) { toast(c('app.noAnswer'), 'warn'); return; }
+  own.value = got;
+  followOwn();
+}
+
+const state = computed<UpdateState>(() => {
+  if (route.value === 'store') return { kind: 'store', store: 'Flathub' };
+  const ready = own.value?.ready || latest.value?.ready;
+  if (ready) return { kind: 'ready', version: plain(ready) };
+  if (own.value?.busy) return own.value.percent >= 0 ? { kind: 'downloading', percent: own.value.percent } : { kind: 'checking' };
+  if (own.value?.failed) return { kind: 'failed', reason: own.value.failed };
+  return checked.value;
+});
+const open = (url: string) => window.open(url, '_blank', 'noopener');
+// A new version's notes are not in this build, so they open on its release page.
+function whatsNew() {
+  const s = state.value;
+  if (s.kind === 'available' || s.kind === 'ready') open(`${REPO}/releases/tag/v${s.version}`);
+  else run('whatsNew');
+}
 
 // The helper programs the server runs. The desktop app fetches a missing one with the others of its version.
 const mods = ref<Modules | null>(null);
-const helpers = computed(() => [
-  { name: 'ffmpeg', tool: sys.value?.tools.ffmpeg, tip: c('info.ffmpegTip') },
-  { name: '7-Zip', tool: sys.value?.tools['7zz'], tip: c('info.sevenZipTip') },
-  { name: 'MuPDF', tool: sys.value?.tools.mutool, tip: c('info.mupdfTip') },
-]);
-const found = (t?: Tool) => (t?.checking ? c('integrations.checking') : t?.available ? plain(t.version) || t.path : c('integrations.notFound'));
 const fetchable = (t?: Tool) => !!mods.value?.offered && !t?.available && !t?.checking;
 let poll: number | undefined;
 function follow() {
@@ -69,19 +109,33 @@ async function fetchModules() {
   mods.value = got;
   follow();
 }
-onUnmounted(() => window.clearTimeout(poll));
+onUnmounted(() => { window.clearTimeout(poll); window.clearTimeout(ownPoll); });
 
-// A check nobody pressed for stays quiet when GitHub does not answer.
-async function check(quiet = false) {
-  update.value = 'busy';
-  const got = await admin.checkUpdate().catch(() => null);
-  latest.value = got;
-  update.value = !got ? 'idle' : got.updateAvailable ? 'newer' : 'ok';
-  if (!got && !quiet) toast(c('app.noAnswer'), 'warn');
+// What a helper's row says beside its number, and the one thing to do about a missing one.
+function helper(name: string, tool: Tool | undefined, hint: string, where: Pick<ComponentRow, 'repoUrl' | 'releasePage'>): ComponentRow {
+  const row: ComponentRow = { name, kind: 'tool', hint, version: plain(tool?.version), ...(tool?.version ? where : {}) };
+  if (tool?.checking) return { ...row, status: c('integrations.checking') };
+  if (tool?.available) return tool.version ? row : { ...row, version: tool.path ?? '' };
+  if (!fetchable(tool)) return { ...row, status: c('integrations.notFound'), tone: 'warn' };
+  if (mods.value?.ready) return { ...row, action: { label: c('info.fetched'), labelKey: 'IconRefresh', onClick: () => void admin.restart() } };
+  if (mods.value?.running) return { ...row, status: c('info.fetching', { n: Math.round(mods.value.fraction * 100) }) };
+  // The button says what is missing; a status beside it leaves a phone no room for the name.
+  return { ...row, action: { label: c('info.download'), labelKey: 'IconDownload', onClick: () => void fetchModules() } };
 }
-// Once as the page opens while the switch is on, and once more when it is turned on.
-watch(() => app.value?.updates.autoCheck, (on) => { if (on) void check(true); });
-const open = (url: string) => window.open(url, '_blank', 'noopener');
+const rows = computed<ComponentRow[]>(() => {
+  const tools = sys.value?.tools;
+  if (!tools) return [];
+  return [
+    helper('rclone', tools.rclone, c('info.rcloneTip'), { repoUrl: 'https://github.com/rclone/rclone' }),
+    helper('ffmpeg', tools.ffmpeg, c('info.ffmpegTip'), { releasePage: 'https://ffmpeg.org/download.html#releases' }),
+    helper('7-Zip', tools['7zz'], c('info.sevenZipTip'), { repoUrl: 'https://github.com/ip7z/7zip' }),
+    helper('MuPDF', tools.mutool, c('info.mupdfTip'), { releasePage: 'https://mupdf.com/releases' }),
+    ...(sys.value?.installer
+      ? [{ name: 'PommelPorter', kind: 'installer' as const, hint: words.value.componentsCard.installer, version: sys.value.installer, repoUrl: 'https://github.com/junkerderprovinz/pommelporter' }]
+      : []),
+  ];
+});
+const n = computed(() => unseen());
 
 const readme = (tile: string, mark: string, glyph: string, name: string, sub: string | undefined, go: () => unknown, aria?: string, id?: string) => ({ tile, mark, glyph, name, sub, go, aria, id });
 const help = computed(() => [
@@ -98,31 +152,23 @@ const give = computed(() => [
 </script>
 
 <template>
-  <Card :title="c('info.version')" :hint="c('info.versionHint')">
-    <FieldRow v-for="x in versions" :key="x.name" :label="x.name" :hint="x.tip">
-      <a v-if="x.v" class="a-vlink glim-num" :href="x.href" target="_blank" rel="noopener">{{ x.v }}</a>
-    </FieldRow>
-    <div class="a-foot">
-      <Button :label="n ? c('info.newN', { n }) : c('info.new')" label-key="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></Button>
-      <Button v-if="latest?.ready" id="a-update" :label="c('app.ready', { v: plain(latest.ready)! })" label-key="IconWhatsNew" tone="ok" @click="admin.restart()" />
-      <Button v-else-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
-      <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check()" />
-    </div>
-  </Card>
-  <Card v-if="app" :title="c('app.updates')">
-    <FieldRowGroup>
-      <FieldRow :label="c('app.autoCheck')" :hint="c(desktop ? 'app.autoCheckDesktopTip' : 'app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-      <!-- A container and a Flatpak cannot replace themselves, so there this one stays off and says why. -->
-      <FieldRow :label="c('app.autoUpdate')" :hint="c(sys?.flatpak ? 'app.autoUpdateFlatpakTip' : desktop ? 'app.autoUpdateDesktopTip' : 'app.autoUpdateTip')"><Toggle v-model="autoUpdate" :disabled="!selfUpdating" /></FieldRow>
-    </FieldRowGroup>
-  </Card>
-  <Card :title="c('info.tools')" :hint="c(desktop ? 'info.toolsDesktopHint' : 'info.toolsHint')">
-    <FieldRow v-for="h in helpers" :key="h.name" :label="h.name" :hint="h.tip">
-      <Pill class="mono">{{ sys ? found(h.tool) : '' }}</Pill>
-      <Button v-if="mods?.ready && fetchable(h.tool)" :label="c('info.fetched')" label-key="IconRefresh" tone="ok" @click="admin.restart()" />
-      <Button v-else-if="fetchable(h.tool)" :label="mods?.running ? c('info.fetching', { n: Math.round(mods.fraction * 100) }) : c('info.download')" label-key="IconDownload" :disabled="mods?.running" @click="fetchModules" />
-    </FieldRow>
-  </Card>
+  <InfoVersionCard
+    v-model:auto-update="autoUpdate"
+    :text="words.versionCard"
+    name="CannonCommander"
+    :version="plain(sys?.version)"
+    :repo-url="REPO"
+    :route="route"
+    :state="state"
+    :on-check="() => check()"
+    :on-update="updateNow"
+    :on-restart="() => void admin.restart()"
+    :guide-url="`${DOCS}getting-started/docker/#updates`"
+    :on-whats-new="whatsNew"
+    :unseen="n"
+    :open-url="open"
+  />
+  <InfoComponentsCard :text="words.componentsCard" name="CannonCommander" :rows="rows" :open-url="open" />
   <Card :title="c('info.help')" :hint="c('info.helpHint')">
     <div class="a-about">
       <p>{{ c('info.helpText') }}</p>

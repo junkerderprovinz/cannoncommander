@@ -162,8 +162,14 @@ describe('the settings', () => {
 
   it('open the newest GlimStone release from its version on the Info tile', async () => {
     await cardsOf('info');
-    const links = [...document.querySelectorAll<HTMLAnchorElement>('a.a-vlink')].map((a) => a.getAttribute('href'));
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('a.glim-version-number')].map((a) => a.getAttribute('href'));
     expect(links).toContain('https://github.com/junkerderprovinz/glimstone/releases/latest');
+  });
+
+  it('stand on the Info tile as Version, Components, Help and About, without the app in the last name', async () => {
+    const cards = await cardsOf('info');
+    expect([...document.querySelectorAll('[data-glim="InfoVersionCard"], [data-glim="InfoComponentsCard"]')].map((c) => c.getAttribute('data-glim'))).toEqual(['InfoVersionCard', 'InfoComponentsCard']);
+    expect(cards).toEqual(['Version', 'Komponenten', 'Hilfe', 'Über']);
   });
 
   it('show how the list looks under Aussehen, as Explorer does under its view, and keep the bars on the file list tile', async () => {
@@ -200,12 +206,5 @@ describe('the settings', () => {
 
   it('keep the settings file and the service on the system tile', async () => {
     expect(await cardsOf('system')).toEqual(['Einstellungen sichern', 'Dienst']);
-  });
-
-  it('put the updates on the info tile, after the version and before the helper programs', async () => {
-    const cards = await cardsOf('info');
-    expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Version', 'Updates', 'Hilfsprogramme', 'Hilfe', 'Über']);
-    // One button looks for a newer version, the one beside the version numbers.
-    expect(document.querySelectorAll('#a-update, #a-upd')).toHaveLength(1);
   });
 });

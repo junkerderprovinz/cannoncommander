@@ -99,13 +99,15 @@ export interface IntegrationResult { kind: string; ok: boolean; reachable: boole
 // checking is set while the desktop app still looks for ffmpeg.
 export interface Tool { available: boolean; path?: string; version?: string; checking?: boolean }
 export interface System {
-  version: string; commit?: string; release: boolean; deployment: 'container' | 'desktop'; flatpak?: boolean; go: string; os: string; arch: string; started: number; uptime: number;
+  version: string; commit?: string; release: boolean; deployment: 'container' | 'desktop'; flatpak?: boolean; installer?: string; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
   features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean; terminal: boolean };
 }
 // ready is the version the desktop app has put in place for its next start.
 export interface UpdateCheck { version: string; latest: string; updateAvailable: boolean; releaseUrl?: string; ready?: string }
 export interface Imported { sections: string[]; notes: string[]; restartNeeded: boolean }
+// The desktop app's own update started by hand. percent is -1 while unknown, ready the version in place for the next start.
+export interface SelfUpdate { busy: boolean; percent: number; ready?: string; failed?: string }
 // The desktop app's helper programs: whether it fetches them and how a fetch goes. ready means they work after a restart.
 export interface Modules { offered: boolean; running: boolean; fraction: number; ready: boolean; failed: boolean }
 
@@ -147,6 +149,8 @@ export const admin = {
   testIntegration: (kind: Exclude<OfficeKind, 'none'> | 'arrowloop', url: string, key?: string) =>
     write<IntegrationResult>('POST', '/admin/integrations/test', { kind, url, ...(key ? (kind === 'arrowloop' ? { token: key } : { secret: key }) : {}) }),
   restart: () => write('POST', '/admin/app/restart'),
+  selfUpdate: () => get<SelfUpdate>('/admin/app/update'),
+  updateNow: () => write<SelfUpdate>('POST', '/admin/app/update'),
   exportSettings: (path: string, users: boolean) => write<{ path: string; size: number }>('POST', '/admin/app/export', { path, users }),
   importSettings: (path: string, users: boolean) => write<Imported>('POST', '/admin/app/import', { path, users }),
   shares: async (all: boolean) => (await (all ? tools.allShares() : tools.shares())).map(share),

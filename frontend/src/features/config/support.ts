@@ -16,12 +16,6 @@ export function desktopAsset(sys: Pick<System, 'version' | 'release'> | null, fi
   return `${REPO}/releases/download/v${sys.version.replace(/^v/, '')}/cannoncommander-${file}`;
 }
 
-// A build between releases has no release page, so it links to its commit.
-export function versionLink(sys: Pick<System, 'version' | 'commit' | 'release'>): string {
-  if (sys.release) return `${REPO}/releases/tag/v${sys.version.replace(/^v/, '')}`;
-  return sys.commit && sys.commit !== 'unknown' ? `${REPO}/commit/${sys.commit}` : REPO;
-}
-
 export async function bugReport() {
   const [sys, sources, remotes, users] = await Promise.allSettled([admin.system(), admin.sources(), admin.remotes(), admin.users()]);
   const ok = <T>(r: PromiseSettledResult<T>) => (r.status === 'fulfilled' ? r.value : null);

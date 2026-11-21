@@ -84,5 +84,17 @@ export function pictureComponent(src: string): FunctionalComponent {
   if (!pictures.has(src)) pictures.set(src, () => h('img', { src, alt: '', class: 'glyph-picture', draggable: false }));
   return pictures.get(src)!;
 }
+// The keys GlimStone's Info cards give their buttons.
+const CARD_GLYPH: Record<string, string> = {
+  'version.whatsNew': 'IconWhatsNew',
+  'version.check': 'IconSync',
+  'version.update': 'IconDownload',
+  'version.restart': 'IconRefresh',
+  'version.guide': 'IconManual',
+  'components.update': 'IconDownload',
+};
 // Button and Window pick a glyph by a key, which in this app is the glyph's own name.
-setGlyphResolver((key) => (hasGlyph(key) ? glyphComponent(key) : undefined));
+setGlyphResolver((key) => {
+  const name = CARD_GLYPH[key] ?? key;
+  return hasGlyph(name) ? glyphComponent(name) : undefined;
+});
