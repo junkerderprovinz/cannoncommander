@@ -47,9 +47,9 @@
       "removeText": "Ohne Passwort öffnet CannonCommander für alle, die seine Adresse erreichen. Damit fällt auch weg:",
       "goes": {
         "twoFactor": "Zwei-Faktor-Authentifizierung",
-        "passkeys": { "one": "{count} Passkey", "other": "{count} Passkeys" },
+        "passkeys": { "one": "{n} Passkey", "other": "{n} Passkeys" },
         "services": "Die Anmeldung mit {names}",
-        "tokens": { "one": "{count} API-Token", "other": "{count} API-Tokens" }
+        "tokens": { "one": "{n} API-Token", "other": "{n} API-Tokens" }
       },
       "removed": "Passwort entfernt. CannonCommander öffnet ohne Anmeldung"
     },
@@ -68,7 +68,7 @@
       "off": "Aus",
       "setUp": "Einrichten",
       "codes": "Wiederherstellungscodes",
-      "codesLeft": { "one": "{count} übrig", "other": "{count} übrig" },
+      "codesLeft": { "one": "{n} übrig", "other": "{n} übrig" },
       "newCodes": "Neu erzeugen",
       "turnOff": "Ausschalten",
       "setupTitle": "Zwei-Faktor-Authentifizierung einrichten",
@@ -142,7 +142,7 @@
       "nameHint": "Wofür das Token da ist. Es steht später in der Liste der Tokens.",
       "scope": "Rechte",
       "lifetime": "Gültig für",
-      "days": { "one": "{count} Tag", "other": "{count} Tage" },
+      "days": { "one": "{n} Tag", "other": "{n} Tage" },
       "year": "1 Jahr",
       "never": "Immer",
       "make": "Erstellen",

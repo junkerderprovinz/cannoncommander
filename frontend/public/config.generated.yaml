@@ -88,6 +88,7 @@ auth:
       clientSecret: ""                    # secret: client secret of the OIDC application
       issuerUrl: ""                       # authorization URL of the OIDC provider
       scopes: "openid email profile"      # scopes to request from the OIDC provider
+      caFile: ""                          # PEM file of a certificate authority to trust for this provider, such as your own
     passkey:                              #  validate:omitempty
       enabled: false                      # has no effect, passkeys are always on
       rpDisplayName: ""                   # the Relying Party display name (defaults to frontend name)

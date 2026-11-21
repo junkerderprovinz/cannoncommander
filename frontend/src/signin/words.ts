@@ -4,7 +4,7 @@ import {
   componentText, listOf, SIGN_IN_ERRORS, SIGN_IN_REDIRECTS, signInTileTextEn, type Plural, type SignInErrorText,
   type SignInReauthText, type SignInRemoved, type SignInText, type SignInTileText,
 } from '@glimstone/core';
-import { forms, language, locale, num, plural, t } from '@/i18n';
+import { forms, language, locale, plural, t } from '@/i18n';
 import { copyWords, eyeWords } from '@/ui/kit';
 import './texts';
 
@@ -14,7 +14,8 @@ export const ARRIVED_CODES = [...SIGN_IN_REDIRECTS, 'notAdmitted'] as const;
 
 const s = (key: string) => t('signin.' + key);
 const tile = (key: string) => s('tile.' + key);
-const counted = (key: string) => forms('signin.tile.' + key) as Plural;
+// GlimStone fills in {count} where the language files, as everywhere in CannonCommander, say {n}.
+const counted = (key: string) => Object.fromEntries(Object.entries(forms('signin.tile.' + key)).map(([k, v]) => [k, v.replace('{n}', '{count}')])) as Plural;
 
 export const errorWords = (): SignInErrorText => Object.fromEntries(ERROR_CODES.map((code) => [code, s('errors.' + code)]));
 export const arrivedWords = (): Record<string, string> => Object.fromEntries(ARRIVED_CODES.map((code) => [code, s('arrived.' + code)]));
@@ -32,7 +33,7 @@ export function cardText(minPassword: number): SignInText {
 
 // What the page after a reset says: the sessions that ended and whatever else the reset took away.
 export function resetNote(removed: SignInRemoved): string {
-  const count = (n: number, key: string) => plural(n, 'signin.tile.password.goes.' + key, { count: num(n) });
+  const count = (n: number, key: string) => plural(n, 'signin.tile.password.goes.' + key);
   const gone = [
     ...(removed.twoFactor ? [tile('password.goes.twoFactor')] : []),
     ...(removed.passkeys ? [count(removed.passkeys, 'passkeys')] : []),
@@ -51,7 +52,7 @@ export function reauthText(): SignInReauthText {
 
 export function tileText(): SignInTileText {
   const field = componentText(language()).passwordField;
-  const days = (n: number) => plural(n, 'signin.tile.tokens.days', { count: num(n) });
+  const days = (n: number) => plural(n, 'signin.tile.tokens.days');
   return {
     cancel: t('core.cancel'), close: t('core.close'), confirm: tile('confirm'), ...copyWords(), back: s('back'),
     save: t('config.save'), remove: t('config.remove'), ...eyeWords(), confirmPassword: field.confirm, mismatch: field.mismatch,

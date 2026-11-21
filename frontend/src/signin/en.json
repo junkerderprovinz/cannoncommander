@@ -51,13 +51,13 @@
       "goes": {
         "twoFactor": "Two-factor authentication",
         "passkeys": {
-          "one": "{count} passkey",
-          "other": "{count} passkeys"
+          "one": "{n} passkey",
+          "other": "{n} passkeys"
         },
         "services": "Signing in with {names}",
         "tokens": {
-          "one": "{count} API token",
-          "other": "{count} API tokens"
+          "one": "{n} API token",
+          "other": "{n} API tokens"
         }
       },
       "removed": "Password removed. CannonCommander opens without signing in"
@@ -78,8 +78,8 @@
       "setUp": "Set up",
       "codes": "Recovery codes",
       "codesLeft": {
-        "one": "{count} left",
-        "other": "{count} left"
+        "one": "{n} left",
+        "other": "{n} left"
       },
       "newCodes": "Make new ones",
       "turnOff": "Turn off",
@@ -155,8 +155,8 @@
       "scope": "Rights",
       "lifetime": "Valid for",
       "days": {
-        "one": "{count} day",
-        "other": "{count} days"
+        "one": "{n} day",
+        "other": "{n} days"
       },
       "year": "1 year",
       "never": "Always",
