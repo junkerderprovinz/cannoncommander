@@ -39,6 +39,9 @@ import (
 //go:embed build/appicon.png
 var appIcon []byte
 
+//go:embed icons/tray.png
+var trayIcon []byte
+
 func main() {
 	if err := run(); err != nil {
 		log.Fatal(err)

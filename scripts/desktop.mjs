@@ -184,10 +184,11 @@ run('wails3', [
   '-config', 'build/config.yml', '-dir', 'build',
   '-productversion', plainVersion,
 ])
-run('wails3', [
-  'generate', 'icons', '-input', 'build/appicon.png',
-  '-windowsfilename', 'build/windows/icon.ico', '-macfilename', 'build/darwin/icons.icns',
-])
+// The icons come from .github/assets/gen-icon.mjs, which draws the small sizes without the logo's frame.
+mkdirSync(join(desktop, 'build', 'windows'), { recursive: true })
+mkdirSync(join(desktop, 'build', 'darwin'), { recursive: true })
+cpSync(join(desktop, 'icons', 'icon.ico'), join(desktop, 'build', 'windows', 'icon.ico'))
+cpSync(join(desktop, 'icons', 'icons.icns'), join(desktop, 'build', 'darwin', 'icons.icns'))
 
 if (process.platform === 'win32') {
   writeWindowsVersion()

@@ -111,7 +111,7 @@ func (s *shell) standBy(on bool) {
 	menu.Add(w.Show).OnClick(func(*application.Context) { s.bringUp() })
 	menu.AddSeparator()
 	menu.Add(w.Quit).OnClick(func(*application.Context) { s.app.Quit() })
-	s.tray = s.app.SystemTray.New().SetIcon(appIcon).SetMenu(menu).OnClick(s.bringUp)
+	s.tray = s.app.SystemTray.New().SetIcon(trayIcon).SetMenu(menu).OnClick(s.bringUp)
 	s.tray.SetTooltip("CannonCommander")
 }
 
