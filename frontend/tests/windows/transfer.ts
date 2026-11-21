@@ -52,7 +52,7 @@ await wait();
 await page.keyboard.press('F5');
 await wait(700);
 check('copy window aims at the other panel', (await page.inputValue('#dest')) === '/mnt/user/backups', await page.inputValue('#dest'));
-check('copy window asks by default', (await page.getAttribute('#clash', 'data-val')) === 'ask');
+check('copy window asks one question, the clashes come later', (await page.locator('.xsheet b').textContent()) === 'Kopieren?' && !(await page.locator('#clash').count()));
 await shot('copy');
 await primary();
 await wait(800);

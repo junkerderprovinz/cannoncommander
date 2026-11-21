@@ -6,7 +6,7 @@ import { type Job, ops, type Preflight, type TransferParams } from '@/api/ops';
 import { action, run } from '@/core/actions';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import { win, type WinEntry } from '@/core/windows';
+import { cancelBtn, type FootButton, win, type WinEntry } from '@/core/windows';
 import { type Entry, toEntry } from '@/files/entries';
 import { parent, split } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
@@ -164,31 +164,31 @@ export async function transfer(job: Transfer) {
   } catch (e) { return warn(e); }
 }
 
-function transferWindow(kind: 'copy' | 'move') {
+function transferWindow(kind: 'copy' | 'move' | 'link') {
   const F = usePanels();
   const items = F.sel(), from = F.T().path;
-  const st: TransferState = reactive({
-    kind, way: kind, items, from, dest: prefs.dual ? F.T(F.other()).path : parent(from),
-    rule: 'ask', verify: false, pf: null,
-  });
-  const verb = verbOf(kind);
-  const primary = () => ({
-    label: st.pf?.unraid?.space ? t(`transfer.anyway.${kind}`) : verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true,
-    run: () => {
-      void Promise.resolve(F.transfer(st.way, items, st.dest.trim().replace(/(.)\/$/, '$1'), from, { rule: st.rule, verify: st.verify }))
-        .then((job) => (job && typeof job === 'object' && 'id' in job ? followJob(w, job as Job) : w.close()));
-      return false;
-    },
-  });
-  const w = win({ title: verb, cls: 'xwin', body: TransferBody, props: { st }, foot: [{ start: t('transfer.background') }, primary()] });
-  // The check runs again as the target changes, so the space warning and the hard link choice follow it.
+  const st: TransferState = reactive({ kind, items, from, dest: prefs.dual ? F.T(F.other()).path : parent(from), rule: 'ask', verify: false, pf: null });
+  const dest = () => st.dest.trim().replace(/(.)\/$/, '$1');
+  const primary = (): FootButton => kind === 'link'
+    ? { label: t('transfer.linkWay'), g: 'IconLink', primary: true, run: () => { void F.transfer('link', items, dest(), from); } }
+    : {
+      label: st.pf?.unraid?.space ? t(`transfer.anyway.${kind}`) : verbOf(kind), g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true,
+      run: () => {
+        void Promise.resolve(F.transfer(kind, items, dest(), from, { rule: st.rule, verify: st.verify }))
+          .then((job) => (job && typeof job === 'object' && 'id' in job ? followJob(w, job as Job, from) : w.close()));
+        return false;
+      },
+    };
+  const w = win({ title: kind === 'link' ? t('transfer.hardlink') : verbOf(kind), cls: 'xwin', body: TransferBody, props: { st }, foot: [cancelBtn(), primary()] });
+  if (kind === 'link') return;
+  // The check runs again as the target changes, so the space warning follows it.
   let asked = 0, timer: ReturnType<typeof setTimeout> | undefined;
-  watch(() => st.dest, (raw) => {
+  watch(() => st.dest, () => {
     clearTimeout(timer);
     timer = setTimeout(() => {
-      const dest = raw.trim().replace(/(.)\/$/, '$1'), n = ++asked;
-      if (!dest || dest === from) { st.pf = null; return; }
-      ops.preflight(kind, { sources: items.map((k) => pathOf(k, from)), dest, rule: 'ask' })
+      const to = dest(), n = ++asked;
+      if (!to || to === from) { st.pf = null; return; }
+      ops.preflight(kind, { sources: items.map((k) => pathOf(k, from)), dest: to, rule: 'ask' })
         .then((pf) => { if (n === asked) st.pf = pf; }, () => { if (n === asked) st.pf = null; });
     }, 150);
   }, { immediate: true });
@@ -220,6 +220,7 @@ export default function setup() {
   const F = usePanels(), clip = useClipboard(), jobs = useJobs();
   action('copy', { label: tl('transfer.copy'), g: 'IconCopy', key: 'F5', needs: 'sel', run: () => transferWindow('copy') });
   action('move', { label: tl('transfer.move'), g: 'IconMove', key: 'F6', needs: ['sel', 'writable'], run: () => transferWindow('move') });
+  action('hardlink', { label: tl('transfer.hardlink'), g: 'IconLink', needs: 'sel', run: () => transferWindow('link') });
   action('transfer', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: (job: Transfer) => transfer(job) });
 
   action('clipCut', { label: tl('transfer.clipCut'), g: 'IconMove', key: 'Ctrl+x', needs: ['sel', 'writable'], run: () => {

@@ -88,7 +88,7 @@ export function deleteItems(sel: Entry[], path: string, { forever = false, after
   const st = reactive({ trash });
   const primary = () => ({ label: st.trash ? t('trash.toTrash') : t('trash.forever'), g: 'IconTrash', primary: true, run: () => {
     stop();
-    void doIt(st.trash).then((job) => (job ? followJob(w, job) : w.close()));
+    void doIt(st.trash).then((job) => (job ? followJob(w, job, path) : w.close()));
     return false;
   } });
   const w = win({

@@ -1,8 +1,8 @@
 {
   "delete": "Löschen",
   "deleteNow": "Endgültig löschen",
-  "deleteOne": "{name} löschen",
-  "deleteMany": { "one": "{n} Objekt löschen", "other": "{n} Objekte löschen" },
+  "askTrash": "In den Papierkorb legen?",
+  "askForever": "Endgültig löschen?",
   "toTrash": "In den Papierkorb",
   "toTrashTip": "Bleibt {days} Tage im Papierkorb und lässt sich wiederherstellen. Ohne den Schalter ist es sofort weg.",
   "toTrashTipSystem": "Landet im {bin} und lässt sich wiederherstellen. Ohne den Schalter ist es sofort weg.",

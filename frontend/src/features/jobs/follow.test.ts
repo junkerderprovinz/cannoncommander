@@ -5,9 +5,10 @@ import { prefs } from '@/core/prefs';
 import { win, winStack } from '@/core/windows';
 import { addMessages } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
+import { usePanels } from '@/stores/panels';
 import de from './de.json';
 import en from './en.json';
-import { followJob } from './follow';
+import { followJob, toggleDetails } from './follow';
 
 beforeAll(() => addMessages('jobs', { de, en }));
 
@@ -25,7 +26,7 @@ function started(over: Partial<Job> = {}) {
   const J = useJobs(), j = job(over);
   J.upsert(j);
   const w = win({ title: 'Kopieren', body: 'confirm', foot: [] });
-  followJob(w, j);
+  followJob(w, j, '/mnt/user/fotos');
   return { J, w, j };
 }
 
@@ -34,14 +35,22 @@ beforeEach(() => {
   winStack.splice(0);
   vi.restoreAllMocks();
   prefs.keepJobWindow = false;
+  prefs.jobDetails = false;
 });
 
 describe('a window that started a job', () => {
-  it('stays and shows the job running, with a way to the background and a way to cancel', () => {
+  it('stays and shows the job running, with the background, a pause and a cancel, and the details switch at the start', () => {
     const { w } = started();
     expect(winStack).toEqual([w]);
-    expect(w.props).toMatchObject({ id: 'j1' });
-    expect(buttons()).toEqual(['Im Hintergrund', 'Abbrechen']);
+    expect(w.props).toMatchObject({ id: 'j1', from: '/mnt/user/fotos' });
+    expect(buttons()).toEqual(['Im Hintergrund', 'Anhalten', 'Abbrechen']);
+    expect(w.startBody).toBeTruthy();
+  });
+
+  it('offers to go on while the job is paused', () => {
+    const { J } = started();
+    J.upsert(job({ state: 'paused' }));
+    expect(buttons()).toEqual(['Im Hintergrund', 'Abbrechen', 'Weiter']);
   });
 
   it('closes by itself once the job is done and the box is unticked', () => {
@@ -50,19 +59,39 @@ describe('a window that started a job', () => {
     expect(winStack).toHaveLength(0);
   });
 
-  it('stays open with the result once the job is done and the box is ticked', () => {
+  it('stays open with the result and the way to the target once the job is done and the box is ticked', () => {
     prefs.keepJobWindow = true;
     const { J } = started();
     J.upsert(job({ state: 'done', doneBytes: 100 }));
     expect(winStack).toHaveLength(1);
+    expect(buttons()).toEqual(['Ziel öffnen', 'Schließen']);
+    const go = vi.spyOn(usePanels(), 'go').mockResolvedValue(true);
+    press('Ziel öffnen');
+    expect(go).toHaveBeenCalledWith('/mnt/user/backups');
+    expect(winStack).toHaveLength(0);
+  });
+
+  it('has nothing to open after a delete', () => {
+    prefs.keepJobWindow = true;
+    const { J } = started({ kind: 'trash', dest: undefined });
+    J.upsert(job({ kind: 'trash', dest: undefined, state: 'done' }));
     expect(buttons()).toEqual(['Schließen']);
   });
 
-  it('stays open after an error, whatever the box says', () => {
+  it('stays open after an error, whatever the box says, and can try again', async () => {
     const { J } = started();
     J.upsert(job({ state: 'failed', error: 'kein Platz' }));
     expect(winStack).toHaveLength(1);
-    expect(buttons()).toEqual(['Schließen']);
+    expect(buttons()).toEqual(['Wiederholen', 'Schließen']);
+    vi.spyOn(ops, 'jobStep').mockResolvedValue(job({ state: 'running' }));
+    press('Wiederholen');
+    await vi.waitFor(() => expect(buttons()).toEqual(['Im Hintergrund', 'Anhalten', 'Abbrechen']));
+  });
+
+  it('can take up a cancelled job again', () => {
+    const { J } = started();
+    J.upsert(job({ state: 'cancelled' }));
+    expect(buttons()).toEqual(['Wiederholen', 'Schließen']);
   });
 
   it('goes to the background and leaves the job running', () => {
@@ -79,5 +108,20 @@ describe('a window that started a job', () => {
     press('Abbrechen');
     expect(step).toHaveBeenCalledWith('j1', 'cancel');
     expect(winStack).toHaveLength(1);
+  });
+
+  it('pauses the job from its foot', () => {
+    const step = vi.spyOn(ops, 'jobStep').mockResolvedValue(job({ state: 'paused' }));
+    started();
+    press('Anhalten');
+    expect(step).toHaveBeenCalledWith('j1', 'pause');
+    expect(winStack).toHaveLength(1);
+  });
+
+  it('remembers whether the window is opened up', () => {
+    toggleDetails();
+    expect(prefs.jobDetails).toBe(true);
+    toggleDetails();
+    expect(prefs.jobDetails).toBe(false);
   });
 });

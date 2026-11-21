@@ -3,13 +3,12 @@
    attribute read. Like GlimStone's, the levels apply only when the system has not asked for less motion. */
 @media (prefers-reduced-motion: no-preference) {
   :root {
-    /* A spinner's turn, the glow of a row that just changed, the hue drift of rotating colours, the dashes running
-       along a transfer's route, the bin rocking before something goes for good, and the type-ahead bubble. */
+    /* A spinner's turn, the glow of a row that just changed, the hue drift of rotating colours, the bin rocking
+       before something goes for good, and the type-ahead bubble. */
     --motion-spinner-dur: .8s;
     --motion-fresh-dur: 2.2s;
     --motion-fresh-glow:32%;
     --motion-hue-dur: 14s;
-    --motion-flow-dur: 1s;
     --motion-bin-tilt:12deg;
     --motion-jump-dur: 120ms;
     --motion-jump-travel:.4rem;
@@ -113,13 +112,20 @@
     /* A panel a drag hovers over breathes: one breath, and how strongly it glows. */
     --motion-dropzone-dur: .9s;
     --motion-dropzone-glow: 20%;
+    /* A job window: how long a file flies and how often one starts, how high its arc goes, the live point of the
+       graph and its ring, and how long the window takes to open up. */
+    --motion-fly-dur: 1.6s;
+    --motion-fly-gap: 1s;
+    --motion-fly-lift: 12px;
+    --motion-graph-point-dur: 420ms;
+    --motion-graph-ring-dur: 2s;
+    --motion-details-dur: 320ms;
   }
   :root[data-motion="subtle"] {
     --motion-spinner-dur: 1.2s;
     --motion-fresh-dur: 1.6s;
     --motion-fresh-glow: 16%;
     --motion-hue-dur: 24s;
-    --motion-flow-dur: 1.6s;
     --motion-bin-tilt: 4deg;
     --motion-jump-dur: 80ms;
     --motion-jump-travel: .15rem;
@@ -194,6 +200,12 @@
     --motion-press-scale: .985;
     --motion-dropzone-dur: 1.4s;
     --motion-dropzone-glow: 12%;
+    --motion-fly-dur: 2.2s;
+    --motion-fly-gap: 1.6s;
+    --motion-fly-lift: 6px;
+    --motion-graph-point-dur: 600ms;
+    --motion-graph-ring-dur: 2.8s;
+    --motion-details-dur: 260ms;
   }
   :root[data-motion="off"] {
     /* Slow rather than stopped: a spinner standing still reads as a hang. */
@@ -202,7 +214,6 @@
     --motion-fresh-glow: 0%;
     /* Long rather than 0; both stop outright at this level where they are used. */
     --motion-hue-dur: 60s;
-    --motion-flow-dur: 60s;
     --motion-bin-tilt: 0deg;
     --motion-jump-dur: 0s;
     --motion-jump-travel: 0rem;
@@ -277,13 +288,18 @@
     --motion-press-scale: 1;
     --motion-dropzone-dur: 60s;
     --motion-dropzone-glow: 0%;
+    --motion-fly-dur: 60s;
+    --motion-fly-gap: 0s;
+    --motion-fly-lift: 0px;
+    --motion-graph-point-dur: 0s;
+    --motion-graph-ring-dur: 60s;
+    --motion-details-dur: 0s;
   }
   :root[data-motion="storm"] {
     --motion-spinner-dur: .5s;
     --motion-fresh-dur: 3s;
     --motion-fresh-glow:55%;
     --motion-hue-dur: 6s;
-    --motion-flow-dur: .5s;
     --motion-bin-tilt:28deg;
     --motion-jump-dur: 260ms;
     --motion-jump-travel:.9rem;
@@ -358,5 +374,11 @@
     --motion-press-scale: .88;
     --motion-dropzone-dur: .45s;
     --motion-dropzone-glow: 34%;
+    --motion-fly-dur: 1.1s;
+    --motion-fly-gap: .6s;
+    --motion-fly-lift: 20px;
+    --motion-graph-point-dur: 300ms;
+    --motion-graph-ring-dur: 1.3s;
+    --motion-details-dur: 360ms;
   }
 }

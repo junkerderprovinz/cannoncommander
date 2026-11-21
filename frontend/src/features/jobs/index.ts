@@ -1,6 +1,7 @@
 // Aufgaben: the jobs window, the job settings kept in step with the server, and a notice when a long job ends.
 import { watch } from 'vue';
-import type { Job, JobSettings } from '@/api/ops';
+import type { Job, JobProgress, JobSettings } from '@/api/ops';
+import { on } from '@/api/sse';
 import { action } from '@/core/actions';
 import { MB } from '@/core/format';
 import { prefs } from '@/core/prefs';
@@ -11,6 +12,7 @@ import { useJobs } from '@/stores/jobs';
 import { useUser } from '@/stores/user';
 import JobsBody from './JobsBody.vue';
 import { jobLabel, took } from './label';
+import { record } from './throughput';
 import './jobs.css';
 
 // The queue settings live on the server; the prefs carry them for the settings page, the speed in MB/s.
@@ -58,5 +60,9 @@ export default function setup() {
   action('jobs', { label: tl('jobs.title'), g: 'IconQueued', run: jobsWindow });
   jobs.load().catch(() => {});
   jobs.onEnded(notifyWhenLong);
+  on('job.progress', (e) => {
+    const p = e.data as JobProgress;
+    if (p.totalBytes) record(p.id, (p.doneBytes / p.totalBytes) * 100, p.rate, Date.now());
+  });
   syncSettings();
 }

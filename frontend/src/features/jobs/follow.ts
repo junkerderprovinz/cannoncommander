@@ -1,24 +1,52 @@
 // A copy, move or delete window stays open once its job has started and shows it to the end. Unless the person keeps
 // it open, a job that went well closes it by itself; one that failed always leaves it open with the result.
-import { markRaw } from 'vue';
+import { markRaw, watch } from 'vue';
 import type { Job } from '@/api/ops';
 import { prefs } from '@/core/prefs';
-import { closeBtn, type WinEntry, winStack } from '@/core/windows';
+import { closeBtn, type FootButton, type WinEntry, winStack } from '@/core/windows';
 import { t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
-import FollowBody from './FollowBody.vue';
+import { usePanels } from '@/stores/panels';
+import DetailsToggle from './DetailsToggle.vue';
+import JobBody from './JobBody.vue';
 
-export function followJob(w: WinEntry, job: Job) {
+export { toggleDetails } from './details';
+
+const opensTarget = (j: Job) => (j.kind === 'copy' || j.kind === 'move') && !!j.dest;
+
+export function followJob(w: WinEntry, job: Job, from?: string) {
   const jobs = useJobs();
-  w.body = markRaw(FollowBody);
-  w.props = { id: job.id };
-  w.foot = [
-    { label: t('jobs.background'), g: 'IconWindowMinimise', wayOut: true },
-    { label: t('jobs.cancel'), g: 'IconClose', run: () => { void jobs.cancel(jobs.find(job.id) ?? job); return false; } },
-  ];
-  jobs.whenDone(job, (done) => {
-    if (!winStack.includes(w)) return;
-    if (done.state === 'done' && !done.failedItems && prefs.keepJobWindow !== true) return w.close();
-    w.foot = [{ ...closeBtn(), primary: true }];
-  });
+  const now = () => jobs.find(job.id) ?? job;
+  const keep = (run: () => unknown) => () => { void run(); return false; };
+  function foot(j: Job): FootButton[] {
+    const background = { label: t('jobs.background'), g: 'IconWindowMinimise', wayOut: true };
+    const cancel = { label: t('jobs.cancel'), g: 'IconClose', run: keep(() => jobs.cancel(now())) };
+    switch (j.state) {
+      case 'running':
+        return [background, { label: t('jobs.pause'), g: 'IconPause', run: keep(() => jobs.pause(now())) }, cancel];
+      case 'paused':
+        return [background, cancel, { label: t('jobs.resume'), g: 'IconPlay', primary: true, run: keep(() => jobs.pause(now())) }];
+      case 'done':
+        return [
+          ...(opensTarget(j) ? [{ label: t('jobs.openTarget'), g: 'IconFolderOpen', run: () => { void usePanels().go(j.dest!); } }] : []),
+          { ...closeBtn(), primary: true },
+        ];
+      case 'failed':
+      case 'cancelled':
+        return [{ label: t('jobs.retry'), g: 'IconRefresh', run: keep(() => jobs.retry(now())) }, { ...closeBtn(), primary: true }];
+      default:
+        return [background, cancel];
+    }
+  }
+  w.body = markRaw(JobBody);
+  w.startBody = markRaw(DetailsToggle);
+  w.props = { id: job.id, from };
+  const stop = watch(() => now().state, (state, was) => {
+    if (!winStack.includes(w)) return stop();
+    if (state === 'done' && was && was !== 'done' && !now().failedItems && prefs.keepJobWindow !== true) {
+      stop();
+      return w.close();
+    }
+    w.foot = foot(now());
+  }, { immediate: true, flush: 'sync' });
 }

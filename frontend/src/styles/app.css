@@ -370,29 +370,16 @@ button.psep:hover { background: var(--hover); color: var(--carbon-text); }
 .mitem:hover { background: var(--hover); color: var(--carbon-text); }
 .mitem.on { background: var(--accent-soft); color: var(--carbon-text); }
 
-/* Copy, move and delete: a picture of what happens first, the choices below it. */
-.xwin .glim-window-body { gap: .85rem; }
-.xroute { display: grid; grid-template-columns: 1fr minmax(8rem, 1.4fr) 1fr; align-items: center; gap: .5rem; padding: 1.1rem .75rem; border-radius: calc(var(--radius-card) - 6px); background: color-mix(in srgb, var(--carbon-surface2) 70%, transparent); }
-.xend { display: flex; flex-direction: column; align-items: center; gap: .4rem; min-width: 0; }
-.xend b { font-size: 13px; font-weight: 600; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.xic { height: 2.6rem; display: grid; place-items: center; }
-.xic svg { width: 2.2rem; height: 2.2rem; color: var(--accent-glyph); }
-.xmid { position: relative; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
-.xsum { font-size: 12px; color: var(--carbon-text-sub); white-space: nowrap; }
-.xtrack { position: relative; width: 100%; height: 1.9rem; display: grid; place-items: center; }
-.xline { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; height: 2px; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, transparent) 0 6px, transparent 6px 12px); background-size: 24px 2px; }
-@keyframes xflow { to { background-position: 24px 0; } }
-.xarrow { position: relative; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-contrast); box-shadow: 0 0 0 4px var(--carbon-surface); }
-.xarrow svg { width: .9rem; height: .9rem; }
-.xchips { display: flex; flex-wrap: wrap; gap: .4rem; }
-.xchip { display: inline-flex; align-items: center; gap: .45rem; max-width: 100%; height: 2rem; padding: 0 .7rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); font-size: 13px; }
-.xchip svg { width: .9rem; height: .9rem; color: var(--accent-glyph); flex: none; }
-.xchip span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.xchip small { color: var(--carbon-text-muted); font-size: 11px; flex: none; }
-.xchip.more { color: var(--carbon-text-sub); }
-.xmore summary { cursor: pointer; padding: .55rem 0 .2rem; font-size: 13px; color: var(--carbon-text-sub); list-style: none; display: flex; align-items: center; gap: .4rem; }
-.xmore summary::before { content: "›"; display: inline-block; }
-.xmore[open] summary::before { rotate: 90deg; }
+/* Copy, move and delete: one quiet sentence of what goes where, the target below it. */
+.xwin .glim-window-body { gap: .95rem; }
+.xsheet { display: flex; align-items: center; gap: .85rem; min-width: 0; padding-block: .15rem .1rem; }
+.xsheet-tile { flex: none; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: var(--radius-card); background: var(--accent-soft); color: var(--accent-ink); }
+.xsheet-tile svg { width: 1.2rem; height: 1.2rem; }
+.xsheet-say { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+.xsheet-say b { font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+.xsheet-say span { font-size: 13px; color: var(--carbon-text-sub); overflow-wrap: anywhere; }
+.xnote { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--carbon-text-sub); max-width: 62ch; }
+.xverify, .xtrash { align-self: flex-start; margin-inline-start: -.45rem; }
 .xdel { display: flex; align-items: center; gap: 1rem; padding: .6rem .3rem; }
 .xbin { width: 3rem; display: grid; place-items: center; flex: none; }
 .xbin svg { width: 2.4rem; height: 2.4rem; color: var(--accent-glyph); }
@@ -400,14 +387,12 @@ button.psep:hover { background: var(--hover); color: var(--carbon-text); }
 .xdel span { display: block; margin-top: .2rem; font-size: 13px; color: var(--carbon-text-sub); }
 @keyframes xshake { 25% { rotate: calc(var(--motion-bin-tilt, 8deg) * -1); } 75% { rotate: var(--motion-bin-tilt, 8deg); } }
 
-/* The motion of the shell and the transfer windows, timed by the level. Rotating colours and the running dashes stop
-   at off, where a still picture says the same. */
+/* The motion of the shell and the delete window, timed by the level. Rotating colours stop at off, where a still
+   picture says the same. */
 @media (prefers-reduced-motion: no-preference) {
   .tree-tog svg { transition: transform var(--motion-control-dur, .12s); }
-  .xmore summary::before { transition: rotate var(--motion-control-dur, .15s); }
   :root[data-rotate]:not([data-motion="off"]) :is(#shortcuts, #tree, .tiles, .list) svg { animation: cc-hue var(--motion-hue-dur, 14s) linear infinite; }
-  :root:not([data-motion="off"]) .xline { animation: xflow var(--motion-flow-dur, 1s) linear infinite; }
-  .forever .xbin svg { animation: xshake var(--motion-shake-dur, .4s); }
+  .forever :is(.xbin, .xsheet-tile) svg { animation: xshake var(--motion-shake-dur, .4s); }
   .list.zoomed { transition: --zoom-tile var(--motion-zoom-dur, 0s) ease-out; }
 }
 

@@ -45,7 +45,7 @@ export function rowMenu(x: number, y: number, shift = false) {
   const items: MenuEntry[] = [
     ...(oneFolder ? folderItems(join(tab.path, sel[0]!.name)) : ['view', 'edit', ...openExtras.flatMap((fn) => fn(sel, tab.path)), ...(file?.archive || sel[0]?.kind === 'arch' ? ['unpack', 'testArchive'] : [])]), '-',
     'copy', 'move', 'rename', 'clipCut', 'clipCopy', '-',
-    'share', 'collect', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every((k) => !k.dir) ? ['diff'] : []), '-',
+    'share', 'collect', 'download', 'pack', 'checksum', 'symlink', 'hardlink', ...(sel.length === 2 && sel.every((k) => !k.dir) ? ['diff'] : []), '-',
     ...rowExtras.flatMap((fn) => fn(sel, tab.path)), '-', 'props', 'fixPerms', 'copyPath', '-', 'delete',
   ];
   open('row', items, { x, y, shift });
