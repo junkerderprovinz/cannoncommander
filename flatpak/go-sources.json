@@ -533,6 +533,20 @@
     },
     {
         "type": "file",
+        "url": "https://proxy.golang.org/github.com/junkerderprovinz/parleyport/kit/@v/v1.0.6-0.20261121154535-94358153f0b4.mod",
+        "sha256": "f20ca7086ba302ea43d2f9ac6a3b2819f81a043b8fa3f9415a95bb99b93e284c",
+        "dest": "gomod/github.com/junkerderprovinz/parleyport/kit/@v",
+        "dest-filename": "v1.0.6-0.20261121154535-94358153f0b4.mod"
+    },
+    {
+        "type": "file",
+        "url": "https://proxy.golang.org/github.com/junkerderprovinz/parleyport/kit/@v/v1.0.6-0.20261121154535-94358153f0b4.zip",
+        "sha256": "26d042384640e027bd31df79296dee44739e8eba540707cfa6e86ab862ab6254",
+        "dest": "gomod/github.com/junkerderprovinz/parleyport/kit/@v",
+        "dest-filename": "v1.0.6-0.20261121154535-94358153f0b4.zip"
+    },
+    {
+        "type": "file",
         "url": "https://proxy.golang.org/github.com/klauspost/compress/@v/v1.20.5.mod",
         "sha256": "0d4e90d99acbc19eea5706e7390f8c925b26b1f5861385bb4f1321d454a1d48c",
         "dest": "gomod/github.com/klauspost/compress/@v",
