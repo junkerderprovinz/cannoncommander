@@ -23,7 +23,7 @@ require (
 	github.com/gtsteffaniak/go-cache v1.1.0
 	github.com/gtsteffaniak/go-ffmpeg v1.7.0
 	github.com/gtsteffaniak/go-logger v1.1.0
-	github.com/junkerderprovinz/parleyport/kit v1.0.6-0.20261122062831-f41cdbb220ff
+	github.com/junkerderprovinz/parleyport/kit v1.0.7-0.20261122094503-67d0b56f71f1
 	github.com/klauspost/compress v1.20.5
 	github.com/kovidgoyal/imaging v1.9.0
 	github.com/mattn/go-sqlite3 v1.14.53
