@@ -28,7 +28,7 @@ CannonCommander signs in through any OpenID Connect provider you run.
 
 The sign-in page now shows a button for it:
 
-![The sign-in page with the button Sign in with OpenID Connect below the password sign-in.](../assets/screenshots/sign-in-oidc.png)
+![The sign-in page with the Pocket ID button below the password sign-in.](../assets/screenshots/sign-in-oidc.png)
 
 ## The button {#button}
 
