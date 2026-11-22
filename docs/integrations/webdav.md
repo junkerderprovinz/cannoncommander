@@ -14,7 +14,7 @@ The WebDAV server lets you mount your files as a drive, in a file manager on you
 
 Sign in with your name and password. Clients send both with every request, so use https outside your own network.
 
-Use an [API token](../access/tokens.md) as the password when your account has [two-factor authentication](../access/two-factor.md) or signs in through a [sign-in service](../configuration/oidc.md). With a read-only token the drive is read only. Wrong passwords from a WebDAV client count apart from the sign-in page, so an old password in a client never locks you out of the browser.
+Use an [API token](../access/tokens.md) as the password when your account has [two-factor authentication](../access/two-factor.md) or signs in through a [sign-in service](../configuration/oidc.md). With a read-only token the drive is read only. Wrong passwords from a WebDAV client count for your name as they do in the browser: after five, each further try waits a little longer, up to a minute. Put the new password into your clients soon after you change it.
 
 === "Windows"
 
