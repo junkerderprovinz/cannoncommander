@@ -26,11 +26,15 @@ Give each person an account of their own, with a role and a folder they stay ins
 | User | Work with the files in their area: copy, move, rename, delete, share |
 | Read only | Look and download |
 
-There always has to be at least one admin.
+The owner, the account that set the first password, always stays an admin. Nobody can block or remove it.
 
 ## Groups {#groups}
 
 A group bundles people so an [access rule](rules.md) can apply to all of them at once. **Add a group**, give it a name, then add members from the user's window.
+
+## Block a user {#block}
+
+Open the user and switch on **Blocked**. The account signs in nowhere until you switch it off again, and its sessions and API tokens end.
 
 ## Remove a user {#remove}
 

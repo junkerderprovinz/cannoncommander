@@ -11,11 +11,11 @@ On the very first visit a welcome window asks for one window or two. The panels 
 
     ![Account & security without a password: the badge says None, with the button Set a password below.](../assets/screenshots/account-no-password.png)
 
-3. Click **Set a password**, type it twice and confirm. It needs at least 12 characters.
+3. Click **Set a password**, type it and click **Save password**. It needs at least 12 characters.
 
     ![The password card with the field New password and the buttons Cancel and Save password.](../assets/screenshots/set-password.png)
 
-From now on everyone signs in. The page you just used now also offers two-factor sign-in, passkeys and API tokens, see [Two-factor and passkeys](../access/two-factor.md).
+From now on everyone signs in. The page you just used now also offers two-factor authentication, passkeys, API tokens and sign-in services, see [Two-factor and passkeys](../access/two-factor.md).
 
 ## Add more people {#people}
 
@@ -23,7 +23,7 @@ Under **Settings > Users & groups** you add an account per person, each with a r
 
 ## Going back to no sign-in {#remove}
 
-**Remove password** on the same page opens CannonCommander again, as long as no other account has a password. Only do this on a network you trust.
+**Remove password** on the same page opens CannonCommander again, as long as no other account signs in with a password. Only do this on a network you trust.
 
 ## Next {#next}
 

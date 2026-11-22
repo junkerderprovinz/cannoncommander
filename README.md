@@ -186,7 +186,7 @@ The folders, files and keys in these pictures are made up. The [documentation](h
 - **Nine views**, 89 columns, quick look on the space bar and a preview pane.
 - **Tools for the whole collection.** Search by name, field or content, folder compare and sync, duplicates, disk usage, batch rename, archives, checksums.
 - **Remote storage** through rclone, **share links** with password and expiry, a **WebDAV** server.
-- **People and rules.** Users, groups, access rules, two-factor sign-in, passkeys, API tokens and OIDC.
+- **People and rules.** Users, groups, access rules, two-factor authentication, passkeys, API tokens and sign-in services over OIDC.
 - **AI assistants, with your rights**, through the built-in MCP server.
 
 Every feature with pictures and step-by-step guides: **[the documentation](https://junkerderprovinz.github.io/cannoncommander/)**.

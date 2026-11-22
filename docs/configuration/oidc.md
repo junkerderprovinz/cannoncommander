@@ -1,69 +1,90 @@
-# Single sign-on with OIDC
+# Sign-in services
 
-CannonCommander signs in through any OpenID Connect provider you run.
-
-## Set it up {#setup}
-
-1. In your provider, create an application for CannonCommander with this redirect address:
-
-    ```text
-    https://files.example.com/api/auth/oidc/callback
-    ```
-
-2. Note its client ID, client secret and issuer address.
-3. Add them to `/config/config.yaml`:
-
-    ```yaml
-    auth:
-      methods:
-        oidc:
-          enabled: true
-          clientId: "cannoncommander"
-          clientSecret: "the secret from your provider"
-          issuerUrl: "https://auth.example.com/application/o/cannoncommander/"
-          adminGroup: "cannoncommander-admins"
-    ```
-
-4. Restart the container.
-
-The sign-in page now shows a button for it:
+A sign-in service signs people in over OpenID Connect: Pocket ID, authentik, Authelia, Keycloak, Kanidm, Zitadel or any other. The sign-in page then shows its button below the password:
 
 ![The sign-in page with the Pocket ID button below the password sign-in.](../assets/screenshots/sign-in-oidc.png)
 
-## The button {#button}
+You set one up in the app or in `config.yaml`. Either way, CannonCommander needs its https address in `http.externalUrl`, so the service can send people back, see [Reverse proxy](reverse-proxy.md#config).
 
-The button carries the name and mark of your provider. CannonCommander tells Pocket ID, authentik, Authelia, Keycloak, Kanidm and Zitadel apart by their addresses, so most setups need nothing more. Two keys change it:
+## In the app {#app}
+
+Sign-in services added in the app wait until your account has a password, so you can still get in when the service is down.
+
+1. Open **Settings > Account & security** and click **Add a sign-in service** at the bottom.
+2. Pick your service from the list, or **Other sign-in service** for any other.
+3. Create an application for CannonCommander at the service and give it the **Redirect address** the form shows.
+4. Fill in the service's **Address**, the **Client ID** and the **Client secret**.
+5. Pick the **Role for newcomers**. Whoever the service lets in for the first time gets it, and it stays User unless you change it.
+6. Save, then click **Test sign-in**. The button shows up on the sign-in page once a test sign-in has worked.
+
+**More settings** holds the name on the button, the scopes and the claims for the name and the groups. For the services in the list CannonCommander knows them already.
+
+## In config.yaml {#config}
+
+The short form is enough for the services in the list. CannonCommander recognises them by their address:
+
+```yaml
+http:
+  externalUrl: "https://files.example.com"
+auth:
+  methods:
+    oidc:
+      enabled: true
+      issuerUrl: "https://id.example.com"
+      clientId: "cannoncommander"
+      clientSecret: "the secret from your service"
+```
+
+Give the service this redirect address, then restart the container:
+
+```text
+https://files.example.com/api/auth/oidc/callback
+```
+
+The service shows up in **Sign-in services** marked **from config.yaml**, and you change it in the file.
+
+!!! note "Closed without a password"
+    With a service in `config.yaml`, CannonCommander stays closed even before anyone has a password. Only the service lets people in.
+
+### All keys {#keys}
 
 | Key | What it does |
 |---|---|
-| `name` | The name on the button, such as `Family login`. Empty is the provider's own name. |
-| `provider` | The kind of provider when it is not recognised: `pocket-id`, `authentik`, `authelia`, `keycloak`, `kanidm`, `zitadel` or `custom`. |
-
-## All keys {#keys}
-
-| Key | What it does |
-|---|---|
-| `enabled` | Switches the sign-in on. |
-| `issuerUrl`, `clientId`, `clientSecret` | The application at your provider. |
-| `name`, `provider` | The button, see above. |
-| `scopes` | What CannonCommander asks for. Empty takes your provider's usual scopes. |
-| `userIdentifier` | The claim that becomes the user name. Empty takes your provider's, usually `preferred_username`. |
-| `groupsClaim` | The claim with the user's groups. Empty takes your provider's, usually `groups`. |
+| `enabled` | Switches the service on. |
+| `issuerUrl`, `clientId`, `clientSecret` | The application at your service. |
+| `name` | The name on the button, such as `Family login`. Empty takes the service's own name. |
+| `provider` | The kind of service when it is not recognised: `pocket-id`, `authentik`, `authelia`, `keycloak`, `kanidm`, `zitadel` or `custom`. |
+| `scopes` | What CannonCommander asks for. Empty takes the service's usual scopes. |
+| `userIdentifier` | The claim that becomes the account name. Empty takes the service's, usually `preferred_username`. |
+| `groupsClaim` | The claim with the groups. Empty takes the service's, usually `groups`. |
 | `adminGroup`, `userGroups` | Who becomes an admin and who gets in, see below. |
-| `caFile` | A PEM file with the certificate authority of a provider that runs on your own certificate. |
+| `caFile` | A PEM file with the certificate authority of a service that runs on your own certificate. |
 
-`disableVerifyTLS` is not possible: name the provider's certificate authority in `caFile` instead.
+A service on your own certificate needs `caFile`. CannonCommander does not start with `disableVerifyTLS`.
 
-## Who gets in {#who}
+A service CannonCommander does not recognise, with a name of its own and your own certificate:
 
-- A user who signs in for the first time is created on the spot, as a user.
-- Members of `adminGroup` become admins.
-- `userGroups` limits sign-in to the groups you list.
+```yaml
+oidc:
+  enabled: true
+  name: "Family login"
+  provider: "custom"
+  issuerUrl: "https://login.example.com"
+  clientId: "cannoncommander"
+  clientSecret: "the secret from your service"
+  caFile: "/config/my-ca.pem"
+```
 
-## Keep the secret out of the file {#env}
+### Who gets in {#who}
+
+- Someone who signs in for the first time gets an account on the spot, with the role User.
+- Members of `adminGroup` become admins. Whoever leaves the group is a user again at the next sign-in.
+- `userGroups` lets in only the groups you list.
+
+### Keep the secret out of the file {#env}
 
 The client ID and secret can come from the variables `CC_OIDC_CLIENT_ID` and `CC_OIDC_CLIENT_SECRET` instead.
 
-## Behind a reverse proxy {#proxy}
+## After a password reset {#reset}
 
-Set `externalUrl` so the redirect address matches, see [Reverse proxy](reverse-proxy.md).
+A [reset through the container log](../access/sign-in.md#reset) pauses every sign-in service. Click **Turn on again** on the service, or **Test sign-in** for one added in the app.

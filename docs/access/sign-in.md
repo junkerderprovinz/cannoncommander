@@ -1,36 +1,64 @@
 # Signing in
 
-Without a password CannonCommander opens for everyone who reaches it. Once any account has a password or a passkey, every visitor signs in first.
+Until an account has a password, CannonCommander is open and everyone who reaches it is an admin. Once a password is set, every visitor signs in first.
 
 ## Turn on the sign-in {#on}
 
 Set a password for your own account under **Settings > Account & security**, see [First start](../getting-started/first-start.md#password). From then on the sign-in page greets everyone:
 
-![The sign-in page: the logo, the user name anna typed in, a password field and the Sign in button.](../assets/screenshots/sign-in.png)
+![The sign-in page: the logo, the name anna typed in, a password field, the Sign in button and Forgot password?.](../assets/screenshots/sign-in.png)
 
-## Stay signed in {#stay}
+With a single account the page asks only for the password. As soon as there are more, it asks for the name too.
 
-**Stay signed in** on the same page decides how long a sign-in lasts: 1, 7 or 30 days. The time counts from your last visit.
+## Account & security {#account}
+
+Everything about your own sign-in lives on this page: the password, two-factor authentication, passkeys, sessions, API tokens and sign-in services.
 
 ![Account & security with a password: the password set, asking for the password on changes, two-factor authentication on with 8 recovery codes left, and two passkeys.](../assets/screenshots/account.png)
 
 ## Change or remove the password {#change}
 
-- **Change** asks for the current password and a new one of at least 12 characters. It signs you out everywhere else.
-- **Remove** opens CannonCommander again without a sign-in, as long as no other account has a password. Two-factor sign-in and passkeys go with it.
+- **Change** asks for the current password and a new one of at least 12 characters. Every other session ends.
+- **Remove password** opens CannonCommander to everyone again. It only works while no other account signs in with a password. Two-factor authentication, passkeys, API tokens and sign-in services go with it.
+
+## Asking for the password {#ask}
+
+New passkeys, API tokens, MCP keys, two-factor authentication, sign-in services and a password you set for someone else need a sign-in from the last few minutes. If yours is older, CannonCommander asks for your password first.
+
+Switch off **Ask for the password on changes** and it asks you to sign out and back in instead.
 
 ## Sessions {#sessions}
 
-The **Sessions** card lists every browser that is signed in, with its address and when it was last seen. **Sign out all others** ends all of them except this one. API tokens keep working, see [API tokens](tokens.md).
+The **Sessions** card lists every browser that is signed in, how it signed in, its address and when it was last seen. **Sign out all others** ends every session but this one. API tokens keep working, see [API tokens](tokens.md).
+
+A session lasts 30 days and ends after 7 days without a visit.
 
 ## Wrong passwords {#limit}
 
-After five wrong passwords for one name from one address, that address waits 15 minutes. Behind a reverse proxy, tell CannonCommander which proxy to trust so it sees the real address, see [Reverse proxy](../configuration/reverse-proxy.md).
+- After five wrong passwords for one name, every further try waits a little longer, up to a minute. A stranger guessing your name cannot lock you out for good.
+- After ten wrong tries from one address, that address waits 15 minutes.
 
-## Single sign-on {#sso}
+Behind a reverse proxy, tell CannonCommander which proxy to trust so it sees the real address, see [Reverse proxy](../configuration/reverse-proxy.md).
 
-CannonCommander can also sign in through an OpenID Connect provider. The sign-in page then shows a button for it:
+## Forgot the password {#reset}
 
-![The sign-in page with an extra button, Sign in with OpenID Connect.](../assets/screenshots/sign-in-oidc.png)
+1. Click **Forgot password?** on the sign-in page.
+2. Open the container log. On Unraid, click the container's icon in the Docker tab and pick **Logs**. The newest line that says `signin: someone asked to reset the password` ends with the code, such as `code=K7QM-3XRP-9DTA`.
 
-How to set it up: [Single sign-on with OIDC](../configuration/oidc.md).
+3. Within 10 minutes, enter the code, your name and a new password twice, then click **Set password**. With a single account there is no name to enter.
+
+Whoever knew the old password may have left a way in behind, so the reset clears more than the password:
+
+- every session and every API token ends, for all accounts
+- your passkeys, two-factor authentication and links to sign-in services are gone
+- sign-in services pause until you turn them on again
+
+Another admin can also set a new password for you under **Settings > Users & groups**.
+
+## Sign-in services {#sso}
+
+People can also sign in through Pocket ID, authentik, Authelia, Keycloak, Kanidm, Zitadel or any other OpenID Connect service. The sign-in page then shows its button:
+
+![The sign-in page with the Pocket ID button below the password sign-in.](../assets/screenshots/sign-in-oidc.png)
+
+How to set one up: [Sign-in services](../configuration/oidc.md).
