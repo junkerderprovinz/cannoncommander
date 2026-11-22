@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Volver a pedir la contraseña",
         "hint": "Algunos cambios necesitan un inicio de sesión de hace pocos minutos: nuevas llaves de acceso, tokens de API y claves MCP, la autenticación de dos factores, los servicios de inicio de sesión y una contraseña que pones para otra persona. Si el tuyo es más antiguo, CannonCommander te pide primero la contraseña. Con la pregunta desactivada, cierras sesión y vuelves a entrar.",
-        "label": "Volver a pedir la contraseña",
+        "label": "Pedir la contraseña al hacer cambios",
         "on": "CannonCommander te pide la contraseña antes de los cambios delicados.",
         "off": "La pregunta está desactivada. Los cambios delicados necesitan un inicio de sesión reciente."
       },
@@ -4679,9 +4679,9 @@
         "add": "Añadir llave de acceso",
         "none": "Aún no hay ninguna llave de acceso",
         "noneHint": "Añade una y entrarás aquí sin escribir nada.",
-        "created": "añadida {when}",
-        "used": "último uso {when}",
-        "never": "nunca usada",
+        "created": "Añadida {when}",
+        "used": "Último uso {when}",
+        "never": "Nunca usada",
         "here": "funciona en esta dirección",
         "other": "funciona solo en {address}",
         "synced": "sincronizada en tus dispositivos",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Servicios de inicio de sesión",
+        "unnamed": "Servicio de inicio de sesión",
         "hint": "Un servicio de inicio de sesión deja entrar a las personas mediante OpenID Connect, y la página de inicio de sesión muestra su botón mientras está activo.",
         "add": "Añadir un servicio de inicio de sesión",
         "untested": "Aún sin probar",
@@ -4785,6 +4786,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nombre desde",
         "groupsClaim": "Grupos desde",
+        "more": "Más ajustes",
         "missing": "Este campo necesita un valor.",
         "unreachable": "CannonCommander no llega a {address}. ¿Es correcta la dirección y puede el contenedor llegar allí?"
       },

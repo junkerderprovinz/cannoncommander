@@ -70,7 +70,7 @@
     "askPassword": {
       "title": "Asking for the password",
       "hint": "Some changes need a sign-in from the last few minutes: new passkeys, API tokens and MCP keys, two-factor authentication, sign-in services, and a password you set for someone else. If yours is older, CannonCommander asks for your password first. With the question off, you sign out and back in instead.",
-      "label": "Ask for the password again",
+      "label": "Ask for the password on changes",
       "on": "CannonCommander asks for your password before sensitive changes.",
       "off": "The question is off. Sensitive changes need a fresh sign-in."
     },
@@ -110,9 +110,9 @@
       "add": "Add a passkey",
       "none": "No passkey yet",
       "noneHint": "Add one and you sign in here without typing.",
-      "created": "added {when}",
-      "used": "last used {when}",
-      "never": "never used",
+      "created": "Added {when}",
+      "used": "Last used {when}",
+      "never": "Never used",
       "here": "works at this address",
       "other": "works only at {address}",
       "synced": "synced across your devices",
@@ -173,6 +173,7 @@
     },
     "services": {
       "title": "Sign-in services",
+      "unnamed": "Sign-in service",
       "hint": "A sign-in service signs people in over OpenID Connect, and the sign-in page shows its button while it's on.",
       "add": "Add a sign-in service",
       "untested": "Not tested yet",
@@ -215,6 +216,7 @@
       "scopes": "Scopes",
       "nameClaim": "Name from",
       "groupsClaim": "Groups from",
+      "more": "More settings",
       "missing": "This field needs a value.",
       "unreachable": "CannonCommander can't reach {address}. Is the address right, and can the container get there?"
     },

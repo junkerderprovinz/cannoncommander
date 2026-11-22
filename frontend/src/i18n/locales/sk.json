@@ -4792,7 +4792,7 @@
       "askPassword": {
         "title": "Znova sa pýtať na heslo",
         "hint": "Niektoré zmeny vyžadujú prihlásenie z posledných pár minút: nové prístupové kľúče, tokeny API a kľúče MCP, dvojfaktorové overenie, prihlasovacie služby a heslo, ktoré nastavujete niekomu inému. Ak je vaše staršie, CannonCommander sa najprv opýta na vaše heslo. Keď je otázka vypnutá, odhlásite sa a znova prihlásite.",
-        "label": "Znova sa pýtať na heslo",
+        "label": "Pýtať sa na heslo pri zmenách",
         "on": "CannonCommander sa pred citlivými zmenami pýta na vaše heslo.",
         "off": "Otázka je vypnutá. Citlivé zmeny vyžadujú čerstvé prihlásenie."
       },
@@ -4834,9 +4834,9 @@
         "add": "Pridať prístupový kľúč",
         "none": "Zatiaľ žiadny prístupový kľúč",
         "noneHint": "Pridajte si jeden a budete sa tu prihlasovať bez písania.",
-        "created": "pridaný {when}",
-        "used": "naposledy použitý {when}",
-        "never": "nikdy nepoužitý",
+        "created": "Pridaný {when}",
+        "used": "Naposledy použitý {when}",
+        "never": "Nikdy nepoužitý",
         "here": "funguje na tejto adrese",
         "other": "funguje len na {address}",
         "synced": "synchronizovaný medzi vašimi zariadeniami",
@@ -4899,6 +4899,7 @@
       },
       "services": {
         "title": "Prihlasovacie služby",
+        "unnamed": "Prihlasovacia služba",
         "hint": "Prihlasovacia služba prihlasuje ľudí cez OpenID Connect a prihlasovacia stránka ukazuje jej tlačidlo, kým je zapnutá.",
         "add": "Pridať prihlasovaciu službu",
         "untested": "Zatiaľ netestované",
@@ -4941,6 +4942,7 @@
         "scopes": "Scopes",
         "nameClaim": "Meno z",
         "groupsClaim": "Skupiny z",
+        "more": "Ďalšie nastavenia",
         "missing": "Toto pole potrebuje hodnotu.",
         "unreachable": "CannonCommander sa nedostane na {address}. Je adresa správna a dostane sa tam kontajner?"
       },

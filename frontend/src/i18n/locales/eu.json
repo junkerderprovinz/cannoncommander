@@ -4475,7 +4475,7 @@
       "askPassword": {
         "title": "Pasahitza berriro eskatzea",
         "hint": "Aldaketa batzuek azken minutuetako saio-hasiera behar dute: sarbide-gako berriak, API tokenak eta MCP gakoak, bi faktoreko autentifikazioa, saio-hasierako zerbitzuak eta beste norbaitentzat ezartzen duzun pasahitza. Zurea zaharragoa bada, CannonCommander-ek zure pasahitza eskatzen du lehenik. Galdera desaktibatuta badago, saioa amaitu eta berriro hasten duzu.",
-        "label": "Eskatu pasahitza berriro",
+        "label": "Eskatu pasahitza aldaketetan",
         "on": "CannonCommander-ek zure pasahitza eskatzen du aldaketa sentikorren aurretik.",
         "off": "Galdera desaktibatuta dago. Aldaketa sentikorrek saio-hasiera berri bat behar dute."
       },
@@ -4515,9 +4515,9 @@
         "add": "Gehitu sarbide-gakoa",
         "none": "Oraindik ez dago sarbide-gakorik",
         "noneHint": "Gehitu bat eta hemen idatzi gabe hasiko duzu saioa.",
-        "created": "gehitua {when}",
-        "used": "azken erabilera {when}",
-        "never": "inoiz erabili gabea",
+        "created": "Gehitua {when}",
+        "used": "Azken erabilera {when}",
+        "never": "Inoiz erabili gabea",
         "here": "helbide honetan dabil",
         "other": "{address} helbidean bakarrik dabil",
         "synced": "zure gailuetan sinkronizatua",
@@ -4578,6 +4578,7 @@
       },
       "services": {
         "title": "Saio-hasierako zerbitzuak",
+        "unnamed": "Saio-hasierako zerbitzua",
         "hint": "Saio-hasierako zerbitzu batek OpenID Connect bidez hasten die saioa jendeari, eta saio-hasierako orriak bere botoia erakusten du aktibatuta dagoen bitartean.",
         "add": "Gehitu saio-hasierako zerbitzu bat",
         "untested": "Oraindik probatu gabe",
@@ -4620,6 +4621,7 @@
         "scopes": "Scope-ak",
         "nameClaim": "Izena nondik",
         "groupsClaim": "Taldeak nondik",
+        "more": "Ezarpen gehiago",
         "missing": "Eremu honek balio bat behar du.",
         "unreachable": "CannonCommander ez da {address} helbidera iristen. Helbidea zuzena da, eta edukiontzia hara irits daiteke?"
       },

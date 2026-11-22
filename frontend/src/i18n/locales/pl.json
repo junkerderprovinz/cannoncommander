@@ -4792,7 +4792,7 @@
       "askPassword": {
         "title": "Ponowne pytanie o hasło",
         "hint": "Niektóre zmiany wymagają logowania z ostatnich kilku minut: nowe klucze dostępu, tokeny API i klucze MCP, uwierzytelnianie dwuskładnikowe, usługi logowania i hasło ustawiane komuś innemu. Jeśli twoje jest starsze, CannonCommander najpierw zapyta o hasło. Gdy pytanie jest wyłączone, wylogowujesz się i logujesz ponownie.",
-        "label": "Pytaj ponownie o hasło",
+        "label": "Pytaj o hasło przy zmianach",
         "on": "CannonCommander pyta o twoje hasło przed ważnymi zmianami.",
         "off": "Pytanie jest wyłączone. Ważne zmiany wymagają świeżego logowania."
       },
@@ -4834,9 +4834,9 @@
         "add": "Dodaj klucz dostępu",
         "none": "Jeszcze brak klucza dostępu",
         "noneHint": "Dodaj jeden, a będziesz się tu logować bez wpisywania.",
-        "created": "dodany {when}",
-        "used": "ostatnio użyty {when}",
-        "never": "nigdy nieużyty",
+        "created": "Dodany {when}",
+        "used": "Ostatnio użyty {when}",
+        "never": "Nigdy nieużyty",
         "here": "działa pod tym adresem",
         "other": "działa tylko pod {address}",
         "synced": "synchronizowany między twoimi urządzeniami",
@@ -4899,6 +4899,7 @@
       },
       "services": {
         "title": "Usługi logowania",
+        "unnamed": "Usługa logowania",
         "hint": "Usługa logowania loguje ludzi przez OpenID Connect, a strona logowania pokazuje jej przycisk, dopóki jest włączona.",
         "add": "Dodaj usługę logowania",
         "untested": "Jeszcze nie testowana",
@@ -4941,6 +4942,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nazwa z",
         "groupsClaim": "Grupy z",
+        "more": "Więcej ustawień",
         "missing": "To pole potrzebuje wartości.",
         "unreachable": "CannonCommander nie może dotrzeć do {address}. Czy adres jest poprawny i czy kontener ma tam dostęp?"
       },

@@ -4792,7 +4792,7 @@
       "askPassword": {
         "title": "Ponovno vprašanje za geslo",
         "hint": "Nekatere spremembe zahtevajo prijavo iz zadnjih nekaj minut: novi ključi za dostop, žetoni API in ključi MCP, dvostopenjsko preverjanje pristnosti, storitve za prijavo in geslo, ki ga nastavite nekomu drugemu. Če je vaša starejša, CannonCommander najprej vpraša za vaše geslo. Ko je vprašanje izklopljeno, se namesto tega odjavite in znova prijavite.",
-        "label": "Ponovno vprašaj za geslo",
+        "label": "Vprašaj za geslo ob spremembah",
         "on": "CannonCommander pred občutljivimi spremembami vpraša za vaše geslo.",
         "off": "Vprašanje je izklopljeno. Občutljive spremembe zahtevajo svežo prijavo."
       },
@@ -4834,9 +4834,9 @@
         "add": "Dodaj ključ za dostop",
         "none": "Še ni ključa za dostop",
         "noneHint": "Dodajte enega in se tukaj prijavite brez tipkanja.",
-        "created": "dodan {when}",
-        "used": "nazadnje uporabljen {when}",
-        "never": "še nikoli uporabljen",
+        "created": "Dodan {when}",
+        "used": "Nazadnje uporabljen {when}",
+        "never": "Še nikoli uporabljen",
         "here": "deluje na tem naslovu",
         "other": "deluje samo na {address}",
         "synced": "usklajen med vašimi napravami",
@@ -4899,6 +4899,7 @@
       },
       "services": {
         "title": "Storitve za prijavo",
+        "unnamed": "Storitev za prijavo",
         "hint": "Storitev za prijavo prijavlja ljudi prek OpenID Connect, stran za prijavo pa prikazuje njen gumb, dokler je vklopljena.",
         "add": "Dodaj storitev za prijavo",
         "untested": "Še ni preizkušena",
@@ -4941,6 +4942,7 @@
         "scopes": "Scopes",
         "nameClaim": "Ime iz",
         "groupsClaim": "Skupine iz",
+        "more": "Več nastavitev",
         "missing": "To polje potrebuje vrednost.",
         "unreachable": "CannonCommander ne doseže {address}. Je naslov pravilen in ali vsebnik pride tja?"
       },

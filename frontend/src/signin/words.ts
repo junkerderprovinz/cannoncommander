@@ -111,7 +111,7 @@ export function tileText(): SignInTileText {
       shownText: tile('tokens.shownText'), shownDone: tile('tokens.shownDone'),
     },
     services: {
-      title: tile('services.title'), hint: tile('services.hint'), add: tile('services.add'), on: tile('twoFactor.on'),
+      title: tile('services.title'), unnamed: tile('services.unnamed'), hint: tile('services.hint'), add: tile('services.add'), on: tile('twoFactor.on'),
       off: tile('twoFactor.off'), untested: tile('services.untested'), paused: tile('services.paused'), show: tile('services.show'),
       mustTest: tile('services.mustTest'), test: tile('services.test'), testing: tile('services.testing'), testOk: tile('services.testOk'),
       testFailed: tile('services.testFailed'), tested: tile('services.tested'), fromConfig: tile('services.fromConfig'),
@@ -124,7 +124,7 @@ export function tileText(): SignInTileText {
       whoGetsIn: tile('services.whoGetsIn'), role: tile('services.role'), roleHint: tile('services.roleHint'), issuer: tile('services.issuer'), issuerHint: tile('services.issuerHint'),
       clientId: tile('services.clientId'), secret: tile('services.secret'), secretKept: tile('services.secretKept'),
       redirect: tile('services.redirect'), redirectHint: tile('services.redirectHint'), label: tile('services.label'),
-      scopes: tile('services.scopes'), nameClaim: tile('services.nameClaim'), groupsClaim: tile('services.groupsClaim'),
+      scopes: tile('services.scopes'), nameClaim: tile('services.nameClaim'), groupsClaim: tile('services.groupsClaim'), more: tile('services.more'),
       turnOn: tile('twoFactor.turnOn'), missing: tile('services.missing'), unreachable: tile('services.unreachable'),
     },
     // The Users tab manages the accounts, so the tile never draws their card.

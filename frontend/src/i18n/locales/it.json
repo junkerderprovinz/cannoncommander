@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Richiedere la password",
         "hint": "Alcune modifiche richiedono un accesso degli ultimi minuti: nuove passkey, token API e chiavi MCP, l'autenticazione a due fattori, i servizi di accesso e una password che imposti per qualcun altro. Se il tuo è più vecchio, CannonCommander ti chiede prima la password. Con la domanda disattivata, esci e rientri.",
-        "label": "Richiedi di nuovo la password",
+        "label": "Chiedi la password alle modifiche",
         "on": "CannonCommander ti chiede la password prima delle modifiche delicate.",
         "off": "La domanda è disattivata. Le modifiche delicate richiedono un accesso recente."
       },
@@ -4679,9 +4679,9 @@
         "add": "Aggiungi passkey",
         "none": "Ancora nessuna passkey",
         "noneHint": "Aggiungine una ed entri qui senza digitare nulla.",
-        "created": "aggiunta {when}",
-        "used": "ultimo uso {when}",
-        "never": "mai usata",
+        "created": "Aggiunta {when}",
+        "used": "Ultimo uso {when}",
+        "never": "Mai usata",
         "here": "funziona a questo indirizzo",
         "other": "funziona solo a {address}",
         "synced": "sincronizzata sui tuoi dispositivi",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Servizi di accesso",
+        "unnamed": "Servizio di accesso",
         "hint": "Un servizio di accesso fa entrare le persone tramite OpenID Connect, e la pagina di accesso mostra il suo pulsante finché è attivo.",
         "add": "Aggiungi un servizio di accesso",
         "untested": "Non ancora provato",
@@ -4785,6 +4786,7 @@
         "scopes": "Scope",
         "nameClaim": "Nome da",
         "groupsClaim": "Gruppi da",
+        "more": "Altre impostazioni",
         "missing": "Questo campo ha bisogno di un valore.",
         "unreachable": "CannonCommander non raggiunge {address}. L'indirizzo è giusto, e il container può arrivarci?"
       },

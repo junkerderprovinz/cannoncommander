@@ -4330,7 +4330,7 @@
       "askPassword": {
         "title": "Meminta kata laluan semula",
         "hint": "Sesetengah perubahan memerlukan log masuk dari beberapa minit terakhir: kunci laluan baharu, token API dan kunci MCP, pengesahan dua faktor, perkhidmatan log masuk dan kata laluan yang anda tetapkan untuk orang lain. Jika milik anda lebih lama, CannonCommander meminta kata laluan anda dahulu. Jika soalan itu dimatikan, anda log keluar dan log masuk semula.",
-        "label": "Minta kata laluan semula",
+        "label": "Minta kata laluan semasa perubahan",
         "on": "CannonCommander meminta kata laluan anda sebelum perubahan sensitif.",
         "off": "Soalan dimatikan. Perubahan sensitif memerlukan log masuk yang baharu."
       },
@@ -4369,9 +4369,9 @@
         "add": "Tambah kunci laluan",
         "none": "Belum ada kunci laluan",
         "noneHint": "Tambah satu dan anda log masuk di sini tanpa menaip.",
-        "created": "ditambah {when}",
-        "used": "kali terakhir digunakan {when}",
-        "never": "belum pernah digunakan",
+        "created": "Ditambah {when}",
+        "used": "Kali terakhir digunakan {when}",
+        "never": "Belum pernah digunakan",
         "here": "berfungsi di alamat ini",
         "other": "hanya berfungsi di {address}",
         "synced": "disegerakkan di peranti anda",
@@ -4431,6 +4431,7 @@
       },
       "services": {
         "title": "Perkhidmatan log masuk",
+        "unnamed": "Perkhidmatan log masuk",
         "hint": "Perkhidmatan log masuk membawa orang masuk melalui OpenID Connect, dan halaman log masuk memaparkan butangnya selagi ia hidup.",
         "add": "Tambah perkhidmatan log masuk",
         "untested": "Belum diuji",
@@ -4473,6 +4474,7 @@
         "scopes": "Scope",
         "nameClaim": "Nama daripada",
         "groupsClaim": "Kumpulan daripada",
+        "more": "Lagi tetapan",
         "missing": "Medan ini memerlukan nilai.",
         "unreachable": "CannonCommander tidak dapat mencapai {address}. Adakah alamatnya betul, dan bolehkah bekas sampai ke sana?"
       },

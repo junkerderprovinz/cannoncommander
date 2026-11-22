@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "Salasanan kysyminen uudelleen",
         "hint": "Jotkin muutokset vaativat kirjautumisen viime minuuteilta: uudet pääsyavaimet, API-tunnukset ja MCP-avaimet, kaksivaiheinen tunnistautuminen, kirjautumispalvelut ja salasana, jonka asetat jollekulle toiselle. Jos omasi on vanhempi, CannonCommander kysyy ensin salasanaasi. Kun kysymys on pois päältä, kirjaudut sen sijaan ulos ja takaisin sisään.",
-        "label": "Kysy salasanaa uudelleen",
+        "label": "Kysy salasanaa muutosten yhteydessä",
         "on": "CannonCommander kysyy salasanaasi ennen arkaluonteisia muutoksia.",
         "off": "Kysymys on pois päältä. Arkaluonteiset muutokset vaativat tuoreen kirjautumisen."
       },
@@ -4524,9 +4524,9 @@
         "add": "Lisää pääsyavain",
         "none": "Ei vielä pääsyavainta",
         "noneHint": "Lisää sellainen, niin kirjaudut tänne kirjoittamatta mitään.",
-        "created": "lisätty {when}",
-        "used": "viimeksi käytetty {when}",
-        "never": "ei koskaan käytetty",
+        "created": "Lisätty {when}",
+        "used": "Viimeksi käytetty {when}",
+        "never": "Ei koskaan käytetty",
         "here": "toimii tässä osoitteessa",
         "other": "toimii vain osoitteessa {address}",
         "synced": "synkronoitu laitteidesi välillä",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Kirjautumispalvelut",
+        "unnamed": "Kirjautumispalvelu",
         "hint": "Kirjautumispalvelu kirjaa ihmiset sisään OpenID Connectilla, ja kirjautumissivu näyttää sen painikkeen niin kauan kuin se on päällä.",
         "add": "Lisää kirjautumispalvelu",
         "untested": "Ei vielä testattu",
@@ -4629,6 +4630,7 @@
         "scopes": "Scopet",
         "nameClaim": "Nimi kentästä",
         "groupsClaim": "Ryhmät kentästä",
+        "more": "Lisää asetuksia",
         "missing": "Tähän kenttään tarvitaan arvo.",
         "unreachable": "CannonCommander ei tavoita osoitetta {address}. Onko osoite oikein, ja pääseekö kontti sinne?"
       },

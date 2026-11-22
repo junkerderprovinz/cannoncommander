@@ -3,7 +3,7 @@
 // password, and the sign-in service that is on stands under Sign in. Passkeys come through the browser's offer in the
 // password field.
 import { SignInCard, SignInField, TextField, type SignInCardService } from '@glimstone/vue';
-import { signInCardHandlers, signInServiceMark, takeSignInCode, type SignInOffer, type SignInRemoved, type SignInVisitor } from '@glimstone/core';
+import { signInCardHandlers, signInServiceLabel, takeSignInCode, type SignInOffer, type SignInRemoved, type SignInVisitor } from '@glimstone/core';
 import { IDENTITY_PROVIDERS } from '@glimstone/core/identityProviders';
 import { computed, onMounted, ref } from 'vue';
 import logo from '@/assets/brand/cannoncommander.svg';
@@ -35,8 +35,8 @@ const first = computed(() => offer.value?.services[0]);
 const service = computed<SignInCardService | undefined>(() => {
   const f = first.value;
   if (!f) return undefined;
-  const mark = signInServiceMark(IDENTITY_PROVIDERS, f.provider);
-  return mark ? { name: f.name, mark } : { name: f.name };
+  const { name, mark } = signInServiceLabel(f, IDENTITY_PROVIDERS, { services: { unnamed: s('tile.services.unnamed') } });
+  return mark ? { name, mark } : { name };
 });
 
 onMounted(async () => {

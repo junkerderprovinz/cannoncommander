@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Cererea din nou a parolei",
         "hint": "Unele modificări au nevoie de o conectare din ultimele minute: chei de acces noi, tokenuri API și chei MCP, autentificarea cu doi factori, serviciile de conectare și o parolă pe care o setezi pentru altcineva. Dacă a ta e mai veche, CannonCommander îți cere întâi parola. Cu întrebarea oprită, te deconectezi și te conectezi din nou.",
-        "label": "Cere din nou parola",
+        "label": "Cere parola la modificări",
         "on": "CannonCommander îți cere parola înainte de modificările sensibile.",
         "off": "Întrebarea e oprită. Modificările sensibile au nevoie de o conectare recentă."
       },
@@ -4679,9 +4679,9 @@
         "add": "Adaugă o cheie de acces",
         "none": "Încă nicio cheie de acces",
         "noneHint": "Adaugă una și te conectezi aici fără să tastezi.",
-        "created": "adăugată {when}",
-        "used": "folosită ultima dată {when}",
-        "never": "niciodată folosită",
+        "created": "Adăugată {when}",
+        "used": "Folosită ultima dată {when}",
+        "never": "Niciodată folosită",
         "here": "merge la această adresă",
         "other": "merge doar la {address}",
         "synced": "sincronizată pe dispozitivele tale",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Servicii de conectare",
+        "unnamed": "Serviciu de conectare",
         "hint": "Un serviciu de conectare conectează oamenii prin OpenID Connect, iar pagina de conectare îi arată butonul cât timp e pornit.",
         "add": "Adaugă un serviciu de conectare",
         "untested": "Netestat încă",
@@ -4785,6 +4786,7 @@
         "scopes": "Scope-uri",
         "nameClaim": "Nume din",
         "groupsClaim": "Grupuri din",
+        "more": "Mai multe setări",
         "missing": "Acest câmp are nevoie de o valoare.",
         "unreachable": "CannonCommander nu ajunge la {address}. E corectă adresa și poate containerul să ajungă acolo?"
       },

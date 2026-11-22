@@ -4330,7 +4330,7 @@
       "askPassword": {
         "title": "Menanyakan kata sandi lagi",
         "hint": "Beberapa perubahan perlu masuk dari beberapa menit terakhir: kunci sandi baru, token API dan kunci MCP, autentikasi dua faktor, layanan masuk, dan kata sandi yang Anda atur untuk orang lain. Jika milik Anda lebih lama, CannonCommander menanyakan kata sandi Anda dulu. Jika pertanyaannya dimatikan, Anda keluar lalu masuk lagi.",
-        "label": "Tanyakan kata sandi lagi",
+        "label": "Tanyakan kata sandi saat ada perubahan",
         "on": "CannonCommander menanyakan kata sandi Anda sebelum perubahan sensitif.",
         "off": "Pertanyaan dimatikan. Perubahan sensitif perlu masuk yang baru."
       },
@@ -4369,9 +4369,9 @@
         "add": "Tambahkan kunci sandi",
         "none": "Belum ada kunci sandi",
         "noneHint": "Tambahkan satu, dan Anda masuk di sini tanpa mengetik.",
-        "created": "ditambahkan {when}",
-        "used": "terakhir dipakai {when}",
-        "never": "belum pernah dipakai",
+        "created": "Ditambahkan {when}",
+        "used": "Terakhir dipakai {when}",
+        "never": "Belum pernah dipakai",
         "here": "berfungsi di alamat ini",
         "other": "hanya berfungsi di {address}",
         "synced": "disinkronkan di perangkat Anda",
@@ -4431,6 +4431,7 @@
       },
       "services": {
         "title": "Layanan masuk",
+        "unnamed": "Layanan masuk",
         "hint": "Layanan masuk membawa orang masuk lewat OpenID Connect, dan halaman masuk menampilkan tombolnya selama aktif.",
         "add": "Tambahkan layanan masuk",
         "untested": "Belum diuji",
@@ -4473,6 +4474,7 @@
         "scopes": "Scope",
         "nameClaim": "Nama dari",
         "groupsClaim": "Grup dari",
+        "more": "Pengaturan lainnya",
         "missing": "Kolom ini perlu nilai.",
         "unreachable": "CannonCommander tidak bisa menjangkau {address}. Apakah alamatnya benar, dan bisakah kontainer sampai ke sana?"
       },

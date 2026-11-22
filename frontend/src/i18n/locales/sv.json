@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "Fråga efter lösenordet igen",
         "hint": "Vissa ändringar kräver en inloggning från de senaste minuterna: nya lösennycklar, API-tokens och MCP-nycklar, tvåfaktorsautentisering, inloggningstjänster och ett lösenord som du sätter åt någon annan. Är din äldre frågar CannonCommander först efter ditt lösenord. Är frågan avstängd loggar du i stället ut och in igen.",
-        "label": "Fråga efter lösenordet igen",
+        "label": "Fråga efter lösenordet vid ändringar",
         "on": "CannonCommander frågar efter ditt lösenord före känsliga ändringar.",
         "off": "Frågan är avstängd. Känsliga ändringar kräver en ny inloggning."
       },
@@ -4524,9 +4524,9 @@
         "add": "Lägg till en lösennyckel",
         "none": "Ingen lösennyckel än",
         "noneHint": "Lägg till en, så loggar du in här utan att skriva.",
-        "created": "tillagd {when}",
-        "used": "senast använd {when}",
-        "never": "aldrig använd",
+        "created": "Tillagd {when}",
+        "used": "Senast använd {when}",
+        "never": "Aldrig använd",
         "here": "fungerar på den här adressen",
         "other": "fungerar bara på {address}",
         "synced": "synkad mellan dina enheter",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Inloggningstjänster",
+        "unnamed": "Inloggningstjänst",
         "hint": "En inloggningstjänst loggar in folk via OpenID Connect, och inloggningssidan visar dess knapp så länge den är på.",
         "add": "Lägg till en inloggningstjänst",
         "untested": "Inte testad än",
@@ -4629,6 +4630,7 @@
         "scopes": "Scopes",
         "nameClaim": "Namn från",
         "groupsClaim": "Grupper från",
+        "more": "Fler inställningar",
         "missing": "Det här fältet behöver ett värde.",
         "unreachable": "CannonCommander når inte {address}. Stämmer adressen, och kan containern komma dit?"
       },

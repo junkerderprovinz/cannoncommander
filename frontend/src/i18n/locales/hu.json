@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "A jelszó újbóli kérése",
         "hint": "Egyes módosításokhoz az elmúlt néhány percből származó bejelentkezés kell: új azonosítókulcsok, API-tokenek és MCP-kulcsok, a kéttényezős hitelesítés, a bejelentkezési szolgáltatások és egy jelszó, amelyet valaki másnak állít be. Ha az öné régebbi, a CannonCommander előbb a jelszavát kéri. Ha a kérdés ki van kapcsolva, helyette ki- és újra bejelentkezik.",
-        "label": "A jelszó újbóli kérése",
+        "label": "Jelszó kérése módosításkor",
         "on": "A CannonCommander az érzékeny módosítások előtt kéri a jelszavát.",
         "off": "A kérdés ki van kapcsolva. Az érzékeny módosításokhoz friss bejelentkezés kell."
       },
@@ -4524,9 +4524,9 @@
         "add": "Azonosítókulcs hozzáadása",
         "none": "Még nincs azonosítókulcs",
         "noneHint": "Adjon hozzá egyet, és itt gépelés nélkül jelentkezik be.",
-        "created": "hozzáadva {when}",
-        "used": "utoljára használva {when}",
-        "never": "még nem használt",
+        "created": "Hozzáadva {when}",
+        "used": "Utoljára használva {when}",
+        "never": "Még nem használt",
         "here": "ezen a címen működik",
         "other": "csak itt működik: {address}",
         "synced": "szinkronizálva az eszközei között",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Bejelentkezési szolgáltatások",
+        "unnamed": "Bejelentkezési szolgáltatás",
         "hint": "A bejelentkezési szolgáltatás OpenID Connecten keresztül jelentkezteti be az embereket, és a bejelentkezési oldal mutatja a gombját, amíg be van kapcsolva.",
         "add": "Bejelentkezési szolgáltatás hozzáadása",
         "untested": "Még nincs tesztelve",
@@ -4629,6 +4630,7 @@
         "scopes": "Scope-ok",
         "nameClaim": "Név forrása",
         "groupsClaim": "Csoportok forrása",
+        "more": "További beállítások",
         "missing": "Ennek a mezőnek érték kell.",
         "unreachable": "A CannonCommander nem éri el ezt: {address}. Helyes a cím, és eljut oda a konténer?"
       },

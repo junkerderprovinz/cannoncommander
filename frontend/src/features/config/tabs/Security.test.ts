@@ -15,7 +15,7 @@ const GET: Record<string, unknown> = {
   'me/sessions': { sessions: [{ id: 's1', via: 'password', created: '2026-11-21T10:00:00Z', seen: '2026-11-21T12:00:00Z', agent: 'Mozilla/5.0 (Windows NT 10.0) Firefox/150.0', from: '192.168.10.16', current: true }] },
   'me/tokens': { tokens: [] },
   'me/passkeys': { passkeys: [] },
-  'methods/oidc': { services: [{ id: 'config', provider: 'custom', name: 'OIDC', issuer: 'https://id.example', clientId: 'cc', secretSet: true, scopes: 'openid', nameClaim: 'preferred_username', groupsClaim: 'groups', ca: false, on: true, paused: false, tested: true, redirect: 'https://cc.example/api/auth/oidc/callback', fromConfig: true }] },
+  'methods/oidc': { services: [{ id: 'config', provider: 'pocket-id', name: '', issuer: 'https://id.example', clientId: 'cc', secretSet: true, scopes: 'openid', nameClaim: 'preferred_username', groupsClaim: 'groups', ca: false, on: true, paused: false, tested: true, redirect: 'https://cc.example/api/auth/oidc/callback', fromConfig: true }] },
   'methods/presets': { presets: [] },
   roles: { roles: ['admin', 'user', 'readonly'], serviceRole: 'user' },
 };
@@ -74,8 +74,8 @@ describe('the account and security tab', () => {
 
   it('shows the service of config.yaml as coming from there, with nothing to edit, remove or switch', async () => {
     await mount();
-    const row = document.querySelector('[data-signin-card="services"] [data-signin-service="custom"]')!;
-    expect(row.textContent).toContain('OIDC');
+    const row = document.querySelector('[data-signin-card="services"] [data-signin-service="pocket-id"]')!;
+    expect(row.textContent).toContain('Pocket ID');
     expect(row.textContent).toContain('https://id.example · aus der config.yaml');
     expect(row.textContent).not.toContain('Bearbeiten');
     expect(row.querySelector('[role="switch"]')).toBeNull();
@@ -86,7 +86,7 @@ describe('the account and security tab', () => {
     Object.assign(config, { on: false, paused: true });
     try {
       await mount();
-      const again = [...document.querySelectorAll<HTMLButtonElement>('[data-signin-service="custom"] button')].find((b) => b.textContent?.includes('Wieder einschalten'))!;
+      const again = [...document.querySelectorAll<HTMLButtonElement>('[data-signin-service="pocket-id"] button')].find((b) => b.textContent?.includes('Wieder einschalten'))!;
       again.click();
       await settle();
       expect(asked).toContain('PATCH methods/oidc/config');
@@ -101,7 +101,7 @@ describe('the account and security tab', () => {
     Object.assign(me, { password: false, via: 'service', service: 'config' });
     try {
       await mount();
-      expect(document.querySelector('[data-signin-card="password"]')?.textContent).toContain('Du meldest dich über OIDC an, deshalb hat dieses Konto hier kein Passwort.');
+      expect(document.querySelector('[data-signin-card="password"]')?.textContent).toContain('Du meldest dich über Pocket ID an, deshalb hat dieses Konto hier kein Passwort.');
       expect(document.querySelector('[data-signin-card="twoFactor"]')?.textContent).toContain('Das läuft über deinen Anmeldedienst');
       expect(document.querySelector('[data-signin-card="passkeys"]')?.textContent).toContain('Zwei-Faktor-Authentifizierung und Passkeys richtest du dort ein.');
     } finally {
@@ -132,6 +132,11 @@ describe('the account and security tab', () => {
       field(name!).dispatchEvent(new Event('input'));
     }
     await settle();
+    // Scopes, name and groups wait closed under More settings, beside the fields every setup needs.
+    const fold = document.querySelector('[data-signin-field="scopes"]')!.closest('[data-scope="accordion"][data-part="item"]')!;
+    expect(fold.querySelector('[data-part="item-trigger"]')?.textContent).toContain('Weitere Einstellungen');
+    expect(fold.querySelector('[data-part="item-content"]')?.getAttribute('data-state')).toBe('closed');
+    expect(document.querySelector('[data-signin-field="issuer"]')!.closest('[data-scope="accordion"]')).toBeNull();
     document.querySelector<HTMLButtonElement>('[data-signin-tile="service-test"]')!.click();
     await settle();
     expect(sent.at(-1)).toMatchObject({ provider: 'custom', name: 'Haus-ID', role: 'admin' });

@@ -202,6 +202,22 @@ describe('the sign in page', () => {
     expect(left.to).toEqual(['/signin/oidc/s1?return=%2F']);
   });
 
+  it('names a service by its own name, else by its kind with the mark, else as a sign-in service', async () => {
+    const button = async (service: Record<string, string>) => {
+      document.body.innerHTML = '';
+      script['GET options'] = { body: offer({ services: [service] }) };
+      await mount();
+      return document.querySelector('[data-signin="service"]')!;
+    };
+    expect((await button({ id: 's1', provider: 'pocket-id', name: 'Haus-ID' })).textContent).toContain('Haus-ID');
+    const kind = await button({ id: 'config', provider: 'pocket-id', name: '' });
+    expect(kind.textContent).toContain('Pocket ID');
+    expect(kind.querySelector('svg')).not.toBeNull();
+    const unnamed = await button({ id: 'config', provider: 'custom', name: '' });
+    expect(unnamed.textContent?.trim()).toBe('Anmeldedienst');
+    expect(unnamed.textContent).not.toContain('OIDC');
+  });
+
   it('starts the service of config.yaml where it always started', async () => {
     script['GET options'] = { body: offer({ services: [{ id: 'config', provider: 'custom', name: 'OIDC' }] }) };
     await mount();

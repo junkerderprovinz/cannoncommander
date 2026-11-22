@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Redemander le mot de passe",
         "hint": "Certaines modifications exigent une connexion datant de quelques minutes : nouvelles clés d'accès, jetons d'API et clés MCP, l'authentification à deux facteurs, les services de connexion et un mot de passe que vous définissez pour quelqu'un d'autre. Si la vôtre est plus ancienne, CannonCommander vous demande d'abord votre mot de passe. Si la question est désactivée, vous vous déconnectez et vous reconnectez à la place.",
-        "label": "Redemander le mot de passe",
+        "label": "Demander le mot de passe lors des modifications",
         "on": "CannonCommander vous demande votre mot de passe avant les modifications sensibles.",
         "off": "La question est désactivée. Les modifications sensibles exigent une connexion récente."
       },
@@ -4679,9 +4679,9 @@
         "add": "Ajouter une clé d'accès",
         "none": "Aucune clé d'accès pour l'instant",
         "noneHint": "Ajoutez-en une et vous vous connectez ici sans rien taper.",
-        "created": "ajoutée {when}",
-        "used": "dernière utilisation {when}",
-        "never": "jamais utilisée",
+        "created": "Ajoutée {when}",
+        "used": "Dernière utilisation {when}",
+        "never": "Jamais utilisée",
         "here": "fonctionne à cette adresse",
         "other": "fonctionne seulement à {address}",
         "synced": "synchronisée sur vos appareils",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Services de connexion",
+        "unnamed": "Service de connexion",
         "hint": "Un service de connexion connecte les personnes via OpenID Connect, et la page de connexion affiche son bouton tant qu'il est activé.",
         "add": "Ajouter un service de connexion",
         "untested": "Pas encore testé",
@@ -4785,6 +4786,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nom depuis",
         "groupsClaim": "Groupes depuis",
+        "more": "Plus de réglages",
         "missing": "Ce champ a besoin d'une valeur.",
         "unreachable": "CannonCommander n'atteint pas {address}. L'adresse est-elle juste, et le conteneur peut-il y accéder ?"
       },

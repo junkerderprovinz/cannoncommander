@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "Parolayı yeniden sorma",
         "hint": "Bazı değişiklikler son birkaç dakikadan bir giriş ister: yeni geçiş anahtarları, API belirteçleri ve MCP anahtarları, iki faktörlü kimlik doğrulama, giriş hizmetleri ve başka biri için ayarladığın bir parola. Seninki daha eskiyse CannonCommander önce parolanı sorar. Soru kapalıyken bunun yerine çıkış yapıp yeniden giriş yaparsın.",
-        "label": "Parolayı yeniden sor",
+        "label": "Değişikliklerde parolayı sor",
         "on": "CannonCommander hassas değişikliklerden önce parolanı sorar.",
         "off": "Soru kapalı. Hassas değişiklikler yeni bir giriş ister."
       },
@@ -4524,9 +4524,9 @@
         "add": "Geçiş anahtarı ekle",
         "none": "Henüz geçiş anahtarı yok",
         "noneHint": "Bir tane ekle, burada yazmadan giriş yap.",
-        "created": "eklendi {when}",
-        "used": "son kullanım {when}",
-        "never": "hiç kullanılmadı",
+        "created": "Eklendi {when}",
+        "used": "Son kullanım {when}",
+        "never": "Hiç kullanılmadı",
         "here": "bu adreste çalışır",
         "other": "yalnızca {address} adresinde çalışır",
         "synced": "cihazların arasında eşitlendi",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Giriş hizmetleri",
+        "unnamed": "Giriş hizmeti",
         "hint": "Bir giriş hizmeti insanları OpenID Connect üzerinden içeri alır ve giriş sayfası açık olduğu sürece düğmesini gösterir.",
         "add": "Giriş hizmeti ekle",
         "untested": "Henüz denenmedi",
@@ -4629,6 +4630,7 @@
         "scopes": "Scope'lar",
         "nameClaim": "Ad kaynağı",
         "groupsClaim": "Grup kaynağı",
+        "more": "Daha fazla ayar",
         "missing": "Bu alana bir değer gerekiyor.",
         "unreachable": "CannonCommander {address} adresine ulaşamıyor. Adres doğru mu, kapsayıcı oraya erişebiliyor mu?"
       },

@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Paroles atkārtota prasīšana",
         "hint": "Dažām izmaiņām vajadzīga pierakstīšanās pēdējo minūšu laikā: jaunas piekļuves atslēgas, API marķieri un MCP atslēgas, divfaktoru autentifikācija, pierakstīšanās pakalpojumi un parole, ko iestati kādam citam. Ja tava ir vecāka, CannonCommander vispirms prasa tavu paroli. Kad jautājums ir izslēgts, tu izraksties un pieraksties no jauna.",
-        "label": "Vēlreiz prasīt paroli",
+        "label": "Prasīt paroli izmaiņu laikā",
         "on": "CannonCommander pirms jutīgām izmaiņām prasa tavu paroli.",
         "off": "Jautājums ir izslēgts. Jutīgām izmaiņām vajadzīga svaiga pierakstīšanās."
       },
@@ -4679,9 +4679,9 @@
         "add": "Pievienot piekļuves atslēgu",
         "none": "Vēl nav piekļuves atslēgas",
         "noneHint": "Pievieno vienu, un te pierakstīsies bez rakstīšanas.",
-        "created": "pievienota {when}",
-        "used": "pēdējo reizi lietota {when}",
-        "never": "nekad nav lietota",
+        "created": "Pievienota {when}",
+        "used": "Pēdējo reizi lietota {when}",
+        "never": "Nekad nav lietota",
         "here": "darbojas šajā adresē",
         "other": "darbojas tikai adresē {address}",
         "synced": "sinhronizēta tavās ierīcēs",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Pierakstīšanās pakalpojumi",
+        "unnamed": "Pierakstīšanās pakalpojums",
         "hint": "Pierakstīšanās pakalpojums pieraksta cilvēkus ar OpenID Connect, un pierakstīšanās lapa rāda tā pogu, kamēr tas ir ieslēgts.",
         "add": "Pievienot pierakstīšanās pakalpojumu",
         "untested": "Vēl nav pārbaudīts",
@@ -4785,6 +4786,7 @@
         "scopes": "Scopes",
         "nameClaim": "Vārds no",
         "groupsClaim": "Grupas no",
+        "more": "Vairāk iestatījumu",
         "missing": "Šim laukam vajadzīga vērtība.",
         "unreachable": "CannonCommander nesasniedz {address}. Vai adrese ir pareiza, un vai konteiners var tur tikt?"
       },

@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Pedir novamente a palavra-passe",
         "hint": "Algumas alterações precisam de um início de sessão dos últimos minutos: novas chaves de acesso, tokens de API e chaves MCP, a autenticação de dois fatores, os serviços de início de sessão e uma palavra-passe que define para outra pessoa. Se o seu for mais antigo, o CannonCommander pede primeiro a sua palavra-passe. Com a pergunta desligada, termina a sessão e volta a entrar.",
-        "label": "Pedir novamente a palavra-passe",
+        "label": "Pedir a palavra-passe nas alterações",
         "on": "O CannonCommander pede a sua palavra-passe antes de alterações sensíveis.",
         "off": "A pergunta está desligada. As alterações sensíveis precisam de um início de sessão recente."
       },
@@ -4679,9 +4679,9 @@
         "add": "Adicionar chave de acesso",
         "none": "Ainda não há nenhuma chave de acesso",
         "noneHint": "Adicione uma e entra aqui sem escrever nada.",
-        "created": "adicionada {when}",
-        "used": "última utilização {when}",
-        "never": "nunca utilizada",
+        "created": "Adicionada {when}",
+        "used": "Última utilização {when}",
+        "never": "Nunca utilizada",
         "here": "funciona neste endereço",
         "other": "funciona apenas em {address}",
         "synced": "sincronizada nos seus dispositivos",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Serviços de início de sessão",
+        "unnamed": "Serviço de início de sessão",
         "hint": "Um serviço de início de sessão deixa as pessoas entrar através de OpenID Connect, e a página de início de sessão mostra o seu botão enquanto está ligado.",
         "add": "Adicionar um serviço de início de sessão",
         "untested": "Ainda não testado",
@@ -4785,6 +4786,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nome a partir de",
         "groupsClaim": "Grupos a partir de",
+        "more": "Mais definições",
         "missing": "Este campo precisa de um valor.",
         "unreachable": "O CannonCommander não alcança {address}. O endereço está certo, e o contentor consegue chegar lá?"
       },

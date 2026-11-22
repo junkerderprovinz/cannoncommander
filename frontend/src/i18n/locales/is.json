@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "Spyrja aftur um lykilorðið",
         "hint": "Sumar breytingar krefjast innskráningar frá síðustu mínútum: nýir aðgangslyklar, API-tákn og MCP-lyklar, tveggja þátta auðkenning, innskráningarþjónustur og lykilorð sem þú stillir fyrir einhvern annan. Ef þín er eldri spyr CannonCommander fyrst um lykilorðið þitt. Ef slökkt er á spurningunni skráirðu þig í staðinn út og aftur inn.",
-        "label": "Spyrja aftur um lykilorðið",
+        "label": "Biðja um lykilorðið við breytingar",
         "on": "CannonCommander spyr um lykilorðið þitt á undan viðkvæmum breytingum.",
         "off": "Slökkt er á spurningunni. Viðkvæmar breytingar krefjast nýrrar innskráningar."
       },
@@ -4524,9 +4524,9 @@
         "add": "Bæta við aðgangslykli",
         "none": "Enginn aðgangslykill enn",
         "noneHint": "Bættu einum við og þú skráir þig inn hér án þess að slá neitt inn.",
-        "created": "bætt við {when}",
-        "used": "síðast notaður {when}",
-        "never": "aldrei notaður",
+        "created": "Bætt við {when}",
+        "used": "Síðast notaður {when}",
+        "never": "Aldrei notaður",
         "here": "virkar á þessu vistfangi",
         "other": "virkar aðeins á {address}",
         "synced": "samstilltur milli tækjanna þinna",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Innskráningarþjónustur",
+        "unnamed": "Innskráningarþjónusta",
         "hint": "Innskráningarþjónusta skráir fólk inn með OpenID Connect og innskráningarsíðan sýnir hnappinn hennar á meðan kveikt er á henni.",
         "add": "Bæta við innskráningarþjónustu",
         "untested": "Ekki prófuð enn",
@@ -4629,6 +4630,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nafn úr",
         "groupsClaim": "Hópar úr",
+        "more": "Fleiri stillingar",
         "missing": "Þessi reitur þarf gildi.",
         "unreachable": "CannonCommander nær ekki í {address}. Er vistfangið rétt og kemst gámurinn þangað?"
       },

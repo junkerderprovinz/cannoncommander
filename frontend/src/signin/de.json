@@ -70,7 +70,7 @@
     "askPassword": {
       "title": "Nach dem Passwort fragen",
       "hint": "Manche Änderungen brauchen eine Anmeldung aus den letzten paar Minuten: neue Passkeys, API-Tokens und MCP-Schlüssel, die Zwei-Faktor-Authentifizierung, Anmeldedienste und ein Passwort, das du für jemand anderen setzt. Ist deine älter, fragt CannonCommander zuerst nach deinem Passwort. Ist die Frage aus, meldest du dich stattdessen ab und wieder an.",
-      "label": "Noch einmal nach dem Passwort fragen",
+      "label": "Bei Änderungen nach dem Passwort fragen",
       "on": "CannonCommander fragt vor heiklen Änderungen nach deinem Passwort.",
       "off": "Die Frage ist aus. Heikle Änderungen brauchen eine frische Anmeldung."
     },
@@ -110,9 +110,9 @@
       "add": "Passkey hinzufügen",
       "none": "Noch kein Passkey",
       "noneHint": "Leg einen an, dann meldest du dich hier ohne Tippen an.",
-      "created": "hinzugefügt {when}",
-      "used": "zuletzt benutzt {when}",
-      "never": "noch nie benutzt",
+      "created": "Hinzugefügt {when}",
+      "used": "Zuletzt benutzt {when}",
+      "never": "Noch nie benutzt",
       "here": "gilt unter dieser Adresse",
       "other": "gilt nur unter {address}",
       "synced": "auf deinen Geräten abgeglichen",
@@ -173,6 +173,7 @@
     },
     "services": {
       "title": "Anmeldedienste",
+      "unnamed": "Anmeldedienst",
       "hint": "Ein Anmeldedienst meldet Leute über OpenID Connect an, und die Anmeldeseite zeigt seinen Knopf, solange er an ist.",
       "add": "Anmeldedienst hinzufügen",
       "untested": "Noch nicht getestet",
@@ -215,6 +216,7 @@
       "scopes": "Scopes",
       "nameClaim": "Name aus",
       "groupsClaim": "Gruppen aus",
+      "more": "Weitere Einstellungen",
       "missing": "Dieses Feld braucht einen Wert.",
       "unreachable": "CannonCommander erreicht {address} nicht. Stimmt die Adresse, und kommt der Container dorthin?"
     },

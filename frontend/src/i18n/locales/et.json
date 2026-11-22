@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "Parooli uuesti küsimine",
         "hint": "Mõned muudatused vajavad sisselogimist viimastest minutitest: uued pääsuvõtmed, API-tõendid ja MCP-võtmed, kaheastmeline autentimine, sisselogimisteenused ja parool, mille määrad kellelegi teisele. Kui sinu oma on vanem, küsib CannonCommander kõigepealt sinu parooli. Kui küsimus on välja lülitatud, logid selle asemel välja ja uuesti sisse.",
-        "label": "Küsi parooli uuesti",
+        "label": "Küsi muudatuste puhul parooli",
         "on": "CannonCommander küsib enne tundlikke muudatusi sinu parooli.",
         "off": "Küsimus on välja lülitatud. Tundlikud muudatused vajavad värsket sisselogimist."
       },
@@ -4524,9 +4524,9 @@
         "add": "Lisa pääsuvõti",
         "none": "Pääsuvõtit veel pole",
         "noneHint": "Lisa üks ja logid siin sisse ilma midagi tippimata.",
-        "created": "lisatud {when}",
-        "used": "viimati kasutatud {when}",
-        "never": "pole kunagi kasutatud",
+        "created": "Lisatud {when}",
+        "used": "Viimati kasutatud {when}",
+        "never": "Pole kunagi kasutatud",
         "here": "töötab sellel aadressil",
         "other": "töötab ainult aadressil {address}",
         "synced": "sünkroonitud sinu seadmete vahel",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Sisselogimisteenused",
+        "unnamed": "Sisselogimisteenus",
         "hint": "Sisselogimisteenus logib inimesi sisse OpenID Connecti kaudu ja sisselogimisleht näitab selle nuppu seni, kuni see on sees.",
         "add": "Lisa sisselogimisteenus",
         "untested": "Pole veel testitud",
@@ -4629,6 +4630,7 @@
         "scopes": "Scope'id",
         "nameClaim": "Nimi väljalt",
         "groupsClaim": "Grupid väljalt",
+        "more": "Rohkem sätteid",
         "missing": "Sellel väljal peab olema väärtus.",
         "unreachable": "CannonCommander ei jõua aadressile {address}. Kas aadress on õige ja kas konteiner pääseb sinna?"
       },

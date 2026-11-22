@@ -4330,7 +4330,7 @@
       "askPassword": {
         "title": "再次询问密码",
         "hint": "有些更改需要最近几分钟内的登录：新的通行密钥、API 令牌和 MCP 密钥、双重身份验证、登录服务，以及你为他人设置的密码。如果你的登录更早，CannonCommander 会先询问你的密码。关闭这个询问后，你需要退出再重新登录。",
-        "label": "再次询问密码",
+        "label": "更改时询问密码",
         "on": "CannonCommander 会在敏感更改前询问你的密码。",
         "off": "询问已关闭。敏感更改需要重新登录。"
       },
@@ -4431,6 +4431,7 @@
       },
       "services": {
         "title": "登录服务",
+        "unnamed": "登录服务",
         "hint": "登录服务通过 OpenID Connect 让人们登录，开启期间登录页面会显示它的按钮。",
         "add": "添加登录服务",
         "untested": "尚未测试",
@@ -4473,6 +4474,7 @@
         "scopes": "Scope",
         "nameClaim": "名称来源",
         "groupsClaim": "组来源",
+        "more": "更多设置",
         "missing": "此字段需要填写。",
         "unreachable": "CannonCommander 无法连接 {address}。地址正确吗？容器能访问到那里吗？"
       },

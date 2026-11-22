@@ -4792,7 +4792,7 @@
       "askPassword": {
         "title": "Znovu se ptát na heslo",
         "hint": "Některé změny vyžadují přihlášení z posledních pár minut: nové přístupové klíče, tokeny API a klíče MCP, dvoufaktorové ověřování, přihlašovací služby a heslo, které nastavujete někomu jinému. Pokud je to vaše starší, CannonCommander se nejdřív zeptá na vaše heslo. Když je otázka vypnutá, odhlásíte se a znovu přihlásíte.",
-        "label": "Znovu se ptát na heslo",
+        "label": "Ptát se na heslo při změnách",
         "on": "CannonCommander se před citlivými změnami ptá na vaše heslo.",
         "off": "Otázka je vypnutá. Citlivé změny vyžadují čerstvé přihlášení."
       },
@@ -4834,9 +4834,9 @@
         "add": "Přidat přístupový klíč",
         "none": "Zatím žádný přístupový klíč",
         "noneHint": "Přidejte si jeden a budete se tu přihlašovat bez psaní.",
-        "created": "přidán {when}",
-        "used": "naposledy použit {when}",
-        "never": "nikdy nepoužit",
+        "created": "Přidán {when}",
+        "used": "Naposledy použit {when}",
+        "never": "Nikdy nepoužit",
         "here": "funguje na této adrese",
         "other": "funguje jen na {address}",
         "synced": "synchronizován mezi vašimi zařízeními",
@@ -4899,6 +4899,7 @@
       },
       "services": {
         "title": "Přihlašovací služby",
+        "unnamed": "Přihlašovací služba",
         "hint": "Přihlašovací služba přihlašuje lidi přes OpenID Connect a přihlašovací stránka ukazuje její tlačítko, dokud je zapnutá.",
         "add": "Přidat přihlašovací službu",
         "untested": "Zatím netestováno",
@@ -4941,6 +4942,7 @@
         "scopes": "Scopes",
         "nameClaim": "Jméno z",
         "groupsClaim": "Skupiny z",
+        "more": "Další nastavení",
         "missing": "Toto pole potřebuje hodnotu.",
         "unreachable": "CannonCommander se nedostane na {address}. Je adresa správná a dostane se tam kontejner?"
       },

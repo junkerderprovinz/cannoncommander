@@ -4330,7 +4330,7 @@
       "askPassword": {
         "title": "Hỏi lại mật khẩu",
         "hint": "Một số thay đổi cần một lần đăng nhập trong vài phút gần đây: khóa truy cập mới, mã thông báo API và khóa MCP, xác thực hai yếu tố, dịch vụ đăng nhập và mật khẩu bạn đặt cho người khác. Nếu lần đăng nhập của bạn cũ hơn, CannonCommander sẽ hỏi mật khẩu trước. Khi tắt câu hỏi, bạn sẽ đăng xuất rồi đăng nhập lại.",
-        "label": "Hỏi lại mật khẩu",
+        "label": "Hỏi mật khẩu khi thay đổi",
         "on": "CannonCommander hỏi mật khẩu của bạn trước các thay đổi nhạy cảm.",
         "off": "Câu hỏi đã tắt. Các thay đổi nhạy cảm cần một lần đăng nhập mới."
       },
@@ -4369,9 +4369,9 @@
         "add": "Thêm khóa truy cập",
         "none": "Chưa có khóa truy cập",
         "noneHint": "Thêm một khóa và bạn sẽ đăng nhập ở đây mà không cần gõ.",
-        "created": "thêm {when}",
-        "used": "dùng lần cuối {when}",
-        "never": "chưa từng dùng",
+        "created": "Thêm {when}",
+        "used": "Dùng lần cuối {when}",
+        "never": "Chưa từng dùng",
         "here": "dùng được ở địa chỉ này",
         "other": "chỉ dùng được ở {address}",
         "synced": "đồng bộ giữa các thiết bị của bạn",
@@ -4431,6 +4431,7 @@
       },
       "services": {
         "title": "Dịch vụ đăng nhập",
+        "unnamed": "Dịch vụ đăng nhập",
         "hint": "Dịch vụ đăng nhập cho mọi người đăng nhập qua OpenID Connect, và trang đăng nhập hiện nút của nó khi đang bật.",
         "add": "Thêm dịch vụ đăng nhập",
         "untested": "Chưa thử",
@@ -4473,6 +4474,7 @@
         "scopes": "Scope",
         "nameClaim": "Tên lấy từ",
         "groupsClaim": "Nhóm lấy từ",
+        "more": "Cài đặt khác",
         "missing": "Trường này cần một giá trị.",
         "unreachable": "CannonCommander không kết nối được {address}. Địa chỉ có đúng không, và container có tới được đó không?"
       },

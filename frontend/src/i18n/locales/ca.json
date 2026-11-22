@@ -4638,7 +4638,7 @@
       "askPassword": {
         "title": "Tornar a demanar la contrasenya",
         "hint": "Alguns canvis necessiten un inici de sessió dels darrers minuts: claus d'accés noves, testimonis d'API i claus MCP, l'autenticació de dos factors, els serveis d'inici de sessió i una contrasenya que poseu per a una altra persona. Si el vostre és més antic, CannonCommander us demana primer la contrasenya. Amb la pregunta desactivada, tanqueu la sessió i torneu a entrar.",
-        "label": "Torna a demanar la contrasenya",
+        "label": "Demana la contrasenya en fer canvis",
         "on": "CannonCommander us demana la contrasenya abans dels canvis delicats.",
         "off": "La pregunta està desactivada. Els canvis delicats necessiten un inici de sessió recent."
       },
@@ -4679,9 +4679,9 @@
         "add": "Afegeix una clau d'accés",
         "none": "Encara no hi ha cap clau d'accés",
         "noneHint": "Afegiu-ne una i entrareu aquí sense escriure res.",
-        "created": "afegida {when}",
-        "used": "darrer ús {when}",
-        "never": "mai utilitzada",
+        "created": "Afegida {when}",
+        "used": "Darrer ús {when}",
+        "never": "Mai utilitzada",
         "here": "funciona en aquesta adreça",
         "other": "només funciona a {address}",
         "synced": "sincronitzada als vostres dispositius",
@@ -4743,6 +4743,7 @@
       },
       "services": {
         "title": "Serveis d'inici de sessió",
+        "unnamed": "Servei d'inici de sessió",
         "hint": "Un servei d'inici de sessió deixa entrar les persones amb OpenID Connect, i la pàgina d'inici de sessió mostra el seu botó mentre és actiu.",
         "add": "Afegeix un servei d'inici de sessió",
         "untested": "Encara no provat",
@@ -4785,6 +4786,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nom des de",
         "groupsClaim": "Grups des de",
+        "more": "Més opcions",
         "missing": "Aquest camp necessita un valor.",
         "unreachable": "CannonCommander no arriba a {address}. És correcta l'adreça, i el contenidor hi pot arribar?"
       },

@@ -4484,7 +4484,7 @@
       "askPassword": {
         "title": "Volver pedir o contrasinal",
         "hint": "Algúns cambios precisan un inicio de sesión dos últimos minutos: novas chaves de acceso, tokens de API e chaves MCP, a autenticación de dous factores, os servizos de inicio de sesión e un contrasinal que pos para outra persoa. Se o teu é máis antigo, CannonCommander pídeche primeiro o contrasinal. Coa pregunta desactivada, pechas a sesión e volves entrar.",
-        "label": "Volver pedir o contrasinal",
+        "label": "Pedir o contrasinal ao facer cambios",
         "on": "CannonCommander pídeche o contrasinal antes dos cambios delicados.",
         "off": "A pregunta está desactivada. Os cambios delicados precisan un inicio de sesión recente."
       },
@@ -4524,9 +4524,9 @@
         "add": "Engadir unha chave de acceso",
         "none": "Aínda non hai chaves de acceso",
         "noneHint": "Engade unha e entras aquí sen escribir nada.",
-        "created": "engadida {when}",
-        "used": "último uso {when}",
-        "never": "nunca usada",
+        "created": "Engadida {when}",
+        "used": "Último uso {when}",
+        "never": "Nunca usada",
         "here": "funciona neste enderezo",
         "other": "só funciona en {address}",
         "synced": "sincronizada nos teus dispositivos",
@@ -4587,6 +4587,7 @@
       },
       "services": {
         "title": "Servizos de inicio de sesión",
+        "unnamed": "Servizo de inicio de sesión",
         "hint": "Un servizo de inicio de sesión deixa entrar as persoas mediante OpenID Connect, e a páxina de inicio de sesión amosa o seu botón mentres está activo.",
         "add": "Engadir un servizo de inicio de sesión",
         "untested": "Aínda sen probar",
@@ -4629,6 +4630,7 @@
         "scopes": "Scopes",
         "nameClaim": "Nome desde",
         "groupsClaim": "Grupos desde",
+        "more": "Máis axustes",
         "missing": "Este campo precisa un valor.",
         "unreachable": "CannonCommander non chega a {address}. É correcto o enderezo, e pode o contedor chegar alí?"
       },
