@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"net"
 	"net/http"
+	"net/netip"
 	"strings"
 	"sync"
 	"time"
@@ -22,6 +23,12 @@ const (
 	maxWrongPasswords = 5
 	maxUnknownSlugs   = 30
 	guardWindow       = 5 * time.Minute
+	// A link takes this many wrong passwords an hour from all addresses
+	// together, then waits twice as long after each one, up to a minute,
+	// so a short password does not fall to guesses from many addresses.
+	freeLinkTries = 10
+	linkTriesFor  = time.Hour
+	maxLinkWait   = time.Minute
 	// openedAgain is how long a visitor counts as one view, so reloading
 	// the page neither counts nor notifies again.
 	openedAgain  = 30 * time.Minute
@@ -86,6 +93,7 @@ type guard struct {
 type window struct {
 	n     int
 	until time.Time
+	last  time.Time
 }
 
 func newGuard() *guard { return &guard{hits: map[string]*window{}} }
@@ -121,6 +129,35 @@ func (g *guard) fail(key string) {
 	w.n++
 }
 
+// backoff reports how long key waits under the rule for one link: nothing
+// for its first freeLinkTries failures in linkTriesFor, then a second after
+// the last one, doubling up to maxLinkWait.
+func (g *guard) backoff(key string) time.Duration {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	w := g.hits[key]
+	now := time.Now()
+	if w == nil || now.After(w.until) || w.n < freeLinkTries {
+		return 0
+	}
+	wait := min(maxLinkWait, time.Second<<min(w.n-freeLinkTries, 6))
+	return max(0, w.last.Add(wait).Sub(now))
+}
+
+// failLink counts one wrong password for the link of key.
+func (g *guard) failLink(key string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	now := time.Now()
+	w := g.hits[key]
+	if w == nil || now.After(w.until) {
+		w = &window{until: now.Add(linkTriesFor)}
+		g.hits[key] = w
+	}
+	w.n++
+	w.last = now
+}
+
 func (g *guard) forget(key string) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
@@ -154,9 +191,22 @@ func (o *opens) first(key string) bool {
 	return true
 }
 
-// remoteIP is the visitor's address. Forwarded headers count only from a
-// proxy the admin trusts, or anyone could pick a fresh address per guess.
+// remoteIP is the visitor's address, an IPv6 one as its /64, the block one
+// connection usually holds. Forwarded headers count only from a proxy the
+// admin trusts, or anyone could pick a fresh address per guess.
 func remoteIP(r *http.Request) string {
+	return network(clientIP(r))
+}
+
+func network(ip string) string {
+	addr, err := netip.ParseAddr(ip)
+	if err != nil || addr.Unmap().Is4() {
+		return ip
+	}
+	return netip.PrefixFrom(addr, 64).Masked().String()
+}
+
+func clientIP(r *http.Request) string {
 	cfg := &settings.Config
 	if cfg.Http.TrustProxyHeaders && settings.IsTrustedProxyPeer(r) {
 		if ip := settings.TrustedProxyClientIP(r.Header.Get("X-Forwarded-For")); ip != "" {

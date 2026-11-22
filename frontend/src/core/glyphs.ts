@@ -84,5 +84,10 @@ export function pictureComponent(src: string): FunctionalComponent {
   if (!pictures.has(src)) pictures.set(src, () => h('img', { src, alt: '', class: 'glyph-picture', draggable: false }));
   return pictures.get(src)!;
 }
-// Button and Window pick a glyph by a key, which in this app is the glyph's own name.
-setGlyphResolver((key) => (hasGlyph(key) ? glyphComponent(key) : undefined));
+// Button and Window pick a glyph by a key, which in this app is the glyph's own name. A few of GlimStone's windows
+// name their buttons by meaning instead.
+const MEANINGS: Record<string, string> = { confirm: 'IconConfirm' };
+setGlyphResolver((key) => {
+  const name = MEANINGS[key] ?? key;
+  return hasGlyph(name) ? glyphComponent(name) : undefined;
+});

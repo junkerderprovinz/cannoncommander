@@ -32,6 +32,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestMain(m *testing.M) { os.Exit(testutil.Main(m)) }
@@ -283,7 +284,6 @@ func TestCreatingALinkChecksEverything(t *testing.T) {
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "slug": "-ab-c"}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "slug": "über-uns"}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "slug": "vergeben"}, http.StatusConflict},
-		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "password": "kurz"}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "expires": past}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "limit": -1}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "extra": 1}, http.StatusBadRequest},
@@ -1034,5 +1034,75 @@ func TestALinkComesWithItsAddressAsAQRCode(t *testing.T) {
 	}
 	if a := e.do("GET", "/shares/"+sh.ID+"/qr", nil, "X-User", "bob"); a.code != http.StatusNotFound {
 		t.Fatalf("bob reads the address: %d", a.code)
+	}
+}
+
+func TestALinkTakesAPasswordOfAnyLength(t *testing.T) {
+	e := newEnv(t)
+	var short struct{ Short bool }
+	a := e.do("POST", "/shares", map[string]any{"paths": []string{"/mnt/user/fotos/Urlaub"}, "password": "ab"}, "X-User", "anna")
+	if a.code != http.StatusCreated {
+		t.Fatalf("a short link password was refused: %d %s", a.code, a.body)
+	}
+	if a.into(t, &short); !short.Short {
+		t.Fatal("the answer does not say the password is short")
+	}
+	var sh shares.Share
+	a.into(t, &sh)
+	if unlock := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "ab"}); unlock.code != http.StatusOK {
+		t.Fatalf("a short link password does not unlock: %d", unlock.code)
+	}
+	a = e.do("PATCH", "/shares/"+sh.ID, map[string]any{"password": "sonnenschein-am-meer"}, "X-User", "anna")
+	short.Short = false
+	if a.into(t, &short); short.Short {
+		t.Fatalf("a long password is called short: %d %s", a.code, a.body)
+	}
+	a = e.do("PATCH", "/shares/"+sh.ID, map[string]any{"password": "x"}, "X-User", "anna")
+	if a.into(t, &short); !short.Short {
+		t.Fatalf("the change does not say the password is short: %d %s", a.code, a.body)
+	}
+}
+
+// behindProxy trusts the test's own address as a proxy, so X-Forwarded-For
+// names the visitor.
+func behindProxy(t *testing.T) {
+	saved := settings.Config.Http
+	t.Cleanup(func() { settings.Config.Http = saved })
+	settings.Config.Http.TrustProxyHeaders = true
+	settings.Config.Http.TrustedProxies = []string{"127.0.0.1/32", "::1/128"}
+}
+
+func TestOneIPv6NetworkGuessesAsOneVisitor(t *testing.T) {
+	e := newEnv(t)
+	behindProxy(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/a"}, "password": "sonnenschein"})
+	for i := 1; i <= 5; i++ {
+		from := "2001:db8:1:2::" + strconv.Itoa(i)
+		if a := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "falsch"}, "X-Forwarded-For", from); a.code != http.StatusForbidden {
+			t.Fatalf("try from %s: %d", from, a.code)
+		}
+	}
+	if a := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "falsch"}, "X-Forwarded-For", "2001:db8:1:2::99"); a.code != http.StatusTooManyRequests {
+		t.Fatalf("a sixth address of the same network: %d", a.code)
+	}
+}
+
+func TestGuessingOneLinkFromManyAddressesHasToWait(t *testing.T) {
+	e := newEnv(t)
+	behindProxy(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/a"}, "password": "sonnenschein"})
+	other := e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/b"}, "password": "sonnenschein"})
+	for i := 1; i <= 10; i++ {
+		from := "198.51.100." + strconv.Itoa(i)
+		if a := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "falsch"}, "X-Forwarded-For", from); a.code != http.StatusForbidden {
+			t.Fatalf("try from %s: %d", from, a.code)
+		}
+	}
+	a := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "falsch"}, "X-Forwarded-For", "203.0.113.7")
+	if a.code != http.StatusTooManyRequests || a.header.Get("Retry-After") == "" {
+		t.Fatalf("a fresh address after ten wrong passwords on the link: %d %v", a.code, a.header)
+	}
+	if a := e.do("POST", "/s/"+other.Slug+"/unlock", map[string]string{"password": "sonnenschein"}, "X-Forwarded-For", "203.0.113.7"); a.code != http.StatusOK {
+		t.Fatalf("another link waits too: %d", a.code)
 	}
 }

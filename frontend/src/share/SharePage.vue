@@ -9,13 +9,15 @@ import logo from '@/assets/brand/cannoncommander.svg';
 import { inside, type PublicItem, type PublicListing, type PublicShare, shareApi } from '@/api/share';
 import { fmtCount, fmtDate, fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
-import { plural, t } from '@/i18n';
+import { locale, plural, t } from '@/i18n';
 import { eyeWords } from '@/ui/kit';
 import { canPreview } from './preview';
 import SharePreview from './SharePreview.vue';
 import ShareUpload from './ShareUpload.vue';
 
 const s = (key: string, params?: Record<string, string | number>) => t('visit.' + key, params);
+// The clock time a throttled visitor may try again, to the second, since the wait backs off from one second up to a minute.
+const timeAfter = (seconds: number) => new Date(Date.now() + seconds * 1000).toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 const slug = decodeURIComponent(location.pathname.replace(/\/+$/, '').split('/').pop() || '');
 const api = shareApi(slug);
 
@@ -79,7 +81,7 @@ async function unlock() {
     await load();
   } catch (e) {
     if (e instanceof ApiError && e.status === 403) err.value = s('wrongPassword');
-    else if (e instanceof ApiError && e.status === 429) err.value = plural(Math.max(1, Math.ceil((e.retryAfter ?? 300) / 60)), 'visit.tooMany');
+    else if (e instanceof ApiError && e.status === 429) err.value = s('tryAgainAt', { time: timeAfter(e.retryAfter ?? 60) });
     else state.value = whyGone(e);
   } finally {
     busy.value = false;

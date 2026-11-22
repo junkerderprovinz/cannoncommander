@@ -224,12 +224,16 @@ func (s *Service) publicUnlock(w http.ResponseWriter, r *http.Request) error {
 	}
 	until := time.Now().Add(unlockFor).UTC().Truncate(time.Second)
 	if sh.Password {
-		key := "pw|" + sh.ID + "|" + remoteIP(r)
+		key, link := "pw|"+sh.ID+"|"+remoteIP(r), "link|"+sh.ID
 		if wait, blocked := s.guard.blocked(key, maxWrongPasswords); blocked {
+			return tooMany(w, wait)
+		}
+		if wait := s.guard.backoff(link); wait > 0 {
 			return tooMany(w, wait)
 		}
 		if utils.CheckPwd(req.Password, sh.passwordHash) != nil {
 			s.guard.fail(key)
+			s.guard.failLink(link)
 			return v1.Coded(http.StatusForbidden, "linkPasswordWrong", "this password is not right")
 		}
 		s.guard.forget(key)

@@ -1,12 +1,13 @@
 package accounts_test
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -21,6 +22,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
+	"github.com/junkerderprovinz/parleyport/kit/signin"
 )
 
 func TestMain(m *testing.M) {
@@ -30,26 +32,43 @@ func TestMain(m *testing.M) {
 	os.Exit(testutil.Main(m))
 }
 
-// world is a server with the real login store, three sources and the
-// accounts API. Requests name their user in X-User, or bring an API token
-// in X-Api.
+// world is a server with the real users table, three sources and the
+// accounts API behind the real sign-in. It starts as the version before
+// left it, with the admin jdp, and open imports and opens the sign-in.
 type world struct {
 	t     *testing.T
+	base  string
 	h     http.Handler
 	fs    *ccfs.Resolver
 	deps  v1.Deps
-	login *fakeLogin
+	auth  *signin.Auth
 	share string
 	admin users.User
+	// scheme is https once a test gives the server an https address.
+	scheme     string
+	disk, boot string
+
+	cookies map[string]string
 }
 
 const strong = "korrekt-pferd-batterie"
 
-func newWorld(t *testing.T) *world {
+// host is where the tests reach the server, so Origin matches it.
+const host = "cc.test"
+
+// newBareWorld is a server of the version before without accounts.
+func newBareWorld(t *testing.T) *world {
 	t.Helper()
 	base := t.TempDir()
 	saved := settings.Config
 	t.Cleanup(func() { settings.Config = saved })
+	settings.Config.Auth.Methods.NoAuth = false
+	settings.Config.Auth.Methods.PasswordAuth.Enabled = true
+	settings.Config.Auth.Methods.PasswordAuth.AdminPassword = ""
+	settings.Config.Auth.Methods.OidcAuth = settings.OidcConfig{}
+	settings.Config.Auth.AdminPassword = ""
+	settings.Config.Http.BaseURL = "/"
+	settings.Config.Http.ExternalUrl = ""
 
 	share, disk, boot := filepath.Join(base, "user"), filepath.Join(base, "disk1"), filepath.Join(base, "boot")
 	for _, d := range []string{"fotos/2026", "filme", "backups/anna", "downloads"} {
@@ -81,6 +100,13 @@ func newWorld(t *testing.T) *world {
 	}
 	t.Cleanup(func() { state.Close() })
 	app.MustWireServices(state.Default())
+	// The first start makes an admin without a password; the worlds here
+	// start from a server whose admin is jdp.
+	if first, err := state.GetUserByUsername("admin"); err == nil {
+		if err := state.DeleteUser(first.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
 
 	db := state.MainDB()
 	rules, err := accounts.Rules(db)
@@ -95,55 +121,81 @@ func newWorld(t *testing.T) *world {
 	if err != nil {
 		t.Fatal(err)
 	}
+	w := &world{t: t, base: base, scheme: "http", fs: fs, deps: v1.Deps{FS: fs, DB: db, Hub: hub.New(hub.Options{})}, share: share, cookies: map[string]string{}}
+	w.disk, w.boot = disk, boot
+	return w
+}
 
-	login := &fakeLogin{dead: map[string]bool{}}
-	accounts.UseLogin(login)
-	authenticate := func(_ http.ResponseWriter, r *http.Request) (*users.User, error) {
-		if raw := r.Header.Get("X-Api"); raw != "" {
-			id, isSession, ok := state.HashedTokenOwner(raw)
-			if !ok || isSession || state.IsTokenRevoked(raw) {
-				return nil, v1.Errorf(http.StatusUnauthorized, "login required")
-			}
-			u, err := state.GetUserByID(id)
-			return &u, err
-		}
-		u, err := state.GetUserByUsername(r.Header.Get("X-User"))
-		if err != nil {
-			return nil, v1.Errorf(http.StatusUnauthorized, "login required")
-		}
-		return &u, nil
+// newWorld is a closed server of the version before, with the admin jdp.
+func newWorld(t *testing.T) *world {
+	t.Helper()
+	w := newBareWorld(t)
+	w.admin = w.oldUser("jdp", strong, true, users.BackendScope{Path: w.share, Scope: "/"}, users.BackendScope{Path: w.disk, Scope: "/"}, users.BackendScope{Path: w.boot, Scope: "/"})
+	return w
+}
+
+// oldUser makes an account as the version before had it, with a bcrypt
+// password unless password is empty.
+func (w *world) oldUser(name, password string, admin bool, scopes ...users.BackendScope) users.User {
+	w.t.Helper()
+	all := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true, Configured: true}
+	u := users.User{FrontendUser: users.FrontendUser{
+		Username: name, LoginMethod: users.LoginMethodPassword,
+		Permissions: users.MarkPermissionsConfigured(users.Permissions{Admin: admin, Share: true}),
+	}}
+	if err := state.CreateUser(&u, password); err != nil {
+		w.t.Fatal(err)
 	}
-	deps := v1.Deps{FS: fs, DB: db, Hub: hub.New(hub.Options{})}
-	r := v1.NewRouter(deps, accounts.Track(db, authenticate))
+	if len(scopes) == 0 {
+		scopes = []users.BackendScope{{Path: w.share, Scope: "/"}}
+	}
+	for i := range scopes {
+		scopes[i].Permissions = all
+	}
+	u.BackendScopes = scopes
+	u.Permissions = users.MarkPermissionsConfigured(users.Permissions{Admin: admin, Share: true})
+	if err := state.UpdateUser(&u, "", "backendScopes", "permissions"); err != nil {
+		w.t.Fatal(err)
+	}
+	got, err := state.GetUserByID(u.ID)
+	if err != nil {
+		w.t.Fatal(err)
+	}
+	return got
+}
+
+// open imports the accounts into the sign-in and builds the server.
+func (w *world) open() *world {
+	w.t.Helper()
+	auth, err := accounts.Open(context.Background(), w.deps)
+	if err != nil {
+		w.t.Fatal(err)
+	}
+	w.t.Cleanup(accounts.Close)
+	w.auth = auth
+	r := v1.NewRouter(w.deps, accounts.Authenticate)
 	accounts.Routes(r)
 	shares.Routes(r)
-	h, err := r.Handler()
+	api, err := r.Handler()
 	if err != nil {
-		t.Fatal(err)
+		w.t.Fatal(err)
 	}
-	w := &world{t: t, h: h, fs: fs, deps: deps, login: login, share: share}
-	all := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true, Configured: true}
-	admin := users.User{FrontendUser: users.FrontendUser{
-		Username:    "jdp",
-		LoginMethod: users.LoginMethodPassword,
-		Permissions: users.MarkPermissionsConfigured(users.Permissions{Admin: true}),
-	}}
-	if err := state.CreateUser(&admin, strong); err != nil {
-		t.Fatal(err)
+	mux := http.NewServeMux()
+	for _, p := range []string{"/api/signin/v1/", "/signin/", "/api/auth/oidc/"} {
+		mux.Handle(p, accounts.Handler(auth))
 	}
-	admin.BackendScopes = []users.BackendScope{{Path: share, Scope: "/", Permissions: all}, {Path: disk, Scope: "/", Permissions: all}, {Path: boot, Scope: "/", Permissions: all}}
-	admin.Permissions = users.MarkPermissionsConfigured(users.Permissions{Admin: true})
-	if err := state.UpdateUser(&admin, "", "backendScopes", "permissions"); err != nil {
-		t.Fatal(err)
-	}
-	if w.admin, err = state.GetUserByID(admin.ID); err != nil {
-		t.Fatal(err)
+	mux.Handle("/", api)
+	w.h = auth.Guard(mux)
+	if u, err := state.GetUserByID(w.admin.ID); err == nil {
+		w.admin = u
 	}
 	return w
 }
 
-// req sends a request. Headers come as pairs after the body.
-func (w *world) req(method, target string, body any, headers ...string) *httptest.ResponseRecorder {
+type header = [2]string
+
+// req sends a request from the browser of the server's own page.
+func (w *world) req(method, target string, body any, headers ...header) *httptest.ResponseRecorder {
 	w.t.Helper()
 	var payload string
 	switch b := body.(type) {
@@ -157,25 +209,69 @@ func (w *world) req(method, target string, body any, headers ...string) *httptes
 		}
 		payload = string(raw)
 	}
-	r := httptest.NewRequest(method, target, strings.NewReader(payload))
-	for i := 0; i+1 < len(headers); i += 2 {
-		r.Header.Set(headers[i], headers[i+1])
+	r := httptest.NewRequest(method, w.scheme+"://"+host+target, strings.NewReader(payload))
+	if payload != "" {
+		r.Header.Set("Content-Type", "application/json")
+	}
+	r.Header.Set("Origin", w.scheme+"://"+host)
+	for _, h := range headers {
+		if h[0] == "Cookie" {
+			r.Header.Add("Cookie", h[1])
+			continue
+		}
+		r.Header.Set(h[0], h[1])
 	}
 	rec := httptest.NewRecorder()
 	w.h.ServeHTTP(rec, r)
 	return rec
 }
 
-// as sends a request as the user with this login name, from a session
-// named after the user.
-func (w *world) as(user, method, target string, body any) *httptest.ResponseRecorder {
+// as sends a request as the account with this name, signed in with strong.
+func (w *world) as(name, method, target string, body any) *httptest.ResponseRecorder {
 	w.t.Helper()
-	return w.req(method, target, body, "X-User", user, "X-Token", w.session(user))
+	return w.req(method, target, body, header{"Cookie", w.session(name)})
 }
 
-// session names the session of user in this test. Track writes a session
-// once a minute at most, so names must not repeat across tests.
-func (w *world) session(user string) string { return "session-" + user + "@" + w.t.Name() }
+// session signs name in once per test and returns its cookie.
+func (w *world) session(name string) string {
+	w.t.Helper()
+	if c, ok := w.cookies[name]; ok {
+		return c
+	}
+	c, err := w.signIn(name, strong)
+	if err != nil {
+		w.t.Fatal(err)
+	}
+	w.cookies[name] = c
+	return c
+}
+
+// signIn signs in with a password and returns the session cookie.
+func (w *world) signIn(name, password string) (string, error) {
+	rec := w.req("POST", "/api/signin/v1/login", map[string]string{"name": name, "password": password})
+	if rec.Code != http.StatusOK {
+		return "", &signInError{rec.Code, rec.Body.String()}
+	}
+	return sessionCookie(w.t, rec), nil
+}
+
+type signInError struct {
+	code int
+	body string
+}
+
+func (e *signInError) Error() string { return http.StatusText(e.code) + ": " + e.body }
+
+func sessionCookie(t *testing.T, rec *httptest.ResponseRecorder) string {
+	t.Helper()
+	for _, c := range rec.Result().Cookies() {
+		if (c.Name == "cc_session" || c.Name == "__Host-cc-session") && c.MaxAge > 0 {
+			return c.Name + "=" + c.Value
+		}
+	}
+	t.Fatalf("no session cookie: %v", rec.Result().Cookies())
+	return ""
+}
 
 func (w *world) must(want int, rec *httptest.ResponseRecorder) *httptest.ResponseRecorder {
 	w.t.Helper()
@@ -199,7 +295,20 @@ func detail(t *testing.T, rec *httptest.ResponseRecorder) string {
 	return decode[v1.Problem](t, rec).Detail
 }
 
-// addUser creates a user through the API and returns it from the store.
+func code(t *testing.T, rec *httptest.ResponseRecorder) string {
+	t.Helper()
+	var p struct {
+		Code  string `json:"code"`
+		Error string `json:"error"`
+	}
+	_ = json.Unmarshal(rec.Body.Bytes(), &p)
+	if p.Code != "" {
+		return p.Code
+	}
+	return p.Error
+}
+
+// addUser creates a user through the Users tile and returns its row.
 func (w *world) addUser(name, role, scope string, groups ...string) users.User {
 	w.t.Helper()
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/users", map[string]any{
@@ -212,25 +321,57 @@ func (w *world) addUser(name, role, scope string, groups ...string) users.User {
 	return u
 }
 
-// passwordLogin signs in through /auth/login, and through /auth/totp with
-// code when the account asks for a second step.
-func (w *world) passwordLogin(name, password, code string) error {
+// account is the sign-in's view of the account of u.
+func (w *world) account(u users.User) signin.Account {
 	w.t.Helper()
-	settings.Config.Auth.Methods.PasswordAuth.Enabled = true
-	rec := w.req("POST", "/auth/login", map[string]any{"username": name, "password": password})
-	if rec.Code != http.StatusOK {
-		return fmt.Errorf("sign in: %d %s", rec.Code, rec.Body)
+	acc, err := w.auth.Account(context.Background(), strconv.FormatUint(u.ID, 10))
+	if err != nil {
+		w.t.Fatal(err)
 	}
-	step := decode[accounts.SignIn](w.t, rec)
-	if step.Next == "done" {
-		return nil
+	return acc
+}
+
+
+// public gives the server an https address, which passkeys and sign-in
+// services need.
+func (w *world) public() *world {
+	settings.Config.Http.ExternalUrl = "https://" + host
+	w.scheme = "https"
+	return w
+}
+
+// browser keeps the cookies the server sets, as a browser does across the
+// steps of a sign-in.
+type browser struct {
+	w   *world
+	jar map[string]string
+}
+
+func (w *world) browser() *browser { return &browser{w: w, jar: map[string]string{}} }
+
+func (b *browser) do(method, target string, body any) *httptest.ResponseRecorder {
+	b.w.t.Helper()
+	var hs []header
+	for name, value := range b.jar {
+		hs = append(hs, header{"Cookie", name + "=" + value})
 	}
-	if step.Next != "totp" || code == "" {
-		return fmt.Errorf("sign in stops at %q", step.Next)
+	rec := b.w.req(method, target, body, hs...)
+	for _, c := range rec.Result().Cookies() {
+		if c.MaxAge < 0 || c.Value == "" {
+			delete(b.jar, c.Name)
+			continue
+		}
+		b.jar[c.Name] = c.Value
 	}
-	rec = w.req("POST", "/auth/totp", map[string]string{"challenge": step.Challenge, "code": code})
-	if rec.Code != http.StatusOK {
-		return fmt.Errorf("code: %d %s", rec.Code, rec.Body)
+	return rec
+}
+
+// session is the session cookie the browser holds.
+func (b *browser) session() string {
+	for _, name := range []string{"cc_session", "__Host-cc-session"} {
+		if v, ok := b.jar[name]; ok {
+			return name + "=" + v
+		}
 	}
-	return nil
+	return ""
 }

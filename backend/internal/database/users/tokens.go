@@ -69,16 +69,3 @@ func TokenNameByRaw(tokens map[string]AuthToken, raw string) (string, bool) {
 	}
 	return tok.Name, true
 }
-
-// EachNamedToken invokes fn for every token keyed by name (skips raw JWT alias keys).
-func EachNamedToken(tokens map[string]AuthToken, fn func(name string, token AuthToken)) {
-	if tokens == nil || fn == nil {
-		return
-	}
-	for key, tok := range tokens {
-		if key != tok.Name {
-			continue
-		}
-		fn(key, tok)
-	}
-}

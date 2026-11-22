@@ -156,7 +156,8 @@ export const tools = {
 
   shares: () => body<Share[]>('/shares'),
   allShares: () => body<Share[]>('/admin/shares'),
-  share: (req: ShareCreate) => body<Share>('/shares', json('POST', req)),
+  // short says the link's password is under the length the page points out, which it takes all the same.
+  share: (req: ShareCreate) => body<Share & { short?: boolean }>('/shares', json('POST', req)),
   getShare: (share: string) => body<Share>(`/shares/${id(share)}`),
   changeShare: (share: string, change: ShareUpdate) => body<Share>(`/shares/${id(share)}`, json('PATCH', change)),
   dropShare: (share: string) => call(`/shares/${id(share)}`, { method: 'DELETE' }),

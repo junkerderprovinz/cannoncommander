@@ -3,7 +3,8 @@
 // Collabora speaks WOPI. ArrowLoop takes folder pairs as recurring jobs and sees the shares under paths of its own.
 import { Select } from '@glimstone/vue/Select';
 import { Button, Card, CopyField, FieldRow, FieldRowGroup, IconButton, PasswordField, Pill, TextField, Toggle } from '@glimstone/vue';
-import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { lazyComponent } from '@/core/lazy';
 import { admin, type AppChange, type AppSettings, type IntegrationResult, type OfficeKind, type System, type Tool } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
@@ -13,7 +14,7 @@ import { copyWords, eyeWords, selectOptions, shake } from '@/ui/kit';
 
 type Test = 'idle' | 'busy' | 'ok' | 'bad';
 // The card carries the marks of thirty clients, which only this tab needs.
-const McpCard = defineAsyncComponent(() => import('../mcp/McpCard.vue'));
+const McpCard = lazyComponent(() => import('../mcp/McpCard.vue'));
 const app = ref<AppSettings | null>(null), sys = ref<System | null>(null);
 const secret = ref(''), alToken = ref('');
 const paths = ref<{ here: string; there: string }[]>([]);

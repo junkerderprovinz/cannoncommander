@@ -34,7 +34,7 @@ func TestAKeyIsShownOnceAndStoredAsAFingerprint(t *testing.T) {
 func TestANewKeyOnlyReadsUnlessAskedOtherwise(t *testing.T) {
 	e := newEnv(t)
 	var out struct{ Item KeyView }
-	e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": "Claude", "password": "richtig"}, &out)
+	e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": "Claude"}, &out)
 	if out.Item.CanWrite {
 		t.Fatal("a key made without canWrite may write")
 	}
@@ -44,10 +44,9 @@ func TestMakingAKeyNeedsTheOwnerAtTheKeyboard(t *testing.T) {
 	e := newEnv(t)
 	body := map[string]any{"label": "Claude"}
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p); code != http.StatusForbidden || p.Code != "currentPasswordWrong" {
-		t.Fatalf("without the password: %d %s", code, p.Code)
+	if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p, "X-Stale", "1"); code != http.StatusForbidden || p.Code != "signInAgain" {
+		t.Fatalf("with a sign-in from long ago: %d %s", code, p.Code)
 	}
-	body["password"] = "richtig"
 	if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p, "X-Token", "1"); code != http.StatusForbidden || p.Code != "tokenCannotChange" {
 		t.Fatalf("with an API token: %d %s", code, p.Code)
 	}
@@ -55,19 +54,16 @@ func TestMakingAKeyNeedsTheOwnerAtTheKeyboard(t *testing.T) {
 		t.Fatalf("without a session: %d", code)
 	}
 	if code := e.api("anna", http.MethodPost, "/mcp/keys", body, nil); code != http.StatusCreated {
-		t.Fatalf("with session and password: %d", code)
+		t.Fatalf("with a fresh session: %d", code)
 	}
 }
 
-func TestWithoutSignInAKeyIsOnlyMadeFromALocalAddress(t *testing.T) {
+func TestWithoutSignInAKeyIsMadeFromAnyAddress(t *testing.T) {
 	e := newEnv(t)
 	e.signIn = false
 	body := map[string]any{"label": "Claude"}
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p, "Host", "files.example.com"); code != http.StatusForbidden || p.Code != "mcpKeyNeedsSignIn" {
-		t.Fatalf("from a public name: %d %s", code, p.Code)
-	}
-	for _, host := range []string{"127.0.0.1:8080", "tower", "nas.lan", "[::1]:80"} {
+	for _, host := range []string{"files.example.com", "127.0.0.1:8080", "tower", "nas.lan", "[::1]:80"} {
 		body["label"] = "Claude " + host
 		if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p, "Host", host); code != http.StatusCreated {
 			t.Fatalf("from %s: %d %s", host, code, p.Code)
@@ -81,13 +77,13 @@ func TestAnAccountHasTenKeysAndItsOwnNames(t *testing.T) {
 		e.key("anna", false)
 	}
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": "one more", "password": "richtig"}, &p); code != http.StatusConflict || p.Code != "mcpKeyLimit" {
+	if code := e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": "one more"}, &p); code != http.StatusConflict || p.Code != "mcpKeyLimit" {
 		t.Fatalf("key %d: %d %s", keyLimit+1, code, p.Code)
 	}
-	if code := e.api("gast", http.MethodPost, "/mcp/keys", map[string]any{"label": "one more", "password": "richtig"}, nil); code != http.StatusCreated {
+	if code := e.api("gast", http.MethodPost, "/mcp/keys", map[string]any{"label": "one more"}, nil); code != http.StatusCreated {
 		t.Fatalf("another account: %d", code)
 	}
-	if code := e.api("gast", http.MethodPost, "/mcp/keys", map[string]any{"label": "ONE MORE", "password": "richtig"}, &p); code != http.StatusConflict || p.Code != "mcpKeyLabelTaken" {
+	if code := e.api("gast", http.MethodPost, "/mcp/keys", map[string]any{"label": "ONE MORE"}, &p); code != http.StatusConflict || p.Code != "mcpKeyLabelTaken" {
 		t.Fatalf("a name taken in another case: %d %s", code, p.Code)
 	}
 }
@@ -96,18 +92,18 @@ func TestOnlyTheOwnerSwitchesWritingOn(t *testing.T) {
 	e := newEnv(t)
 	_, id := e.key("anna", false)
 	var p problem
-	if code := e.api("anna", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": true}, &p); code != http.StatusForbidden {
-		t.Fatalf("on without the password: %d %s", code, p.Code)
+	if code := e.api("anna", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": true}, &p, "X-Stale", "1"); code != http.StatusForbidden {
+		t.Fatalf("on with a sign-in from long ago: %d %s", code, p.Code)
 	}
-	if code := e.api("chef", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": true, "password": "richtig"}, &p); code != http.StatusForbidden || p.Code != "mcpKeyNotYours" {
+	if code := e.api("chef", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": true}, &p); code != http.StatusForbidden || p.Code != "mcpKeyNotYours" {
 		t.Fatalf("an admin switching on: %d %s", code, p.Code)
 	}
 	if code := e.api("gast", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": false}, &p); code != http.StatusNotFound {
 		t.Fatalf("somebody else: %d %s", code, p.Code)
 	}
 	var k KeyView
-	if code := e.api("anna", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": true, "password": "richtig"}, &k); code != http.StatusOK || !k.CanWrite {
-		t.Fatalf("the owner with the password: %d %+v", code, k)
+	if code := e.api("anna", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": true}, &k); code != http.StatusOK || !k.CanWrite {
+		t.Fatalf("the owner: %d %+v", code, k)
 	}
 	if code := e.api("chef", http.MethodPatch, "/mcp/keys/"+id, map[string]any{"canWrite": false}, &k); code != http.StatusOK || k.CanWrite {
 		t.Fatalf("an admin switching off: %d %+v", code, k)
@@ -121,10 +117,10 @@ func TestAReplacedKeyStopsWorkingAtOnce(t *testing.T) {
 		Key  string
 		Item KeyView
 	}
-	if code := e.api("chef", http.MethodPost, "/mcp/keys/"+id+"/rotate", map[string]any{"password": "richtig"}, nil); code != http.StatusForbidden {
+	if code := e.api("chef", http.MethodPost, "/mcp/keys/"+id+"/rotate", nil, nil); code != http.StatusForbidden {
 		t.Fatalf("an admin replacing anna's key: %d", code)
 	}
-	if code := e.api("anna", http.MethodPost, "/mcp/keys/"+id+"/rotate", map[string]any{"password": "richtig"}, &out); code != http.StatusOK || out.Item.ID != id {
+	if code := e.api("anna", http.MethodPost, "/mcp/keys/"+id+"/rotate", nil, &out); code != http.StatusOK || out.Item.ID != id {
 		t.Fatalf("replace: %d %+v", code, out)
 	}
 	if code, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+old); code != http.StatusUnauthorized {
@@ -190,12 +186,12 @@ func TestAKeyNameIsShortAndPrintable(t *testing.T) {
 	e := newEnv(t)
 	for _, label := range []string{"", "   ", strings.Repeat("x", 65), "a‮b", "line\nbreak"} {
 		var p problem
-		if code := e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": label, "password": "richtig"}, &p); code != http.StatusBadRequest || p.Code != "mcpKeyLabel" {
+		if code := e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": label}, &p); code != http.StatusBadRequest || p.Code != "mcpKeyLabel" {
 			t.Fatalf("label %q: %d %s", label, code, p.Code)
 		}
 	}
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": "ok", "client": "Claude Desktop", "password": "richtig"}, &p); code != http.StatusBadRequest || p.Code != "mcpKeyClient" {
+	if code := e.api("anna", http.MethodPost, "/mcp/keys", map[string]any{"label": "ok", "client": "Claude Desktop"}, &p); code != http.StatusBadRequest || p.Code != "mcpKeyClient" {
 		t.Fatalf("a client id with a space: %d %s", code, p.Code)
 	}
 }
@@ -219,5 +215,38 @@ func TestTheLogKeepsCallsButNoArguments(t *testing.T) {
 	e.api("anna", http.MethodGet, "/mcp/keys", nil, &list)
 	if list.Keys[0].CallsToday != 2 || list.Keys[0].LastUsedAt == 0 {
 		t.Fatalf("the card shows %+v", list.Keys[0])
+	}
+}
+
+func TestTheKeyOfABlockedAccountStops(t *testing.T) {
+	e := newEnv(t)
+	key, _ := e.key("anna", false)
+	if code, _, _ := e.raw(http.MethodPost, mustJSON(t, map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}), "Authorization", "Bearer "+key); code != http.StatusOK {
+		t.Fatalf("the key before: %d", code)
+	}
+	anna, _ := e.byName("anna")
+	setBlocked(anna.ID, true)
+	t.Cleanup(func() { setBlocked(anna.ID, false) })
+	if code, _, _ := e.raw(http.MethodPost, mustJSON(t, map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}), "Authorization", "Bearer "+key); code != http.StatusUnauthorized {
+		t.Fatalf("the key of a blocked account: %d", code)
+	}
+}
+
+func TestAReimportRevokesEveryKeyAndGrant(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	e.key("anna", false)
+	e.key("chef", true)
+	client := e.registerClient()
+	if status, _ := e.exchange(client, e.consent("anna", client, false)); status != http.StatusOK {
+		t.Fatalf("grant: %d", status)
+	}
+	n, err := revokeEverything(t.Context(), e.srv.deps.DB)
+	if err != nil || n != 3 {
+		t.Fatalf("revoked %d, %v", n, err)
+	}
+	var live int
+	if err := e.srv.deps.DB.QueryRow(`SELECT COUNT(*) FROM mcp_keys WHERE revoked_at = 0`).Scan(&live); err != nil || live != 0 {
+		t.Fatalf("%d keys and grants still live, %v", live, err)
 	}
 }

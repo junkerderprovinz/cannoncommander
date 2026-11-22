@@ -14,6 +14,7 @@ import { lowerCase, sortLines, sortLinesDown, trimTrailing, upperCase } from './
 import type { Doc, Indent } from './docs';
 import type { Range } from './find';
 import { byId } from './languages';
+import { twice } from '@/core/lazy';
 
 export const setMatches = StateEffect.define<{ ranges: Range[]; hit: number }>();
 
@@ -136,7 +137,7 @@ export function languageOf(id: string): Promise<Extension> {
   const lang = byId(id);
   if (!lang) return Promise.resolve([]);
   if (!loaded.has(id)) {
-    const got = lang.load();
+    const got = twice(lang.load)();
     got.catch(() => loaded.delete(id));
     loaded.set(id, got);
   }
@@ -150,13 +151,14 @@ const saveAndClose = async () => { if (await vimHooks.save()) vimHooks.close(); 
 let vimLoaded: Promise<Extension> | null = null;
 // Vim comes in a chunk of its own, the first time someone switches it on. :w saves the tab and :q closes it.
 export function vimOf(): Promise<Extension> {
-  vimLoaded ??= import('@replit/codemirror-vim').then(({ vim, Vim }) => {
+  vimLoaded ??= twice(() => import('@replit/codemirror-vim'))().then(({ vim, Vim }) => {
     Vim.defineEx('write', 'w', () => { void vimHooks.save(); });
     Vim.defineEx('quit', 'q', () => vimHooks.close());
     Vim.defineEx('wq', 'wq', () => { void saveAndClose(); });
     Vim.defineEx('xit', 'x', () => { void saveAndClose(); });
     return vim({ status: true });
   });
+  vimLoaded.catch(() => { vimLoaded = null; });
   return vimLoaded;
 }
 

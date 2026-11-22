@@ -9,6 +9,7 @@ import { api, ApiError } from '@/api/client';
 import { connect, disconnect } from '@/api/sse';
 import { installAnnouncer } from '@/core/announce';
 import { coverKeys, installKeyboard } from '@/core/keyboard';
+import { lazyComponent } from '@/core/lazy';
 import { bindDefaults } from '@/core/keymap';
 import { installNav } from '@/core/nav';
 import { applyPrefs, mergeServerPrefs, onPrefsSaved, prefs } from '@/core/prefs';
@@ -87,8 +88,8 @@ async function start(me?: Me) {
   startApp(me);
 }
 
-async function startConsent() {
-  const { default: ConsentPage } = await import('@/pages/ConsentPage.vue');
+function startConsent() {
+  const ConsentPage = lazyComponent(() => import('@/pages/ConsentPage.vue'));
   createApp({ render: () => [h(ConsentPage), h(ToastHost)] }).mount('#root');
 }
 

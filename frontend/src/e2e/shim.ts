@@ -18,12 +18,13 @@ import { type Action, action, labelOf } from '@/core/actions';
 import { glyph, kindOf } from '@/core/glyphs';
 import { BASE, toItem } from '@/api/client';
 import type { FsList } from '@/api/types';
-import type { Activity, Session, Source } from '@/api/admin';
+import type { SignInSession } from '@glimstone/core';
+import type { Activity, Source } from '@/api/admin';
 import type { Share } from '@/api/tools';
 import { nextTick, watch } from 'vue';
 import { device } from '@/features/config/sessions';
 import { session } from '@/signin';
-import { auth } from '@/api/auth';
+import { signIn } from '@/signin/kit';
 import { topFolders } from '@/files/frequent';
 import { type Clip, useClipboard } from '@/stores/clipboard';
 import { type Colour, type Label, type Tag, useLabels } from '@/stores/labels';
@@ -104,9 +105,9 @@ async function readAll(listing: ReturnType<typeof useListing>, path = '/') {
 }
 
 // The step files read some lists at once from the prototype's memory; here they come from the server the same way.
-function getNow<T>(path: string): T | undefined {
+function getNow<T>(path: string, base = BASE): T | undefined {
   const req = new XMLHttpRequest();
-  req.open('GET', BASE + path, false);
+  req.open('GET', base + path, false);
   req.send();
   return req.status === 200 ? (JSON.parse(req.responseText) as T) : undefined;
 }
@@ -158,7 +159,7 @@ export async function installShim() {
   // as the reload would start it.
   const logout = actions.logout;
   if (logout) action('logout', { ...logout, run: async () => {
-    await auth.logout().catch(() => {});
+    await signIn.logout();
     session.out = false;
     await nextTick();
     session.out = true;
@@ -253,7 +254,10 @@ export async function installShim() {
       },
     }),
     get sources() { return getNow<{ sources: Source[] }>('/admin/sources')?.sources ?? []; },
-    get sessions() { return (getNow<{ items: Session[] }>('/me/sessions')?.items ?? []).map((s) => ({ ...s, device: device(s.userAgent).name })); },
+    get sessions() {
+      return (getNow<{ sessions: SignInSession[] }>('me/sessions', signIn.root + 'api/signin/v1/')?.sessions ?? [])
+        .map((s) => ({ ...s, userAgent: s.agent ?? '', ip: s.from ?? '', device: device(s.agent ?? '').name }));
+    },
     get activity() { return getNow<{ items: Activity[] }>('/admin/activity?limit=500')?.items ?? []; },
     get shares() { return (getNow<Share[]>('/shares') ?? []).map((s) => ({ ...s, path: s.paths[0] })); },
     ...waiting.DATA,

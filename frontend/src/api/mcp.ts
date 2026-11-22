@@ -12,15 +12,14 @@ export interface McpKey {
 export interface McpOAuth { possible: boolean; enabled: boolean; issuer: string; active: boolean; grantLimit: number }
 export interface McpWriteLimits { entriesPerCall: number; entriesPerHour: number; filesPerCall: number; bytesPerCall: number; callsPerMinute: number }
 export interface McpKeys {
-  endpointPath: string; limit: number; signIn: boolean; hostAllowsKeys: boolean; desktop: boolean; writeLimits: McpWriteLimits;
+  endpointPath: string; limit: number; signIn: boolean; desktop: boolean; writeLimits: McpWriteLimits;
   keys: McpKey[]; revoked: McpKey[]; oauth: McpOAuth;
   stats?: { requests: Record<string, number>; tools: Record<string, number> };
 }
 export interface McpEvent { at: number; tool: string; outcome: string; jobId?: string }
 export interface McpConsent {
   client: { id: string; name: string; known: string; redirectHost: string; loopback: boolean };
-  // password says that Allow asks for the account's password, which only an account that signs in with one has.
-  account: string; password: boolean; ticket: string; limitReached: boolean; grantLimit: number;
+  account: string; ticket: string; limitReached: boolean; grantLimit: number;
 }
 export interface McpSecret { key: string; item: McpKey }
 
@@ -48,18 +47,14 @@ export const mcp = {
     const got = await get<McpKeys>('/mcp/keys?' + new URLSearchParams({ since: midnight(), ...(all ? { all: 'true' } : {}) }));
     return { ...got, keys: got.keys.map(key), revoked: got.revoked.map(key) };
   },
-  // password is the account's own, left out where the server asks for none.
-  create: async (label: string, client: string, canWrite: boolean, password?: string) =>
-    secret(await write<McpSecret>('POST', '/mcp/keys', { label, client, canWrite, password })),
-  update: async (id: string, change: { label?: string; canWrite?: boolean; password?: string }) => key(await write<McpKey>('PATCH', at(id), change)),
-  rotate: async (id: string, password?: string) => secret(await write<McpSecret>('POST', at(id) + '/rotate', { password })),
+  create: async (label: string, client: string, canWrite: boolean) => secret(await write<McpSecret>('POST', '/mcp/keys', { label, client, canWrite })),
+  update: async (id: string, change: { label?: string; canWrite?: boolean }) => key(await write<McpKey>('PATCH', at(id), change)),
+  rotate: async (id: string) => secret(await write<McpSecret>('POST', at(id) + '/rotate')),
   revoke: (id: string) => write('POST', at(id) + '/revoke'),
   purge: (id: string) => write('DELETE', at(id)),
   activity: async (id: string) => (await get<{ events: McpEvent[] }>(at(id) + '/activity')).events.map((e) => ({ ...e, at: ms(e.at) })),
   setOAuth: (enabled: boolean, issuer: string) => write<McpOAuth>('PUT', '/mcp/oauth', { enabled, issuer }),
   // search is the query the client opened the consent page with, passed on as it came.
   consent: (search: string) => get<McpConsent>('/mcp/oauth/authorize' + search),
-  // Allow needs the password of an account that has one, as making a key does.
-  answer: (ticket: string, allow: boolean, canWrite: boolean, password?: string) =>
-    write<{ redirect: string }>('POST', '/mcp/oauth/authorize', password === undefined ? { ticket, allow, canWrite } : { ticket, allow, canWrite, password }),
+  answer: (ticket: string, allow: boolean, canWrite: boolean) => write<{ redirect: string }>('POST', '/mcp/oauth/authorize', { ticket, allow, canWrite }),
 };

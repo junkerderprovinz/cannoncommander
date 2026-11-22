@@ -190,36 +190,3 @@ func TestRequestHostTrustProxyHeaders(t *testing.T) {
 		t.Fatalf("requestHost = %q, want public.example.com", got)
 	}
 }
-
-func TestRequestSchemeForPublicURL(t *testing.T) {
-	orig := settings.Config.Http.TrustProxyHeaders
-	t.Cleanup(func() { settings.Config.Http.TrustProxyHeaders = orig })
-
-	t.Run("trusted host without proto defaults to https", func(t *testing.T) {
-		settings.Config.Http.TrustProxyHeaders = true
-		req := httptest.NewRequest("GET", "http://127.0.0.1:8080/", nil)
-		req.Header.Set("X-Forwarded-Host", "public.example.com")
-		if got := requestSchemeForPublicURL(req); got != "https" {
-			t.Fatalf("requestSchemeForPublicURL = %q, want https", got)
-		}
-	})
-
-	t.Run("trusted host with proto honors proto", func(t *testing.T) {
-		settings.Config.Http.TrustProxyHeaders = true
-		req := httptest.NewRequest("GET", "http://127.0.0.1:8080/", nil)
-		req.Header.Set("X-Forwarded-Host", "public.example.com")
-		req.Header.Set("X-Forwarded-Proto", "http")
-		if got := requestSchemeForPublicURL(req); got != "http" {
-			t.Fatalf("requestSchemeForPublicURL = %q, want http", got)
-		}
-	})
-
-	t.Run("ignores forwarded proto when untrusted", func(t *testing.T) {
-		settings.Config.Http.TrustProxyHeaders = false
-		req := httptest.NewRequest("GET", "http://127.0.0.1:8080/", nil)
-		req.Header.Set("X-Forwarded-Proto", "https")
-		if got := requestSchemeForPublicURL(req); got != "http" {
-			t.Fatalf("requestSchemeForPublicURL = %q, want http", got)
-		}
-	})
-}

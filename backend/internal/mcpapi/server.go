@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -49,23 +50,28 @@ const (
 	invalidRequest = -32600
 )
 
-// Login is what the endpoint needs from the sign-in system. The accounts
-// provide it; tests put in their own.
+// Login is what the endpoint needs from the sign-in. The accounts provide
+// it; tests put in their own. Confirm runs then only when the visitor signed
+// in moments ago or confirmed the password, and no ending crosses it.
 type Login interface {
 	SessionHash(r *http.Request) (string, bool)
 	ByAPIToken(r *http.Request) bool
 	ClientIP(r *http.Request) string
-	Confirm(r *http.Request, u *users.User, password string) error
+	Confirm(r *http.Request, then func() error) error
+	Alive(session string) bool
+	Blocked(userID uint64) bool
 }
 
-type accountsLogin struct{ deps v1.Deps }
+type accountsLogin struct{}
 
-func (accountsLogin) SessionHash(r *http.Request) (string, bool) { return accounts.SessionHash(r) }
-func (accountsLogin) ByAPIToken(r *http.Request) bool            { return accounts.ByAPIToken(r) }
+func (accountsLogin) SessionHash(r *http.Request) (string, bool) { return accounts.SessionOf(r) }
+func (accountsLogin) ByAPIToken(r *http.Request) bool            { return accounts.ByToken(r) }
 func (accountsLogin) ClientIP(r *http.Request) string            { return accounts.ClientIP(r) }
-func (l accountsLogin) Confirm(r *http.Request, u *users.User, password string) error {
-	return accounts.ConfirmOwner(r, l.deps.DB, u, password)
+func (accountsLogin) Confirm(r *http.Request, then func() error) error {
+	return accounts.ConfirmOwner(r, then)
 }
+func (accountsLogin) Alive(session string) bool  { return accounts.Alive(session) }
+func (accountsLogin) Blocked(userID uint64) bool { return accounts.Blocked(userID) }
 
 // Server is the MCP endpoint of one database and what it keeps between
 // requests.
@@ -79,11 +85,13 @@ type Server struct {
 	user func(id uint64) (*users.User, error)
 	// pepper is the server's signing key, which the digests are made with.
 	pepper func() []byte
-	// signIn reports whether the server asks people to sign in. Without it
-	// nobody could give consent, and a key may only be made from an address
-	// no public name can point at.
+	// signIn reports whether the server asks people to sign in. What is
+	// handed out while it does not ends once it does.
 	signIn func() bool
-	now    func() time.Time
+	// open is whether the server was open when last asked, true at start
+	// so a server that closed while it was down settles its keys too.
+	open atomic.Bool
+	now  func() time.Time
 
 	mu        sync.RWMutex
 	api       http.Handler
@@ -128,7 +136,7 @@ func newServer(d v1.Deps) *Server {
 	s := &Server{
 		deps:  d,
 		st:    store{db: d.DB},
-		login: accountsLogin{deps: d},
+		login: accountsLogin{},
 		user: func(id uint64) (*users.User, error) {
 			u, err := state.GetUserByID(id)
 			if err != nil {
@@ -151,7 +159,29 @@ func newServer(d v1.Deps) *Server {
 		oauth:      newOAuthState(),
 	}
 	s.transport = s.newTransport()
+	s.open.Store(true)
 	return s
+}
+
+// settle revokes the keys and grants made while the server was open, the
+// first time it is asked after the server closed, whichever way it closed.
+func (s *Server) settle(r *http.Request) {
+	if !s.signIn() {
+		s.open.Store(true)
+		return
+	}
+	if !s.open.Swap(false) {
+		return
+	}
+	gone, err := s.st.endOpen(r.Context(), s.now().Unix())
+	if err != nil {
+		logger.Errorf("mcp: end the keys made while open: %v", err)
+		s.open.Store(true)
+		return
+	}
+	for _, k := range gone {
+		s.changed(r, k, "revoked when CannonCommander got a sign-in")
+	}
 }
 
 // Mount puts the endpoint and the public half of the authorization server on
@@ -216,8 +246,7 @@ func (s *Server) newTransport() http.Handler {
 		// The SDK's rule refuses a request that reached a loopback address
 		// under any other name, before any key is read, which is what a reverse
 		// proxy in the same network namespace looks like. The key is the
-		// defence here: a page that rebinds its name cannot know one, and
-		// without a sign-in it cannot make one either (keysAllowedFrom).
+		// defence here.
 		DisableLocalhostProtection:   true,
 		MaxRequestBodyBytes:          maxBody,
 		PropagateRequestCancellation: true,
@@ -230,6 +259,7 @@ func (s *Server) newTransport() http.Handler {
 // order.
 func (s *Server) serveMCP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	s.settle(r)
 	keys, err := s.st.anyActiveKey(ctx)
 	if err != nil {
 		logger.Errorf("mcp: read the keys: %v", err)
@@ -279,7 +309,7 @@ func (s *Server) serveMCP(w http.ResponseWriter, r *http.Request) {
 	k, ok := s.match(ctx, presented, byToken, issuer, now)
 	var u *users.User
 	if ok && !conflict {
-		if u, err = s.user(k.UserID); err != nil || u.Username == "" {
+		if u, err = s.user(k.UserID); err != nil || u.Username == "" || s.login.Blocked(k.UserID) || k.MadeOpen && s.signIn() {
 			ok = false
 		}
 	}

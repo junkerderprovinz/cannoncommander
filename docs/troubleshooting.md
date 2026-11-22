@@ -35,7 +35,7 @@ Most problems come down to a mapping, a permission or a proxy setting. Here are 
     Windows Explorer maps WebDAV only over https. See [WebDAV](integrations/webdav.md).
 
 ??? question "No passkey can be added here"
-    Browsers offer passkeys only over https or on `localhost`. Open CannonCommander through its https address.
+    Browsers tie a passkey to a domain name with a trusted certificate. Open CannonCommander through its https address.
 
 ??? question "Share links point to the wrong address"
     Set `externalUrl` in `config.yaml`, see [Reverse proxy](configuration/reverse-proxy.md#config).
@@ -44,7 +44,7 @@ Most problems come down to a mapping, a permission or a proxy setting. Here are 
     Switch on **Play videos in the browser** under **Settings > Integrations**. It converts MKV and similar formats while they play.
 
 ??? question "I forgot my password"
-    Click **Forgot password?** on the sign-in page. CannonCommander writes a code into the container log: on Unraid click the container's icon in the Docker tab and pick **Logs**. Enter the code and a new password within 10 minutes. The reset ends all other sessions, turns off two-factor sign-in and revokes every API token. Another admin can also set a new password for you under **Settings > Users & groups**.
+    Click **Forgot password?** on the sign-in page and take the code from the container log. See [Forgot the password](access/sign-in.md#reset) for the steps and what the reset ends. Another admin can also set a new password for you under **Settings > Users & groups**.
 
 ## The activity log {#activity}
 

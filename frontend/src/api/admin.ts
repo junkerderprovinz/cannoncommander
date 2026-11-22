@@ -2,8 +2,6 @@
 // milliseconds, so the pages compare and format them like every other date.
 import { ApiError, call } from './client';
 import { type Share as WireShare, shareUrl, tools } from './tools';
-import type { Problem } from './types';
-import { creationOptions, credentialJSON } from './webauthn';
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
 const send = (method: string, body?: unknown): RequestInit => ({
@@ -27,10 +25,11 @@ export type Role = 'admin' | 'user' | 'readonly';
 export interface User {
   id: string; name: string; full: string; role: Role; scope: string; groups: string[];
   loginMethod: 'password' | 'oidc'; twofa: boolean; passkeys: number; last: number | null; pwChanged: number | null;
+  // The owner set the first password, keeps the admin role and is never blocked or removed.
+  blocked: boolean; owner: boolean;
 }
-export interface Account extends User { recovery: number; lockPassword: boolean; signIn: boolean; hasPassword: boolean; token?: { name: string; rights: Token['rights'] } }
-// revoke ends every session, API token and passkey of the user.
-export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string; revoke?: boolean }
+// revoke ends every session, API token and passkey of the user, and blocked keeps the user from signing in at all.
+export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string; revoke?: boolean; blocked?: boolean }
 export interface Group { name: string; note: string; members: string[] }
 export type RuleKind = 'hide' | 'read' | 'allow';
 // who is a user name, @group or * for everybody.
@@ -74,8 +73,6 @@ export interface Share extends Omit<WireShare, 'created' | 'expires'> { created:
 export interface Session { id: string; created: number; seen: number; userAgent: string; ip: string; current: boolean }
 export interface Token { id: string; name: string; created: number; last: number | null; rights: 'r' | 'rw'; expires: number | null }
 export interface Passkey { id: string; name: string; origin: string; created: number; last: number | null }
-// blocked says why no passkey can be added from this address, null when one can.
-export interface Passkeys { blocked: Problem | null; items: Passkey[] }
 // authMethod is mcp for what an assistant did, and tokenName then names its key.
 export interface Activity {
   id: number; t: number; who: string; what: string; obj: string; path?: string; target?: string; ip?: string; authMethod?: string; tokenName?: string;
@@ -120,8 +117,9 @@ const index = (x: Wire<IndexState, 'lastIndexed' | 'nextScan'>): IndexState => (
 
 export const admin = {
   users: async () => (await items<WireUser>('/admin/users')).map(user),
-  createUser: (u: UserInput) => write('POST', '/admin/users', u),
-  updateUser: (name: string, u: UserInput) => write('PATCH', `/admin/users/${at(name)}`, u),
+  // The answer says short when the password it set is under the length the page points out.
+  createUser: (u: UserInput) => write<{ short?: boolean }>('POST', '/admin/users', u),
+  updateUser: (name: string, u: UserInput) => write<{ short?: boolean }>('PATCH', `/admin/users/${at(name)}`, u),
   deleteUser: (name: string) => write('DELETE', `/admin/users/${at(name)}`),
   userSessions: async (name: string) => (await items<Wire<Session, 'created' | 'seen'>>(`/admin/users/${at(name)}/sessions`)).map(session),
   endUserSession: (name: string, id: string) => write('DELETE', `/admin/users/${at(name)}/sessions/${at(id)}`),
@@ -152,7 +150,7 @@ export const admin = {
   shares: async (all: boolean) => (await (all ? tools.allShares() : tools.shares())).map(share),
   // An expiry of null makes the link last, an empty password takes it off.
   updateShare: (id: string, change: { expires?: number | null; password?: string; message?: string }) =>
-    write('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
+    write<{ short?: boolean }>('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
   deleteShare: (id: string) => write('DELETE', `/shares/${at(id)}`),
   remotes: () => get<{ remotes: Remote[]; rclone: Rclone }>('/remotes'),
   addRemote: (r: RemoteInput) => write<Remote>('POST', '/remotes', r),
@@ -168,32 +166,6 @@ export const admin = {
   modules: () => get<Modules>('/modules'),
   fetchModules: () => write<Modules>('POST', '/modules'),
   notifyUnraid: (subject: string, description: string) => write('POST', '/unraid/notify/test', { subject, description }),
-};
-
-export const me = {
-  account: async (): Promise<Account> => user(await get<Wire<Account, 'last' | 'pwChanged'>>('/me')),
-  password: (current: string, next: string) => write<{ ended: number }>('PUT', '/me/password', { current, next }),
-  removePassword: (current: string) => write<{ ended: number }>('DELETE', '/me/password', { current }),
-  sessions: async () => (await items<Wire<Session, 'created' | 'seen'>>('/me/sessions')).map(session),
-  endSession: (id: string) => write('DELETE', `/me/sessions/${at(id)}`),
-  tokens: async () => (await items<Wire<Token, 'created' | 'last' | 'expires'>>('/me/tokens')).map(token),
-  // password is the current one, for an account that signs in with one.
-  createToken: (name: string, rights: Token['rights'], days: number | null, password?: string) =>
-    write<{ secret: string }>('POST', '/me/tokens', { name, rights, days, password }),
-  deleteToken: (id: string) => write('DELETE', `/me/tokens/${at(id)}`),
-  passkeys: async (): Promise<Passkeys> => { const p = await get<{ blocked?: Problem; items: Wire<Passkey, 'created' | 'last'>[] }>('/me/passkeys'); return { blocked: p.blocked ?? null, items: p.items.map(passkey) }; },
-  // Two steps on one path: the name brings the options, the browser's answer to them adds the passkey.
-  async addPasskey(name: string, password?: string): Promise<void> {
-    const { options } = await write<{ options: { publicKey: Record<string, unknown> } }>('POST', '/me/passkeys', { name, password });
-    const credential = credentialJSON(await navigator.credentials.create(creationOptions(options)));
-    await write('POST', '/me/passkeys', { name, credential });
-  },
-  deletePasskey: (id: string) => write('DELETE', `/me/passkeys/${at(id)}`),
-  // The server draws the QR code, so no encoder ships to the browser.
-  totpBegin: () => write<{ secret: string; uri: string; qr: string }>('POST', '/me/totp', {}),
-  totpConfirm: (code: string) => write<{ codes: string[] }>('POST', '/me/totp', { code }),
-  totpCodes: (code: string) => write<{ codes: string[] }>('POST', '/me/totp', { code, regenerate: true }),
-  totpOff: (code: string) => write('DELETE', '/me/totp', { code }),
 };
 
 // Whether a folder or, with files, a file exists, asked the way the file list asks.

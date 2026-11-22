@@ -87,47 +87,6 @@ func createTestStorageWithSQL(t *testing.T) (*access.Storage, *users.Storage, *s
 	return accessStore, userStore, sqlStore
 }
 
-func TestSyncUserGroups_WriteThroughAndReload(t *testing.T) {
-	s, _, sqlStore := createTestStorageWithSQL(t)
-
-	if err := s.SyncUserGroups("alice", []string{"acme", "staff"}); err != nil {
-		t.Fatalf("SyncUserGroups: %v", err)
-	}
-
-	groups, err := sqlStore.GetAllGroups()
-	if err != nil {
-		t.Fatalf("GetAllGroups: %v", err)
-	}
-	if _, ok := groups["acme"]["alice"]; !ok {
-		t.Fatalf("expected alice in acme in SQL, got %#v", groups)
-	}
-	if _, ok := groups["staff"]["alice"]; !ok {
-		t.Fatalf("expected alice in staff in SQL, got %#v", groups)
-	}
-
-	// Simulate restart: new Storage loaded from SQL
-	reloaded := access.NewStorage(nil)
-	reloaded.Groups = groups
-	if got := reloaded.GetUserGroups("alice"); len(got) != 2 {
-		t.Fatalf("reloaded groups for alice: %v", got)
-	}
-
-	// Sync to a single group and ensure SQL drops the old membership
-	if err = s.SyncUserGroups("alice", []string{"acme"}); err != nil {
-		t.Fatalf("SyncUserGroups update: %v", err)
-	}
-	groups, err = sqlStore.GetAllGroups()
-	if err != nil {
-		t.Fatalf("GetAllGroups after update: %v", err)
-	}
-	if _, ok := groups["acme"]["alice"]; !ok {
-		t.Fatal("alice should remain in acme")
-	}
-	if _, ok := groups["staff"]["alice"]; ok {
-		t.Fatal("alice should no longer be in staff in SQL")
-	}
-}
-
 func TestAddUserToGroup_WriteThrough(t *testing.T) {
 	s, _, sqlStore := createTestStorageWithSQL(t)
 

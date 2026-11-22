@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, EmptyState, IconButton, ListRow, Pill } from '@glimstone/vue';
+import { Badge, Button, Card, EmptyState, ListRow } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Group, type Share, type User } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -25,6 +25,9 @@ function userTip(u: User) {
   return [c('users.signsInAs', { name: u.name }), u.groups.length ? c('users.inGroups', { groups: u.groups.join(', ') }) : '', u.twofa ? c('users.withTwofa') : ''].filter(Boolean).join(' ');
 }
 
+// The quiet line under a name, in the order the sign-in tile gives its accounts: role, area, last seen.
+const userFacts = (u: User) => [roleName(u.role), u.scope, u.last ? ago(u.last) : c('users.never')].join(' · ');
+
 const editUser = (u: User | null) => win({ title: u ? c('users.edit') : c('users.add'), body: UserWin, props: { user: u, users: users.value, groups: groups.value, saved: load } });
 const editGroup = (g: Group | null) => win({ title: g ? c('users.editGroup') : c('users.addGroup'), body: GroupWin, props: { group: g, users: users.value, groups: groups.value, saved: load } });
 
@@ -48,17 +51,17 @@ function removeGroup(g: Group) {
 
 <template>
   <Card :title="c('users.users')">
-    <div v-if="users.length" class="a-list">
-      <ListRow v-for="(u, i) in users" :key="u.name" :name="u.full" :tip="userTip(u)" :data-uopen="i" @click="editUser(u)">
+    <div v-if="users.length" class="a-rows">
+      <ListRow v-for="(u, i) in users" :key="u.name" steady :name="u.full" :meta="userFacts(u)" :tip="userTip(u)" :data-uopen="i" @click="editUser(u)">
         <template #tile><i class="a-initials">{{ initials(u) }}</i></template>
-        <template #badges>
-          <Pill v-if="u.name === myName()" tone="state">{{ c('users.you') }}</Pill>
-          <Pill>{{ roleName(u.role) }}</Pill><Pill class="mono">{{ u.scope }}</Pill>
-          <Pill>{{ u.last ? ago(u.last) : c('users.never') }}</Pill>
+        <template v-if="u.name === myName() || u.owner || u.blocked" #badges>
+          <Badge v-if="u.name === myName()" size="small" tone="active">{{ c('users.you') }}</Badge>
+          <Badge v-if="u.owner" size="small">{{ c('users.owner') }}</Badge>
+          <Badge v-if="u.blocked" size="small" tone="warn">{{ c('users.blocked') }}</Badge>
         </template>
         <template #actions>
-          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-uopen="i" @click="editUser(u)" />
-          <IconButton :absent="u.name === myName()" :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeUser(u)" />
+          <Button compact tone="subtle" :label="c('edit')" label-key="IconPencil" :data-uopen="i" @click.stop="editUser(u)" />
+          <Button v-if="u.name !== myName() && !u.owner" compact tone="subtle" :label="c('remove')" label-key="IconTrash" @click.stop="removeUser(u)" />
         </template>
       </ListRow>
     </div>
@@ -66,13 +69,12 @@ function removeGroup(g: Group) {
     <div class="a-foot"><Button data-uadd :label="c('users.add')" label-key="IconAdd" @click="editUser(null)" /></div>
   </Card>
   <Card :title="c('users.groups')">
-    <div v-if="groups.length" class="a-list">
-      <ListRow v-for="g in groups" :key="g.name" :name="g.name" :tip="g.note || null" data-gopen @click="editGroup(g)">
+    <div v-if="groups.length" class="a-rows">
+      <ListRow v-for="g in groups" :key="g.name" steady :name="g.name" :meta="cn(g.members.length, 'users.members')" :tip="g.note || null" data-gopen @click="editGroup(g)">
         <template #tile><G n="IconAccounts" /></template>
-        <template #badges><Pill>{{ cn(g.members.length, 'users.members') }}</Pill></template>
         <template #actions>
-          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" @click="editGroup(g)" />
-          <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeGroup(g)" />
+          <Button compact tone="subtle" :label="c('edit')" label-key="IconPencil" @click.stop="editGroup(g)" />
+          <Button compact tone="subtle" :label="c('remove')" label-key="IconTrash" @click.stop="removeGroup(g)" />
         </template>
       </ListRow>
     </div>

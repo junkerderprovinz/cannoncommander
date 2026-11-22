@@ -6,15 +6,11 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// configureHTTPRouter registers what lives outside /api/v1: the pages, the
-// bundles and the single sign on that the sign in page links to.
+// configureHTTPRouter registers what lives outside /api/v1 and the sign-in:
+// the pages and the bundles.
 func configureHTTPRouter(router *http.ServeMux) {
 	base := settings.Config.Http.BaseURL
 
-	oidc := http.NewServeMux()
-	oidc.HandleFunc("GET /auth/oidc/login", withRateLimit(AuthRateLimitOIDC, oidcLoginHandler))
-	oidc.HandleFunc("GET /auth/oidc/callback", withRateLimit(AuthRateLimitOIDC, oidcCallbackHandler))
-	router.Handle(base+"api/auth/oidc/", http.StripPrefix(base+"api", oidc))
 	// Anything else under /api is a mistyped call, not a page of the app.
 	router.Handle(base+"api/", http.NotFoundHandler())
 

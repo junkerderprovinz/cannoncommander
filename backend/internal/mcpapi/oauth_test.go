@@ -68,7 +68,7 @@ func (e *env) consent(user, client string, canWrite bool) string {
 		e.t.Fatalf("consent info: %d %+v", code, info)
 	}
 	var answer struct{ Redirect string }
-	if code := e.api(user, http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true, "canWrite": canWrite, "password": "richtig"}, &answer); code != http.StatusOK {
+	if code := e.api(user, http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true, "canWrite": canWrite}, &answer); code != http.StatusOK {
 		e.t.Fatalf("consent: %d", code)
 	}
 	u, _ := url.Parse(answer.Redirect)
@@ -103,11 +103,6 @@ func TestOAuthIsOffUntilAnAdminSwitchesItOn(t *testing.T) {
 	if code := e.api("chef", http.MethodPut, "/mcp/oauth", map[string]any{"enabled": true, "issuer": "http://files.example.com"}, &p); code != http.StatusBadRequest || p.Code != "mcpOAuthIssuer" {
 		t.Fatalf("a plain http issuer = %d %s", code, p.Code)
 	}
-	e.signIn = false
-	if code := e.api("chef", http.MethodPut, "/mcp/oauth", map[string]any{"enabled": true, "issuer": testIssuer}, &p); code != http.StatusBadRequest || p.Code != "mcpOAuthNeedsSignIn" {
-		t.Fatalf("without sign-in = %d %s", code, p.Code)
-	}
-	e.signIn = true
 	e.oauthOn()
 	resp, _ := http.Get(e.web.URL + "/.well-known/oauth-authorization-server")
 	var meta map[string]any
@@ -160,7 +155,7 @@ func TestTheConsentIsBoundToTheSessionThatSawIt(t *testing.T) {
 	var info struct{ Ticket string }
 	e.api("anna", http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info)
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true, "password": "richtig"}, &p, "X-Session", "another session"); code != http.StatusConflict {
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, &p, "X-Session", "another session"); code != http.StatusConflict {
 		t.Fatalf("the ticket from another session = %d %s", code, p.Code)
 	}
 	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, nil, "X-Token", "1"); code != http.StatusForbidden {
@@ -276,11 +271,8 @@ func (e *env) consentTicket(user, client string) string {
 	e.t.Helper()
 	q := url.Values{"client_id": {client}, "redirect_uri": {claudeHook}, "response_type": {"code"},
 		"code_challenge": {challengeOf(verifier)}, "code_challenge_method": {"S256"}}
-	var info struct {
-		Ticket   string
-		Password bool
-	}
-	if code := e.api(user, http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info); code != http.StatusOK || !info.Password {
+	var info struct{ Ticket string }
+	if code := e.api(user, http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info); code != http.StatusOK || info.Ticket == "" {
 		e.t.Fatalf("consent info: %d %+v", code, info)
 	}
 	return info.Ticket
@@ -292,20 +284,17 @@ func TestAllowingAClientNeedsTheOwnerAtTheKeyboard(t *testing.T) {
 	client := e.registerClient()
 	ticket := e.consentTicket("anna", client)
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true}, &p); code != http.StatusForbidden {
-		t.Fatalf("allow without the password: %d %s", code, p.Code)
-	}
-	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true, "password": "falsch"}, &p); code != http.StatusForbidden {
-		t.Fatalf("allow with a wrong password: %d %s", code, p.Code)
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true}, &p, "X-Stale", "1"); code != http.StatusForbidden || p.Code != "signInAgain" {
+		t.Fatalf("allow with a sign-in from long ago: %d %s", code, p.Code)
 	}
 	var answer struct{ Redirect string }
-	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true, "password": "richtig"}, &answer); code != http.StatusOK || !strings.Contains(answer.Redirect, "code=") {
-		t.Fatalf("the same ticket with the password: %d %s", code, answer.Redirect)
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true}, &answer); code != http.StatusOK || !strings.Contains(answer.Redirect, "code=") {
+		t.Fatalf("the same ticket once fresh: %d %s", code, answer.Redirect)
 	}
 	e.advance(time.Second)
 	deny := e.consentTicket("anna", client)
 	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": deny, "allow": false}, &answer); code != http.StatusOK || !strings.Contains(answer.Redirect, "access_denied") {
-		t.Fatalf("deny without the password: %d %s", code, answer.Redirect)
+		t.Fatalf("deny: %d %s", code, answer.Redirect)
 	}
 }
 
@@ -319,7 +308,7 @@ func TestOneAccountCannotFillTheWaitingCodes(t *testing.T) {
 	}
 	var p problem
 	ticket := e.consentTicket("anna", client)
-	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true, "password": "richtig"}, &p); code != http.StatusConflict || p.Code != "oauthBusy" {
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true}, &p); code != http.StatusConflict || p.Code != "oauthBusy" {
 		t.Fatalf("one code more for anna: %d %s", code, p.Code)
 	}
 	e.consent("chef", client, false)
@@ -352,5 +341,60 @@ func TestEndingSessionsEndsGrantsAndEndingTokensEndsKeys(t *testing.T) {
 	}
 	if status, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+other); status != http.StatusOK {
 		t.Fatalf("another account's key = %d", status)
+	}
+}
+
+func TestACodeAllowedBeforeItsSignInEndedMakesNoGrant(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	client := e.registerClient()
+	code := e.consent("anna", client, false)
+	endSession("session-of-anna")
+	t.Cleanup(func() {
+		signInState.Lock()
+		delete(signInState.ended, "session-of-anna")
+		signInState.Unlock()
+	})
+	if status, body := e.exchange(client, code); status != http.StatusBadRequest || body["error"] != "invalid_grant" {
+		t.Fatalf("a code whose sign-in ended made a grant: %d %v", status, body)
+	}
+}
+
+func TestAClientIsAllowedWhileTheServerIsOpen(t *testing.T) {
+	e := newEnv(t)
+	e.signIn = false
+	e.oauthOn()
+	client := e.registerClient()
+	q := url.Values{"client_id": {client}, "redirect_uri": {claudeHook}, "response_type": {"code"},
+		"code_challenge": {challengeOf(verifier)}, "code_challenge_method": {"S256"}, "state": {"xyz"}, "resource": {oauthTarget}}
+	var info struct{ Ticket string }
+	if code := e.api("anna", http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info, "X-Session", ""); code != http.StatusOK {
+		t.Fatalf("consent info while open: %d", code)
+	}
+	var answer struct{ Redirect string }
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, &answer, "X-Session", ""); code != http.StatusOK {
+		t.Fatalf("consent while open: %d", code)
+	}
+	u, _ := url.Parse(answer.Redirect)
+	if status, body := e.exchange(client, u.Query().Get("code")); status != http.StatusOK {
+		t.Fatalf("the code allowed while open made no grant: %d %v", status, body)
+	}
+}
+
+func TestACodeAllowedWhileOpenLapsesWithTheFirstPassword(t *testing.T) {
+	e := newEnv(t)
+	e.signIn = false
+	e.oauthOn()
+	client := e.registerClient()
+	q := url.Values{"client_id": {client}, "redirect_uri": {claudeHook}, "response_type": {"code"},
+		"code_challenge": {challengeOf(verifier)}, "code_challenge_method": {"S256"}, "state": {"xyz"}, "resource": {oauthTarget}}
+	var info struct{ Ticket string }
+	e.api("anna", http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info, "X-Session", "")
+	var answer struct{ Redirect string }
+	e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, &answer, "X-Session", "")
+	u, _ := url.Parse(answer.Redirect)
+	e.signIn = true
+	if status, body := e.exchange(client, u.Query().Get("code")); status != http.StatusBadRequest || body["error"] != "invalid_grant" {
+		t.Fatalf("a code allowed while open made a grant after the first password: %d %v", status, body)
 	}
 }

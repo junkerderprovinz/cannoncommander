@@ -6,7 +6,7 @@ import (
 )
 
 // currentSchemaVersion is the SQLite schema marker for this codebase.
-const currentSchemaVersion = 7
+const currentSchemaVersion = 8
 
 // Schema creates all tables for the SQLite database
 func createSchema(db *sql.DB) error {
@@ -174,6 +174,10 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 			if _, err := db.Exec(`DELETE FROM settings WHERE key LIKE 'userDefaults.%' OR key IN ('sidebarLinkDefaults', 'toolAccessDefaults')`); err != nil {
 				return fmt.Errorf("drop user defaults: %w", err)
 			}
+		case 8:
+			// The sign-in moved to its own documents. Nothing changes here,
+			// the version before writes this one back down and so shows that
+			// it ran.
 		default:
 			return fmt.Errorf("unknown schema version: %d", v)
 		}

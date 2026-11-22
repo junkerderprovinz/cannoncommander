@@ -21,7 +21,7 @@ The endpoint is `/mcp` below the address you open CannonCommander at, such as `h
 ## Reading and writing {#rights}
 
 - A new key only reads: it lists folders, searches and reads text files.
-- **Write** is a switch per key and asks for your password first. With it on, the assistant can create folders, copy, move, rename, move things to the trash and restore them.
+- **Write** is a switch per key and asks for your password first when CannonCommander has one. With it on, the assistant can create folders, copy, move, rename, move things to the trash and restore them.
 - Every change is a job you can follow and undo. Nothing is ever deleted for good.
 - Writing is held to 25 entries per call and 200 per hour.
 
@@ -39,7 +39,7 @@ Web chats in the cloud cannot take a key. For them:
 
 1. Make CannonCommander reachable from the internet over https, for example behind a [reverse proxy](../configuration/reverse-proxy.md). A login on the proxy may guard the interface, but `/mcp` has to get through without it.
 2. As admin, switch on **Sign-in through OAuth** under **Keys of all accounts** in the same card, with the public address.
-3. Add CannonCommander in the assistant. It sends you to a CannonCommander page where you sign in and allow it.
+3. Add CannonCommander in the assistant. It sends you to a CannonCommander page where you allow it, after signing in if CannonCommander has a password.
 
 ## In the desktop app {#desktop}
 

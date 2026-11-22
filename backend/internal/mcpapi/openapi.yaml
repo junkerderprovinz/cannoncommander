@@ -11,8 +11,9 @@ tag:
 
     These operations manage the keys of the signed-in account. Admins also
     see and revoke the keys of everybody else. Making a key, replacing one
-    and switching writing on need a session, never an API token, and the
-    account's password or a fresh sign-in.
+    and switching writing on need a session, never an API token, and a
+    fresh sign-in. Without one they answer 403 signInAgain, and the page
+    confirms the password at the sign-in's me/confirm and tries again.
 paths:
   /mcp/keys:
     get:
@@ -62,9 +63,6 @@ paths:
                 canWrite:
                   type: boolean
                   default: false
-                password:
-                  type: string
-                  description: The account's password. An account without one signs in again instead.
       responses:
         "201":
           $ref: "#/components/responses/McpKeySecret"
@@ -82,7 +80,7 @@ paths:
     patch:
       operationId: mcpKeyUpdate
       summary: Rename a key or set its write switch
-      description: Only the owner switches writing on, with the password. An admin may switch it off for anybody.
+      description: Only the owner switches writing on, with a fresh sign-in. An admin may switch it off for anybody.
       requestBody:
         required: true
         content:
@@ -94,8 +92,6 @@ paths:
                   type: string
                 canWrite:
                   type: boolean
-                password:
-                  type: string
       responses:
         "200":
           description: The key as it is now.
@@ -133,15 +129,7 @@ paths:
     post:
       operationId: mcpKeyRotate
       summary: Replace a key
-      description: The key keeps its name, switch and log; the old one stops working at once. Only the owner.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
+      description: The key keeps its name, switch and log; the old one stops working at once. Only the owner, with a fresh sign-in.
       responses:
         "200":
           $ref: "#/components/responses/McpKeySecret"
@@ -274,9 +262,6 @@ paths:
                 canWrite:
                   type: boolean
                   default: false
-                password:
-                  type: string
-                  description: Needed to allow, as for making a key. An account without a password signs in again instead.
       responses:
         "200":
           description: Where the browser goes on to.
@@ -321,7 +306,7 @@ components:
   schemas:
     McpKeys:
       type: object
-      required: [endpointPath, limit, signIn, hostAllowsKeys, desktop, writeLimits, keys, revoked, oauth]
+      required: [endpointPath, limit, signIn, desktop, writeLimits, keys, revoked, oauth]
       properties:
         endpointPath:
           type: string
@@ -332,9 +317,6 @@ components:
         signIn:
           type: boolean
           description: The server asks people to sign in.
-        hostAllowsKeys:
-          type: boolean
-          description: A key can be made from the address this request came in on.
         desktop:
           type: boolean
         writeLimits:
@@ -453,7 +435,7 @@ components:
           type: string
     McpConsent:
       type: object
-      required: [client, ticket, account, password, limitReached, grantLimit]
+      required: [client, ticket, account, limitReached, grantLimit]
       properties:
         client:
           type: object
@@ -471,9 +453,6 @@ components:
               type: boolean
         account:
           type: string
-        password:
-          type: boolean
-          description: The account signs in with a password, which Allow then asks for. Any other account needs a sign-in from the last minutes instead.
         ticket:
           type: string
         limitReached:

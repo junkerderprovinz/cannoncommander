@@ -13,7 +13,7 @@ Give each person an account of their own, with a role and a folder they stay ins
     - **Role**: Admin, User or Read only.
     - **Area**: the folder this person sees, with everything below it.
     - **Groups**: switch on the groups the person belongs to.
-    - **Password**: at least 12 characters, typed twice.
+    - **Password**: typed twice. Any length works, and under 12 characters the window tells you it is short.
 3. Click **Add**.
 
 ![The window Add a user: sign-in name lena, display name Lena, the role User, the area /mnt/user, the groups and the password.](../assets/screenshots/user-add.png)
@@ -26,11 +26,15 @@ Give each person an account of their own, with a role and a folder they stay ins
 | User | Work with the files in their area: copy, move, rename, delete, share |
 | Read only | Look and download |
 
-There always has to be at least one admin.
+The owner, the account that set the first password, always stays an admin. Nobody can block or remove it.
 
 ## Groups {#groups}
 
 A group bundles people so an [access rule](rules.md) can apply to all of them at once. **Add a group**, give it a name, then add members from the user's window.
+
+## Block a user {#block}
+
+Open the user and switch on **Blocked**. The account signs in nowhere until you switch it off again, and its sessions and API tokens end.
 
 ## Remove a user {#remove}
 

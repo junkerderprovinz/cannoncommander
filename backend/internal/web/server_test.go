@@ -15,7 +15,7 @@ func guarded(t *testing.T, method, host string, header map[string]string) int {
 	inner := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	req := httptest.NewRequest(method, "/api/v1/fs/mkdir", nil)
 	req.Host = host
-	req.AddCookie(&http.Cookie{Name: sessionCookieName, Value: "a.b.c"})
+	req.AddCookie(&http.Cookie{Name: "cc_session", Value: "a.b.c"})
 	for k, v := range header {
 		req.Header.Set(k, v)
 	}

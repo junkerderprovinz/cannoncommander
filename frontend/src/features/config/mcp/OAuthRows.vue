@@ -42,7 +42,7 @@ const on = computed({
 
 <template>
   <FieldRow :label="c('mcp.oauth')" :hint="c('mcp.oauthTip')">
-    <Toggle v-model="on" :disabled="busy" :refused="oauth.possible || oauth.enabled ? undefined : c('mcp.oauthNeedsSignIn')" data-mcp="oauth" />
+    <Toggle v-model="on" :disabled="busy" :refused="oauth.possible || oauth.enabled ? undefined : c('mcp.oauthDesktop')" data-mcp="oauth" />
   </FieldRow>
   <FieldRow v-if="on" :label="c('mcp.issuer')" :hint="c('mcp.issuerTip')">
     <TextField id="mcp-issuer" ref="field" v-model="draft" placeholder="https://files.example.com" width="wide" mono @keydown.enter="save(true, draft)" />

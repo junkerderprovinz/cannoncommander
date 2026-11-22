@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -48,7 +47,6 @@ type KeyView struct {
 var (
 	errLabel        = v1.Coded(http.StatusBadRequest, "mcpKeyLabel", "a key needs a name of 1 to 64 characters")
 	errClient       = v1.Coded(http.StatusBadRequest, "mcpKeyClient", "a client id is 1 to 32 lower-case letters, digits and dashes")
-	errNeedsSignIn  = v1.Coded(http.StatusForbidden, "mcpKeyNeedsSignIn", "without sign-in, a key can only be made from an IP address or a local name")
 	errNoSuchKey    = v1.Coded(http.StatusNotFound, "mcpKeyNotFound", "there is no such key")
 	errNotYourKey   = v1.Coded(http.StatusForbidden, "mcpKeyNotYours", "only the account a key belongs to can do this")
 	errTokenRefused = v1.Coded(http.StatusForbidden, "tokenCannotChange", "sign in to change keys, an API token cannot")
@@ -87,57 +85,20 @@ var clientID = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{0,31}$`)
 
 var keyIDShape = regexp.MustCompile(`^[0-9a-f]{32}$`)
 
-// privateSuffixes only ever resolve inside a network, so no answer from
-// public DNS can point one of them at a LAN address.
-var privateSuffixes = []string{".local", ".lan", ".home", ".home.arpa", ".internal", ".localdomain", ".ts.net"}
-
-// hostAllowsKeys reports whether a key may be made from the request host
-// while nobody signs in: an IP address, localhost, a single label or a
-// private suffix, none of which a public DNS name can rebind.
-func hostAllowsKeys(host string) bool {
-	if h, _, err := net.SplitHostPort(host); err == nil {
-		host = h
-	}
-	host = strings.ToLower(strings.Trim(strings.TrimSpace(host), "[]"))
-	if host == "" {
-		return false
-	}
-	if net.ParseIP(host) != nil || !strings.Contains(host, ".") {
-		return true
-	}
-	for _, suffix := range privateSuffixes {
-		if strings.HasSuffix(host, suffix) {
-			return true
-		}
-	}
-	return false
-}
-
-// keysAllowedFrom reports whether r may make or change a key. A server people
-// sign in to settles it with the session, which is bound to the real address;
-// a page that rebound its name to this one carries none. Without sign-in, as in
-// the desktop app, only an address that cannot be rebound counts.
-func (s *Server) keysAllowedFrom(r *http.Request) bool {
-	return s.signIn() || hostAllowsKeys(r.Host)
-}
-
-// proveOwner makes sure the person at the keyboard owns the account before a
-// key is made, replaced or allowed to write: a session, no API token, and the
-// password or a fresh sign-in, as for an API token.
-func (s *Server) proveOwner(r *http.Request, u *users.User, password string) error {
+// proveOwner runs then, which makes, replaces or lets a key write, once the
+// person at the keyboard owns the account: a session, no API token, and a
+// fresh sign-in or the password confirmed, as for an API token.
+func (s *Server) proveOwner(r *http.Request, then func() error) error {
 	if s.login.ByAPIToken(r) {
 		return errTokenRefused
 	}
-	if !s.keysAllowedFrom(r) {
-		return errNeedsSignIn
-	}
 	if !s.signIn() {
-		return nil
+		return then()
 	}
 	if _, ok := s.login.SessionHash(r); !ok {
 		return errTokenRefused
 	}
-	return s.login.Confirm(r, u, password)
+	return s.login.Confirm(r, then)
 }
 
 // unusable names why a key no longer authenticates although nobody revoked
@@ -187,6 +148,7 @@ func (s *Server) ownerNames(ids ...uint64) map[uint64]string {
 func (s *Server) list(w http.ResponseWriter, r *http.Request) error {
 	me := v1.UserFrom(r)
 	ctx := r.Context()
+	s.settle(r)
 	all := r.URL.Query().Get("all") == "true"
 	if all && !me.Permissions.Admin {
 		return v1.Coded(http.StatusForbidden, "adminsOnly", "admins only")
@@ -228,11 +190,10 @@ func (s *Server) list(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	out := map[string]any{
-		"endpointPath":   EndpointPath,
-		"limit":          keyLimit,
-		"signIn":         s.signIn(),
-		"hostAllowsKeys": s.keysAllowedFrom(r),
-		"desktop":        desktop.Active(),
+		"endpointPath": EndpointPath,
+		"limit":        keyLimit,
+		"signIn":       s.signIn(),
+		"desktop":      desktop.Active(),
 		"writeLimits": map[string]int64{
 			"entriesPerCall": itemsPerCall, "entriesPerHour": itemsPerHour, "filesPerCall": filesPerCall, "callsPerMinute": callsPerMinute,
 			"bytesPerCall": bytesPerCall,
@@ -253,7 +214,6 @@ type createRequest struct {
 	Label    string `json:"label"`
 	Client   string `json:"client"`
 	CanWrite bool   `json:"canWrite"`
-	Password string `json:"password"`
 }
 
 func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
@@ -269,21 +229,27 @@ func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
 	if in.Client != "" && !clientID.MatchString(in.Client) {
 		return errClient
 	}
-	if err := s.proveOwner(r, me, in.Password); err != nil {
-		return err
-	}
 	pepper := s.pepper()
 	if len(pepper) == 0 {
 		return errors.New("the server has no signing key")
 	}
+	s.settle(r)
 	key, id := newSecret(keyPrefix), newID()
-	k, err := s.st.createKey(r.Context(), Key{
-		ID: id, UserID: me.ID, Label: label, Client: in.Client,
-		Digest: hashKey(pepper, key), Hint: keyHint(key), Check: keyCheck(pepper, id),
-		CanWrite: in.CanWrite, CreatedAt: s.now().Unix(),
+	var k Key
+	err := s.proveOwner(r, func() error {
+		var err error
+		k, err = s.st.createKey(r.Context(), Key{
+			ID: id, UserID: me.ID, Label: label, Client: in.Client,
+			Digest: hashKey(pepper, key), Hint: keyHint(key), Check: keyCheck(pepper, id),
+			CanWrite: in.CanWrite, CreatedAt: s.now().Unix(), MadeOpen: !s.signIn(),
+		})
+		if err != nil {
+			return keyProblem(err)
+		}
+		return nil
 	})
 	if err != nil {
-		return keyProblem(err)
+		return err
 	}
 	event := "made"
 	if k.CanWrite {
@@ -316,7 +282,6 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 	var in struct {
 		Label    *string `json:"label"`
 		CanWrite *bool   `json:"canWrite"`
-		Password string  `json:"password"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -338,17 +303,24 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 		}
 		in.Label = &clean
 	}
+	save := func() error {
+		updated, saveErr := s.st.updateKey(r.Context(), k.ID, in.Label, in.CanWrite)
+		if saveErr != nil {
+			return keyProblem(saveErr)
+		}
+		k = updated
+		return nil
+	}
 	if in.CanWrite != nil && *in.CanWrite && !k.CanWrite {
 		if k.UserID != me.ID {
 			return errNotYourKey
 		}
-		if err := s.proveOwner(r, me, in.Password); err != nil {
-			return err
-		}
+		err = s.proveOwner(r, save)
+	} else {
+		err = save()
 	}
-	k, err = s.st.updateKey(r.Context(), k.ID, in.Label, in.CanWrite)
 	if err != nil {
-		return keyProblem(err)
+		return err
 	}
 	if in.CanWrite != nil {
 		event := "switched to read only"
@@ -362,14 +334,6 @@ func (s *Server) update(w http.ResponseWriter, r *http.Request) error {
 
 func (s *Server) rotate(w http.ResponseWriter, r *http.Request) error {
 	me := v1.UserFrom(r)
-	var in struct {
-		Password string `json:"password"`
-	}
-	if r.ContentLength != 0 {
-		if err := v1.DecodeJSON(r, &in); err != nil {
-			return err
-		}
-	}
 	k, err := s.keyFor(r, me)
 	if err != nil {
 		return err
@@ -380,14 +344,19 @@ func (s *Server) rotate(w http.ResponseWriter, r *http.Request) error {
 	if k.Kind != kindKey || k.RevokedAt != 0 {
 		return errNoSuchKey
 	}
-	if err := s.proveOwner(r, me, in.Password); err != nil {
-		return err
-	}
+	s.settle(r)
 	pepper := s.pepper()
 	key := newSecret(keyPrefix)
-	k, err = s.st.rotateKey(r.Context(), k.ID, hashKey(pepper, key), keyHint(key), keyCheck(pepper, k.ID), s.now().Unix())
+	err = s.proveOwner(r, func() error {
+		rotated, rotateErr := s.st.rotateKey(r.Context(), k.ID, hashKey(pepper, key), keyHint(key), keyCheck(pepper, k.ID), s.now().Unix(), !s.signIn())
+		if rotateErr != nil {
+			return keyProblem(rotateErr)
+		}
+		k = rotated
+		return nil
+	})
 	if err != nil {
-		return keyProblem(err)
+		return err
 	}
 	s.changed(r, k, "replaced")
 	w.Header().Set("Cache-Control", "no-store")
@@ -525,7 +494,7 @@ func (s *Server) setOAuth(w http.ResponseWriter, r *http.Request) error {
 		return errTokenRefused
 	}
 	if in.Enabled && !s.oauthPossible() {
-		return v1.Coded(http.StatusBadRequest, "mcpOAuthNeedsSignIn", errOAuthNeedsSignIn.Error())
+		return v1.Coded(http.StatusBadRequest, "mcpOAuthDesktop", errOAuthDesktop.Error())
 	}
 	issuer := ""
 	if in.Enabled || strings.TrimSpace(in.Issuer) != "" {
@@ -636,7 +605,6 @@ func (s *Server) consentInfo(w http.ResponseWriter, r *http.Request) error {
 			"redirectHost": u.Hostname(), "loopback": loopback(u.Hostname()),
 		},
 		"account":      me.Username,
-		"password":     me.LoginMethod == users.LoginMethodPassword,
 		"ticket":       ticket,
 		"limitReached": others >= keyLimit,
 		"grantLimit":   keyLimit,
@@ -645,7 +613,7 @@ func (s *Server) consentInfo(w http.ResponseWriter, r *http.Request) error {
 
 // consent takes the user's answer. Allow hands the client a code for the
 // token endpoint, which makes a lasting credential like a key, so it asks for
-// the password or a fresh sign-in as making a key does. A refused proof
+// a fresh sign-in or the password confirmed, as making a key does. A refused proof
 // leaves the ticket unspent, so the page can ask again. Deny tells the client
 // access_denied.
 func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
@@ -653,7 +621,6 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 		Ticket   string `json:"ticket"`
 		Allow    bool   `json:"allow"`
 		CanWrite bool   `json:"canWrite"`
-		Password string `json:"password"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -668,8 +635,9 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	me := v1.UserFrom(r)
+	// A refused proof leaves the ticket unspent, so it is asked for first.
 	if in.Allow {
-		if err := s.proveOwner(r, me, in.Password); err != nil {
+		if err = s.proveOwner(r, func() error { return nil }); err != nil {
 			return err
 		}
 	}
@@ -710,9 +678,16 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 	pending := &pendingCode{
 		clientID: client.ID, redirectURI: t.Redirect, challenge: t.Challenge, resource: t.Resource,
 		label: label, known: client.Known, userID: me.ID, canWrite: in.CanWrite, expires: now.Add(codeTTL),
+		session: session,
 	}
-	if !s.oauth.putCode(hashOAuth(s.pepper(), "code", code), pending, now) {
-		return v1.Coded(http.StatusConflict, "oauthBusy", "too many sign-ins are waiting, try again in a minute")
+	err = s.proveOwner(r, func() error {
+		if !s.oauth.putCode(hashOAuth(s.pepper(), "code", code), pending, now) {
+			return v1.Coded(http.StatusConflict, "oauthBusy", "too many sign-ins are waiting, try again in a minute")
+		}
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 	logger.Infof("mcp: oauth: client %s was allowed by %s from %s", client.ID, me.Username, addr)
 	w.Header().Set("Cache-Control", "no-store")

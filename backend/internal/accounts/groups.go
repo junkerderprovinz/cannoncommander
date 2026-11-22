@@ -177,9 +177,14 @@ func (h handlers) updateGroup(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, g)
 }
 
-// dropGroup removes a group from the login system and its note.
+// dropGroup removes a group from the login system and its note. A group an
+// admin renames goes through here too and is the admin's from then on, so
+// a sign-in service takes nobody out of it.
 func (h handlers) dropGroup(ctx context.Context, name string) error {
 	if err := state.DeleteGroup(name); err != nil {
+		return err
+	}
+	if _, err := h.db.ExecContext(ctx, `DELETE FROM synced_members WHERE group_name = ?`, name); err != nil {
 		return err
 	}
 	_, err := h.db.ExecContext(ctx, `DELETE FROM group_notes WHERE name = ?`, name)

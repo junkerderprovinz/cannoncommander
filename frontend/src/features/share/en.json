@@ -38,7 +38,6 @@
   "create": "Create link",
   "badSlug": "The address needs 3 to 40 characters: small letters, digits and dashes",
   "slugTaken": "This address is taken. The dice finds a free one.",
-  "shortPassword": "The password needs at least 6 characters",
   "rerolled": "New address rolled, the old one leads nowhere",
   "together": "Shared collection",
   "folderName": "Folder name",

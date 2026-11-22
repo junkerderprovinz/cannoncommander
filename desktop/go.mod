@@ -56,6 +56,7 @@ require (
 	github.com/gtsteffaniak/go-ffmpeg v1.7.0 // indirect
 	github.com/gtsteffaniak/go-logger v1.1.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
+	github.com/junkerderprovinz/parleyport/kit v1.0.8-0.20261122145033-07797ad0d54c // indirect
 	github.com/klauspost/compress v1.20.5 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.2 // indirect
 	github.com/kovidgoyal/go-parallel v1.1.1 // indirect

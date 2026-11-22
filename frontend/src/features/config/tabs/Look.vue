@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Button, Card, ColorPicker, FieldRow, Selector, Toggle } from '@glimstone/vue';
 import { ACCENTS, applyAccent, applyOled, COLOR_NAMES_DE, DEFAULT_ACCENT, oledRefusal, RAINBOW, storedOled } from '@glimstone/core';
-import { computed, defineAsyncComponent, ref } from 'vue';
+import { computed, ref } from 'vue';
+import { lazyComponent } from '@/core/lazy';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
@@ -13,7 +14,7 @@ import { pickerWords, segItems } from '@/ui/kit';
 import LanguagePicker from '../LanguagePicker.vue';
 import ListCard from './ListCard.vue';
 
-const SandboxRow = import.meta.env.DESKTOP ? defineAsyncComponent(() => import('@/features/shellmenu/SandboxRow.vue')) : null;
+const SandboxRow = import.meta.env.DESKTOP ? lazyComponent(() => import('@/features/shellmenu/SandboxRow.vue')) : null;
 
 const PRESETS = ACCENTS.map((a) => a.hex);
 const same = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x.toLowerCase() === b[i]!.toLowerCase());

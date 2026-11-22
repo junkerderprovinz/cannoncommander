@@ -6,8 +6,9 @@ import { admin, type Share } from '@/api/admin';
 import { DAY, fmtDate, now } from '@/core/format';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import { attempt, c, cn, fail, stepFoot } from '@/features/config/shared';
+import { attempt, c, cn, stepFoot } from '@/features/config/shared';
 import { MESSAGE_MAX } from '@/features/share/link';
+import { shortNote, shortSaved } from '@/signin/words';
 import { copyWords, eyeWords, selectOptions } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry; share: Share; saved: () => void }>();
@@ -26,16 +27,16 @@ async function setNew() {
 
 async function save() {
   const asking = pwOn.value && (!s.password || pwNew.value);
-  if (asking && pw.value.length < 6) return fail(c('shares.pwShort'), pwInput());
   const change: { expires?: number | null; password?: string; message?: string } = {};
   if (message.value.trim() !== s.message) change.message = message.value.trim();
   if (expiry.value === 'never') change.expires = null;
   else if (expiry.value !== 'keep') change.expires = now() + Number(expiry.value) * DAY;
   if (!pwOn.value && s.password) change.password = '';
   if (asking) change.password = pw.value;
-  if (!(await attempt(admin.updateShare(s.id, change), pwInput()))) return;
+  const done = await attempt(admin.updateShare(s.id, change), pwInput());
+  if (!done) return;
   props.win.close();
-  toast(c('saved'));
+  toast(c('saved') + shortSaved(done.value));
   props.saved();
 }
 
@@ -58,7 +59,7 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('save'), g: 'IconSa
       <FieldRow :label="c('shares.askPw')" :hint="c('shares.askPwTip')"><Toggle v-model="pwOn" /></FieldRow>
       <template v-if="pwOn">
         <FieldRow v-if="s.password && !pwNew" :label="c('users.password')"><Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="setNew" /></FieldRow>
-        <FieldRow v-else :label="c('users.password')" :hint="c('shares.pwTip')"><PasswordField id="a-sharepw" v-model="pw" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
+        <FieldRow v-else :label="c('users.password')"><PasswordField id="a-sharepw" v-model="pw" width="medium" autocomplete="new-password" :text="eyeWords()" :note="shortNote(pw)" /></FieldRow>
       </template>
     </div>
   </SubCard>

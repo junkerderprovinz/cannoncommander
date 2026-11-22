@@ -330,14 +330,17 @@ func (s *SQLStore) CreateUser(user *users.User) error {
 	query := `INSERT INTO users (user_id, username, perm_api, perm_admin, perm_realtime, user_data) 
 			  VALUES (?, ?, ?, ?, ?, ?)`
 
-	_, err = s.db.Exec(query,
-		userIDDBString(user.ID),
-		user.Username,
-		user.Permissions.Api,
-		user.Permissions.Admin,
-		user.Permissions.Realtime,
-		userDataJSON,
-	)
+	err = s.InLegacyTx(func(tx *sql.Tx) error {
+		_, execErr := tx.Exec(query,
+			userIDDBString(user.ID),
+			user.Username,
+			user.Permissions.Api,
+			user.Permissions.Admin,
+			user.Permissions.Realtime,
+			userDataJSON,
+		)
+		return execErr
+	})
 	if err != nil {
 		if err.Error() == "UNIQUE constraint failed: users.username" {
 			return fmt.Errorf("user with provided username already exists")
@@ -361,26 +364,31 @@ func (s *SQLStore) UpdateUser(user *users.User) error {
 	query := `UPDATE users SET username = ?, perm_api = ?, perm_admin = ?, 
 			  perm_realtime = ?, user_data = ? WHERE user_id = ?`
 
-	result, err := s.db.Exec(query,
-		user.Username,
-		user.Permissions.Api,
-		user.Permissions.Admin,
-		user.Permissions.Realtime,
-		userDataJSON,
-		userIDDBString(user.ID),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to update user: %w", err)
-	}
+	return s.InLegacyTx(func(tx *sql.Tx) error {
+		result, err := tx.Exec(query,
+			user.Username,
+			user.Permissions.Api,
+			user.Permissions.Admin,
+			user.Permissions.Realtime,
+			userDataJSON,
+			userIDDBString(user.ID),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to update user: %w", err)
+		}
+		return oneRow(result)
+	})
+}
 
-	rowsAffected, err := result.RowsAffected()
+// oneRow fails when a write by id found no user.
+func oneRow(result sql.Result) error {
+	n, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %w", err)
 	}
-	if rowsAffected == 0 {
+	if n == 0 {
 		return fmt.Errorf("user not found")
 	}
-
 	return nil
 }
 
@@ -395,40 +403,22 @@ func (s *SQLStore) DeleteUserByID(id uint64) error {
 	if id == 0 {
 		return fmt.Errorf("user not found")
 	}
-	query := `DELETE FROM users WHERE user_id = ?`
-	result, err := s.db.Exec(query, userIDDBString(id))
-	if err != nil {
-		return fmt.Errorf("failed to delete user: %w", err)
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("failed to get rows affected: %w", err)
-	}
-
-	if rowsAffected == 0 {
-		return fmt.Errorf("user not found")
-	}
-
-	return nil
+	return s.InLegacyTx(func(tx *sql.Tx) error {
+		result, err := tx.Exec(`DELETE FROM users WHERE user_id = ?`, userIDDBString(id))
+		if err != nil {
+			return fmt.Errorf("failed to delete user: %w", err)
+		}
+		return oneRow(result)
+	})
 }
 
 // DeleteUserByUsername deletes a user by username
 func (s *SQLStore) DeleteUserByUsername(username string) error {
-	query := `DELETE FROM users WHERE username = ?`
-	result, err := s.db.Exec(query, username)
-	if err != nil {
-		return fmt.Errorf("failed to delete user: %w", err)
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("failed to get rows affected: %w", err)
-	}
-
-	if rowsAffected == 0 {
-		return fmt.Errorf("user not found")
-	}
-
-	return nil
+	return s.InLegacyTx(func(tx *sql.Tx) error {
+		result, err := tx.Exec(`DELETE FROM users WHERE username = ?`, username)
+		if err != nil {
+			return fmt.Errorf("failed to delete user: %w", err)
+		}
+		return oneRow(result)
+	})
 }

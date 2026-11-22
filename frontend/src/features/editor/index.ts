@@ -2,8 +2,8 @@
 // Notepad++'s line commands, find and replace with regular expressions and a markdown preview. In the desktop app
 // F4 may open another program instead, which desktop.ts hands in.
 import './editor.css';
-import { defineAsyncComponent } from 'vue';
 import { action } from '@/core/actions';
+import { lazyComponent, twice } from '@/core/lazy';
 import { bindKey, inScope } from '@/core/keymap';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
@@ -22,8 +22,8 @@ import { actionId, EDITOR_COMMANDS, editorHost } from './session';
 
 // CodeMirror comes in a chunk of its own, fetched right after start, so the first paint does not wait for it and
 // F4 does not either.
-const loadEditor = () => import('./EditorBody.vue');
-const EditorBody = defineAsyncComponent(loadEditor);
+const loadEditor = twice(() => import('./EditorBody.vue'));
+const EditorBody = lazyComponent(loadEditor);
 
 // Another program for F4, which only the desktop app can start. It answers whether it took the file.
 export const programHooks: { edit: ((path: string) => Promise<boolean>) | null } = { edit: null };
@@ -68,7 +68,7 @@ async function edit(node: FileNode, folder: string, more: FileNode[] = []) {
 }
 
 export default function setup() {
-  loadEditor();
+  loadEditor().catch(() => {});
   hooks.edit = (n, folder) => { void edit(n, folder); };
 
   action('edit', { label: tl('editor.edit'), g: 'IconPencil', key: 'F4', needs: ['file', 'writable'], run: async () => {

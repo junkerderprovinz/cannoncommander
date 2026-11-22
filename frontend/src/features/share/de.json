@@ -38,7 +38,6 @@
   "create": "Link erstellen",
   "badSlug": "Die Adresse braucht 3 bis 40 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche",
   "slugTaken": "Diese Adresse ist schon vergeben. Der Würfel findet eine freie.",
-  "shortPassword": "Das Passwort braucht mindestens 6 Zeichen",
   "rerolled": "Neue Adresse gewürfelt, die alte führt ins Leere",
   "together": "Sammelfreigabe",
   "folderName": "Name des Ordners",

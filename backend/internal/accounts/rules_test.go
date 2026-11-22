@@ -28,7 +28,7 @@ func (w *world) verdict(user, path string) accounts.Verdict {
 }
 
 func TestGroupsKeepNoteAndMembers(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie", "note": "Fotos", "members": []string{"anna", "jdp", "anna"}}))
 	w.must(http.StatusConflict, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie"}))
@@ -45,7 +45,7 @@ func TestGroupsKeepNoteAndMembers(t *testing.T) {
 }
 
 func TestRenamingAndDeletingAGroupMovesItsRules(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie", "note": "Fotos", "members": []string{"anna"}}))
 	w.setRules(rule{"who": "@familie", "path": "/mnt/user/backups", "rule": "hide"}, rule{"who": "*", "path": "*.tmp", "rule": "hide"})
@@ -71,7 +71,7 @@ func TestRenamingAndDeletingAGroupMovesItsRules(t *testing.T) {
 }
 
 func TestRulesAreChecked(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	for _, bad := range []rule{
 		{"who": "anna", "path": "", "rule": "hide"},
@@ -96,7 +96,7 @@ func TestRulesAreChecked(t *testing.T) {
 }
 
 func TestTheFirstMatchingRuleDecides(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie"}))
 	anna := w.addUser("anna", "user", "/mnt/user", "familie")
 	bert := w.addUser("bert", "user", "/mnt/user")
@@ -136,7 +136,7 @@ func TestTheFirstMatchingRuleDecides(t *testing.T) {
 }
 
 func TestRulesSurviveARestart(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	w.setRules(rule{"who": "anna", "path": "/mnt/user/backups", "rule": "hide"})
 	v1.Forget(w.deps, "accounts")
@@ -151,7 +151,7 @@ func TestRulesSurviveARestart(t *testing.T) {
 }
 
 func TestTheCheckerExplainsWhatAUserGets(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user/fotos")
 	w.addUser("gast", "readonly", "/mnt/user")
 	w.addUser("bert", "user", "/mnt/user")
@@ -181,7 +181,7 @@ func TestTheCheckerExplainsWhatAUserGets(t *testing.T) {
 }
 
 func TestCarryingAFolderGoesByTheKindOfRule(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	anna := w.addUser("anna", "user", "/mnt/user")
 	album := filepath.Join(w.share, "fotos", "album")
 	if err := os.MkdirAll(filepath.Join(album, "privat"), 0o755); err != nil {

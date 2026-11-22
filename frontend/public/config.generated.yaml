@@ -74,20 +74,23 @@ auth:
       enabled: true
       adminUsername: "admin"              # secret: admin username auto-assigned. If not set, the default is "admin".
       adminPassword: "admin"              # secret: password for admin auto-assigned admin account. If set, reset on startup.
-      minLength: 5                        # minimum pasword length required, default is 5.  validate:omitempty
+      minLength: 12                       # below this length the sign-in points out that a password is short, default is 12. It never refuses one.  validate:omitempty
       enforcedOtp: false                  # if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
     oidc:                                 #  validate:omitempty
       enabled: false                      # whether to enable this authentication method.
       adminGroup: ""                      # if set, users in this group will be granted admin privileges
       userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-      groupsClaim: "groups"               # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: "preferred_username" # the field value to use as the username. Default is "preferred_username". Other common values are "email" or "username", or "phone"
+      groupsClaim: ""                     # the JSON field name to read groups from. Empty takes the provider's, usually "groups"
+      userIdentifier: ""                  # the field value to use as the username. Empty takes the provider's, usually "preferred_username". Other common values are "email" or "username"
       disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
       logoutRedirectUrl: ""               # if provider logout url is provided, the server will also redirect to logout url. Custom logout query params are respected.
       clientId: ""                        # secret: client id of the OIDC application
       clientSecret: ""                    # secret: client secret of the OIDC application
       issuerUrl: ""                       # authorization URL of the OIDC provider
-      scopes: "openid email profile"      # scopes to request from the OIDC provider
+      scopes: ""                          # scopes to request from the OIDC provider. Empty takes the provider's
+      name: ""                            # the name the sign-in button shows. Empty is the provider's own name
+      provider: ""                        # the kind of provider: pocket-id, authentik, authelia, keycloak, kanidm, zitadel or custom. Empty recognises it
+      caFile: ""                          # PEM file of a certificate authority to trust for this provider, such as your own
     passkey:                              #  validate:omitempty
       enabled: false                      # has no effect, passkeys are always on
       rpDisplayName: ""                   # the Relying Party display name (defaults to frontend name)

@@ -176,10 +176,14 @@ func (s *Server) openConsent(session, ticket string, now time.Time) (consentTick
 
 // consentSession returns the session a consent is bound to. An API token or a
 // key of this server is no session: what it allowed would outlive the person
-// who never saw the page.
+// who never saw the page. A server nobody signs in to binds it to no session,
+// and closing the server ends it.
 func (s *Server) consentSession(r *http.Request) (string, error) {
 	if s.login.ByAPIToken(r) {
 		return "", v1.Coded(http.StatusForbidden, "tokenCannotChange", "sign in to allow a client, an API token cannot")
+	}
+	if !s.signIn() {
+		return "", nil
 	}
 	hash, ok := s.login.SessionHash(r)
 	if !ok {
@@ -308,6 +312,7 @@ func form(w http.ResponseWriter, r *http.Request) bool {
 // wrong one costs nothing; only a wrong client secret counts, towards a
 // throttle of that client.
 func (s *Server) token(w http.ResponseWriter, r *http.Request) {
+	s.settle(r)
 	issuer, on := s.issuer(r.Context())
 	if !on {
 		http.NotFound(w, r)
@@ -387,6 +392,10 @@ func (s *Server) exchangeCode(w http.ResponseWriter, r *http.Request, client oau
 		oauthError(w, http.StatusBadRequest, "invalid_grant", "the account that allowed this client is gone")
 		return
 	}
+	if code.session == "" && s.signIn() || code.session != "" && !s.login.Alive(code.session) {
+		oauthError(w, http.StatusBadRequest, "invalid_grant", "the sign-in that allowed this client has ended")
+		return
+	}
 	access, refresh, accessDigest, refreshDigest := s.newTokens()
 	if err := s.st.pruneOAuth(ctx, now.Unix()); err != nil {
 		logger.Errorf("mcp: oauth: prune: %v", err)
@@ -395,7 +404,7 @@ func (s *Server) exchangeCode(w http.ResponseWriter, r *http.Request, client oau
 		ID: code.grantID, Label: code.label, Client: code.known, OAuthClient: client.ID, Resource: code.resource,
 		Check: keyCheck(s.pepper(), code.grantID), UserID: code.userID, CanWrite: code.canWrite,
 		AccessDigest: accessDigest, RefreshDigest: refreshDigest,
-		AccessExpires: now.Add(accessTTL).Unix(), RefreshExpires: now.Add(refreshTTL).Unix(),
+		AccessExpires: now.Add(accessTTL).Unix(), RefreshExpires: now.Add(refreshTTL).Unix(), MadeOpen: code.session == "",
 	}, now.Unix())
 	if errors.Is(err, errGrantLimit) {
 		oauthError(w, http.StatusBadRequest, "invalid_grant", "this account already has as many signed-in clients as it may")

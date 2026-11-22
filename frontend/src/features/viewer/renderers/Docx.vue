@@ -7,6 +7,7 @@ import { t } from '@/i18n';
 import { rawUrl } from '../content';
 import { joinPath } from '../kinds';
 import type { REmits, RProps } from './types';
+import { twice } from '@/core/lazy';
 
 const props = defineProps<RProps>();
 const emit = defineEmits<REmits & { (e: 'failed'): void }>();
@@ -16,7 +17,7 @@ onMounted(async () => {
   try {
     const res = await fetch(rawUrl(joinPath(props.folder, props.n.name)));
     if (!res.ok) throw new Error(String(res.status));
-    const { convertToHtml } = await import('mammoth');
+    const { convertToHtml } = await twice(() => import('mammoth'))();
     const out = await convertToHtml({ arrayBuffer: await res.arrayBuffer() }, { styleMap: ["p[style-name='Title'] => h1:fresh", "p[style-name='Subtitle'] => p.lead:fresh"] });
     html.value = DOMPurify.sanitize(out.value);
     emit('info', t('viewer.office.doc'));

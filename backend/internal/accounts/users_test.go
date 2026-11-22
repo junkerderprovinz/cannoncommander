@@ -12,6 +12,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
@@ -20,7 +21,7 @@ import (
 )
 
 func TestAdminsCreateUsersWithRoleScopeAndGroups(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie", "note": "Fotos und Filme"}))
 	anna := w.addUser("anna", "user", "/mnt/user/fotos", "familie")
 
@@ -31,8 +32,11 @@ func TestAdminsCreateUsersWithRoleScopeAndGroups(t *testing.T) {
 	if byID := decode[accounts.Account](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/users/"+got.ID, nil))); byID.Name != "anna" {
 		t.Fatalf("by id = %+v", byID)
 	}
-	if utils.CheckPwd(strong, anna.Password) != nil {
-		t.Fatal("the password did not take")
+	if _, err := w.signIn("anna", strong); err != nil {
+		t.Fatalf("the password did not take: %v", err)
+	}
+	if utils.CheckPwd(strong, anna.Password) == nil {
+		t.Fatal("the users table keeps the password the version before would let in with")
 	}
 	if _, err := w.fs.Check(&anna, "/mnt/user/fotos/2026", ccfs.Create); err != nil {
 		t.Fatalf("a user writes in the scope: %v", err)
@@ -57,7 +61,7 @@ func TestAdminsCreateUsersWithRoleScopeAndGroups(t *testing.T) {
 }
 
 func TestNewUsersAreChecked(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	cases := []struct {
 		body map[string]any
@@ -68,7 +72,7 @@ func TestNewUsersAreChecked(t *testing.T) {
 		{map[string]any{"name": "a", "scope": "/mnt/user", "password": strong}, http.StatusBadRequest},
 		{map[string]any{"name": "anna", "scope": "/mnt/user", "password": strong}, http.StatusConflict},
 		{map[string]any{"name": "bert", "scope": "/mnt/user"}, http.StatusBadRequest},
-		{map[string]any{"name": "bert", "scope": "/mnt/user", "password": "kurz"}, http.StatusBadRequest},
+		{map[string]any{"name": "bert", "scope": "/mnt/user", "password": ""}, http.StatusBadRequest},
 		{map[string]any{"name": "bert", "password": strong}, http.StatusBadRequest},
 		{map[string]any{"name": "bert", "scope": "/mnt/user/nirgends", "password": strong}, http.StatusBadRequest},
 		{map[string]any{"name": "bert", "scope": "/mnt/disk1", "password": strong}, http.StatusBadRequest},
@@ -86,7 +90,7 @@ func TestNewUsersAreChecked(t *testing.T) {
 }
 
 func TestAFolderThatOnlyLeadsToSourcesStandsForAllOfThem(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	boss := w.addUser("boss", "admin", "/mnt")
 	if got := decode[accounts.Account](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/users/boss", nil))); got.Scope != "/mnt" {
 		t.Fatalf("scope = %q", got.Scope)
@@ -104,7 +108,7 @@ func TestAFolderThatOnlyLeadsToSourcesStandsForAllOfThem(t *testing.T) {
 }
 
 func TestChangingAUser(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	anna := w.addUser("anna", "user", "/mnt/user")
 	w.must(http.StatusOK, w.as(w.admin.Username, "PUT", "/admin/rules", map[string]any{"items": []map[string]string{{"who": "anna", "path": "/mnt/user/backups", "rule": "hide"}}}))
 
@@ -123,16 +127,21 @@ func TestChangingAUser(t *testing.T) {
 		t.Fatalf("a new role alone must change the rights: %v", err)
 	}
 
+	before := w.session("anni")
 	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/anni", map[string]any{"password": "noch-ein-langes-passwort"}))
-	if last := w.login.endAll[len(w.login.endAll)-1]; last.user != anna.ID || last.keep != "" {
-		t.Fatalf("a new password must log the user out everywhere: %+v", last)
+	w.must(http.StatusUnauthorized, w.req("GET", "/me", nil, header{"Cookie", before}))
+	if _, err := w.signIn("anni", "noch-ein-langes-passwort"); err != nil {
+		t.Fatalf("the new password does not sign in: %v", err)
 	}
-	w.must(http.StatusBadRequest, w.as(w.admin.Username, "PATCH", "/admin/users/anni", map[string]any{"password": "kurz"}))
+	if got := w.account(anna); got.Name != "anni" || got.Role != "user" {
+		t.Fatalf("the sign-in did not follow: %+v", got)
+	}
+	w.must(http.StatusBadRequest, w.as(w.admin.Username, "PATCH", "/admin/users/anni", map[string]any{"password": ""}))
 	w.must(http.StatusNotFound, w.as(w.admin.Username, "PATCH", "/admin/users/anna", map[string]any{"full": "x"}))
 }
 
 func TestAdminsCannotLockThemselvesOut(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	me := w.admin.Username
 	w.must(http.StatusConflict, w.as(me, "PATCH", "/admin/users/"+me, map[string]any{"role": "user"}))
 	w.must(http.StatusBadRequest, w.as(me, "PATCH", "/admin/users/"+me, map[string]any{"name": "chef"}))
@@ -141,16 +150,18 @@ func TestAdminsCannotLockThemselvesOut(t *testing.T) {
 
 	w.addUser("zweite", "admin", "/mnt/user")
 	w.must(http.StatusOK, w.as("zweite", "PATCH", "/admin/users/"+me, map[string]any{"role": "user"}))
+	// A lower role ends the sessions of the account.
+	w.must(http.StatusUnauthorized, w.as(me, "GET", "/me", nil))
+	delete(w.cookies, me)
 	w.must(http.StatusForbidden, w.as(me, "PATCH", "/admin/users/zweite", map[string]any{"role": "user"}))
 }
 
 func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie"}))
 	anna := w.addUser("anna", "user", "/mnt/user", "familie")
-	w.as("anna", "GET", "/me", nil)
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "skript", "rights": "rw"})))
-	w.req("GET", "/me", nil, "X-Api", tok.Secret)
+	tok := decode[struct{ Value string }](t, w.must(http.StatusOK, w.as("anna", "POST", "/api/signin/v1/me/tokens", map[string]any{"name": "skript", "scopes": []string{"all"}})))
+	w.must(http.StatusOK, w.req("GET", "/me", nil, header{"Authorization", "Bearer " + tok.Value}))
 	w.must(http.StatusOK, w.as(w.admin.Username, "PUT", "/admin/rules", map[string]any{"items": []map[string]string{
 		{"who": "anna", "path": "/mnt/user/backups", "rule": "hide"},
 		{"who": "@familie", "path": "/mnt/user/filme", "rule": "read"},
@@ -176,9 +187,7 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 	if links := decode[[]any](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/shares", nil))); len(links) != 0 {
 		t.Fatalf("share links left: %+v", links)
 	}
-	if _, _, ok := state.HashedTokenOwner(tok.Secret); ok {
-		t.Fatal("the token of anna still logs in")
-	}
+	w.must(http.StatusUnauthorized, w.req("GET", "/me", nil, header{"Authorization", "Bearer " + tok.Value}))
 	rules := decode[struct{ Items []accounts.Rule }](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/rules", nil))).Items
 	if len(rules) != 1 || rules[0].Who != "@familie" {
 		t.Fatalf("rules = %+v", rules)
@@ -186,9 +195,14 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 	if slices.Contains(state.GetGroupMembers()["familie"], "anna") {
 		t.Fatal("anna is still in the group")
 	}
-	for _, table := range []string{"user_prefs", "sessions", "account_profiles", "token_use"} {
+	for _, table := range []string{"user_prefs", "sessions", "account_profiles", "token_use", "synced_members"} {
 		var n int
-		if err := w.deps.DB.QueryRow(`SELECT COUNT(*) FROM `+table+` WHERE user_id = ?`, id).Scan(&n); err != nil || n != 0 {
+		where := "user_id = ?"
+		arg := any(id)
+		if table == "synced_members" {
+			where, arg = "username = ?", "anna"
+		}
+		if err := w.deps.DB.QueryRow(`SELECT COUNT(*) FROM `+table+` WHERE `+where, arg).Scan(&n); err != nil || n != 0 {
 			t.Errorf("%s keeps %d rows of anna, %v", table, n, err)
 		}
 	}
@@ -196,7 +210,7 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 }
 
 func TestTheRoleDecidesWhoMayShare(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user/fotos")
 	w.addUser("gast", "readonly", "/mnt/user/fotos")
 	w.addUser("boss", "admin", "/mnt/user/fotos")
@@ -208,6 +222,7 @@ func TestTheRoleDecidesWhoMayShare(t *testing.T) {
 	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/gast", map[string]any{"role": "user"}))
 	w.must(http.StatusCreated, w.as("gast", "POST", "/shares", link))
 	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/anna", map[string]any{"role": "readonly"}))
+	delete(w.cookies, "anna")
 	w.must(http.StatusForbidden, w.as("anna", "POST", "/shares", link))
 }
 
@@ -239,7 +254,7 @@ func (w *world) traces(owner string) (*undo.Log, *trash.Store, trash.Item, strin
 }
 
 func TestANewUserOfAnOldNameInheritsNoUndoStepsOrTrash(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	log, bin, it, file := w.traces("anna")
 
@@ -271,7 +286,7 @@ func TestANewUserOfAnOldNameInheritsNoUndoStepsOrTrash(t *testing.T) {
 }
 
 func TestRenamingAUserTakesUndoStepsTrashAndJobsAlong(t *testing.T) {
-	w := newWorld(t)
+	w := newWorld(t).open()
 	w.addUser("anna", "user", "/mnt/user")
 	log, bin, it, _ := w.traces("anna")
 	m := jobs.For(w.deps)
@@ -307,5 +322,80 @@ func TestRenamingAUserTakesUndoStepsTrashAndJobsAlong(t *testing.T) {
 	var owner string
 	if err := w.deps.DB.QueryRow(`SELECT owner FROM jobs WHERE id = ?`, job.ID).Scan(&owner); err != nil || owner != "anni" {
 		t.Errorf("the stored job belongs to %q, %v", owner, err)
+	}
+}
+
+func TestARoleSetInTheAppReachesTheRowTheOlderVersionReads(t *testing.T) {
+	w := newWorld(t).open()
+	anna := w.addUser("anna", "admin", "/mnt/user")
+	permAdmin := func() (admin bool) {
+		if err := w.deps.DB.QueryRow(`SELECT perm_admin FROM users WHERE user_id = ?`, strconv.FormatUint(anna.ID, 10)).Scan(&admin); err != nil {
+			t.Fatal(err)
+		}
+		return admin
+	}
+	if !permAdmin() {
+		t.Fatal("a new admin is no admin in the row")
+	}
+	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"role": "user"}))
+	if permAdmin() {
+		t.Fatal("a demoted admin is still admin for the version before")
+	}
+}
+
+func TestTheUsersTileTakesAPasswordOfAnyLength(t *testing.T) {
+	w := newWorld(t).open()
+	type answer struct{ Short bool }
+	rec := w.must(http.StatusCreated, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "kurt", "role": "user", "scope": "/mnt/user", "password": "ab"}))
+	if !decode[answer](t, rec).Short {
+		t.Fatal("the answer does not say the password is short")
+	}
+	if _, err := w.signIn("kurt", "ab"); err != nil {
+		t.Fatalf("the short password does not sign in: %v", err)
+	}
+	rec = w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"password": "x"}))
+	if !decode[answer](t, rec).Short {
+		t.Fatal("the change does not say the password is short")
+	}
+	rec = w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"full": "Kurt"}))
+	if decode[answer](t, rec).Short {
+		t.Fatal("a change without a password calls it short")
+	}
+	if _, err := w.signIn("kurt", "x"); err != nil {
+		t.Fatalf("the one-letter password does not sign in: %v", err)
+	}
+	w.must(http.StatusBadRequest, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "leer", "role": "user", "scope": "/mnt/user", "password": ""}))
+	w.must(http.StatusBadRequest, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"name": "kurti", "password": ""}))
+	if _, err := state.GetUserByUsername("kurt"); err != nil {
+		t.Fatalf("a change with an empty password landed halfway: %v", err)
+	}
+}
+
+func TestALongPasswordIsNotCalledShort(t *testing.T) {
+	w := newWorld(t).open()
+	rec := w.must(http.StatusCreated, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "kurt", "role": "user", "scope": "/mnt/user", "password": strong}))
+	if decode[struct{ Short bool }](t, rec).Short {
+		t.Fatal("a long password is called short")
+	}
+}
+
+func TestTheUsersTileWorksWhileNobodyHasAPassword(t *testing.T) {
+	w := newBareWorld(t)
+	w.admin = w.oldUser("jdp", "", true, users.BackendScope{Path: w.share, Scope: "/"})
+	w.oldUser("kurt", "", false, users.BackendScope{Path: w.share, Scope: "/"})
+	w.open()
+	w.must(http.StatusOK, w.req("GET", "/admin/users", nil))
+	w.must(http.StatusOK, w.req("PATCH", "/admin/users/kurt", map[string]any{"name": "kurti", "role": "readonly", "blocked": true}))
+	kurti, err := state.GetUserByUsername("kurti")
+	if err != nil {
+		t.Fatalf("the rename while open did not land: %v", err)
+	}
+	got := w.account(kurti)
+	if got.Role != "readonly" || !got.Blocked {
+		t.Fatalf("the change while open did not land: %+v", got)
+	}
+	w.must(http.StatusNoContent, w.req("DELETE", "/admin/users/kurti", nil))
+	if _, err := state.GetUserByUsername("kurti"); err == nil {
+		t.Fatal("the account removed while open is still there")
 	}
 }

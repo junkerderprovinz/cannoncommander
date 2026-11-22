@@ -107,10 +107,10 @@ func TestRevokeSessionsKeepsOneSessionAndTheApiTokens(t *testing.T) {
 	if err != nil || n != 2 {
 		t.Fatalf("ended %d sessions, %v", n, err)
 	}
-	if !store.SessionAlive(utils.HashSHA256("desk")) || !store.SessionAlive(utils.HashSHA256("other-user")) {
+	if store.IsTokenRevoked("desk") || store.IsTokenRevoked("other-user") {
 		t.Fatal("the kept session and other users' sessions must stay")
 	}
-	if store.SessionAlive(utils.HashSHA256("phone")) || store.SessionAlive(utils.HashSHA256("laptop")) {
+	if !store.IsTokenRevoked("phone") || !store.IsTokenRevoked("laptop") {
 		t.Fatal("the other sessions must end")
 	}
 	if _, ok := store.GetHashedTokenInfo("script"); !ok {

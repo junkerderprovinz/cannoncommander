@@ -1,5 +1,6 @@
 // One renderer per kind of file. The heavy ones load the first time a file of their kind is opened.
-import { type Component, defineAsyncComponent } from 'vue';
+import type { Component } from 'vue';
+import { lazyComponent } from '@/core/lazy';
 import type { ViewKind } from '../kinds';
 import Arch from './Arch.vue';
 import Audio from './Audio.vue';
@@ -16,6 +17,6 @@ import Video from './Video.vue';
 export const RENDERERS: Record<ViewKind, Component> = {
   dir: Dir, img: Img, video: Video, audio: Audio, pdf: Pages, office: Office, md: Md, text: Text, code: Text,
   arch: Arch, disk: Disk, file: Hex,
-  epub: defineAsyncComponent(() => import('./Epub.vue')),
-  model: defineAsyncComponent(() => import('./Model.vue')),
+  epub: lazyComponent(() => import('./Epub.vue')),
+  model: lazyComponent(() => import('./Model.vue')),
 };

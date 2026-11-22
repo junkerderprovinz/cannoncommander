@@ -2,16 +2,14 @@
 // One client set up in three steps: a key, the configuration for that client, and the wait for its first call, which
 // shows as a new last use while the window asks for the keys every few seconds. A client that signs in through OAuth
 // gets the sign-in as its first step instead, and the window waits for its grant to appear.
-import { Button, CopyField, EmptyState, FieldRow, InfoBubble, PasswordField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { Button, CopyField, FieldRow, InfoBubble, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ApiError } from '@/api/client';
 import { mcp, type McpKeys, type McpOAuth, type McpSecret } from '@/api/mcp';
-import { glyphComponent } from '@/core/glyphs';
 import { closeBtn, type WinEntry } from '@/core/windows';
 import { c, fail, stepFoot } from '@/features/config/shared';
-import { copyText, copyWords, eyeWords, segItems } from '@/ui/kit';
-import { staleSignIn } from '../proof';
-import { signInFor } from './again';
+import { withPassword } from '@/signin/kit';
+import { copyText, copyWords, segItems } from '@/ui/kit';
 import ClientMark from './ClientMark.vue';
 import { type ConfigPaths, type McpClient, OTHER_CLIENT, snippetFor } from './clients';
 import OAuthRows from './OAuthRows.vue';
@@ -22,7 +20,7 @@ const OS: [keyof ConfigPaths, string][] = [['windows', 'Windows'], ['macos', 'ma
 
 const props = defineProps<{
   win: WinEntry; client: McpClient; state: () => McpKeys | null; reload: () => Promise<void>;
-  password: boolean; admin: boolean; endpoint: { origin: string; endpointPath: string }; connector: string;
+  admin: boolean; endpoint: { origin: string; endpointPath: string }; connector: string;
   made: (got: McpSecret) => void; oauthChanged: (oauth: McpOAuth) => void;
 }>();
 
@@ -33,15 +31,11 @@ const keys = computed(() => data.value?.keys ?? []);
 const own = computed(() => keys.value.filter((k) => !k.viaOAuth));
 const usable = computed(() => own.value.filter((k) => !k.unusable));
 const full = computed(() => !!data.value && own.value.length >= data.value.limit);
-const canMake = computed(() => data.value?.hostAllowsKeys !== false);
 
 const mode = ref<'new' | 'pick'>('new');
-const label = ref(other ? '' : props.client.name), write = ref(false), current = ref('');
+const label = ref(other ? '' : props.client.name), write = ref(false);
 const created = ref<{ key: string; id: string } | null>(null), picked = ref<{ id: string; since: number } | null>(null);
-const stale = ref(false);
 const nameField = ref<InstanceType<typeof TextField> | null>(null);
-const at = (sel: string) => props.win.el?.querySelector(sel) ?? null;
-const host = location.hostname;
 
 // Each key's last use as the first list after opening has it. The list the card had may be minutes old, and a call
 // from before the window must not count as the client's first.
@@ -55,24 +49,17 @@ const time = (ms: number) => new Date(ms).toLocaleTimeString();
 async function make() {
   const name = label.value.trim();
   if (!name) return fail(c('mcp.needName'), nameField.value?.input);
-  if (props.password && !current.value) return fail(c('security.needCurrent'), at('#mcp-cpw'));
   let got: McpSecret;
   try {
-    got = await mcp.create(name, other ? '' : props.client.id, write.value, props.password ? current.value : undefined);
+    got = await withPassword(() => mcp.create(name, other ? '' : props.client.id, write.value));
   } catch (e) {
-    if (staleSignIn(e)) return showStale();
-    return fail(e instanceof ApiError ? e.message : c('notSaved'), props.password ? at('#mcp-cpw') : nameField.value?.input);
+    return fail(e instanceof ApiError ? e.message : c('notSaved'), nameField.value?.input);
   }
   created.value = { key: got.key, id: got.item.id };
   props.made(got);
   // The key shows only here, so a stray Escape must not take it away.
   props.win.locked = true;
   stepFoot(props.win, [{ label: c('done'), g: 'IconCheck', primary: true, run: () => { props.win.locked = false; } }]);
-}
-
-function showStale() {
-  stale.value = true;
-  stepFoot(props.win, [closeBtn(), { label: c('security.signInAgain'), g: 'IconSignIn', primary: true, run: () => { signInFor({ do: 'create', client: props.client.id }); return false; } }]);
 }
 
 const snippet = computed(() => snippetFor(props.client, { ...props.endpoint, key: created.value?.key ?? KEY_PLACEHOLDER }));
@@ -102,7 +89,7 @@ const keyTip = computed(() => {
 let timer: ReturnType<typeof setInterval> | undefined;
 onMounted(async () => {
   stepFoot(props.win, [closeBtn()]);
-  if (!canMake.value || full.value) mode.value = usable.value.length ? 'pick' : 'new';
+  if (full.value) mode.value = usable.value.length ? 'pick' : 'new';
   await props.reload().catch(() => {});
   baseline.value = Object.fromEntries(keys.value.map((k) => [k.id, k.lastUsedAt]));
   timer = setInterval(() => { void props.reload().catch(() => {}); }, POLL);
@@ -151,18 +138,15 @@ onBeforeUnmount(() => clearInterval(timer));
         <p class="a-text">{{ c('mcp.copyNow') }}</p>
         <FieldRow :label="label.trim()"><CopyField width="grow" :value="created.key" :label="label.trim()" :text="copyWords()" /></FieldRow>
       </template>
-      <EmptyState v-else-if="stale" nested :glyph="glyphComponent('IconSignIn')" :title="c('security.staleTitle')" :hint="c('mcp.stale')" />
       <template v-else>
-        <FieldRow v-if="usable.length && canMake" :label="c('mcp.stepKey')">
+        <FieldRow v-if="usable.length" :label="c('mcp.stepKey')">
           <Selector v-model="mode" :items="segItems([['new', c('mcp.newKey')], ['pick', c('mcp.existingKey')]])" size="sm" activation="manual" inline button-height pairs-on-phone />
         </FieldRow>
         <template v-if="mode === 'new'">
-          <p v-if="!canMake" class="a-text">{{ c('mcp.hostRefused', { host }) }}</p>
-          <p v-else-if="full" class="a-text">{{ c('mcp.full', { n: data!.limit }) }}</p>
+          <p v-if="full" class="a-text">{{ c('mcp.full', { n: data!.limit }) }}</p>
           <template v-else>
             <FieldRow :label="c('sources.name')"><TextField id="mcp-label" ref="nameField" v-model="label" :placeholder="c('mcp.namePh')" width="medium" maxlength="64" @keydown.enter="make" /></FieldRow>
             <FieldRow :label="c('mcp.write')" :hint="c('mcp.writeTip', { perCall: data?.writeLimits.entriesPerCall ?? 0, perHour: data?.writeLimits.entriesPerHour ?? 0 })"><Toggle v-model="write" data-mcp="newWrite" /></FieldRow>
-            <FieldRow v-if="password" :label="c('security.current')" :hint="c('security.proofTip')"><PasswordField id="mcp-cpw" v-model="current" width="medium" autocomplete="current-password" :text="eyeWords()" @keydown.enter="make" /></FieldRow>
             <div class="a-foot"><Button id="mcp-make" :label="c('mcp.makeKey')" label-key="IconKey" tone="accent" @click="make" /></div>
           </template>
         </template>

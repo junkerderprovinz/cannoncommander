@@ -85,9 +85,47 @@ async function toggle(tab, badge) {
 
 const button = (tab, name) => tab.getByRole('button', { name, exact: true }).last();
 
+const NOW = JSON.parse(readFileSync(join(repo, 'testing', 'fixture', 'prototype.json'), 'utf8')).now;
+const MIN = 60_000;
+const DAY = 1440 * MIN;
+const ago = (ms) => new Date(NOW - ms).toISOString();
+
+// The fixture server has no sign-in kit, so the pictures get its answers from here: a server where nobody has a
+// password yet. Sessions, tokens and passkeys only show once the account signs in with a password.
+const KIT = '/api/signin/v1/';
+const KIT_ANSWERS = {
+  options: { open: true, owner: false, minPassword: 12, signedIn: true, passkeys: false, services: [] },
+  me: { name: 'jdp', role: 'admin', via: 'open', owner: false, password: false, twoFactor: false, recoveryLeft: 0, fresh: true, askPassword: true },
+  settings: { askPassword: true },
+  'me/sessions': {
+    sessions: [
+      { id: 'a1', via: 'password', created: ago(9 * DAY), seen: ago(MIN), from: '192.168.10.16', agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0', current: true },
+      { id: 'a2', via: 'passkey', created: ago(20 * DAY), seen: ago(120 * MIN), from: '192.168.30.50', agent: 'Mozilla/5.0 (Android 15; Mobile; rv:140.0) Gecko/140.0 Firefox/140.0', current: false },
+    ],
+  },
+  'me/tokens': { tokens: [{ id: 't1', name: 'backup-skript', scopes: ['all'], created: ago(30 * DAY), used: ago(DAY) }] },
+  'me/passkeys': {
+    passkeys: [
+      { id: 'p1', name: 'Windows Hello', created: ago(60 * DAY), used: ago(3 * MIN), rpID: 'localhost', synced: false, here: true },
+      { id: 'p2', name: 'Phone', created: ago(120 * DAY), used: ago(50 * DAY), rpID: 'cannon.tower.lan', synced: true, here: false },
+    ],
+  },
+  'methods/oidc': { services: [] },
+  'methods/presets': { presets: [] },
+  roles: { roles: ['admin', 'user'], serviceRole: 'user' },
+};
+
 // An account with a password, for the pages that only show up once one is set.
-const WITH_PASSWORD = { '/api/v1/me': (me) => ({ ...me, hasPassword: true, signIn: true }) };
-const SIGNED_OUT = { '/api/v1/me': () => ({ status: 401 }) };
+const WITH_PASSWORD = {
+  '/api/v1/me': (me) => ({ ...me, signIn: true }),
+  [`${KIT}options`]: (o) => ({ ...o, open: false }),
+  [`${KIT}me`]: (me) => ({ ...me, account: '3', via: 'password', password: true, twoFactor: true, recoveryLeft: 8 }),
+};
+const signedOut = (offer) => ({
+  '/api/v1/me': () => ({ status: 401 }),
+  [`${KIT}me`]: () => ({ status: 401 }),
+  [`${KIT}options`]: (o) => ({ ...o, open: false, signedIn: false, ...offer }),
+});
 
 // What only the desktop app answers, as an empty computer: the fixture server stands for a server.
 const ON_THE_COMPUTER = {
@@ -390,18 +428,18 @@ const SHOTS = [
     name: 'set-password',
     async prepare(tab) {
       await settings(tab, 'Account & security');
-      await tab.getByText('Set a password').click();
+      await button(tab, 'Set a password').click();
       await sleep(800);
     },
   },
   {
-    name: 'sign-in', api: { ...SIGNED_OUT, '/api/v1/auth/options': (o) => ({ ...o, server: 'Tower' }) },
+    name: 'sign-in', api: signedOut(),
     async prepare(tab) {
       await tab.locator('#cl-user').fill('anna');
     },
   },
   {
-    name: 'sign-in-oidc', api: { ...SIGNED_OUT, '/api/v1/auth/options': (o) => ({ ...o, server: 'Tower', oidc: { label: 'OpenID Connect', url: '#' } }) },
+    name: 'sign-in-oidc', api: signedOut({ services: [{ id: 'config', provider: 'pocket-id', name: '' }] }),
   },
   { name: 'account', api: WITH_PASSWORD, host: 'localhost', prepare: (tab) => settings(tab, 'Account & security') },
   {
@@ -412,7 +450,7 @@ const SHOTS = [
     },
   },
   {
-    name: 'token-add', api: WITH_PASSWORD,
+    name: 'token-add', api: WITH_PASSWORD, host: 'localhost',
     async prepare(tab) {
       await settings(tab, 'Account & security');
       await card(tab, 'API tokens');
@@ -545,13 +583,19 @@ const ENGLISH = [
 async function capture(browser, shot, theme) {
   const ctx = await browser.newContext({ viewport: VIEW, colorScheme: theme, locale: 'en-US', timezoneId: 'Europe/Vienna' });
   const tab = await ctx.newPage();
-  const now = JSON.parse(readFileSync(join(repo, 'testing', 'fixture', 'prototype.json'), 'utf8')).now;
-  await tab.clock.install({ time: now + 60_000 });
+  await tab.clock.install({ time: NOW + MIN });
   await tab.addInitScript((prefs) => {
     if (sessionStorage.getItem('seeded')) return;
     localStorage.setItem('cannoncommander-prefs', JSON.stringify(prefs));
     sessionStorage.setItem('seeded', '1');
   }, { language: 'en', theme, motion: 'off', ...shot.prefs });
+  await tab.route(`**${KIT}**`, (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const known = KIT_ANSWERS[path.slice(KIT.length)];
+    const body = shot.api?.[path] ? shot.api[path](known ?? {}) : known;
+    if (!body || route.request().method() !== 'GET') return route.fulfill({ status: 404, json: { error: 'notFound' } });
+    return body.status ? route.fulfill({ status: body.status, json: { error: 'signInFirst' } }) : route.fulfill({ json: body });
+  });
   await tab.route('**/api/v1/**', async (route) => {
     if (route.request().resourceType() === 'eventsource') return route.continue();
     const path = new URL(route.request().url()).pathname;

@@ -16,8 +16,8 @@ CannonCommander itself does not open its own data folder, see [Security](../secu
 |---|---|---|
 | `server.sources` | The folders that show up | [Folders](folders.md) |
 | `http` | `externalUrl`, `baseURL`, trusted proxies | [Reverse proxy](reverse-proxy.md) |
-| `auth.methods.password` | `enforcedOtp: true` for two-factor sign-in for everyone | [Two-factor and passkeys](../access/two-factor.md) |
-| `auth.methods.oidc` | Single sign-on | [OIDC](oidc.md) |
+| `auth.methods.password` | `minLength`, the length under which the page calls a password short (12). It never refuses one | [Signing in](../access/sign-in.md) |
+| `auth.methods.oidc` | A sign-in service such as Pocket ID | [Sign-in services](oidc.md) |
 
 ## Back up and move the settings {#export}
 

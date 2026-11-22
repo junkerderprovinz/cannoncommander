@@ -8,10 +8,10 @@ describe('share links', () => {
     expect(SLUG.test(slugFor('...'))).toBe(true);
   });
 
-  it('turns the form into the request, and stops at what the server would refuse', () => {
+  it('turns the form into the request, and stops at what the server would refuse, a short password not among it', () => {
     const f = newForm('urlaub', true);
     expect(readForm({ ...f, slug: 'Ab' })).toBeNull();
-    expect(readForm({ ...f, pw: true, pass: 'kurz' })).toBeNull();
+    expect(readForm({ ...f, pw: true, pass: 'kurz' })).toMatchObject({ password: 'kurz' });
     const req = readForm({ ...f, slug: 'Urlaub-2026', exp: '0', limit: '5', pw: true, pass: 'geheim123', uploads: true })!;
     expect(req).toEqual({ slug: 'urlaub-2026', expires: null, limit: 5, notify: false, password: 'geheim123', uploads: true });
     expect(readForm({ ...newForm('a.txt', false), uploads: true })).not.toHaveProperty('uploads');

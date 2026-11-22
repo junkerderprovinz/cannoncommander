@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The ways into another person's account, each one to take away on its own or all of them at once. The password
 // stays, that is changed in the user's own window.
-import { Button, EmptyState, IconButton, ListRow, Pill, SubCard } from '@glimstone/vue';
+import { Badge, Button, EmptyState, ListRow, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type Passkey, type Session, type Token, type User } from '@/api/admin';
 import { fmtDate } from '@/core/format';
@@ -51,31 +51,29 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
 
 <template>
   <SubCard :title="c('security.sessions')">
-    <div v-if="sessions.length" class="a-list">
-      <ListRow v-for="s in sessions" :key="s.id" :name="device(s.userAgent).name" :tip="c('access.since', { date: fmtDate(s.created) })">
+    <div v-if="sessions.length" class="a-rows">
+      <ListRow v-for="s in sessions" :key="s.id" steady :name="device(s.userAgent).name" :meta="[s.ip, ago(s.seen)].join(' · ')" :tip="c('access.since', { date: fmtDate(s.created) })">
         <template #tile><G :n="device(s.userAgent).g" /></template>
-        <template #badges><Pill class="mono">{{ s.ip }}</Pill><Pill>{{ ago(s.seen) }}</Pill></template>
-        <template #actions><IconButton :glyph="glyphComponent('IconSignOut')" :tip="c('security.signOut')" data-acc-session @click="signOut(s)" /></template>
+        <template #actions><Button compact tone="subtle" :label="c('security.signOut')" label-key="IconSignOut" data-acc-session @click="signOut(s)" /></template>
       </ListRow>
     </div>
     <EmptyState v-else nested :glyph="glyphComponent('IconBrowser')" :title="c('access.noSessions')" />
   </SubCard>
   <SubCard :title="c('security.tokens')">
-    <div v-if="tokens.length" class="a-list">
-      <ListRow v-for="t in tokens" :key="t.id" :name="t.name" :tip="tokenTip(t)">
+    <div v-if="tokens.length" class="a-rows">
+      <ListRow v-for="t in tokens" :key="t.id" steady :name="t.name" :meta="t.last ? c('security.used', { ago: ago(t.last) }) : c('security.neverUsed')" :tip="tokenTip(t)">
         <template #tile><G n="IconKey" /></template>
-        <template #badges><Pill>{{ t.rights === 'rw' ? c('security.readWrite') : c('security.read') }}</Pill><Pill>{{ t.last ? c('security.used', { ago: ago(t.last) }) : c('security.neverUsed') }}</Pill></template>
-        <template #actions><IconButton :glyph="glyphComponent('IconKeyRevoke')" :tip="c('security.revoke')" data-acc-token @click="revoke(t)" /></template>
+        <template #badges><Badge size="small">{{ t.rights === 'rw' ? c('security.readWrite') : c('security.read') }}</Badge></template>
+        <template #actions><Button compact tone="subtle" :label="c('security.revoke')" label-key="IconKeyRevoke" data-acc-token @click="revoke(t)" /></template>
       </ListRow>
     </div>
     <EmptyState v-else nested :glyph="glyphComponent('IconKey')" :title="c('access.noTokens')" />
   </SubCard>
   <SubCard :title="c('security.passkeys')">
-    <div v-if="passkeys.length" class="a-list">
-      <ListRow v-for="p in passkeys" :key="p.id" :name="p.name" :tip="c('security.passkeyTip', { origin: p.origin })">
+    <div v-if="passkeys.length" class="a-rows">
+      <ListRow v-for="p in passkeys" :key="p.id" steady :name="p.name" :meta="[p.origin, p.last ? c('security.used', { ago: ago(p.last) }) : c('security.neverUsed')].join(' · ')" :tip="c('security.passkeyTip', { origin: p.origin })">
         <template #tile><G n="IconKey" /></template>
-        <template #badges><Pill class="mono">{{ p.origin }}</Pill><Pill>{{ p.last ? c('security.used', { ago: ago(p.last) }) : c('security.neverUsed') }}</Pill></template>
-        <template #actions><IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" data-acc-passkey @click="removePasskey(p)" /></template>
+        <template #actions><Button compact tone="subtle" :label="c('remove')" label-key="IconTrash" data-acc-passkey @click="removePasskey(p)" /></template>
       </ListRow>
     </div>
     <EmptyState v-else nested :glyph="glyphComponent('IconKey')" :title="c('access.noPasskeys')" />

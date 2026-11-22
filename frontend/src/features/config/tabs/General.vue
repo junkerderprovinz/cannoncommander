@@ -2,7 +2,8 @@
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
 import { Button, Card, FieldRow, FieldRowGroup, PathField, Selector, Toggle } from '@glimstone/vue';
-import { defineAsyncComponent, ref } from 'vue';
+import { ref } from 'vue';
+import { lazyComponent } from '@/core/lazy';
 import { admin, exists } from '@/api/admin';
 import { host, windowsPaths } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
@@ -13,7 +14,7 @@ import { useUser } from '@/stores/user';
 import { c, cn, fail, P } from '@/features/config/shared';
 
 // The container build leaves the desktop app's rows out.
-const DesktopRows = import.meta.env.DESKTOP ? defineAsyncComponent(() => import('@/features/desktop/DesktopRows.vue')) : null;
+const DesktopRows = import.meta.env.DESKTOP ? lazyComponent(() => import('@/features/desktop/DesktopRows.vue')) : null;
 const U = useUnraid();
 const home = useUser().me.home || '/';
 // The desktop app shows and takes the folder the way the computer writes it.

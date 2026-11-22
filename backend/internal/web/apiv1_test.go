@@ -6,19 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestAPIv1IsMountedBehindTheLogin(t *testing.T) {
-	saved := settings.Config
-	t.Cleanup(func() { settings.Config = saved })
-	settings.Config.Http.BaseURL = "/"
-	settings.Config.Server.Sources = []*settings.Source{{Name: "Shares", Path: t.TempDir()}}
-
-	router := http.NewServeMux()
-	if err := mountAPIv1(router); err != nil {
-		t.Fatal(err)
-	}
+	router := newServer(t, withAdminPassword(t))
 
 	rec := httptest.NewRecorder()
 	router.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/fs/list?path=/", nil))

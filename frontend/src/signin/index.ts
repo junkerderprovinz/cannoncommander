@@ -1,17 +1,14 @@
 // The sign in: its texts, whether the session ended, and the action that signs out.
 import { reactive } from 'vue';
-import { auth } from '@/api/auth';
 import { onSignedOut } from '@/api/client';
 import { disconnect } from '@/api/sse';
 import { action } from '@/core/actions';
 import { host } from '@/core/host';
-import { addMessages, t, tl } from '@/i18n';
+import { t, tl } from '@/i18n';
 import { useUser } from '@/stores/user';
-import de from './de.json';
-import en from './en.json';
+import { signIn } from './kit';
 import './signin.css';
-
-addMessages('signin', { de, en });
+import './texts';
 
 export const session = reactive({ out: false });
 
@@ -37,7 +34,7 @@ export function installSignOut() {
     // The desktop app signs nobody in, and neither does a server where nobody has a password yet.
     when: () => !host.desktop && useUser().me.signIn === true,
     run: async () => {
-      await auth.logout().catch(() => {});
+      await signIn.logout();
       disconnect();
       leaveNote(t('signin.bye'));
       location.reload();

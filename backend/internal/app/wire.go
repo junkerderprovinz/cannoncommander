@@ -17,9 +17,6 @@ func WireServices(store *state.Store) (*App, error) {
 	authSvc := auth.New(store)
 	auth.SetDefault(authSvc)
 	indexing.SetMetaStore(store)
-	if err := auth.InitWebAuthn(store); err != nil {
-		return nil, err
-	}
 	return &App{
 		Store: store,
 		Auth:  authSvc,

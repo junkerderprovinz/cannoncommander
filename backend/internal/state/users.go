@@ -195,9 +195,6 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 	}
 	// Hash password if provided
 	if plaintextPassword != "" {
-		if err := settings.ValidatePasswordPolicy(plaintextPassword); err != nil {
-			return err
-		}
 		hashedPassword, err := utils.HashPwd(plaintextPassword)
 		if err != nil {
 			return fmt.Errorf("failed to hash password: %w", err)
@@ -269,7 +266,6 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 	}
 
 	putUserInCache(user)
-	recountSignIns()
 
 	return nil
 }
@@ -326,9 +322,6 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 			if plaintextPassword == "" {
 				return fmt.Errorf("password field requires a non-empty plaintext password")
 			}
-			if err := settings.ValidatePasswordPolicy(plaintextPassword); err != nil {
-				return err
-			}
 			hashedPassword, hashErr := utils.HashPwd(plaintextPassword)
 			if hashErr != nil {
 				return fmt.Errorf("failed to hash password: %w", hashErr)
@@ -363,10 +356,6 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 
 	if err := commitUserUpdate(existingUser, storedSnapshot); err != nil {
 		return err
-	}
-	recountSignIns()
-	if FieldListIncludes(fields, "password") && storedSnapshot.Username == settings.PasswordAdminUsername() {
-		forgetFirstAdminPassword()
 	}
 	return nil
 }
@@ -550,7 +539,6 @@ func DeleteUser(id uint64) error {
 	if accessDb != nil {
 		_ = accessDb.RemoveHashedTokensForUser(id)
 	}
-	recountSignIns()
 
 	return nil
 }
@@ -578,7 +566,6 @@ func DeleteUserByUsername(username string) error {
 	if accessDb != nil && uid != 0 {
 		_ = accessDb.RemoveHashedTokensForUser(uid)
 	}
-	recountSignIns()
 	return nil
 }
 
@@ -592,16 +579,6 @@ func removeUserAccess(username string) error {
 		return fmt.Errorf("failed to remove user from groups: %w", err)
 	}
 	return nil
-}
-
-// TokenNameForRawToken returns the persisted token name when rawToken matches a stored API key.
-func TokenNameForRawToken(user *users.User, rawToken string) (string, bool) {
-	if user == nil {
-		return "", false
-	}
-	usersMux.RLock()
-	defer usersMux.RUnlock()
-	return users.TokenNameByRaw(user.Tokens, rawToken)
 }
 
 // AddUserToken adds an API token to a user
@@ -626,35 +603,6 @@ func AddUserToken(ownerUsername string, token users.AuthToken) error {
 		user.Tokens = make(map[string]users.AuthToken)
 	}
 	users.StoreToken(user.Tokens, token)
-
-	if err := sqlDb.UpdateUser(user); err != nil {
-		return err
-	}
-
-	putUserInCache(user)
-
-	return nil
-}
-
-// DeleteUserToken removes an API token from a user
-func DeleteUserToken(ownerUsername string, tokenName string) error {
-	usersMux.Lock()
-	defer usersMux.Unlock()
-
-	user, err := loadExistingUserLocked(&users.User{FrontendUser: users.FrontendUser{Username: ownerUsername}})
-	if err != nil {
-		return fmt.Errorf("user not found in state")
-	}
-
-	// Check if token exists
-	if user.Tokens == nil {
-		return fmt.Errorf("user has no tokens")
-	}
-	if _, tokenExists := user.Tokens[tokenName]; !tokenExists {
-		return fmt.Errorf("token with name %s not found for user", tokenName)
-	}
-
-	users.RemoveTokenByName(user.Tokens, tokenName)
 
 	if err := sqlDb.UpdateUser(user); err != nil {
 		return err

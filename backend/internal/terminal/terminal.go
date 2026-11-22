@@ -316,7 +316,9 @@ func (h *handlers) watch(ctx context.Context, conn *websocket.Conn, s *session) 
 // before the terminals do when the server stops, and a deleted user's
 // sessions end with it anyway.
 func (h *handlers) lost(ctx context.Context, s *session) string {
-	if s.hash != "" && !h.gate.Alive(s.hash) {
+	// A shell opened while the server was open has no session, and it ends
+	// once a password closes the server.
+	if s.hash == "" && !h.gate.Open() || s.hash != "" && !h.gate.Alive(s.hash) {
 		return "signedOut"
 	}
 	if u, err := h.deps.Users(s.user); err == nil && !u.Permissions.Admin {

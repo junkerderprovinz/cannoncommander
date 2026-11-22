@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -17,6 +18,10 @@ import (
 // SQLStore provides access to the SQLite database
 type SQLStore struct {
 	db *sql.DB
+	// olderBuild is whether a version before 8 opened the file since this
+	// one ran on it, armed whether writes take the fingerprint again.
+	olderBuild bool
+	armed      atomic.Bool
 }
 
 // NewSQLStoreOpts configures NewSQLStoreWithOptions.
@@ -88,6 +93,12 @@ func NewSQLStoreWithOptions(dbPath string, opts NewSQLStoreOpts) (*SQLStore, boo
 		return nil, existingDb, err
 	}
 
+	armed, err := hasFingerprint(db)
+	if err != nil {
+		db.Close()
+		return nil, existingDb, err
+	}
+
 	if version < currentSchemaVersion {
 		logger.Infof("Running database migrations from version %d to %d", version, currentSchemaVersion)
 		err = runMigrations(db, version)
@@ -102,7 +113,8 @@ func NewSQLStoreWithOptions(dbPath string, opts NewSQLStoreOpts) (*SQLStore, boo
 		return nil, existingDb, err
 	}
 
-	store := &SQLStore{db: db}
+	store := &SQLStore{db: db, olderBuild: armed && version < currentSchemaVersion}
+	store.armed.Store(armed)
 
 	logger.Debugf("SQLite database initialized at %s", dbPath)
 

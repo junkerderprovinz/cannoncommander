@@ -45,8 +45,7 @@ const (
 )
 
 const (
-	minPassword = 6
-	maxPaths    = 1000
+	maxPaths = 1000
 )
 
 // slugPattern is the address rule of the share dialog.

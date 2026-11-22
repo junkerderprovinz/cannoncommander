@@ -83,6 +83,15 @@ export function t(key: string, params: Record<string, string | number> = {}): st
   return key;
 }
 
+// The forms of a counted text in the interface's language, for a part that picks the form itself.
+export function forms(key: string): Record<string, string> {
+  for (const lang of chain(state.lang)) {
+    const found = lookup(tables[lang], key);
+    if (typeof found === 'object' && said(found.other)) return Object.fromEntries(Object.entries(found).map(([k, v]) => [k, shown(String(v))]));
+  }
+  return { other: key };
+}
+
 // For labels that must follow a change of language without being registered again.
 export const tl = (key: string, params?: Record<string, string | number>) => () => t(key, params);
 
@@ -105,10 +114,11 @@ export const byName = (a: string, b: string) => collator(true).compare(a, b);
 export const byText = (a: string, b: string) => collator(false).compare(a, b);
 
 // What the server said as a code with parameters, in the interface's language. A code this interface does not know
-// gives nothing, and the caller shows the server's own sentence instead.
+// gives nothing, and the caller shows the server's own sentence instead. The sign-in's codes reach the API as well,
+// through the users' tab, and read the same as on the sign-in's own pages.
 export function serverText(code?: string, params: Record<string, unknown> = {}): string | undefined {
-  const key = 'server.' + code;
-  if (!code || !chain(state.lang).some((lang) => lookup(tables[lang], key) !== undefined)) return undefined;
+  const key = code && ['server.' + code, 'signin.errors.' + code].find((k) => chain(state.lang).some((lang) => lookup(tables[lang], k) !== undefined));
+  if (!key) return undefined;
   const { n, ...rest } = Object.fromEntries(Object.entries(params).map(([k, v]) => [k, typeof v === 'number' ? v : String(v)]));
   return typeof n === 'number' && typeof lookup(tables.de, key) === 'object' ? plural(n, key, rest) : t(key, n === undefined ? rest : { n, ...rest });
 }

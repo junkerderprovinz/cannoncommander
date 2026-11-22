@@ -115,15 +115,6 @@ func RecordUserMutation(r *http.Request, actor *Actor, eventType activitydb.Even
 	})
 }
 
-func RecordTokenMutation(r *http.Request, actor *Actor, eventType activitydb.EventType, affectedTokenName string) {
-	RecordUser(r, actor, activitydb.Entry{
-		EventType: eventType,
-		Details: activitydb.Details{
-			AffectedTokenName: affectedTokenName,
-		},
-	})
-}
-
 func RecordAuth(r *http.Request, user *users.User, eventType activitydb.EventType, details activitydb.Details) {
 	if user == nil || user.ID == 0 {
 		return
@@ -138,13 +129,4 @@ func RecordAuth(r *http.Request, user *users.User, eventType activitydb.EventTyp
 		entry.IPAddress = remoteIP(r)
 	}
 	recordEntry(entry)
-}
-
-func RecordLogin(r *http.Request, user *users.User) {
-	if user == nil {
-		return
-	}
-	RecordAuth(r, user, activitydb.EventLogin, activitydb.Details{
-		LoginMethod: string(user.LoginMethod),
-	})
 }

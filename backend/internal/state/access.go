@@ -19,10 +19,6 @@ func RemoveUserFromGroup(group, username string) error {
 	return accessDb.RemoveUserFromGroup(group, username)
 }
 
-func SyncUserGroups(username string, newGroups []string) error {
-	return accessDb.SyncUserGroups(username, newGroups)
-}
-
 // GroupExists reports whether a group name is already registered.
 func GroupExists(groupname string) bool {
 	if accessDb == nil {
@@ -86,11 +82,6 @@ func HashedTokenOwner(tokenString string) (userID uint64, isSession bool, ok boo
 	return info.UserID, info.IsSession, true
 }
 
-// SessionAlive reports whether the session token with this hash still logs in.
-func SessionAlive(tokenHash string) bool {
-	return accessDb != nil && accessDb.SessionAlive(tokenHash)
-}
-
 // RevokeTokenHash ends the token with this hash at once.
 func RevokeTokenHash(tokenHash string) error {
 	if accessDb == nil {
@@ -106,15 +97,6 @@ func RevokeSessions(userID uint64, keep string) (int, error) {
 		return 0, fmt.Errorf("access storage not available")
 	}
 	return accessDb.RevokeSessions(userID, keep)
-}
-
-// RetireSessionToken lets a renewed session token work on for
-// BearerTokenGrace.
-func RetireSessionToken(tokenString string) error {
-	if accessDb == nil {
-		return fmt.Errorf("access storage not available")
-	}
-	return accessDb.RetireToken(tokenString)
 }
 
 func RemoveApiToken(tokenString string) error {
@@ -145,4 +127,13 @@ func SetGroupMembers(group string, usernames []string) error {
 // DeleteGroup removes a group.
 func DeleteGroup(group string) error {
 	return accessDb.DeleteGroup(group)
+}
+
+// ForgetTokenOwner removes every token hash that points at the user, so
+// nothing the version before issued signs in as that account.
+func ForgetTokenOwner(userID uint64) error {
+	if accessDb == nil {
+		return fmt.Errorf("access storage not available")
+	}
+	return accessDb.RemoveHashedTokensForUser(userID)
 }

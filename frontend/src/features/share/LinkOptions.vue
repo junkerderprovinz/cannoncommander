@@ -4,6 +4,7 @@ import { FieldRow, IconButton, PasswordField, Selector, SubCard, TextArea, TextF
 import { computed, nextTick, ref, watch } from 'vue';
 import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
+import { shortNote } from '@/signin/words';
 import { type LinkForm, MESSAGE_MAX, slugFor } from './link';
 
 const props = defineProps<{ f: LinkForm; name: string }>();
@@ -24,7 +25,7 @@ watch(() => props.f.pw, async (on) => { if (on) { await nextTick(); pass.value?.
     <FieldRow :label="t('share.limit')" :hint="t('share.limitTip')"><Selector id="cs-limit" v-model="f.limit" :items="segItems(limits)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="t('share.withPassword')"><Toggle id="cs-pw" v-model="f.pw" /></FieldRow>
     <div id="cs-pwrow" :hidden="!f.pw">
-      <FieldRow :label="t('share.password')"><PasswordField id="cs-pass" ref="pass" v-model="f.pass" :eye-attrs="{ 'data-eye': '' }" :placeholder="t('share.passwordPlaceholder')" autocomplete="new-password" width="wide" :text="eyeWords()" /></FieldRow>
+      <FieldRow :label="t('share.password')"><PasswordField id="cs-pass" ref="pass" v-model="f.pass" :eye-attrs="{ 'data-eye': '' }" :placeholder="t('share.passwordPlaceholder')" autocomplete="new-password" width="wide" :text="eyeWords()" :note="shortNote(f.pass)" /></FieldRow>
     </div>
     <FieldRow v-if="f.folder" :label="t('share.uploads')" :hint="t('share.uploadsTip')"><Toggle id="cs-up" v-model="f.uploads" /></FieldRow>
     <FieldRow :label="t('share.notify')" :hint="t('share.notifyTip')"><Toggle id="cs-notify" v-model="f.notify" /></FieldRow>

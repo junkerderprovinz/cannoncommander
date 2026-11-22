@@ -13,7 +13,7 @@
   "open": "Öffnen",
   "wrongPassword": "Das Passwort stimmt nicht. Schau noch einmal genau hin.",
   "needPassword": "Gib das Passwort ein.",
-  "tooMany": { "one": "Zu viele Versuche. Bitte warte {n} Minute und versuch es dann noch einmal.", "other": "Zu viele Versuche. Bitte warte {n} Minuten und versuch es dann noch einmal." },
+  "tryAgainAt": "Zu viele Versuche. Ab {time} kannst du es wieder versuchen.",
   "expiredTitle": "Abgelaufen",
   "expiredText": "Dieser Link war nur bis zu einem bestimmten Tag gültig, und der ist vorbei. Frag am besten die Person, die ihn dir geschickt hat, nach einem neuen.",
   "usedUpTitle": "Aufgebraucht",
