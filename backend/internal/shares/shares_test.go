@@ -1048,8 +1048,8 @@ func TestALinkTakesAPasswordOfAnyLength(t *testing.T) {
 	}
 	var sh shares.Share
 	a.into(t, &sh)
-	if a := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "ab"}); a.code != http.StatusOK {
-		t.Fatalf("a short link password does not unlock: %d", a.code)
+	if unlock := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "ab"}); unlock.code != http.StatusOK {
+		t.Fatalf("a short link password does not unlock: %d", unlock.code)
 	}
 	a = e.do("PATCH", "/shares/"+sh.ID, map[string]any{"password": "sonnenschein-am-meer"}, "X-User", "anna")
 	short.Short = false

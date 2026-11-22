@@ -202,10 +202,10 @@ func TestAnOpenServerActsAsTheOwnerWhateverItsName(t *testing.T) {
 		t.Fatal(err)
 	}
 	admin.Username = "jdp"
-	if err := UpdateUser(&admin, "", "username"); err != nil {
+	if err = UpdateUser(&admin, "", "username"); err != nil {
 		t.Fatal(err)
 	}
-	if err := CreateUser(&users.User{FrontendUser: users.FrontendUser{Username: "kurt", LoginMethod: users.LoginMethodPassword}}, ""); err != nil {
+	if err = CreateUser(&users.User{FrontendUser: users.FrontendUser{Username: "kurt", LoginMethod: users.LoginMethodPassword}}, ""); err != nil {
 		t.Fatal(err)
 	}
 	UseOwner(func() (uint64, bool) { return admin.ID, true })
@@ -223,13 +223,13 @@ func TestAnOpenServerWithoutOwnerOrAdminNameActsAsTheFirstAdmin(t *testing.T) {
 		t.Fatal(err)
 	}
 	admin.Username = "zora"
-	if err := UpdateUser(&admin, "", "username"); err != nil {
+	if err = UpdateUser(&admin, "", "username"); err != nil {
 		t.Fatal(err)
 	}
 	for _, name := range []string{"kurt", "bert"} {
 		u := &users.User{FrontendUser: users.FrontendUser{Username: name, LoginMethod: users.LoginMethodPassword}}
 		u.Permissions.Admin = name == "bert"
-		if err := CreateUser(u, ""); err != nil {
+		if err = CreateUser(u, ""); err != nil {
 			t.Fatal(err)
 		}
 	}

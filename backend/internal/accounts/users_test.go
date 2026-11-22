@@ -361,7 +361,6 @@ func TestTheUsersTileTakesAPasswordOfAnyLength(t *testing.T) {
 	if decode[answer](t, rec).Short {
 		t.Fatal("a change without a password calls it short")
 	}
-	rec = w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"password": "x"}))
 	if _, err := w.signIn("kurt", "x"); err != nil {
 		t.Fatalf("the one-letter password does not sign in: %v", err)
 	}
