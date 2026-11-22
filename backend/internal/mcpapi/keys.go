@@ -148,6 +148,7 @@ func (s *Server) ownerNames(ids ...uint64) map[uint64]string {
 func (s *Server) list(w http.ResponseWriter, r *http.Request) error {
 	me := v1.UserFrom(r)
 	ctx := r.Context()
+	s.settle(r)
 	all := r.URL.Query().Get("all") == "true"
 	if all && !me.Permissions.Admin {
 		return v1.Coded(http.StatusForbidden, "adminsOnly", "admins only")
@@ -189,10 +190,10 @@ func (s *Server) list(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	out := map[string]any{
-		"endpointPath":   EndpointPath,
-		"limit":          keyLimit,
-		"signIn":         s.signIn(),
-		"desktop":        desktop.Active(),
+		"endpointPath": EndpointPath,
+		"limit":        keyLimit,
+		"signIn":       s.signIn(),
+		"desktop":      desktop.Active(),
 		"writeLimits": map[string]int64{
 			"entriesPerCall": itemsPerCall, "entriesPerHour": itemsPerHour, "filesPerCall": filesPerCall, "callsPerMinute": callsPerMinute,
 			"bytesPerCall": bytesPerCall,
@@ -232,6 +233,7 @@ func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
 	if len(pepper) == 0 {
 		return errors.New("the server has no signing key")
 	}
+	s.settle(r)
 	key, id := newSecret(keyPrefix), newID()
 	var k Key
 	err := s.proveOwner(r, func() error {
@@ -239,7 +241,7 @@ func (s *Server) create(w http.ResponseWriter, r *http.Request) error {
 		k, err = s.st.createKey(r.Context(), Key{
 			ID: id, UserID: me.ID, Label: label, Client: in.Client,
 			Digest: hashKey(pepper, key), Hint: keyHint(key), Check: keyCheck(pepper, id),
-			CanWrite: in.CanWrite, CreatedAt: s.now().Unix(),
+			CanWrite: in.CanWrite, CreatedAt: s.now().Unix(), MadeOpen: !s.signIn(),
 		})
 		if err != nil {
 			return keyProblem(err)
@@ -342,10 +344,11 @@ func (s *Server) rotate(w http.ResponseWriter, r *http.Request) error {
 	if k.Kind != kindKey || k.RevokedAt != 0 {
 		return errNoSuchKey
 	}
+	s.settle(r)
 	pepper := s.pepper()
 	key := newSecret(keyPrefix)
 	err = s.proveOwner(r, func() error {
-		rotated, rotateErr := s.st.rotateKey(r.Context(), k.ID, hashKey(pepper, key), keyHint(key), keyCheck(pepper, k.ID), s.now().Unix())
+		rotated, rotateErr := s.st.rotateKey(r.Context(), k.ID, hashKey(pepper, key), keyHint(key), keyCheck(pepper, k.ID), s.now().Unix(), !s.signIn())
 		if rotateErr != nil {
 			return keyProblem(rotateErr)
 		}

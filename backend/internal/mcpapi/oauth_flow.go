@@ -312,6 +312,7 @@ func form(w http.ResponseWriter, r *http.Request) bool {
 // wrong one costs nothing; only a wrong client secret counts, towards a
 // throttle of that client.
 func (s *Server) token(w http.ResponseWriter, r *http.Request) {
+	s.settle(r)
 	issuer, on := s.issuer(r.Context())
 	if !on {
 		http.NotFound(w, r)
@@ -403,7 +404,7 @@ func (s *Server) exchangeCode(w http.ResponseWriter, r *http.Request, client oau
 		ID: code.grantID, Label: code.label, Client: code.known, OAuthClient: client.ID, Resource: code.resource,
 		Check: keyCheck(s.pepper(), code.grantID), UserID: code.userID, CanWrite: code.canWrite,
 		AccessDigest: accessDigest, RefreshDigest: refreshDigest,
-		AccessExpires: now.Add(accessTTL).Unix(), RefreshExpires: now.Add(refreshTTL).Unix(),
+		AccessExpires: now.Add(accessTTL).Unix(), RefreshExpires: now.Add(refreshTTL).Unix(), MadeOpen: code.session == "",
 	}, now.Unix())
 	if errors.Is(err, errGrantLimit) {
 		oauthError(w, http.StatusBadRequest, "invalid_grant", "this account already has as many signed-in clients as it may")

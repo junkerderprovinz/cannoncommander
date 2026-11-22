@@ -127,7 +127,6 @@ func SealKey() ([]byte, error) {
 	return key, nil
 }
 
-
 // SignInKeepsAccounts reports whether the sign-in imported the accounts, so
 // they change only through it and not behind its back.
 func SignInKeepsAccounts() (bool, error) {

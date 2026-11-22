@@ -76,6 +76,9 @@ func init() {
 		)`,
 		`CREATE INDEX mcp_oauth_tokens_grant ON mcp_oauth_tokens (grant_id)`,
 	))
+	migrate.Register(migrate.Main, migrate.SQL("mcp/002_made_open",
+		`ALTER TABLE mcp_keys ADD COLUMN made_open INTEGER NOT NULL DEFAULT 0`,
+	))
 }
 
 // Key is one key an assistant authenticates with, or one client that signed
@@ -101,6 +104,9 @@ type Key struct {
 	LastUsedFrom  string
 	RevokedAt     int64
 	RevokedReason string
+	// MadeOpen marks a key or grant handed out while the server asked
+	// nobody to sign in, which ends once it does.
+	MadeOpen bool
 }
 
 const (
@@ -125,7 +131,7 @@ var (
 )
 
 const keyCols = `id, user_id, kind, oauth_client, resource, label, client, key_digest, key_hint, key_check,
-	can_write, created_at, rotated_at, last_used_at, last_used_from, revoked_at, revoked_reason`
+	can_write, created_at, rotated_at, last_used_at, last_used_from, revoked_at, revoked_reason, made_open`
 
 type scanner interface{ Scan(...any) error }
 
@@ -137,7 +143,7 @@ func scanKey(s scanner) (Key, error) {
 	var k Key
 	var user string
 	err := s.Scan(&k.ID, &user, &k.Kind, &k.OAuthClient, &k.Resource, &k.Label, &k.Client, &k.Digest, &k.Hint, &k.Check,
-		&k.CanWrite, &k.CreatedAt, &k.RotatedAt, &k.LastUsedAt, &k.LastUsedFrom, &k.RevokedAt, &k.RevokedReason)
+		&k.CanWrite, &k.CreatedAt, &k.RotatedAt, &k.LastUsedAt, &k.LastUsedFrom, &k.RevokedAt, &k.RevokedReason, &k.MadeOpen)
 	if err != nil {
 		return Key{}, err
 	}
@@ -227,9 +233,9 @@ func (s store) createKey(ctx context.Context, k Key) (Key, error) {
 	} else if taken {
 		return Key{}, errKeyLabelTaken
 	}
-	if _, err := tx.Exec(`INSERT INTO mcp_keys (id, user_id, kind, label, client, key_digest, key_hint, key_check, can_write, created_at)
-		VALUES (?, ?, 'key', ?, ?, ?, ?, ?, ?, ?)`,
-		k.ID, uid(k.UserID), k.Label, k.Client, k.Digest, k.Hint, k.Check, k.CanWrite, k.CreatedAt); err != nil {
+	if _, err := tx.Exec(`INSERT INTO mcp_keys (id, user_id, kind, label, client, key_digest, key_hint, key_check, can_write, created_at, made_open)
+		VALUES (?, ?, 'key', ?, ?, ?, ?, ?, ?, ?, ?)`,
+		k.ID, uid(k.UserID), k.Label, k.Client, k.Digest, k.Hint, k.Check, k.CanWrite, k.CreatedAt, k.MadeOpen); err != nil {
 		return Key{}, err
 	}
 	if err := tx.Commit(); err != nil {
@@ -240,9 +246,9 @@ func (s store) createKey(ctx context.Context, k Key) (Key, error) {
 
 // rotateKey gives an active key new material and keeps its id, name and
 // permission. A client signed in through OAuth has no key to replace.
-func (s store) rotateKey(ctx context.Context, id, digest, hint, check string, now int64) (Key, error) {
-	res, err := s.db.ExecContext(ctx, `UPDATE mcp_keys SET key_digest = ?, key_hint = ?, key_check = ?, rotated_at = ?
-		WHERE id = ? AND revoked_at = 0 AND kind = 'key'`, digest, hint, check, now, id)
+func (s store) rotateKey(ctx context.Context, id, digest, hint, check string, now int64, open bool) (Key, error) {
+	res, err := s.db.ExecContext(ctx, `UPDATE mcp_keys SET key_digest = ?, key_hint = ?, key_check = ?, rotated_at = ?, made_open = made_open OR ?
+		WHERE id = ? AND revoked_at = 0 AND kind = 'key'`, digest, hint, check, now, open, id)
 	if err != nil {
 		return Key{}, err
 	}
@@ -329,6 +335,11 @@ func (s store) revokeUser(ctx context.Context, userID uint64, kind, reason strin
 // untouched.
 func (s store) revokeGrants(ctx context.Context, reason string, now int64) ([]Key, error) {
 	return s.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE kind = 'oauth' AND revoked_at = 0`, reason, now)
+}
+
+// endOpen revokes every key and grant made while the server was open.
+func (s store) endOpen(ctx context.Context, now int64) ([]Key, error) {
+	return s.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE made_open = 1 AND revoked_at = 0`, "closed", now)
 }
 
 func (s store) revokeWhere(ctx context.Context, query, reason string, now int64, args ...any) ([]Key, error) {
@@ -652,6 +663,7 @@ type grant struct {
 	CanWrite                                        bool
 	AccessDigest, RefreshDigest                     string
 	AccessExpires, RefreshExpires                   int64
+	MadeOpen                                        bool
 }
 
 // createGrant stores the grant a client earned by signing in. An earlier
@@ -684,9 +696,9 @@ func (s store) createGrant(ctx context.Context, g grant, now int64) (Key, error)
 	if err != nil {
 		return Key{}, err
 	}
-	if _, err := tx.Exec(`INSERT INTO mcp_keys (id, user_id, kind, oauth_client, resource, label, client, key_check, can_write, created_at)
-		VALUES (?, ?, 'oauth', ?, ?, ?, ?, ?, ?, ?)`,
-		g.ID, uid(g.UserID), g.OAuthClient, g.Resource, label, g.Client, g.Check, g.CanWrite, now); err != nil {
+	if _, err := tx.Exec(`INSERT INTO mcp_keys (id, user_id, kind, oauth_client, resource, label, client, key_check, can_write, created_at, made_open)
+		VALUES (?, ?, 'oauth', ?, ?, ?, ?, ?, ?, ?, ?)`,
+		g.ID, uid(g.UserID), g.OAuthClient, g.Resource, label, g.Client, g.Check, g.CanWrite, now, g.MadeOpen); err != nil {
 		return Key{}, err
 	}
 	if err := insertTokens(tx, g.ID, g.AccessDigest, g.RefreshDigest, g.AccessExpires, g.RefreshExpires, now); err != nil {

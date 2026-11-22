@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -84,11 +85,13 @@ type Server struct {
 	user func(id uint64) (*users.User, error)
 	// pepper is the server's signing key, which the digests are made with.
 	pepper func() []byte
-	// signIn reports whether the server asks people to sign in. Without it
-	// nobody could give consent, and a key may only be made from an address
-	// no public name can point at.
+	// signIn reports whether the server asks people to sign in. What is
+	// handed out while it does not ends once it does.
 	signIn func() bool
-	now    func() time.Time
+	// open is whether the server was open when last asked, true at start
+	// so a server that closed while it was down settles its keys too.
+	open atomic.Bool
+	now  func() time.Time
 
 	mu        sync.RWMutex
 	api       http.Handler
@@ -156,7 +159,29 @@ func newServer(d v1.Deps) *Server {
 		oauth:      newOAuthState(),
 	}
 	s.transport = s.newTransport()
+	s.open.Store(true)
 	return s
+}
+
+// settle revokes the keys and grants made while the server was open, the
+// first time it is asked after the server closed, whichever way it closed.
+func (s *Server) settle(r *http.Request) {
+	if !s.signIn() {
+		s.open.Store(true)
+		return
+	}
+	if !s.open.Swap(false) {
+		return
+	}
+	gone, err := s.st.endOpen(r.Context(), s.now().Unix())
+	if err != nil {
+		logger.Errorf("mcp: end the keys made while open: %v", err)
+		s.open.Store(true)
+		return
+	}
+	for _, k := range gone {
+		s.changed(r, k, "revoked when CannonCommander got a sign-in")
+	}
 }
 
 // Mount puts the endpoint and the public half of the authorization server on
@@ -234,6 +259,7 @@ func (s *Server) newTransport() http.Handler {
 // order.
 func (s *Server) serveMCP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	s.settle(r)
 	keys, err := s.st.anyActiveKey(ctx)
 	if err != nil {
 		logger.Errorf("mcp: read the keys: %v", err)
@@ -283,7 +309,7 @@ func (s *Server) serveMCP(w http.ResponseWriter, r *http.Request) {
 	k, ok := s.match(ctx, presented, byToken, issuer, now)
 	var u *users.User
 	if ok && !conflict {
-		if u, err = s.user(k.UserID); err != nil || u.Username == "" || s.login.Blocked(k.UserID) {
+		if u, err = s.user(k.UserID); err != nil || u.Username == "" || s.login.Blocked(k.UserID) || k.MadeOpen && s.signIn() {
 			ok = false
 		}
 	}
