@@ -116,8 +116,8 @@ github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUq
 github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jessevdk/go-flags v1.5.0/go.mod h1:Fw0T6WPc1dYxT4mKEZRfG5kJhaTDP9pj1c2EWnYs/m4=
-github.com/junkerderprovinz/parleyport/kit v1.0.8-0.20261122145033-07797ad0d54c h1:cKSC54efczqCYukTS/KYb3ZWy58ArE7uHnQDScAaaV8=
-github.com/junkerderprovinz/parleyport/kit v1.0.8-0.20261122145033-07797ad0d54c/go.mod h1:hjRWIj5QLnIAl9Y9mO6EIP7+tQ6OZxlOA+Qi/2ux/as=
+github.com/junkerderprovinz/parleyport/kit v1.0.8-0.20261122213618-b9dfc85ed06b h1:Jj/7a0Y1L4+0gs4NMK+nZhh8/ZfZ7XBiwegHL94CA5c=
+github.com/junkerderprovinz/parleyport/kit v1.0.8-0.20261122213618-b9dfc85ed06b/go.mod h1:hjRWIj5QLnIAl9Y9mO6EIP7+tQ6OZxlOA+Qi/2ux/as=
 github.com/klauspost/compress v1.20.5 h1:rJj5VjH4xQxbnLphg6eqUcDxRFCw1jpMdDY9qXlrwSs=
 github.com/klauspost/compress v1.20.5/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
 github.com/klauspost/cpuid/v2 v2.4.2 h1:xRw7IZEsAgVCp6trS/DgWbTAqpixhmywgVgBjYGg1bQ=
