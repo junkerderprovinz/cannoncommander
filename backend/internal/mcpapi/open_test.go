@@ -1,7 +1,9 @@
 package mcpapi
 
 import (
+	"context"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"testing"
 )
@@ -64,14 +66,15 @@ func TestAClientAllowedWhileOpenEndsWhenTheServerCloses(t *testing.T) {
 		t.Fatalf("exchange while open: %d %v", status, tokens)
 	}
 	access, _ := tokens["access_token"].(string)
+	refresh, _ := tokens["refresh_token"].(string)
 	e.signIn = true
-	if code, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+access); code != http.StatusUnauthorized {
-		t.Fatalf("the access token allowed while open works after the close: %d", code)
-	}
 	status, body := e.post("/oauth/token", "application/x-www-form-urlencoded", url.Values{
-		"grant_type": {"refresh_token"}, "client_id": {client}, "refresh_token": {tokens["refresh_token"].(string)}}.Encode())
+		"grant_type": {"refresh_token"}, "client_id": {client}, "refresh_token": {refresh}}.Encode())
 	if status != http.StatusBadRequest || body["error"] != "invalid_grant" {
 		t.Fatalf("the refresh token allowed while open works after the close: %d %v", status, body)
+	}
+	if code, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+access); code != http.StatusUnauthorized {
+		t.Fatalf("the access token allowed while open works after the close: %d", code)
 	}
 }
 
@@ -88,5 +91,30 @@ func TestAKeyMadeInALaterOpenSpellIsRevokedWhenTheServerClosesAgain(t *testing.T
 	e.api("anna", http.MethodGet, "/mcp/keys", nil, &list)
 	if len(list.Revoked) != 1 || list.Revoked[0].RevokedReason != "closed" {
 		t.Fatalf("anna sees %+v", list.Revoked)
+	}
+}
+
+func TestAServerThatStartsClosedEndsTheKeysMadeWhileOpen(t *testing.T) {
+	e := newEnv(t)
+	e.signIn = false
+	_, id := e.key("anna", false)
+	restarted := newServer(e.deps)
+	restarted.signIn = func() bool { return true }
+	restarted.login, restarted.user, restarted.now = e.srv.login, e.srv.user, e.srv.now
+	restarted.settle(httptest.NewRequest(http.MethodGet, "/mcp/keys", nil))
+	if k, err := e.srv.st.key(context.Background(), id); err != nil || k.RevokedReason != "closed" {
+		t.Fatalf("after a start without the open state the key is %+v: %v", k, err)
+	}
+}
+
+func TestAKeyMarkedOpenIsRefusedWhenTheSweepRanBeforeItWasStored(t *testing.T) {
+	e := newEnv(t)
+	e.key("chef", false)
+	e.signIn = false
+	openKey, _ := e.key("anna", false)
+	e.srv.open.Store(false)
+	e.signIn = true
+	if code, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+openKey); code != http.StatusUnauthorized {
+		t.Fatalf("a key made while open works after the close: %d", code)
 	}
 }

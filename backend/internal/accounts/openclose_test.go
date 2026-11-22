@@ -68,3 +68,31 @@ func TestAnOpenServerActsAsTheOwnerAfterARename(t *testing.T) {
 		t.Fatal("what the open server made outlasts the first password")
 	}
 }
+
+func TestTurningATestedServiceBackOnClosesTheServerAgain(t *testing.T) {
+	w := newBareWorld(t)
+	jdp := w.oldUser("jdp", "", true, users.BackendScope{Path: w.share, Scope: "/"})
+	w.public()
+	w.open()
+	p := signintest.NewProvider(t)
+	body := map[string]any{"provider": "custom", "issuer": p.URL, "clientId": p.ClientID, "secret": p.Secret, "ca": string(p.CA)}
+	added := decode[struct{ Service struct{ ID string } }](t, w.must(http.StatusOK, w.req("POST", "/api/signin/v1/methods/oidc", body)))
+	test := decode[struct{ URL string }](t, w.must(http.StatusOK, w.req("POST", "/api/signin/v1/methods/oidc/"+added.Service.ID+"/test", map[string]string{"return": "/"})))
+	p.Next(signintest.Person{Subject: "sub-jdp", Name: "jdp"})
+	b := w.browser()
+	w.via(b, p, test.URL)
+	w.must(http.StatusOK, b.do("PATCH", "/api/signin/v1/methods/oidc/"+added.Service.ID, map[string]any{"on": false}))
+	if !state.OpenAccess() {
+		t.Fatal("turning the only service off left the server closed")
+	}
+	tok := decode[struct{ Value string }](t, w.must(http.StatusOK, w.req("POST", "/api/signin/v1/me/tokens", map[string]any{"name": "skript", "scopes": []string{"all"}})))
+	_, before := heard(jdp.ID)
+	w.must(http.StatusOK, w.req("PATCH", "/api/signin/v1/methods/oidc/"+added.Service.ID, map[string]any{"on": true}))
+	if state.OpenAccess() {
+		t.Fatal("turning the service back on left the server open")
+	}
+	if _, after := heard(jdp.ID); after == before {
+		t.Fatal("what was made while open outlasts the service coming back")
+	}
+	w.must(http.StatusUnauthorized, w.req("GET", "/me", nil, header{"Authorization", "Bearer " + tok.Value}))
+}
