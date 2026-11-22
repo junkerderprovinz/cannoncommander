@@ -4,7 +4,7 @@ A sign-in service signs people in over OpenID Connect: Pocket ID, authentik, Aut
 
 ![The sign-in page with the Pocket ID button below the password sign-in.](../assets/screenshots/sign-in-oidc.png)
 
-You set one up in the app or in `config.yaml`. Either way, CannonCommander needs its https address in `http.externalUrl`, so the service can send people back, see [Reverse proxy](reverse-proxy.md#config).
+You set one up in the app or in `config.yaml`. Either way, CannonCommander needs its address in `http.externalUrl`, so the service can send people back, see [Reverse proxy](reverse-proxy.md#config). For a service in `config.yaml` that address must be https, or CannonCommander does not start.
 
 ## In the app {#app}
 
