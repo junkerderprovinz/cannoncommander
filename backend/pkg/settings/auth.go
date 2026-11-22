@@ -1,7 +1,6 @@
 package settings
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -12,8 +11,8 @@ type AuthCommon struct {
 	Enabled           bool     `json:"enabled"`           // whether to enable this authentication method.
 	AdminGroup        string   `json:"adminGroup"`        // if set, users in this group will be granted admin privileges
 	UserGroups        []string `json:"userGroups"`        // if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-	GroupsClaim       string   `json:"groupsClaim"`       // the JSON field name to read groups from. Default is "groups"
-	UserIdentifier    string   `json:"userIdentifier"`    // the field value to use as the username. Default is "preferred_username". Other common values are "email" or "username", or "phone"
+	GroupsClaim       string   `json:"groupsClaim"`       // the JSON field name to read groups from. Empty takes the provider's, usually "groups"
+	UserIdentifier    string   `json:"userIdentifier"`    // the field value to use as the username. Empty takes the provider's, usually "preferred_username". Other common values are "email" or "username"
 	DisableVerifyTLS  bool     `json:"disableVerifyTLS"`  // disable TLS verification (insecure, for testing only)
 	LogoutRedirectUrl string   `json:"logoutRedirectUrl"` // if provider logout url is provided, the server will also redirect to logout url. Custom logout query params are respected.
 	CreateUser        bool     `json:"createUser"`        // deprecated: always true for supported authentication methods
@@ -102,7 +101,9 @@ type OidcConfig struct {
 	ClientID     string `json:"clientId"`     // secret: client id of the OIDC application
 	ClientSecret string `json:"clientSecret"` // secret: client secret of the OIDC application
 	IssuerUrl    string `json:"issuerUrl"`    // authorization URL of the OIDC provider
-	Scopes       string `json:"scopes"`       // scopes to request from the OIDC provider
+	Scopes       string `json:"scopes"`       // scopes to request from the OIDC provider. Empty takes the provider's
+	Name         string `json:"name"`         // the name the sign-in button shows. Empty is the provider's own name
+	Provider     string `json:"provider"`     // the kind of provider: pocket-id, authentik, authelia, keycloak, kanidm, zitadel or custom. Empty recognises it
 	CaFile       string `json:"caFile"`       // PEM file of a certificate authority to trust for this provider, such as your own
 }
 
@@ -114,21 +115,4 @@ type PasskeyAuthConfig struct {
 	RPID            string   `json:"rpId"`            // the Relying Party ID until a request names its host, which every passkey request does
 	RPOrigins       []string `json:"rpOrigins"`       // allowed origins; if empty, auto-derived from base URL
 	LoginButtonText string   `json:"loginButtonText"` // custom text for the passkey login button
-}
-
-// validateOidcAuth fills in what the OIDC section leaves out. The sign-in
-// speaks to the provider itself.
-func validateOidcAuth() error {
-	oidcCfg := &Config.Auth.Methods.OidcAuth
-	applyAuthCommonDefaults(&oidcCfg.AuthCommon)
-	if oidcCfg.UserIdentifier == "" {
-		oidcCfg.UserIdentifier = "preferred_username"
-	}
-	if oidcCfg.Scopes == "" {
-		oidcCfg.Scopes = "openid email profile"
-	}
-	if !oidcCfg.Enabled {
-		return errors.New("OIDC is not enabled")
-	}
-	return nil
 }

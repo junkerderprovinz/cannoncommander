@@ -485,10 +485,6 @@ func setupAuth(generate bool) {
 	}
 	if Config.Auth.Methods.OidcAuth.Enabled || generate {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "oidc")
-		err := validateOidcAuth()
-		if err != nil && !generate {
-			logger.Fatalf("Error validating OIDC auth: %v", err)
-		}
 	}
 
 	// use password auth as default if no auth methods are set

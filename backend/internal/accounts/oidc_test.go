@@ -2,6 +2,7 @@ package accounts_test
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -13,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
@@ -334,5 +336,58 @@ func TestWebDAVTakesNoPasswordWhilePasswordsAreOff(t *testing.T) {
 	settings.Config.Auth.Methods.PasswordAuth.Enabled = false
 	if _, err := accounts.BasicLogin(r, "jdp", strong); err == nil {
 		t.Fatal("WebDAV took a password while passwords are off")
+	}
+}
+
+type offered struct{ ID, Provider, Name string }
+
+// offeredServices are the services the sign-in page offers.
+func (w *world) offeredServices() []offered {
+	w.t.Helper()
+	var o struct{ Services []offered }
+	if err := json.Unmarshal(w.must(http.StatusOK, w.req("GET", "/api/signin/v1/options", nil)).Body.Bytes(), &o); err != nil {
+		w.t.Fatal(err)
+	}
+	return o.Services
+}
+
+func TestTheServiceFromTheConfigIsNamedAfterTheProviderItIs(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("")
+	p.Like("pocket-id")
+	w.open()
+	// The sign-in reads the provider's discovery after it opened.
+	var got []offered
+	for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline); time.Sleep(20 * time.Millisecond) {
+		if got = w.offeredServices(); len(got) == 1 && got[0].Provider != "custom" {
+			break
+		}
+	}
+	if len(got) != 1 || got[0].Name != "" || got[0].Provider != "pocket-id" {
+		t.Fatalf("the sign-in page offers %+v", got)
+	}
+}
+
+func TestANameAndAProviderFromTheConfigWin(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("")
+	p.Like("pocket-id")
+	settings.Config.Auth.Methods.OidcAuth.Name = "Familie"
+	settings.Config.Auth.Methods.OidcAuth.Provider = "authentik"
+	w.open()
+	if got := w.offeredServices(); len(got) != 1 || got[0].Name != "Familie" || got[0].Provider != "authentik" {
+		t.Fatalf("the sign-in page offers %+v", got)
+	}
+}
+
+func TestClaimsSetInTheConfigWinOverTheProvidersOwn(t *testing.T) {
+	w := newWorld(t)
+	p := w.withProvider("")
+	p.Like("pocket-id")
+	settings.Config.Auth.Methods.OidcAuth.UserIdentifier = "email"
+	w.open()
+	b, _ := w.throughProvider(p, signintest.Person{Subject: "s-1", Name: "erna", Email: "erna@example.com", EmailVerified: true})
+	if me, ok := w.meThrough(b); !ok || me.Name != "erna@example.com" {
+		t.Fatalf("the name came from the provider's claim, not userIdentifier: %+v", me)
 	}
 }

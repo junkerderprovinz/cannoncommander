@@ -41,7 +41,7 @@ func configService() (*signin.ServiceSpec, error) {
 		return nil, fmt.Errorf("OIDC needs http.externalUrl, the https address people open CannonCommander at, and the provider must send them back to <that address>%s", callback)
 	}
 	spec := &signin.ServiceSpec{
-		ID: configServiceID, Provider: "custom", Name: "OIDC",
+		ID: configServiceID, Provider: o.Provider, Name: o.Name,
 		Issuer: o.IssuerUrl, ClientID: o.ClientID, Secret: o.ClientSecret,
 		Scopes: o.Scopes, NameClaim: o.UserIdentifier, GroupsClaim: o.GroupsClaim,
 		StartPath: oidcStartPath, CallbackPath: oidcCallbackPath,
