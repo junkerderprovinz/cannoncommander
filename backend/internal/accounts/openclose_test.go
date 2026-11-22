@@ -55,7 +55,7 @@ func TestATokenMadeWhileNobodyOwnsTheServerMakesTheOwnerARow(t *testing.T) {
 func TestAnOpenServerActsAsTheOwnerAfterARename(t *testing.T) {
 	w := newBareWorld(t)
 	admin := w.oldUser("admin", "", true, users.BackendScope{Path: w.share, Scope: "/"})
-	w.oldUser("kurt", "", false, users.BackendScope{Path: w.share, Scope: "/"})
+	w.oldUser("anton", "", true, users.BackendScope{Path: w.share, Scope: "/"})
 	w.open()
 	w.must(http.StatusOK, w.req("PATCH", "/admin/users/admin", map[string]any{"name": "chef"}))
 	if u, err := state.ResolveNoAuthUser(); err != nil || u.ID != admin.ID {

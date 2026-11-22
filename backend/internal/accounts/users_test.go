@@ -366,6 +366,10 @@ func TestTheUsersTileTakesAPasswordOfAnyLength(t *testing.T) {
 		t.Fatalf("the one-letter password does not sign in: %v", err)
 	}
 	w.must(http.StatusBadRequest, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "leer", "role": "user", "scope": "/mnt/user", "password": ""}))
+	w.must(http.StatusBadRequest, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"name": "kurti", "password": ""}))
+	if _, err := state.GetUserByUsername("kurt"); err != nil {
+		t.Fatalf("a change with an empty password landed halfway: %v", err)
+	}
 }
 
 func TestALongPasswordIsNotCalledShort(t *testing.T) {
