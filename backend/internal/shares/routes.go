@@ -15,6 +15,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 //go:embed openapi.yaml
@@ -187,7 +188,15 @@ func (s *Service) create(w http.ResponseWriter, r *http.Request) error {
 	if sh, err = s.one(r.Context(), `WHERE id = ?`, sh.ID); err != nil {
 		return err
 	}
-	return v1.WriteJSON(w, r, http.StatusCreated, sh)
+	return v1.WriteJSON(w, r, http.StatusCreated, saved{sh, settings.ShortPassword(req.Password)})
+}
+
+// saved is a share as its create or change answers it. Short says the new
+// password is under the length the page points out, and the link takes it
+// all the same.
+type saved struct {
+	*Share
+	Short bool `json:"short,omitempty"`
 }
 
 func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
@@ -261,7 +270,7 @@ func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
 	if sh, err = s.one(r.Context(), `WHERE id = ?`, sh.ID); err != nil {
 		return err
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, sh)
+	return v1.WriteJSON(w, r, http.StatusOK, saved{sh, req.Password != nil && settings.ShortPassword(*req.Password)})
 }
 
 // delete asks for no share right: withdrawing a link only takes something
@@ -366,9 +375,6 @@ func (s *Service) pickSlug(r *http.Request, slug, name string) (string, error) {
 }
 
 func setPassword(sh *Share, pw string) error {
-	if len([]rune(pw)) < minPassword {
-		return v1.Coded(http.StatusBadRequest, "linkPasswordShort", "the password needs at least 6 characters").With("n", 6)
-	}
 	hash, err := utils.HashPwd(pw)
 	if err != nil {
 		return err

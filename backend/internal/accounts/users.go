@@ -16,6 +16,7 @@ import (
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/junkerderprovinz/parleyport/kit/signin"
 )
 
@@ -122,10 +123,19 @@ func (h handlers) getUser(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	return h.writeAccount(w, r, http.StatusOK, u.ID)
+	return h.writeAccount(w, r, http.StatusOK, u.ID, "")
 }
 
-func (h handlers) writeAccount(w http.ResponseWriter, r *http.Request, status int, id uint64) error {
+// savedAccount is an account as a create or change answers it. Short says
+// the password this request set is under the length the page points out.
+type savedAccount struct {
+	Account
+	Short bool `json:"short,omitempty"`
+}
+
+// writeAccount answers with the account id. password is the one the request
+// set, or "".
+func (h handlers) writeAccount(w http.ResponseWriter, r *http.Request, status int, id uint64, password string) error {
 	u, err := state.GetUserByID(id)
 	if err != nil {
 		return errNoSuchUser
@@ -138,7 +148,7 @@ func (h handlers) writeAccount(w http.ResponseWriter, r *http.Request, status in
 	if err != nil {
 		return err
 	}
-	return v1.WriteJSON(w, r, status, a)
+	return v1.WriteJSON(w, r, status, savedAccount{a, settings.ShortPassword(password)})
 }
 
 // UserInput creates or changes a user. In a change, fields that are left
@@ -238,7 +248,7 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	activity.RecordUserMutation(r, &activity.Actor{User: v1.UserFrom(r)}, activitydb.EventUserCreate, u, nil)
-	return h.writeAccount(w, r, http.StatusCreated, u.ID)
+	return h.writeAccount(w, r, http.StatusCreated, u.ID, *in.Password)
 }
 
 // undoCreate takes back the row a create wrote when the sign-in could not
@@ -275,7 +285,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		return fromSignIn(r, err)
 	}
 	actor := v1.UserFrom(r)
-	self := u.ID == actor.ID
+	self := isSelf(u, actor)
 	var fields []string
 
 	if in.Revoke && self {
@@ -390,7 +400,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	if changed, err := state.GetUserByID(u.ID); err == nil {
 		activity.RecordUserMutation(r, &activity.Actor{User: actor}, activitydb.EventUserUpdate, &changed, changes)
 	}
-	return h.writeAccount(w, r, http.StatusOK, u.ID)
+	return h.writeAccount(w, r, http.StatusOK, u.ID, deref(in.Password))
 }
 
 // deleteUser removes an account. The sign-in ends its ways in, and the
@@ -406,7 +416,7 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	actor := v1.UserFrom(r)
-	if u.ID == actor.ID {
+	if isSelf(u, actor) {
 		return v1.Coded(http.StatusForbidden, "deleteSelf", "you cannot delete your own account")
 	}
 	if err := auth.RemoveAccount(r, idOf(&u)); err != nil {
@@ -580,6 +590,12 @@ func (h handlers) withRole(scopes []users.BackendScope, role string) []users.Bac
 
 // mayShareAs keeps links from read only users, because a public link hands a
 // file to anyone, which goes further than looking at it and downloading it.
+// isSelf reports whether actor changes its own account. While the server is
+// open the visitor stands in for everyone, not for the account it acts as.
+func isSelf(u users.User, actor *users.User) bool {
+	return u.ID == actor.ID && !state.OpenAccess()
+}
+
 func mayShareAs(role string) bool { return role != roleReadOnly }
 
 func deref(s *string) string {

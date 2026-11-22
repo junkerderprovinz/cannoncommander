@@ -779,7 +779,7 @@ func SetDefaults(generate bool) Settings {
 			Methods: LoginMethods{
 				PasswordAuth: PasswordAuthConfig{
 					Enabled:   true,
-					MinLength: 5,
+					MinLength: 12,
 				},
 			},
 		},

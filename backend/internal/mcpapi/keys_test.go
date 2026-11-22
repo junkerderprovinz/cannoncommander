@@ -58,15 +58,12 @@ func TestMakingAKeyNeedsTheOwnerAtTheKeyboard(t *testing.T) {
 	}
 }
 
-func TestWithoutSignInAKeyIsOnlyMadeFromALocalAddress(t *testing.T) {
+func TestWithoutSignInAKeyIsMadeFromAnyAddress(t *testing.T) {
 	e := newEnv(t)
 	e.signIn = false
 	body := map[string]any{"label": "Claude"}
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p, "Host", "files.example.com"); code != http.StatusForbidden || p.Code != "mcpKeyNeedsSignIn" {
-		t.Fatalf("from a public name: %d %s", code, p.Code)
-	}
-	for _, host := range []string{"127.0.0.1:8080", "tower", "nas.lan", "[::1]:80"} {
+	for _, host := range []string{"files.example.com", "127.0.0.1:8080", "tower", "nas.lan", "[::1]:80"} {
 		body["label"] = "Claude " + host
 		if code := e.api("anna", http.MethodPost, "/mcp/keys", body, &p, "Host", host); code != http.StatusCreated {
 			t.Fatalf("from %s: %d %s", host, code, p.Code)

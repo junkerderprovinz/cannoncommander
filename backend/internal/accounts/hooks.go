@@ -15,7 +15,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	cerrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/junkerderprovinz/parleyport/kit/signin"
 )
 
@@ -192,11 +191,12 @@ func (h handlers) ended(ctx context.Context, account string, what signin.Ending)
 		if err := mirrorPassword(ctx, account); err != nil {
 			return err
 		}
-		if err := passwordChanged(ctx, h.db, account); err != nil {
-			return err
-		}
-		if u, err := state.GetUserByID(id); err == nil && u.Username == settings.PasswordAdminUsername() {
-			state.ForgetFirstAdminPassword()
+		// A sign-in service that closes an open server ends the same way
+		// and sets no password.
+		if acc, err := SignIn().Account(ctx, account); err == nil && acc.Password {
+			if err := passwordChanged(ctx, h.db, account); err != nil {
+				return err
+			}
 		}
 	}
 	// A client that came in through OAuth came through a session, so it

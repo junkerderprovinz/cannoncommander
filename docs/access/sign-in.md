@@ -18,7 +18,7 @@ Everything about your own sign-in lives on this page: the password, two-factor a
 
 ## Change or remove the password {#change}
 
-- **Change** asks for the current password and a new one of at least 12 characters. Every other session ends.
+- **Change** asks for the current password and a new one. Any length works, and under 12 characters the page tells you it is short. Every other session ends.
 - **Remove password** opens CannonCommander to everyone again. It only works while no other account signs in with a password. Two-factor authentication, passkeys, API tokens and sign-in services go with it.
 
 ## Password check on changes {#ask}

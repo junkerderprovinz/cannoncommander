@@ -283,7 +283,6 @@ func TestCreatingALinkChecksEverything(t *testing.T) {
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "slug": "-ab-c"}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "slug": "über-uns"}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "slug": "vergeben"}, http.StatusConflict},
-		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "password": "kurz"}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "expires": past}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "limit": -1}, http.StatusBadRequest},
 		{"anna", map[string]any{"paths": []string{"/mnt/user/fotos"}, "extra": 1}, http.StatusBadRequest},
@@ -1034,5 +1033,31 @@ func TestALinkComesWithItsAddressAsAQRCode(t *testing.T) {
 	}
 	if a := e.do("GET", "/shares/"+sh.ID+"/qr", nil, "X-User", "bob"); a.code != http.StatusNotFound {
 		t.Fatalf("bob reads the address: %d", a.code)
+	}
+}
+
+func TestALinkTakesAPasswordOfAnyLength(t *testing.T) {
+	e := newEnv(t)
+	var short struct{ Short bool }
+	a := e.do("POST", "/shares", map[string]any{"paths": []string{"/mnt/user/fotos/Urlaub"}, "password": "ab"}, "X-User", "anna")
+	if a.code != http.StatusCreated {
+		t.Fatalf("a short link password was refused: %d %s", a.code, a.body)
+	}
+	if a.into(t, &short); !short.Short {
+		t.Fatal("the answer does not say the password is short")
+	}
+	var sh shares.Share
+	a.into(t, &sh)
+	if a := e.do("POST", "/s/"+sh.Slug+"/unlock", map[string]string{"password": "ab"}); a.code != http.StatusOK {
+		t.Fatalf("a short link password does not unlock: %d", a.code)
+	}
+	a = e.do("PATCH", "/shares/"+sh.ID, map[string]any{"password": "sonnenschein-am-meer"}, "X-User", "anna")
+	short.Short = false
+	if a.into(t, &short); short.Short {
+		t.Fatalf("a long password is called short: %d %s", a.code, a.body)
+	}
+	a = e.do("PATCH", "/shares/"+sh.ID, map[string]any{"password": "x"}, "X-User", "anna")
+	if a.into(t, &short); !short.Short {
+		t.Fatalf("the change does not say the password is short: %d %s", a.code, a.body)
 	}
 }

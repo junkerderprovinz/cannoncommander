@@ -306,7 +306,7 @@ components:
   schemas:
     McpKeys:
       type: object
-      required: [endpointPath, limit, signIn, hostAllowsKeys, desktop, writeLimits, keys, revoked, oauth]
+      required: [endpointPath, limit, signIn, desktop, writeLimits, keys, revoked, oauth]
       properties:
         endpointPath:
           type: string
@@ -317,9 +317,6 @@ components:
         signIn:
           type: boolean
           description: The server asks people to sign in.
-        hostAllowsKeys:
-          type: boolean
-          description: A key can be made from the address this request came in on.
         desktop:
           type: boolean
         writeLimits:

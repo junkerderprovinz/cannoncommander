@@ -13,6 +13,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
@@ -71,7 +72,7 @@ func TestNewUsersAreChecked(t *testing.T) {
 		{map[string]any{"name": "a", "scope": "/mnt/user", "password": strong}, http.StatusBadRequest},
 		{map[string]any{"name": "anna", "scope": "/mnt/user", "password": strong}, http.StatusConflict},
 		{map[string]any{"name": "bert", "scope": "/mnt/user"}, http.StatusBadRequest},
-		{map[string]any{"name": "bert", "scope": "/mnt/user", "password": "kurz"}, http.StatusBadRequest},
+		{map[string]any{"name": "bert", "scope": "/mnt/user", "password": ""}, http.StatusBadRequest},
 		{map[string]any{"name": "bert", "password": strong}, http.StatusBadRequest},
 		{map[string]any{"name": "bert", "scope": "/mnt/user/nirgends", "password": strong}, http.StatusBadRequest},
 		{map[string]any{"name": "bert", "scope": "/mnt/disk1", "password": strong}, http.StatusBadRequest},
@@ -135,7 +136,7 @@ func TestChangingAUser(t *testing.T) {
 	if got := w.account(anna); got.Name != "anni" || got.Role != "user" {
 		t.Fatalf("the sign-in did not follow: %+v", got)
 	}
-	w.must(http.StatusBadRequest, w.as(w.admin.Username, "PATCH", "/admin/users/anni", map[string]any{"password": "kurz"}))
+	w.must(http.StatusBadRequest, w.as(w.admin.Username, "PATCH", "/admin/users/anni", map[string]any{"password": ""}))
 	w.must(http.StatusNotFound, w.as(w.admin.Username, "PATCH", "/admin/users/anna", map[string]any{"full": "x"}))
 }
 
@@ -339,5 +340,59 @@ func TestARoleSetInTheAppReachesTheRowTheOlderVersionReads(t *testing.T) {
 	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"role": "user"}))
 	if permAdmin() {
 		t.Fatal("a demoted admin is still admin for the version before")
+	}
+}
+
+func TestTheUsersTileTakesAPasswordOfAnyLength(t *testing.T) {
+	w := newWorld(t).open()
+	type answer struct{ Short bool }
+	rec := w.must(http.StatusCreated, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "kurt", "role": "user", "scope": "/mnt/user", "password": "ab"}))
+	if !decode[answer](t, rec).Short {
+		t.Fatal("the answer does not say the password is short")
+	}
+	if _, err := w.signIn("kurt", "ab"); err != nil {
+		t.Fatalf("the short password does not sign in: %v", err)
+	}
+	rec = w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"password": "x"}))
+	if !decode[answer](t, rec).Short {
+		t.Fatal("the change does not say the password is short")
+	}
+	rec = w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"full": "Kurt"}))
+	if decode[answer](t, rec).Short {
+		t.Fatal("a change without a password calls it short")
+	}
+	rec = w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/kurt", map[string]any{"password": "x"}))
+	if _, err := w.signIn("kurt", "x"); err != nil {
+		t.Fatalf("the one-letter password does not sign in: %v", err)
+	}
+	w.must(http.StatusBadRequest, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "leer", "role": "user", "scope": "/mnt/user", "password": ""}))
+}
+
+func TestALongPasswordIsNotCalledShort(t *testing.T) {
+	w := newWorld(t).open()
+	rec := w.must(http.StatusCreated, w.as("jdp", "POST", "/admin/users", map[string]any{"name": "kurt", "role": "user", "scope": "/mnt/user", "password": strong}))
+	if decode[struct{ Short bool }](t, rec).Short {
+		t.Fatal("a long password is called short")
+	}
+}
+
+func TestTheUsersTileWorksWhileNobodyHasAPassword(t *testing.T) {
+	w := newBareWorld(t)
+	w.admin = w.oldUser("jdp", "", true, users.BackendScope{Path: w.share, Scope: "/"})
+	w.oldUser("kurt", "", false, users.BackendScope{Path: w.share, Scope: "/"})
+	w.open()
+	w.must(http.StatusOK, w.req("GET", "/admin/users", nil))
+	w.must(http.StatusOK, w.req("PATCH", "/admin/users/kurt", map[string]any{"name": "kurti", "role": "readonly", "blocked": true}))
+	kurti, err := state.GetUserByUsername("kurti")
+	if err != nil {
+		t.Fatalf("the rename while open did not land: %v", err)
+	}
+	got := w.account(kurti)
+	if got.Role != "readonly" || !got.Blocked {
+		t.Fatalf("the change while open did not land: %+v", got)
+	}
+	w.must(http.StatusNoContent, w.req("DELETE", "/admin/users/kurti", nil))
+	if _, err := state.GetUserByUsername("kurti"); err == nil {
+		t.Fatal("the account removed while open is still there")
 	}
 }

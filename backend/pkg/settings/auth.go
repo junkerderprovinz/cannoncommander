@@ -46,7 +46,7 @@ type PasswordAuthConfig struct {
 	Enabled       bool   `json:"enabled"`
 	AdminUsername string `json:"adminUsername"`                  // secret: admin username auto-assigned. If not set, the default is "admin".
 	AdminPassword string `json:"adminPassword"`                  // secret: password for admin auto-assigned admin account. If set, reset on startup.
-	MinLength     int    `json:"minLength" validate:"omitempty"` // minimum pasword length required, default is 5.
+	MinLength     int    `json:"minLength" validate:"omitempty"` // below this length the sign-in points out that a password is short, default is 12. It never refuses one.
 	EnforcedOtp   bool   `json:"enforcedOtp"`                    // if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
 }
 

@@ -221,8 +221,7 @@ func (s *Server) newTransport() http.Handler {
 		// The SDK's rule refuses a request that reached a loopback address
 		// under any other name, before any key is read, which is what a reverse
 		// proxy in the same network namespace looks like. The key is the
-		// defence here: a page that rebinds its name cannot know one, and
-		// without a sign-in it cannot make one either (keysAllowedFrom).
+		// defence here.
 		DisableLocalhostProtection:   true,
 		MaxRequestBodyBytes:          maxBody,
 		PropagateRequestCancellation: true,

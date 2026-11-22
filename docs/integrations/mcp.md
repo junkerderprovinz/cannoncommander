@@ -39,7 +39,7 @@ Web chats in the cloud cannot take a key. For them:
 
 1. Make CannonCommander reachable from the internet over https, for example behind a [reverse proxy](../configuration/reverse-proxy.md). A login on the proxy may guard the interface, but `/mcp` has to get through without it.
 2. As admin, switch on **Sign-in through OAuth** under **Keys of all accounts** in the same card, with the public address.
-3. Add CannonCommander in the assistant. It sends you to a CannonCommander page where you sign in and allow it.
+3. Add CannonCommander in the assistant. It sends you to a CannonCommander page where you allow it, after signing in if CannonCommander has a password.
 
 ## In the desktop app {#desktop}
 

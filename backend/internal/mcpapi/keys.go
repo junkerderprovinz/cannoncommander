@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -48,7 +47,6 @@ type KeyView struct {
 var (
 	errLabel        = v1.Coded(http.StatusBadRequest, "mcpKeyLabel", "a key needs a name of 1 to 64 characters")
 	errClient       = v1.Coded(http.StatusBadRequest, "mcpKeyClient", "a client id is 1 to 32 lower-case letters, digits and dashes")
-	errNeedsSignIn  = v1.Coded(http.StatusForbidden, "mcpKeyNeedsSignIn", "without sign-in, a key can only be made from an IP address or a local name")
 	errNoSuchKey    = v1.Coded(http.StatusNotFound, "mcpKeyNotFound", "there is no such key")
 	errNotYourKey   = v1.Coded(http.StatusForbidden, "mcpKeyNotYours", "only the account a key belongs to can do this")
 	errTokenRefused = v1.Coded(http.StatusForbidden, "tokenCannotChange", "sign in to change keys, an API token cannot")
@@ -87,49 +85,12 @@ var clientID = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{0,31}$`)
 
 var keyIDShape = regexp.MustCompile(`^[0-9a-f]{32}$`)
 
-// privateSuffixes only ever resolve inside a network, so no answer from
-// public DNS can point one of them at a LAN address.
-var privateSuffixes = []string{".local", ".lan", ".home", ".home.arpa", ".internal", ".localdomain", ".ts.net"}
-
-// hostAllowsKeys reports whether a key may be made from the request host
-// while nobody signs in: an IP address, localhost, a single label or a
-// private suffix, none of which a public DNS name can rebind.
-func hostAllowsKeys(host string) bool {
-	if h, _, err := net.SplitHostPort(host); err == nil {
-		host = h
-	}
-	host = strings.ToLower(strings.Trim(strings.TrimSpace(host), "[]"))
-	if host == "" {
-		return false
-	}
-	if net.ParseIP(host) != nil || !strings.Contains(host, ".") {
-		return true
-	}
-	for _, suffix := range privateSuffixes {
-		if strings.HasSuffix(host, suffix) {
-			return true
-		}
-	}
-	return false
-}
-
-// keysAllowedFrom reports whether r may make or change a key. A server people
-// sign in to settles it with the session, which is bound to the real address;
-// a page that rebound its name to this one carries none. Without sign-in, as in
-// the desktop app, only an address that cannot be rebound counts.
-func (s *Server) keysAllowedFrom(r *http.Request) bool {
-	return s.signIn() || hostAllowsKeys(r.Host)
-}
-
 // proveOwner runs then, which makes, replaces or lets a key write, once the
 // person at the keyboard owns the account: a session, no API token, and a
 // fresh sign-in or the password confirmed, as for an API token.
 func (s *Server) proveOwner(r *http.Request, then func() error) error {
 	if s.login.ByAPIToken(r) {
 		return errTokenRefused
-	}
-	if !s.keysAllowedFrom(r) {
-		return errNeedsSignIn
 	}
 	if !s.signIn() {
 		return then()
@@ -231,7 +192,6 @@ func (s *Server) list(w http.ResponseWriter, r *http.Request) error {
 		"endpointPath":   EndpointPath,
 		"limit":          keyLimit,
 		"signIn":         s.signIn(),
-		"hostAllowsKeys": s.keysAllowedFrom(r),
 		"desktop":        desktop.Active(),
 		"writeLimits": map[string]int64{
 			"entriesPerCall": itemsPerCall, "entriesPerHour": itemsPerHour, "filesPerCall": filesPerCall, "callsPerMinute": callsPerMinute,
@@ -531,7 +491,7 @@ func (s *Server) setOAuth(w http.ResponseWriter, r *http.Request) error {
 		return errTokenRefused
 	}
 	if in.Enabled && !s.oauthPossible() {
-		return v1.Coded(http.StatusBadRequest, "mcpOAuthNeedsSignIn", errOAuthNeedsSignIn.Error())
+		return v1.Coded(http.StatusBadRequest, "mcpOAuthDesktop", errOAuthDesktop.Error())
 	}
 	issuer := ""
 	if in.Enabled || strings.TrimSpace(in.Issuer) != "" {

@@ -617,3 +617,14 @@ func TestCreateUserExplicitFalseStaysFalse(t *testing.T) {
 		t.Fatalf("permissions = %+v, want %+v", loaded.Permissions, want)
 	}
 }
+
+func TestAPasswordOfAnyLengthIsTaken(t *testing.T) {
+	startFresh(t, "")
+	u := &users.User{FrontendUser: users.FrontendUser{Username: "kurz", LoginMethod: users.LoginMethodPassword}}
+	if err := CreateUser(u, "ab"); err != nil {
+		t.Fatalf("a short password was refused: %v", err)
+	}
+	if err := UpdateUser(u, "x", "password"); err != nil {
+		t.Fatalf("a one-letter password was refused: %v", err)
+	}
+}

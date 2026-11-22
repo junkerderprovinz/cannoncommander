@@ -198,9 +198,8 @@ func createConfig(configpath string, noInput bool) error {
 	if adminUsername != "admin" {
 		config.Auth.Methods.PasswordAuth.AdminUsername = adminUsername
 	}
-	const adminPasswordGenerateDefault = "generate on startup"
-	adminPassword := askQuestion(reader, "What should the default admin password be?", adminPasswordGenerateDefault)
-	if adminPassword != "" && !strings.EqualFold(adminPassword, adminPasswordGenerateDefault) {
+	adminPassword := askQuestion(reader, "What should the admin password be? Leave it empty to start without one", "")
+	if adminPassword != "" {
 		config.Auth.Methods.PasswordAuth.AdminPassword = adminPassword
 	}
 

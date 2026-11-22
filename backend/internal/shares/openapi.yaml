@@ -42,7 +42,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Share"
+                $ref: "#/components/schemas/SavedShare"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -93,7 +93,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Share"
+                $ref: "#/components/schemas/SavedShare"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -543,6 +543,14 @@ components:
         state:
           type: string
           enum: [active, expired, exhausted]
+    SavedShare:
+      allOf:
+        - $ref: "#/components/schemas/Share"
+        - type: object
+          properties:
+            short:
+              type: boolean
+              description: The new password is shorter than auth.methods.password.minLength. The link takes it all the same.
     ShareAddress:
       type: object
       required: [url, qr]
@@ -577,7 +585,7 @@ components:
           nullable: true
         password:
           type: string
-          minLength: 6
+          description: Any length works. An empty one leaves the link without a password.
         limit:
           type: integer
           minimum: 0

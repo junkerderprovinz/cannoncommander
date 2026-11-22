@@ -16,7 +16,7 @@ CannonCommander itself does not open its own data folder, see [Security](../secu
 |---|---|---|
 | `server.sources` | The folders that show up | [Folders](folders.md) |
 | `http` | `externalUrl`, `baseURL`, trusted proxies | [Reverse proxy](reverse-proxy.md) |
-| `auth.methods.password` | `minLength` for longer passwords than 12 characters | [Signing in](../access/sign-in.md) |
+| `auth.methods.password` | `minLength`, the length under which the page calls a password short (12). It never refuses one | [Signing in](../access/sign-in.md) |
 | `auth.methods.oidc` | A sign-in service such as Pocket ID | [Sign-in services](oidc.md) |
 
 ## Back up and move the settings {#export}

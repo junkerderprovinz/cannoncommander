@@ -70,6 +70,7 @@ func Open(ctx context.Context, d v1.Deps) (*signin.Auth, error) {
 	warnAboutConfig(ctx, h)
 	signIns.Store(auth)
 	state.UseSignIn(auth.Anyone)
+	state.UseOwner(owner)
 	shares.UseBlocked(Blocked)
 	return auth, nil
 }
@@ -104,7 +105,7 @@ func (h handlers) config(ctx context.Context, service *signin.ServiceSpec) (sign
 		TokenPrefix: "cc",
 		Public:      publicURL,
 		Base:        settings.Config.Http.BaseURL,
-		MinPassword: max(minPassword, settings.Config.Auth.Methods.PasswordAuth.MinLength),
+		MinPassword: settings.PasswordMinLength(),
 		NewID:       newAccountID,
 		Import:      h.importAccounts,
 		Legacy:      h.legacy(),
@@ -193,6 +194,36 @@ func (h handlers) forgetSignIn(ctx context.Context, service *signin.ServiceSpec)
 	}
 	logger.Warningf("signin: imported the accounts again, dropping %v and %d MCP keys and grants", counts, keys)
 	return nil
+}
+
+// ownerID remembers the owner's row, which a rename does not move.
+var ownerID atomic.Uint64
+
+// owner finds the row of the account the sign-in counts as the owner.
+func owner() (uint64, bool) {
+	auth := SignIn()
+	if auth == nil {
+		return 0, false
+	}
+	ctx := context.Background()
+	isOwner := func(id uint64) bool {
+		acc, err := auth.Account(ctx, strconv.FormatUint(id, 10))
+		return err == nil && acc.Owner
+	}
+	if id := ownerID.Load(); id != 0 && isOwner(id) {
+		return id, true
+	}
+	all, err := state.GetAllUsers()
+	if err != nil {
+		return 0, false
+	}
+	for _, u := range all {
+		if isOwner(u.ID) {
+			ownerID.Store(u.ID)
+			return u.ID, true
+		}
+	}
+	return 0, false
 }
 
 // revokeAllKeys is set by the MCP server, which keeps keys and grants in

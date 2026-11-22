@@ -195,9 +195,6 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 	}
 	// Hash password if provided
 	if plaintextPassword != "" {
-		if err := settings.ValidatePasswordPolicy(plaintextPassword); err != nil {
-			return err
-		}
 		hashedPassword, err := utils.HashPwd(plaintextPassword)
 		if err != nil {
 			return fmt.Errorf("failed to hash password: %w", err)
@@ -325,9 +322,6 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 			if plaintextPassword == "" {
 				return fmt.Errorf("password field requires a non-empty plaintext password")
 			}
-			if err := settings.ValidatePasswordPolicy(plaintextPassword); err != nil {
-				return err
-			}
 			hashedPassword, hashErr := utils.HashPwd(plaintextPassword)
 			if hashErr != nil {
 				return fmt.Errorf("failed to hash password: %w", hashErr)
@@ -362,9 +356,6 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 
 	if err := commitUserUpdate(existingUser, storedSnapshot); err != nil {
 		return err
-	}
-	if FieldListIncludes(fields, "password") && storedSnapshot.Username == settings.PasswordAdminUsername() {
-		forgetFirstAdminPassword()
 	}
 	return nil
 }

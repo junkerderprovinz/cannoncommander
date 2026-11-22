@@ -1,16 +1,16 @@
 package state
 
 import (
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-func startFresh(t *testing.T, adminPassword string) string {
+func startFresh(t *testing.T, adminPassword string) {
 	t.Helper()
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
@@ -23,11 +23,10 @@ func startFresh(t *testing.T, adminPassword string) string {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = Close() })
-	return filepath.Join(dir, "first-admin-password")
 }
 
 func TestAFreshInstallStartsTheAdminWithoutAPassword(t *testing.T) {
-	file := startFresh(t, "")
+	startFresh(t, "")
 
 	admin, err := GetUserByUsername("admin")
 	if err != nil {
@@ -35,9 +34,6 @@ func TestAFreshInstallStartsTheAdminWithoutAPassword(t *testing.T) {
 	}
 	if admin.Password != "" || admin.RequirePasswordChange {
 		t.Fatalf("the first admin got a password: %q, change due %v", admin.Password, admin.RequirePasswordChange)
-	}
-	if _, err := os.Stat(file); !os.IsNotExist(err) {
-		t.Fatalf("want no password file, stat says %v", err)
 	}
 }
 
@@ -91,17 +87,6 @@ func TestNoauthIsOpenWhateverTheSignInSays(t *testing.T) {
 
 	if !OpenAccess() {
 		t.Fatal("noauth lets everyone in")
-	}
-}
-
-func TestTheFirstPasswordFileGoesWhenTheAdminHasOne(t *testing.T) {
-	file := startFresh(t, "")
-	if err := os.WriteFile(file, []byte("speakable-word-ab3cd-ef\n"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	ForgetFirstAdminPassword()
-	if _, err := os.Stat(file); !os.IsNotExist(err) {
-		t.Fatalf("want the password file gone, stat says %v", err)
 	}
 }
 
@@ -207,5 +192,49 @@ func TestTheReimportVariableActsOnce(t *testing.T) {
 	t.Cleanup(func() { _ = Close() })
 	if !Reimport() {
 		t.Fatal("set again, the variable did not ask for the import")
+	}
+}
+
+func TestAnOpenServerActsAsTheOwnerWhateverItsName(t *testing.T) {
+	startFresh(t, "")
+	admin, err := GetUserByUsername("admin")
+	if err != nil {
+		t.Fatal(err)
+	}
+	admin.Username = "jdp"
+	if err := UpdateUser(&admin, "", "username"); err != nil {
+		t.Fatal(err)
+	}
+	if err := CreateUser(&users.User{FrontendUser: users.FrontendUser{Username: "kurt", LoginMethod: users.LoginMethodPassword}}, ""); err != nil {
+		t.Fatal(err)
+	}
+	UseOwner(func() (uint64, bool) { return admin.ID, true })
+	t.Cleanup(func() { UseOwner(func() (uint64, bool) { return 0, false }) })
+	u, err := ResolveNoAuthUser()
+	if err != nil || u.Username != "jdp" {
+		t.Fatalf("the open server acts as %q: %v", u.Username, err)
+	}
+}
+
+func TestAnOpenServerWithoutOwnerOrAdminNameActsAsTheFirstAdmin(t *testing.T) {
+	startFresh(t, "")
+	admin, err := GetUserByUsername("admin")
+	if err != nil {
+		t.Fatal(err)
+	}
+	admin.Username = "zora"
+	if err := UpdateUser(&admin, "", "username"); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"kurt", "bert"} {
+		u := &users.User{FrontendUser: users.FrontendUser{Username: name, LoginMethod: users.LoginMethodPassword}}
+		u.Permissions.Admin = name == "bert"
+		if err := CreateUser(u, ""); err != nil {
+			t.Fatal(err)
+		}
+	}
+	u, err := ResolveNoAuthUser()
+	if err != nil || u.Username != "bert" {
+		t.Fatalf("the open server acts as %q: %v", u.Username, err)
 	}
 }

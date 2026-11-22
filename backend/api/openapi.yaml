@@ -2891,7 +2891,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
+                $ref: "#/components/schemas/SavedAccount"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -2956,7 +2956,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
+                $ref: "#/components/schemas/SavedAccount"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3466,7 +3466,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Share"
+                $ref: "#/components/schemas/SavedShare"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3525,7 +3525,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Share"
+                $ref: "#/components/schemas/SavedShare"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -9109,6 +9109,14 @@ components:
         pwChanged:
           type: [string, "null"]
           format: date-time
+    SavedAccount:
+      allOf:
+        - $ref: "#/components/schemas/Account"
+        - type: object
+          properties:
+            short:
+              type: boolean
+              description: The password this request set is shorter than auth.methods.password.minLength. It is taken all the same.
     Me:
       allOf:
         - $ref: "#/components/schemas/Account"
@@ -9157,7 +9165,8 @@ components:
             type: string
         password:
           type: string
-          minLength: 12
+          minLength: 1
+          description: Any length works.
         blocked:
           type: boolean
           description: In a change, blocks or unblocks the user. Blocking ends every session and API token.
@@ -9365,6 +9374,14 @@ components:
         state:
           type: string
           enum: [active, expired, exhausted]
+    SavedShare:
+      allOf:
+        - $ref: "#/components/schemas/Share"
+        - type: object
+          properties:
+            short:
+              type: boolean
+              description: The new password is shorter than auth.methods.password.minLength. The link takes it all the same.
     ShareAddress:
       type: object
       required: [url, qr]
@@ -9399,7 +9416,7 @@ components:
           nullable: true
         password:
           type: string
-          minLength: 6
+          description: Any length works. An empty one leaves the link without a password.
         limit:
           type: integer
           minimum: 0
@@ -10957,7 +10974,7 @@ components:
             type: string
     McpKeys:
       type: object
-      required: [endpointPath, limit, signIn, hostAllowsKeys, desktop, writeLimits, keys, revoked, oauth]
+      required: [endpointPath, limit, signIn, desktop, writeLimits, keys, revoked, oauth]
       properties:
         endpointPath:
           type: string
@@ -10968,9 +10985,6 @@ components:
         signIn:
           type: boolean
           description: The server asks people to sign in.
-        hostAllowsKeys:
-          type: boolean
-          description: A key can be made from the address this request came in on.
         desktop:
           type: boolean
         writeLimits:

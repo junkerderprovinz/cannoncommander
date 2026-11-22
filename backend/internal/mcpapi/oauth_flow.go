@@ -176,10 +176,14 @@ func (s *Server) openConsent(session, ticket string, now time.Time) (consentTick
 
 // consentSession returns the session a consent is bound to. An API token or a
 // key of this server is no session: what it allowed would outlive the person
-// who never saw the page.
+// who never saw the page. A server nobody signs in to binds it to no session,
+// and closing the server ends it.
 func (s *Server) consentSession(r *http.Request) (string, error) {
 	if s.login.ByAPIToken(r) {
 		return "", v1.Coded(http.StatusForbidden, "tokenCannotChange", "sign in to allow a client, an API token cannot")
+	}
+	if !s.signIn() {
+		return "", nil
 	}
 	hash, ok := s.login.SessionHash(r)
 	if !ok {
@@ -387,7 +391,7 @@ func (s *Server) exchangeCode(w http.ResponseWriter, r *http.Request, client oau
 		oauthError(w, http.StatusBadRequest, "invalid_grant", "the account that allowed this client is gone")
 		return
 	}
-	if !s.login.Alive(code.session) {
+	if code.session == "" && s.signIn() || code.session != "" && !s.login.Alive(code.session) {
 		oauthError(w, http.StatusBadRequest, "invalid_grant", "the sign-in that allowed this client has ended")
 		return
 	}

@@ -62,7 +62,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
+                $ref: "#/components/schemas/SavedAccount"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -119,7 +119,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
+                $ref: "#/components/schemas/SavedAccount"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -569,6 +569,14 @@ components:
         pwChanged:
           type: [string, "null"]
           format: date-time
+    SavedAccount:
+      allOf:
+        - $ref: "#/components/schemas/Account"
+        - type: object
+          properties:
+            short:
+              type: boolean
+              description: The password this request set is shorter than auth.methods.password.minLength. It is taken all the same.
     Me:
       allOf:
         - $ref: "#/components/schemas/Account"
@@ -617,7 +625,8 @@ components:
             type: string
         password:
           type: string
-          minLength: 12
+          minLength: 1
+          description: Any length works.
         blocked:
           type: boolean
           description: In a change, blocks or unblocks the user. Blocking ends every session and API token.

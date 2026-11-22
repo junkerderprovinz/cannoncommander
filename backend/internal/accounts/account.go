@@ -17,7 +17,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/junkerderprovinz/parleyport/kit/signin"
 )
 
@@ -28,10 +27,6 @@ const (
 	roleUser     = "user"
 	roleReadOnly = "readonly"
 )
-
-// minPassword is the shortest password the app takes. The server setting
-// can ask for more.
-const minPassword = 12
 
 // Account is a user as the app shows it. Name is the login name, Full the
 // name to show, and Scope the folder the user sees. LoginMethod is oidc for
@@ -246,13 +241,11 @@ func commonFolder(paths []string) string {
 	return out
 }
 
-// checkPassword applies the app's minimum and the server's policy.
+// checkPassword takes any password but an empty one. A short one is the
+// account's own choice, and the page points it out.
 func checkPassword(pw string) error {
-	if len(pw) < minPassword {
-		return v1.Coded(http.StatusBadRequest, "passwordShort", "the password needs at least 12 characters").With("n", 12)
-	}
-	if err := settings.ValidatePasswordPolicy(pw); err != nil {
-		return v1.Errorf(http.StatusBadRequest, err.Error())
+	if pw == "" {
+		return v1.Coded(http.StatusBadRequest, "passwordMissing", "the password is missing")
 	}
 	return nil
 }

@@ -127,9 +127,6 @@ func SealKey() ([]byte, error) {
 	return key, nil
 }
 
-// ForgetFirstAdminPassword removes the file with a generated first password,
-// once the admin has one of their own.
-func ForgetFirstAdminPassword() { forgetFirstAdminPassword() }
 
 // SignInKeepsAccounts reports whether the sign-in imported the accounts, so
 // they change only through it and not behind its back.

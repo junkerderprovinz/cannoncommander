@@ -103,11 +103,6 @@ func TestOAuthIsOffUntilAnAdminSwitchesItOn(t *testing.T) {
 	if code := e.api("chef", http.MethodPut, "/mcp/oauth", map[string]any{"enabled": true, "issuer": "http://files.example.com"}, &p); code != http.StatusBadRequest || p.Code != "mcpOAuthIssuer" {
 		t.Fatalf("a plain http issuer = %d %s", code, p.Code)
 	}
-	e.signIn = false
-	if code := e.api("chef", http.MethodPut, "/mcp/oauth", map[string]any{"enabled": true, "issuer": testIssuer}, &p); code != http.StatusBadRequest || p.Code != "mcpOAuthNeedsSignIn" {
-		t.Fatalf("without sign-in = %d %s", code, p.Code)
-	}
-	e.signIn = true
 	e.oauthOn()
 	resp, _ := http.Get(e.web.URL + "/.well-known/oauth-authorization-server")
 	var meta map[string]any
@@ -362,5 +357,44 @@ func TestACodeAllowedBeforeItsSignInEndedMakesNoGrant(t *testing.T) {
 	})
 	if status, body := e.exchange(client, code); status != http.StatusBadRequest || body["error"] != "invalid_grant" {
 		t.Fatalf("a code whose sign-in ended made a grant: %d %v", status, body)
+	}
+}
+
+func TestAClientIsAllowedWhileTheServerIsOpen(t *testing.T) {
+	e := newEnv(t)
+	e.signIn = false
+	e.oauthOn()
+	client := e.registerClient()
+	q := url.Values{"client_id": {client}, "redirect_uri": {claudeHook}, "response_type": {"code"},
+		"code_challenge": {challengeOf(verifier)}, "code_challenge_method": {"S256"}, "state": {"xyz"}, "resource": {oauthTarget}}
+	var info struct{ Ticket string }
+	if code := e.api("anna", http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info, "X-Session", ""); code != http.StatusOK {
+		t.Fatalf("consent info while open: %d", code)
+	}
+	var answer struct{ Redirect string }
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, &answer, "X-Session", ""); code != http.StatusOK {
+		t.Fatalf("consent while open: %d", code)
+	}
+	u, _ := url.Parse(answer.Redirect)
+	if status, body := e.exchange(client, u.Query().Get("code")); status != http.StatusOK {
+		t.Fatalf("the code allowed while open made no grant: %d %v", status, body)
+	}
+}
+
+func TestACodeAllowedWhileOpenLapsesWithTheFirstPassword(t *testing.T) {
+	e := newEnv(t)
+	e.signIn = false
+	e.oauthOn()
+	client := e.registerClient()
+	q := url.Values{"client_id": {client}, "redirect_uri": {claudeHook}, "response_type": {"code"},
+		"code_challenge": {challengeOf(verifier)}, "code_challenge_method": {"S256"}, "state": {"xyz"}, "resource": {oauthTarget}}
+	var info struct{ Ticket string }
+	e.api("anna", http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info, "X-Session", "")
+	var answer struct{ Redirect string }
+	e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, &answer, "X-Session", "")
+	u, _ := url.Parse(answer.Redirect)
+	e.signIn = true
+	if status, body := e.exchange(client, u.Query().Get("code")); status != http.StatusBadRequest || body["error"] != "invalid_grant" {
+		t.Fatalf("a code allowed while open made a grant after the first password: %d %v", status, body)
 	}
 }

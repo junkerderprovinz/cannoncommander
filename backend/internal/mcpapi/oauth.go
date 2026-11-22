@@ -58,8 +58,8 @@ const (
 )
 
 var (
-	errOAuthNeedsSignIn = errors.New("sign-in through OAuth needs a server people sign in to")
-	errOAuthIssuer      = errors.New("the public address must be an https address without a path, such as https://files.example.com")
+	errOAuthDesktop = errors.New("the desktop app has no public address to offer sign-in through OAuth on")
+	errOAuthIssuer  = errors.New("the public address must be an https address without a path, such as https://files.example.com")
 )
 
 // oauthState is what the authorization server keeps between requests. Codes
@@ -175,10 +175,9 @@ func knownClientName(id string) string {
 	return ""
 }
 
-// oauthPossible reports whether this server could offer OAuth at all: only a
-// server people sign in to can ask one of them for consent, and the desktop
-// app has nobody to sign in.
-func (s *Server) oauthPossible() bool { return s.signIn() && !desktop.Active() }
+// oauthPossible reports whether this server could offer OAuth at all: the
+// desktop app has no public address a cloud client could reach.
+func (s *Server) oauthPossible() bool { return !desktop.Active() }
 
 // issuer returns the issuer while OAuth is offered: possible, switched on and
 // with a public address stored.

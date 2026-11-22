@@ -11,7 +11,7 @@ On the very first visit a welcome window asks for one window or two. The panels 
 
     ![Account & security without a password: the badge says None, with the button Set a password below.](../assets/screenshots/account-no-password.png)
 
-3. Click **Set a password**, type it and click **Save password**. It needs at least 12 characters.
+3. Click **Set a password**, type it and click **Save password**. Any length works, and under 12 characters the page tells you it is short.
 
     ![The password card with the field New password and the buttons Cancel and Save password.](../assets/screenshots/set-password.png)
 
