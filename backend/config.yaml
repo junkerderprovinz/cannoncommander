@@ -11,6 +11,5 @@ auth:
   methods:
     password:
       enabled: true
-      minLength: 5
     passkey:
       enabled: false
