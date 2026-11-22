@@ -14,7 +14,7 @@ Scripts, WebDAV clients and other programs sign in with an API token instead of 
 6. Enter your password and click **Create**.
 7. Copy the token. It is shown only this once.
 
-![The window Create a token: name, rights Read or Read and write, expires in 30 days, 1 year or never, and the current password.](../assets/screenshots/token-add.png)
+![The window Create a token: a name, the rights Read or Read and write, and valid for 30 days, 90 days, 1 year or always.](../assets/screenshots/token-add.png)
 
 ## Use a token {#use}
 

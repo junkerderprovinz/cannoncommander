@@ -12,7 +12,7 @@ Set a password for your own account under **Settings > Account & security**, see
 
 **Stay signed in** on the same page decides how long a sign-in lasts: 1, 7 or 30 days. The time counts from your last visit.
 
-![Account & security with a password: changed 41 days ago, stay signed in for 30 days, two-factor sign-in on, two passkeys and the sessions.](../assets/screenshots/account.png)
+![Account & security with a password: the password set, asking for the password on changes, two-factor authentication on with 8 recovery codes left, and two passkeys.](../assets/screenshots/account.png)
 
 ## Change or remove the password {#change}
 

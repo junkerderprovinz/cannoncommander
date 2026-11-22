@@ -9,11 +9,11 @@ On the very first visit a welcome window asks for one window or two. The panels 
 1. Click **Settings** at the top right.
 2. Open **Account & security**. The password shows **None**.
 
-    ![Account & security without a password: the badge says None, next to the button Set a password.](../assets/screenshots/account-no-password.png)
+    ![Account & security without a password: the badge says None, with the button Set a password below.](../assets/screenshots/account-no-password.png)
 
 3. Click **Set a password**, type it twice and confirm. It needs at least 12 characters.
 
-    ![The window Set a password with the fields New password and Repeat.](../assets/screenshots/set-password.png)
+    ![The password card with the field New password and the buttons Cancel and Save password.](../assets/screenshots/set-password.png)
 
 From now on everyone signs in. The page you just used now also offers two-factor sign-in, passkeys and API tokens, see [Two-factor and passkeys](../access/two-factor.md).
 
