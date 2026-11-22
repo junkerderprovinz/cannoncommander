@@ -9,10 +9,11 @@ import { fmtSize } from '@/core/format';
 import { glyphComponent, hasGlyph } from '@/core/glyphs';
 import { locale } from '@/i18n';
 import { c } from '@/features/config/shared';
+import { twice } from '@/core/lazy';
 
 // The logos weigh a hundred kilobytes, so they come along with the first list or window that shows them.
 let storage: typeof import('@glimstone/core/storageProviders') | null = null;
-export const loadMarks = async () => { storage ??= await import('@glimstone/core/storageProviders'); };
+export const loadMarks = async () => { storage ??= await twice(() => import('@glimstone/core/storageProviders'))(); };
 
 let catalog: Promise<RemoteCatalog> | null = null;
 // rclone's options only change with rclone, so one answer serves every window. A failed one is asked again.

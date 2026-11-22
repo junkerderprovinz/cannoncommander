@@ -3996,7 +3996,9 @@
     "cancel": "Zrušiť",
     "close": "Zavrieť",
     "done": "Hotovo",
-    "undo": "Späť"
+    "undo": "Späť",
+    "loadFailed": "Táto časť sa nenačítala.",
+    "retry": "Skúsiť znova"
   },
   "format": {
     "today": "dnes",

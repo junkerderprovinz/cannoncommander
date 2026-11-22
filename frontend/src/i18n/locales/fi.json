@@ -3728,7 +3728,9 @@
     "cancel": "Peruuta",
     "close": "Sulje",
     "done": "Valmis",
-    "undo": "Kumoa"
+    "undo": "Kumoa",
+    "loadFailed": "Tämä osa ei latautunut.",
+    "retry": "Yritä uudelleen"
   },
   "format": {
     "today": "tänään",

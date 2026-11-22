@@ -3728,7 +3728,9 @@
     "cancel": "Hætta við",
     "close": "Loka",
     "done": "Lokið",
-    "undo": "Afturkalla"
+    "undo": "Afturkalla",
+    "loadFailed": "Þessi hluti hlóðst ekki.",
+    "retry": "Reyna aftur"
   },
   "format": {
     "today": "í dag",

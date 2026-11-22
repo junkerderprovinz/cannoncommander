@@ -3862,7 +3862,9 @@
     "cancel": "Otkaži",
     "close": "Zatvori",
     "done": "Gotovo",
-    "undo": "Poništi"
+    "undo": "Poništi",
+    "loadFailed": "Ovaj se dio nije učitao.",
+    "retry": "Pokušaj ponovno"
   },
   "format": {
     "today": "danas",

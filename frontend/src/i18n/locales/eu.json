@@ -3719,7 +3719,9 @@
     "cancel": "Utzi",
     "close": "Itxi",
     "done": "Eginda",
-    "undo": "Desegin"
+    "undo": "Desegin",
+    "loadFailed": "Zati hau ez da kargatu.",
+    "retry": "Saiatu berriro"
   },
   "format": {
     "today": "gaur",

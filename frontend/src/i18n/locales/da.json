@@ -3728,7 +3728,9 @@
     "cancel": "Annuller",
     "close": "Luk",
     "done": "Færdig",
-    "undo": "Fortryd"
+    "undo": "Fortryd",
+    "loadFailed": "Denne del blev ikke indlæst.",
+    "retry": "Prøv igen"
   },
   "format": {
     "today": "i dag",

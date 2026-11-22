@@ -3996,7 +3996,9 @@
     "cancel": "Atšaukti",
     "close": "Uždaryti",
     "done": "Atlikta",
-    "undo": "Anuliuoti"
+    "undo": "Anuliuoti",
+    "loadFailed": "Ši dalis neįsikėlė.",
+    "retry": "Bandyti dar kartą"
   },
   "format": {
     "today": "šiandien",

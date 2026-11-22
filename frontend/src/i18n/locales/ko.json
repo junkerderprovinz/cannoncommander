@@ -3594,7 +3594,9 @@
     "cancel": "취소",
     "close": "닫기",
     "done": "완료",
-    "undo": "실행 취소"
+    "undo": "실행 취소",
+    "loadFailed": "이 부분을 불러오지 못했습니다.",
+    "retry": "다시 시도"
   },
   "format": {
     "today": "오늘",

@@ -9,7 +9,9 @@
     "cancel": "Abbrechen",
     "close": "Schließen",
     "done": "Fertig",
-    "undo": "Rückgängig"
+    "undo": "Rückgängig",
+    "loadFailed": "Dieser Teil ließ sich nicht laden.",
+    "retry": "Noch einmal versuchen"
   },
   "format": {
     "today": "heute",

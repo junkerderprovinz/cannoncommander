@@ -3594,7 +3594,9 @@
     "cancel": "取消",
     "close": "关闭",
     "done": "完成",
-    "undo": "撤销"
+    "undo": "撤销",
+    "loadFailed": "这部分没有加载出来。",
+    "retry": "重试"
   },
   "format": {
     "today": "今天",

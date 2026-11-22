@@ -3594,7 +3594,9 @@
     "cancel": "Batal",
     "close": "Tutup",
     "done": "Selesai",
-    "undo": "Buat asal"
+    "undo": "Buat asal",
+    "loadFailed": "Bahagian ini tidak dimuatkan.",
+    "retry": "Cuba lagi"
   },
   "format": {
     "today": "hari ini",

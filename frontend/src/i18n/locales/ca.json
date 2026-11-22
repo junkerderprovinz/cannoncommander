@@ -3862,7 +3862,9 @@
     "cancel": "Cancel·la",
     "close": "Tanca",
     "done": "Fet",
-    "undo": "Desfés"
+    "undo": "Desfés",
+    "loadFailed": "Aquesta part no s'ha carregat.",
+    "retry": "Torna-ho a provar"
   },
   "format": {
     "today": "avui",

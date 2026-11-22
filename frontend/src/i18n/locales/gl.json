@@ -3728,7 +3728,9 @@
     "cancel": "Cancelar",
     "close": "Pechar",
     "done": "Feito",
-    "undo": "Desfacer"
+    "undo": "Desfacer",
+    "loadFailed": "Esta parte non se cargou.",
+    "retry": "Tentar de novo"
   },
   "format": {
     "today": "hoxe",

@@ -3996,7 +3996,9 @@
     "cancel": "Anuluj",
     "close": "Zamknij",
     "done": "Gotowe",
-    "undo": "Cofnij"
+    "undo": "Cofnij",
+    "loadFailed": "Ta część się nie wczytała.",
+    "retry": "Spróbuj ponownie"
   },
   "format": {
     "today": "dziś",

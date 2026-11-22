@@ -16,6 +16,8 @@ svg { display: block; }
 .glim-num { font-variant-numeric: tabular-nums lining-nums; }
 .mono { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 13px; }
 .muted { color: var(--carbon-text-muted); }
+.lazy-failed { display: flex; flex-direction: column; align-items: center; gap: .6rem; padding: 1.5rem 1rem; color: var(--carbon-text-muted); text-align: center; }
+.lazy-failed p { margin: 0; }
 .sub { color: var(--carbon-text-sub); }
 
 /* The pages keep the prototype's room at the bottom, so screenshots of both line up. The file view keeps the same

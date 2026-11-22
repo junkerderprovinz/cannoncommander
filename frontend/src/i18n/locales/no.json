@@ -3728,7 +3728,9 @@
     "cancel": "Avbryt",
     "close": "Lukk",
     "done": "Ferdig",
-    "undo": "Angre"
+    "undo": "Angre",
+    "loadFailed": "Denne delen ble ikke lastet inn.",
+    "retry": "Prøv igjen"
   },
   "format": {
     "today": "i dag",

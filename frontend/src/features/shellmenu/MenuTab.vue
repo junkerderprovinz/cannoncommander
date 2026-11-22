@@ -2,14 +2,14 @@
 // The tile Kontextmenü: the app's own menus row by row, each to hide or to move within its group, and in the desktop
 // app the rows other programs put into the system's menu.
 import { Button, Card, FieldRow, IconButton, ListRow, Toggle } from '@glimstone/vue';
-import { defineAsyncComponent } from 'vue';
+import { lazyComponent } from '@/core/lazy';
 import { G, glyphComponent } from '@/core/glyphs';
 import { host } from '@/core/host';
 import { t } from '@/i18n';
 import { customised, groups, isHidden, type MenuKind, move, resetMenu, rowOf, setHidden } from './custom';
 
 // The container build leaves the system's half out.
-const OthersCard = import.meta.env.DESKTOP ? defineAsyncComponent(() => import('./OthersCard.vue')) : null;
+const OthersCard = import.meta.env.DESKTOP ? lazyComponent(() => import('./OthersCard.vue')) : null;
 
 const KINDS: MenuKind[] = ['row', 'list'];
 const shownGroups = (kind: MenuKind) => groups(kind).map((g) => g.map(rowOf).filter((r) => r !== null)).filter((g) => g.length);

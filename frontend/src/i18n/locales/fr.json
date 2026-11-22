@@ -3862,7 +3862,9 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "done": "Terminé",
-    "undo": "Annuler"
+    "undo": "Annuler",
+    "loadFailed": "Cette partie ne s'est pas chargée.",
+    "retry": "Réessayer"
   },
   "format": {
     "today": "aujourd'hui",

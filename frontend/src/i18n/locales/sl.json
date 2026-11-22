@@ -3996,7 +3996,9 @@
     "cancel": "Prekliči",
     "close": "Zapri",
     "done": "Končano",
-    "undo": "Razveljavi"
+    "undo": "Razveljavi",
+    "loadFailed": "Ta del se ni naložil.",
+    "retry": "Poskusi znova"
   },
   "format": {
     "today": "danes",

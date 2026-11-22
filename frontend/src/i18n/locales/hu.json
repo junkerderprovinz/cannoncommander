@@ -3728,7 +3728,9 @@
     "cancel": "Mégse",
     "close": "Bezárás",
     "done": "Kész",
-    "undo": "Visszavonás"
+    "undo": "Visszavonás",
+    "loadFailed": "Ez a rész nem töltődött be.",
+    "retry": "Újrapróbálás"
   },
   "format": {
     "today": "ma",

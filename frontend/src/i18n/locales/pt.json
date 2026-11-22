@@ -3862,7 +3862,9 @@
     "cancel": "Cancelar",
     "close": "Fechar",
     "done": "Concluído",
-    "undo": "Anular"
+    "undo": "Anular",
+    "loadFailed": "Esta parte não carregou.",
+    "retry": "Tentar novamente"
   },
   "format": {
     "today": "hoje",

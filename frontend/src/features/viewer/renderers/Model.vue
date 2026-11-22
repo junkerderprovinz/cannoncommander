@@ -6,6 +6,7 @@ import { t } from '@/i18n';
 import { rawUrl } from '../content';
 import { ext, joinPath } from '../kinds';
 import type { REmits, RProps } from './types';
+import { twice } from '@/core/lazy';
 
 const props = defineProps<RProps>();
 const emit = defineEmits<REmits & { (e: 'failed'): void }>();
@@ -14,26 +15,26 @@ let stop = () => {};
 
 onMounted(async () => {
   try {
-    const THREE = await import('three');
-    const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+    const THREE = await twice(() => import('three'))();
+    const { OrbitControls } = await twice(() => import('three/addons/controls/OrbitControls.js'))();
     const e = ext(props.n.name);
     const res = await fetch(rawUrl(joinPath(props.folder, props.n.name)));
     if (!res.ok) throw new Error(String(res.status));
     const data = await res.arrayBuffer();
     let object: import('three').Object3D;
     if (e === 'stl' || e === 'ply') {
-      const Loader = e === 'stl' ? (await import('three/addons/loaders/STLLoader.js')).STLLoader : (await import('three/addons/loaders/PLYLoader.js')).PLYLoader;
+      const Loader = e === 'stl' ? (await twice(() => import('three/addons/loaders/STLLoader.js'))()).STLLoader : (await twice(() => import('three/addons/loaders/PLYLoader.js'))()).PLYLoader;
       const geometry = new Loader().parse(data);
       geometry.computeVertexNormals();
       object = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0xb8bcc4, metalness: 0.1, roughness: 0.6 }));
     } else if (e === 'obj') {
-      object = new (await import('three/addons/loaders/OBJLoader.js')).OBJLoader().parse(new TextDecoder().decode(data));
+      object = new (await twice(() => import('three/addons/loaders/OBJLoader.js'))()).OBJLoader().parse(new TextDecoder().decode(data));
     } else if (e === '3mf') {
-      object = new (await import('three/addons/loaders/3MFLoader.js')).ThreeMFLoader().parse(data);
+      object = new (await twice(() => import('three/addons/loaders/3MFLoader.js'))()).ThreeMFLoader().parse(data);
     } else if (e === 'fbx') {
-      object = new (await import('three/addons/loaders/FBXLoader.js')).FBXLoader().parse(data, '');
+      object = new (await twice(() => import('three/addons/loaders/FBXLoader.js'))()).FBXLoader().parse(data, '');
     } else {
-      const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+      const { GLTFLoader } = await twice(() => import('three/addons/loaders/GLTFLoader.js'))();
       object = (await new GLTFLoader().parseAsync(data, '')).scene;
     }
 

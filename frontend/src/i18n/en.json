@@ -9,7 +9,9 @@
     "cancel": "Cancel",
     "close": "Close",
     "done": "Done",
-    "undo": "Undo"
+    "undo": "Undo",
+    "loadFailed": "This part didn't load.",
+    "retry": "Try again"
   },
   "format": {
     "today": "today",

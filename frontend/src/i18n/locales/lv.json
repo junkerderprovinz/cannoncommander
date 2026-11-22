@@ -3862,7 +3862,9 @@
     "cancel": "Atcelt",
     "close": "Aizvērt",
     "done": "Gatavs",
-    "undo": "Atsaukt"
+    "undo": "Atsaukt",
+    "loadFailed": "Šī daļa neielādējās.",
+    "retry": "Mēģināt vēlreiz"
   },
   "format": {
     "today": "šodien",

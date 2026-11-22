@@ -7,6 +7,7 @@ import { t } from '@/i18n';
 import { rawUrl } from '../content';
 import { joinPath } from '../kinds';
 import type { REmits, RProps } from './types';
+import { twice } from '@/core/lazy';
 
 const props = defineProps<RProps>();
 const emit = defineEmits<REmits & { (e: 'failed'): void }>();
@@ -21,7 +22,7 @@ onMounted(async () => {
   try {
     const res = await fetch(rawUrl(joinPath(props.folder, props.n.name)));
     if (!res.ok) throw new Error(String(res.status));
-    const { default: ePub } = await import('@likecoin/epub-ts');
+    const { default: ePub } = await twice(() => import('@likecoin/epub-ts'))();
     book = ePub(await res.arrayBuffer());
     rendition = book.renderTo(host.value!, { width: '100%', height: '100%', flow: 'paginated', spread: 'none' });
     rendition.themes.default({ body: { 'font-family': '"Noto Serif", Georgia, serif', color: '#1d1d1f', background: '#fff' } });

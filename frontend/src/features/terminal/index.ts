@@ -2,7 +2,8 @@
 // is on. Typing cmd, bash or powershell into the path field opens one too, as in Explorer. The desktop app opens the
 // computer's own terminal instead, in a window of its own.
 import './terminal.css';
-import { defineAsyncComponent, watch, watchEffect } from 'vue';
+import { watch, watchEffect } from 'vue';
+import { lazyComponent } from '@/core/lazy';
 import { call, json, q } from '@/api/client';
 import { action, actions } from '@/core/actions';
 import { addTo } from '@/core/extend';
@@ -17,7 +18,7 @@ import { onDesktop, refreshTerminal, terminalAllowed, terminalOn } from './state
 import { pathCommand } from './words';
 
 // xterm comes in a chunk of its own, fetched when the first terminal opens.
-const TerminalBody = defineAsyncComponent(() => import('./TerminalBody.vue'));
+const TerminalBody = lazyComponent(() => import('./TerminalBody.vue'));
 
 function openWindow(path: string) {
   win({

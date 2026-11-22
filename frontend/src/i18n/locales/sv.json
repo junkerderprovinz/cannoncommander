@@ -3728,7 +3728,9 @@
     "cancel": "Avbryt",
     "close": "Stäng",
     "done": "Klar",
-    "undo": "Ångra"
+    "undo": "Ångra",
+    "loadFailed": "Den här delen laddades inte.",
+    "retry": "Försök igen"
   },
   "format": {
     "today": "i dag",

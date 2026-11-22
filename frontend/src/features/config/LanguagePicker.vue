@@ -3,9 +3,11 @@ import { Select } from '@glimstone/vue/Select';
 import { computed, type FunctionalComponent, h, onMounted } from 'vue';
 import { prefs, setPref } from '@/core/prefs';
 import { language as current, languages } from '@/i18n';
+import { twice } from '@/core/lazy';
 
 // The flags weigh half a megabyte, so they load with the first list that shows them and not with the app.
-onMounted(() => import('@/i18n/flags.css'));
+// Without the flags the names still say which language is which.
+onMounted(() => twice(() => import('@/i18n/flags.css'))().catch(() => {}));
 
 // Before anyone picks a language the list shows the one the browser asked for, and saves nothing.
 const language = computed({ get: () => prefs.language || current(), set: (v: string) => setPref('language', v) });

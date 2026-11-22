@@ -3862,7 +3862,9 @@
     "cancel": "Anulează",
     "close": "Închide",
     "done": "Gata",
-    "undo": "Anulează"
+    "undo": "Anulează",
+    "loadFailed": "Această parte nu s-a încărcat.",
+    "retry": "Încearcă din nou"
   },
   "format": {
     "today": "azi",
