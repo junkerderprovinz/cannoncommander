@@ -4330,9 +4330,10 @@
         "removed": "Kata laluan dibuang. CannonCommander dibuka tanpa log masuk"
       },
       "askPassword": {
-        "title": "Meminta kata laluan semula",
-        "hint": "Sesetengah perubahan memerlukan log masuk dari beberapa minit terakhir: kunci laluan baharu, token API dan kunci MCP, pengesahan dua faktor, perkhidmatan log masuk dan kata laluan yang anda tetapkan untuk orang lain. Jika milik anda lebih lama, CannonCommander meminta kata laluan anda dahulu. Jika soalan itu dimatikan, anda log keluar dan log masuk semula.",
+        "title": "Semakan kata laluan semasa perubahan",
+        "hint": "Sebelum perubahan sensitif, CannonCommander boleh meminta kata laluan anda, jadi anda tidak perlu log keluar dan log masuk semula.",
         "label": "Minta kata laluan semasa perubahan",
+        "when": "Perubahan ini memerlukan log masuk dari 10 minit terakhir, atau 5 minit melalui perkhidmatan log masuk: token API, kunci laluan atau kunci MCP baharu, menyediakan pengesahan dua faktor, kod pemulihan baharu, menambah atau menukar perkhidmatan log masuk dan log masuk ujiannya, menghidupkan semula perkhidmatan dari config.yaml, dan bagi pentadbir akaun baharu atau kata laluan akaun lain. Menaip kata laluan dikira sebagai log masuk semula. Jika soalan itu dimatikan, CannonCommander menghantar anda untuk log masuk semula. Menukar atau membuang kata laluan sendiri sentiasa meminta kata laluan semasa.",
         "on": "CannonCommander meminta kata laluan anda sebelum perubahan sensitif.",
         "off": "Soalan dimatikan. Perubahan sensitif memerlukan log masuk yang baharu."
       },

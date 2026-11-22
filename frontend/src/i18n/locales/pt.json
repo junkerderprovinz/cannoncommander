@@ -4638,9 +4638,10 @@
         "removed": "Palavra-passe removida. O CannonCommander abre sem início de sessão"
       },
       "askPassword": {
-        "title": "Pedir novamente a palavra-passe",
-        "hint": "Algumas alterações precisam de um início de sessão dos últimos minutos: novas chaves de acesso, tokens de API e chaves MCP, a autenticação de dois fatores, os serviços de início de sessão e uma palavra-passe que define para outra pessoa. Se o seu for mais antigo, o CannonCommander pede primeiro a sua palavra-passe. Com a pergunta desligada, termina a sessão e volta a entrar.",
+        "title": "Verificação da palavra-passe nas alterações",
+        "hint": "Antes de uma alteração sensível, o CannonCommander pode pedir a sua palavra-passe, para que não tenha de terminar a sessão e voltar a entrar.",
         "label": "Pedir a palavra-passe nas alterações",
+        "when": "Estas alterações pedem um início de sessão dos últimos 10 minutos, ou 5 através de um serviço de início de sessão: um novo token de API, chave de acesso ou chave MCP, configurar a autenticação de dois fatores, novos códigos de recuperação, adicionar ou alterar um serviço de início de sessão e o seu teste, voltar a ligar o serviço do config.yaml e, para administradores, uma conta nova ou a palavra-passe de outra conta. Escrever a sua palavra-passe conta como voltar a iniciar sessão. Com a pergunta desligada, o CannonCommander envia-o antes para iniciar sessão de novo. Alterar ou remover a sua própria palavra-passe pede sempre a atual.",
         "on": "O CannonCommander pede a sua palavra-passe antes de alterações sensíveis.",
         "off": "A pergunta está desligada. As alterações sensíveis precisam de um início de sessão recente."
       },

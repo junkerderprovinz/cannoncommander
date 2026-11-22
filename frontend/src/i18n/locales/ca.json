@@ -4638,9 +4638,10 @@
         "removed": "Contrasenya eliminada. CannonCommander s'obre sense iniciar la sessió"
       },
       "askPassword": {
-        "title": "Tornar a demanar la contrasenya",
-        "hint": "Alguns canvis necessiten un inici de sessió dels darrers minuts: claus d'accés noves, testimonis d'API i claus MCP, l'autenticació de dos factors, els serveis d'inici de sessió i una contrasenya que poseu per a una altra persona. Si el vostre és més antic, CannonCommander us demana primer la contrasenya. Amb la pregunta desactivada, tanqueu la sessió i torneu a entrar.",
+        "title": "Comprovació de la contrasenya als canvis",
+        "hint": "Abans d'un canvi delicat, CannonCommander us pot demanar la contrasenya, així no cal que tanqueu la sessió i torneu a entrar.",
         "label": "Demana la contrasenya en fer canvis",
+        "when": "Aquests canvis volen un inici de sessió dels darrers 10 minuts, o 5 amb un servei d'inici de sessió: un testimoni d'API, una clau d'accés o una clau MCP nova, configurar l'autenticació de dos factors, codis de recuperació nous, afegir o canviar un servei d'inici de sessió i la seva prova, tornar a activar el servei de config.yaml i, per als administradors, un compte nou o la contrasenya d'un altre compte. Escriure la contrasenya compta com a tornar a iniciar la sessió. Amb la pregunta desactivada, CannonCommander us envia a iniciar la sessió de nou. Canviar o treure la vostra pròpia contrasenya sempre demana l'actual.",
         "on": "CannonCommander us demana la contrasenya abans dels canvis delicats.",
         "off": "La pregunta està desactivada. Els canvis delicats necessiten un inici de sessió recent."
       },

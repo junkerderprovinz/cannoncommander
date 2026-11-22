@@ -4484,9 +4484,10 @@
         "removed": "Wachtwoord verwijderd. CannonCommander opent zonder inloggen"
       },
       "askPassword": {
-        "title": "Opnieuw om het wachtwoord vragen",
-        "hint": "Sommige wijzigingen hebben een login van de laatste paar minuten nodig: nieuwe toegangssleutels, API-tokens en MCP-sleutels, tweestapsverificatie, inlogdiensten en een wachtwoord dat je voor iemand anders instelt. Is de jouwe ouder, dan vraagt CannonCommander eerst om je wachtwoord. Staat de vraag uit, dan log je uit en weer in.",
+        "title": "Wachtwoordcontrole bij wijzigingen",
+        "hint": "Voor een gevoelige wijziging kan CannonCommander om je wachtwoord vragen, zodat je niet hoeft uit te loggen en weer in te loggen.",
         "label": "Bij wijzigingen om het wachtwoord vragen",
+        "when": "Deze wijzigingen willen een login van de laatste 10 minuten, of 5 via een inlogdienst: een nieuw API-token, een nieuwe toegangssleutel of MCP-sleutel, tweestapsverificatie instellen, nieuwe herstelcodes, een inlogdienst toevoegen of wijzigen en de testlogin ervan, de dienst uit config.yaml weer aanzetten en voor beheerders een nieuw account of het wachtwoord van een ander account. Je wachtwoord intypen telt als opnieuw inloggen. Staat de vraag uit, dan stuurt CannonCommander je in plaats daarvan opnieuw naar de login. Je eigen wachtwoord wijzigen of verwijderen vraagt altijd om het huidige.",
         "on": "CannonCommander vraagt om je wachtwoord voor gevoelige wijzigingen.",
         "off": "De vraag staat uit. Gevoelige wijzigingen hebben een verse login nodig."
       },

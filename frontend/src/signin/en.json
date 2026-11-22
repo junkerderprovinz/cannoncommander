@@ -68,9 +68,10 @@
       "removed": "Password removed. CannonCommander opens without signing in"
     },
     "askPassword": {
-      "title": "Asking for the password",
-      "hint": "Some changes need a sign-in from the last few minutes: new passkeys, API tokens and MCP keys, two-factor authentication, sign-in services, and a password you set for someone else. If yours is older, CannonCommander asks for your password first. With the question off, you sign out and back in instead.",
+      "title": "Password check on changes",
+      "hint": "Before a sensitive change, CannonCommander can ask for your password, so you don't have to sign out and back in.",
       "label": "Ask for the password on changes",
+      "when": "These changes want a sign-in from the last 10 minutes, or 5 through a sign-in service: a new API token, passkey or MCP key, setting up two-factor authentication, new recovery codes, adding or changing a sign-in service and its test sign-in, turning the service from config.yaml back on, and for admins a new account or another account's password. Typing your password counts as signing in again. With the question off, CannonCommander sends you to sign in again instead. Changing or removing your own password always asks for the current one.",
       "on": "CannonCommander asks for your password before sensitive changes.",
       "off": "The question is off. Sensitive changes need a fresh sign-in."
     },

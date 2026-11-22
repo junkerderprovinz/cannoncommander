@@ -4792,9 +4792,10 @@
         "removed": "Slaptažodis pašalintas. CannonCommander atsidaro be prisijungimo"
       },
       "askPassword": {
-        "title": "Pakartotinis slaptažodžio klausimas",
-        "hint": "Kai kuriems pakeitimams reikia prisijungimo per paskutines kelias minutes: nauji prieigos raktai, API žetonai ir MCP raktai, dviejų veiksnių autentifikavimas, prisijungimo paslaugos ir slaptažodis, kurį nustatai kam nors kitam. Jei tavo senesnis, CannonCommander pirmiausia paklausia tavo slaptažodžio. Kai klausimas išjungtas, vietoj to atsijungi ir vėl prisijungi.",
+        "title": "Slaptažodžio patikra keičiant",
+        "hint": "Prieš jautrų pakeitimą CannonCommander gali paklausti tavo slaptažodžio, todėl nereikia atsijungti ir vėl prisijungti.",
         "label": "Klausti slaptažodžio keičiant",
+        "when": "Šiems pakeitimams reikia prisijungimo per paskutines 10 minučių, o per prisijungimo paslaugą per 5: naujas API žetonas, prieigos raktas ar MCP raktas, dviejų veiksnių autentifikavimo nustatymas, nauji atkūrimo kodai, prisijungimo paslaugos pridėjimas ar keitimas ir jos bandomasis prisijungimas, config.yaml paslaugos įjungimas iš naujo, o administratoriams nauja paskyra ar kitos paskyros slaptažodis. Įvestas slaptažodis skaičiuojamas kaip naujas prisijungimas. Kai klausimas išjungtas, CannonCommander vietoj to nusiunčia tave prisijungti iš naujo. Keičiant ar šalinant savo slaptažodį visada klausiama dabartinio.",
         "on": "CannonCommander prieš jautrius pakeitimus paklausia tavo slaptažodžio.",
         "off": "Klausimas išjungtas. Jautriems pakeitimams reikia naujo prisijungimo."
       },

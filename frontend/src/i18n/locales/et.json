@@ -4484,9 +4484,10 @@
         "removed": "Parool eemaldatud. CannonCommander avaneb ilma sisselogimiseta"
       },
       "askPassword": {
-        "title": "Parooli uuesti küsimine",
-        "hint": "Mõned muudatused vajavad sisselogimist viimastest minutitest: uued pääsuvõtmed, API-tõendid ja MCP-võtmed, kaheastmeline autentimine, sisselogimisteenused ja parool, mille määrad kellelegi teisele. Kui sinu oma on vanem, küsib CannonCommander kõigepealt sinu parooli. Kui küsimus on välja lülitatud, logid selle asemel välja ja uuesti sisse.",
+        "title": "Parooli kontroll muudatustel",
+        "hint": "Enne tundlikku muudatust võib CannonCommander küsida sinu parooli, nii et sa ei pea välja ja uuesti sisse logima.",
         "label": "Küsi muudatuste puhul parooli",
+        "when": "Need muudatused vajavad sisselogimist viimase 10 minuti jooksul, sisselogimisteenuse kaudu viimase 5 jooksul: uus API-tõend, pääsuvõti või MCP-võti, kaheastmelise autentimise seadistamine, uued taastekoodid, sisselogimisteenuse lisamine või muutmine ja selle proovisisselogimine, config.yaml-i teenuse uuesti sisselülitamine ning administraatoritele uus konto või teise konto parool. Parooli sisestamine loeb uueks sisselogimiseks. Kui küsimus on välja lülitatud, saadab CannonCommander sind selle asemel uuesti sisse logima. Oma parooli muutmine või eemaldamine küsib alati praegust.",
         "on": "CannonCommander küsib enne tundlikke muudatusi sinu parooli.",
         "off": "Küsimus on välja lülitatud. Tundlikud muudatused vajavad värsket sisselogimist."
       },

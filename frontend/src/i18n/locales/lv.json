@@ -4638,9 +4638,10 @@
         "removed": "Parole noņemta. CannonCommander atveras bez pieteikšanās"
       },
       "askPassword": {
-        "title": "Paroles atkārtota prasīšana",
-        "hint": "Dažām izmaiņām vajadzīga pierakstīšanās pēdējo minūšu laikā: jaunas piekļuves atslēgas, API marķieri un MCP atslēgas, divfaktoru autentifikācija, pierakstīšanās pakalpojumi un parole, ko iestati kādam citam. Ja tava ir vecāka, CannonCommander vispirms prasa tavu paroli. Kad jautājums ir izslēgts, tu izraksties un pieraksties no jauna.",
+        "title": "Paroles pārbaude izmaiņām",
+        "hint": "Pirms jutīgām izmaiņām CannonCommander var prasīt tavu paroli, tāpēc nav jāizrakstās un jāpierakstās no jauna.",
         "label": "Prasīt paroli izmaiņu laikā",
+        "when": "Šīm izmaiņām vajadzīga pierakstīšanās pēdējo 10 minūšu laikā, ar pierakstīšanās pakalpojumu pēdējo 5 minūšu laikā: jauns API marķieris, piekļuves atslēga vai MCP atslēga, divfaktoru autentifikācijas iestatīšana, jauni atkopšanas kodi, pierakstīšanās pakalpojuma pievienošana vai maiņa un tā izmēģinājuma pierakstīšanās, config.yaml pakalpojuma atkārtota ieslēgšana un administratoriem jauns konts vai cita konta parole. Paroles ievadīšana skaitās kā jauna pierakstīšanās. Kad jautājums ir izslēgts, CannonCommander tā vietā sūta tevi pierakstīties no jauna. Savas paroles maiņa vai noņemšana vienmēr prasa pašreizējo.",
         "on": "CannonCommander pirms jutīgām izmaiņām prasa tavu paroli.",
         "off": "Jautājums ir izslēgts. Jutīgām izmaiņām vajadzīga svaiga pierakstīšanās."
       },

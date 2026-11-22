@@ -3,6 +3,8 @@
 /* A row's values stay at the right edge whether or not it has the pointer, and its buttons come in to their left. */
 .a-list > .glim-list-row > .glim-list-row-actions { order: 1; }
 .a-list > .glim-list-row > .glim-list-row-badges { order: 2; }
+/* Lists of the sign-in tile's kind, people and their ways in, with the buttons always in view. */
+.a-rows { display: flex; flex-direction: column; gap: var(--space-2); }
 .a-conns { display: flex; flex-direction: column; gap: .5rem; }
 .a-conn-path { margin: 0; font-size: 12px; color: var(--carbon-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .a-foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; padding-top: .5rem; }

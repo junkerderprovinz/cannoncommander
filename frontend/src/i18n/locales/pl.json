@@ -4792,9 +4792,10 @@
         "removed": "Hasło usunięte. CannonCommander otwiera się bez logowania"
       },
       "askPassword": {
-        "title": "Ponowne pytanie o hasło",
-        "hint": "Niektóre zmiany wymagają logowania z ostatnich kilku minut: nowe klucze dostępu, tokeny API i klucze MCP, uwierzytelnianie dwuskładnikowe, usługi logowania i hasło ustawiane komuś innemu. Jeśli twoje jest starsze, CannonCommander najpierw zapyta o hasło. Gdy pytanie jest wyłączone, wylogowujesz się i logujesz ponownie.",
+        "title": "Sprawdzanie hasła przy zmianach",
+        "hint": "Przed ważną zmianą CannonCommander może zapytać o hasło, więc nie musisz się wylogowywać i logować ponownie.",
         "label": "Pytaj o hasło przy zmianach",
+        "when": "Te zmiany wymagają logowania z ostatnich 10 minut, a przez usługę logowania z ostatnich 5: nowy token API, klucz dostępu lub klucz MCP, konfiguracja uwierzytelniania dwuskładnikowego, nowe kody odzyskiwania, dodanie lub zmiana usługi logowania i jej logowanie testowe, ponowne włączenie usługi z config.yaml, a dla administratorów nowe konto lub hasło innego konta. Wpisanie hasła liczy się jako ponowne zalogowanie. Gdy pytanie jest wyłączone, CannonCommander zamiast tego odsyła cię do ponownego logowania. Zmiana lub usunięcie własnego hasła zawsze wymaga podania obecnego.",
         "on": "CannonCommander pyta o twoje hasło przed ważnymi zmianami.",
         "off": "Pytanie jest wyłączone. Ważne zmiany wymagają świeżego logowania."
       },

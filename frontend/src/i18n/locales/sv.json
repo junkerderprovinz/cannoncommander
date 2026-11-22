@@ -4484,9 +4484,10 @@
         "removed": "Lösenordet är borttaget. CannonCommander öppnas utan inloggning"
       },
       "askPassword": {
-        "title": "Fråga efter lösenordet igen",
-        "hint": "Vissa ändringar kräver en inloggning från de senaste minuterna: nya lösennycklar, API-tokens och MCP-nycklar, tvåfaktorsautentisering, inloggningstjänster och ett lösenord som du sätter åt någon annan. Är din äldre frågar CannonCommander först efter ditt lösenord. Är frågan avstängd loggar du i stället ut och in igen.",
+        "title": "Lösenordskontroll vid ändringar",
+        "hint": "Före en känslig ändring kan CannonCommander fråga efter ditt lösenord, så att du slipper logga ut och in igen.",
         "label": "Fråga efter lösenordet vid ändringar",
+        "when": "Dessa ändringar kräver en inloggning från de senaste 10 minuterna, eller 5 via en inloggningstjänst: en ny API-token, lösennyckel eller MCP-nyckel, att ställa in tvåfaktorsautentisering, nya återställningskoder, att lägga till eller ändra en inloggningstjänst och dess testinloggning, att slå på tjänsten från config.yaml igen och för administratörer ett nytt konto eller ett annat kontos lösenord. Att skriva lösenordet räknas som en ny inloggning. Är frågan avstängd skickar CannonCommander dig i stället till inloggningen igen. Att ändra eller ta bort ditt eget lösenord frågar alltid efter det nuvarande.",
         "on": "CannonCommander frågar efter ditt lösenord före känsliga ändringar.",
         "off": "Frågan är avstängd. Känsliga ändringar kräver en ny inloggning."
       },

@@ -68,9 +68,10 @@
       "removed": "Passwort entfernt. CannonCommander öffnet ohne Anmeldung"
     },
     "askPassword": {
-      "title": "Nach dem Passwort fragen",
-      "hint": "Manche Änderungen brauchen eine Anmeldung aus den letzten paar Minuten: neue Passkeys, API-Tokens und MCP-Schlüssel, die Zwei-Faktor-Authentifizierung, Anmeldedienste und ein Passwort, das du für jemand anderen setzt. Ist deine älter, fragt CannonCommander zuerst nach deinem Passwort. Ist die Frage aus, meldest du dich stattdessen ab und wieder an.",
+      "title": "Erneute Passwortabfrage",
+      "hint": "Vor einer heiklen Änderung kann CannonCommander nach deinem Passwort fragen. Dann musst du dich nicht ab- und wieder anmelden.",
       "label": "Bei Änderungen nach dem Passwort fragen",
+      "when": "Diese Änderungen brauchen eine Anmeldung aus den letzten 10 Minuten, über einen Anmeldedienst aus den letzten 5: ein neues API-Token, ein neuer Passkey oder MCP-Schlüssel, die Zwei-Faktor-Authentifizierung einrichten, neue Wiederherstellungscodes, einen Anmeldedienst hinzufügen oder ändern und seine Testanmeldung, den Dienst aus der config.yaml wieder einschalten und für Admins ein neues Konto oder das Passwort eines anderen Kontos. Gibst du dein Passwort ein, zählt das als neue Anmeldung. Ist die Frage aus, schickt dich CannonCommander stattdessen zur Anmeldung. Änderst oder entfernst du dein eigenes Passwort, fragt CannonCommander immer nach dem aktuellen.",
       "on": "CannonCommander fragt vor heiklen Änderungen nach deinem Passwort.",
       "off": "Die Frage ist aus. Heikle Änderungen brauchen eine frische Anmeldung."
     },

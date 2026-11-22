@@ -4484,9 +4484,10 @@
         "removed": "Salasana poistettu. CannonCommander aukeaa ilman kirjautumista"
       },
       "askPassword": {
-        "title": "Salasanan kysyminen uudelleen",
-        "hint": "Jotkin muutokset vaativat kirjautumisen viime minuuteilta: uudet pääsyavaimet, API-tunnukset ja MCP-avaimet, kaksivaiheinen tunnistautuminen, kirjautumispalvelut ja salasana, jonka asetat jollekulle toiselle. Jos omasi on vanhempi, CannonCommander kysyy ensin salasanaasi. Kun kysymys on pois päältä, kirjaudut sen sijaan ulos ja takaisin sisään.",
+        "title": "Salasanan tarkistus muutoksissa",
+        "hint": "Ennen arkaluonteista muutosta CannonCommander voi kysyä salasanaasi, joten sinun ei tarvitse kirjautua ulos ja takaisin sisään.",
         "label": "Kysy salasanaa muutosten yhteydessä",
+        "when": "Nämä muutokset vaativat kirjautumisen viimeisten 10 minuutin ajalta, kirjautumispalvelun kautta 5 minuutin: uusi API-tunnus, pääsyavain tai MCP-avain, kaksivaiheisen tunnistautumisen käyttöönotto, uudet palautuskoodit, kirjautumispalvelun lisääminen tai muuttaminen ja sen koekirjautuminen, config.yaml-tiedoston palvelun ottaminen uudelleen käyttöön sekä ylläpitäjille uusi tili tai toisen tilin salasana. Salasanan kirjoittaminen lasketaan uudeksi kirjautumiseksi. Kun kysymys on pois päältä, CannonCommander lähettää sinut sen sijaan kirjautumaan uudelleen. Oman salasanan vaihtaminen tai poistaminen kysyy aina nykyistä.",
         "on": "CannonCommander kysyy salasanaasi ennen arkaluonteisia muutoksia.",
         "off": "Kysymys on pois päältä. Arkaluonteiset muutokset vaativat tuoreen kirjautumisen."
       },

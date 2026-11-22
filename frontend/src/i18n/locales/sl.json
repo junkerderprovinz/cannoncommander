@@ -4792,9 +4792,10 @@
         "removed": "Geslo je odstranjeno. CannonCommander se odpre brez prijave"
       },
       "askPassword": {
-        "title": "Ponovno vprašanje za geslo",
-        "hint": "Nekatere spremembe zahtevajo prijavo iz zadnjih nekaj minut: novi ključi za dostop, žetoni API in ključi MCP, dvostopenjsko preverjanje pristnosti, storitve za prijavo in geslo, ki ga nastavite nekomu drugemu. Če je vaša starejša, CannonCommander najprej vpraša za vaše geslo. Ko je vprašanje izklopljeno, se namesto tega odjavite in znova prijavite.",
+        "title": "Preverjanje gesla ob spremembah",
+        "hint": "Pred občutljivo spremembo lahko CannonCommander vpraša za vaše geslo, zato se vam ni treba odjaviti in znova prijaviti.",
         "label": "Vprašaj za geslo ob spremembah",
+        "when": "Te spremembe zahtevajo prijavo iz zadnjih 10 minut, prek storitve za prijavo iz zadnjih 5: nov žeton API, ključ za dostop ali ključ MCP, nastavitev dvostopenjskega preverjanja pristnosti, nove obnovitvene kode, dodajanje ali spreminjanje storitve za prijavo in njena preizkusna prijava, ponovni vklop storitve iz config.yaml ter za skrbnike nov račun ali geslo drugega računa. Vnos gesla šteje kot nova prijava. Ko je vprašanje izklopljeno, vas CannonCommander namesto tega pošlje na ponovno prijavo. Sprememba ali odstranitev lastnega gesla vedno zahteva trenutno.",
         "on": "CannonCommander pred občutljivimi spremembami vpraša za vaše geslo.",
         "off": "Vprašanje je izklopljeno. Občutljive spremembe zahtevajo svežo prijavo."
       },

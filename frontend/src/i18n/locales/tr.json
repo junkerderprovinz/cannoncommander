@@ -4484,9 +4484,10 @@
         "removed": "Parola kaldırıldı. CannonCommander giriş yapmadan açılır"
       },
       "askPassword": {
-        "title": "Parolayı yeniden sorma",
-        "hint": "Bazı değişiklikler son birkaç dakikadan bir giriş ister: yeni geçiş anahtarları, API belirteçleri ve MCP anahtarları, iki faktörlü kimlik doğrulama, giriş hizmetleri ve başka biri için ayarladığın bir parola. Seninki daha eskiyse CannonCommander önce parolanı sorar. Soru kapalıyken bunun yerine çıkış yapıp yeniden giriş yaparsın.",
+        "title": "Değişikliklerde parola denetimi",
+        "hint": "Hassas bir değişiklikten önce CannonCommander parolanı sorabilir, böylece çıkış yapıp yeniden giriş yapman gerekmez.",
         "label": "Değişikliklerde parolayı sor",
+        "when": "Bu değişiklikler son 10 dakikadan, bir giriş hizmetiyle son 5 dakikadan bir giriş ister: yeni bir API belirteci, geçiş anahtarı ya da MCP anahtarı, iki faktörlü kimlik doğrulamayı kurmak, yeni kurtarma kodları, bir giriş hizmeti eklemek ya da değiştirmek ve onun deneme girişi, config.yaml'deki hizmeti yeniden açmak ve yöneticiler için yeni bir hesap ya da başka bir hesabın parolası. Parolanı yazmak yeniden giriş sayılır. Soru kapalıyken CannonCommander seni bunun yerine yeniden girişe gönderir. Kendi parolanı değiştirmek ya da kaldırmak her zaman şu anki parolayı sorar.",
         "on": "CannonCommander hassas değişikliklerden önce parolanı sorar.",
         "off": "Soru kapalı. Hassas değişiklikler yeni bir giriş ister."
       },

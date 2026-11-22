@@ -4638,9 +4638,10 @@
         "removed": "Password rimossa. CannonCommander si apre senza accesso"
       },
       "askPassword": {
-        "title": "Richiedere la password",
-        "hint": "Alcune modifiche richiedono un accesso degli ultimi minuti: nuove passkey, token API e chiavi MCP, l'autenticazione a due fattori, i servizi di accesso e una password che imposti per qualcun altro. Se il tuo è più vecchio, CannonCommander ti chiede prima la password. Con la domanda disattivata, esci e rientri.",
+        "title": "Controllo della password sulle modifiche",
+        "hint": "Prima di una modifica delicata, CannonCommander può chiederti la password, così non devi uscire e rientrare.",
         "label": "Chiedi la password alle modifiche",
+        "when": "Queste modifiche vogliono un accesso degli ultimi 10 minuti, o 5 tramite un servizio di accesso: un nuovo token API, una nuova passkey o chiave MCP, configurare l'autenticazione a due fattori, nuovi codici di recupero, aggiungere o cambiare un servizio di accesso e il suo accesso di prova, riattivare il servizio di config.yaml e, per gli amministratori, un nuovo account o la password di un altro account. Digitare la password vale come nuovo accesso. Con la domanda disattivata, CannonCommander ti manda invece ad accedere di nuovo. Cambiare o togliere la tua password chiede sempre quella attuale.",
         "on": "CannonCommander ti chiede la password prima delle modifiche delicate.",
         "off": "La domanda è disattivata. Le modifiche delicate richiedono un accesso recente."
       },

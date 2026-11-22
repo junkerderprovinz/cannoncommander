@@ -4330,9 +4330,10 @@
         "removed": "Kata sandi dihapus. CannonCommander terbuka tanpa masuk"
       },
       "askPassword": {
-        "title": "Menanyakan kata sandi lagi",
-        "hint": "Beberapa perubahan perlu masuk dari beberapa menit terakhir: kunci sandi baru, token API dan kunci MCP, autentikasi dua faktor, layanan masuk, dan kata sandi yang Anda atur untuk orang lain. Jika milik Anda lebih lama, CannonCommander menanyakan kata sandi Anda dulu. Jika pertanyaannya dimatikan, Anda keluar lalu masuk lagi.",
+        "title": "Pemeriksaan kata sandi saat perubahan",
+        "hint": "Sebelum perubahan sensitif, CannonCommander bisa menanyakan kata sandi Anda, jadi Anda tidak perlu keluar lalu masuk lagi.",
         "label": "Tanyakan kata sandi saat ada perubahan",
+        "when": "Perubahan ini butuh masuk dari 10 menit terakhir, atau 5 menit lewat layanan masuk: token API, kunci sandi, atau kunci MCP baru, menyiapkan autentikasi dua faktor, kode pemulihan baru, menambah atau mengubah layanan masuk dan uji masuknya, menyalakan lagi layanan dari config.yaml, dan bagi admin akun baru atau kata sandi akun lain. Mengetik kata sandi dihitung sebagai masuk lagi. Jika pertanyaannya dimatikan, CannonCommander mengirim Anda untuk masuk lagi. Mengubah atau menghapus kata sandi sendiri selalu meminta kata sandi saat ini.",
         "on": "CannonCommander menanyakan kata sandi Anda sebelum perubahan sensitif.",
         "off": "Pertanyaan dimatikan. Perubahan sensitif perlu masuk yang baru."
       },

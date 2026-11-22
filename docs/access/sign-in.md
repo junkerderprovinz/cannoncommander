@@ -14,18 +14,25 @@ With a single account the page asks only for the password. As soon as there are 
 
 Everything about your own sign-in lives on this page: the password, two-factor authentication, passkeys, sessions, API tokens and sign-in services.
 
-![Account & security with a password: the password set, asking for the password on changes, two-factor authentication on with 8 recovery codes left, and two passkeys.](../assets/screenshots/account.png)
+![Account & security with a password: the password set, the password check on changes, two-factor authentication on with 8 recovery codes left, and two passkeys.](../assets/screenshots/account.png)
 
 ## Change or remove the password {#change}
 
 - **Change** asks for the current password and a new one of at least 12 characters. Every other session ends.
 - **Remove password** opens CannonCommander to everyone again. It only works while no other account signs in with a password. Two-factor authentication, passkeys, API tokens and sign-in services go with it.
 
-## Asking for the password {#ask}
+## Password check on changes {#ask}
 
-New passkeys, API tokens, MCP keys, two-factor authentication, sign-in services and a password you set for someone else need a sign-in from the last few minutes. If yours is older, CannonCommander asks for your password first.
+Some changes want a sign-in from the last 10 minutes, or 5 when you signed in through a sign-in service:
 
-Switch off **Ask for the password on changes** and it asks you to sign out and back in instead.
+- a new API token, passkey or MCP key
+- setting up two-factor authentication or making new recovery codes
+- adding or changing a sign-in service, its test sign-in, and turning the service from `config.yaml` back on
+- for admins, a new account or another account's password
+
+If your sign-in is older, CannonCommander asks for your password, and typing it counts as signing in again. Switch off **Ask for the password on changes** and it sends you to sign in again instead. The (i) next to the switch lists the same changes.
+
+Changing or removing your own password always asks for the current one.
 
 ## Sessions {#sessions}
 

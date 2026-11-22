@@ -4484,9 +4484,10 @@
         "removed": "Adgangskoden er fjernet. CannonCommander åbner uden login"
       },
       "askPassword": {
-        "title": "Spørg efter adgangskoden igen",
-        "hint": "Nogle ændringer kræver et login fra de sidste par minutter: nye adgangsnøgler, API-tokens og MCP-nøgler, tofaktorgodkendelse, logintjenester og en adgangskode, du sætter for en anden. Er dit ældre, spørger CannonCommander først om din adgangskode. Er spørgsmålet slået fra, logger du i stedet ud og ind igen.",
+        "title": "Adgangskodetjek ved ændringer",
+        "hint": "Før en følsom ændring kan CannonCommander spørge om din adgangskode, så du ikke behøver logge ud og ind igen.",
         "label": "Spørg efter adgangskoden ved ændringer",
+        "when": "Disse ændringer kræver et login fra de sidste 10 minutter, eller 5 via en logintjeneste: et nyt API-token, en ny adgangsnøgle eller MCP-nøgle, opsætning af tofaktorgodkendelse, nye gendannelseskoder, at tilføje eller ændre en logintjeneste og dens testlogin, at slå tjenesten fra config.yaml til igen og for administratorer en ny konto eller en anden kontos adgangskode. Når du skriver din adgangskode, tæller det som et nyt login. Er spørgsmålet slået fra, sender CannonCommander dig i stedet til login igen. At ændre eller fjerne din egen adgangskode spørger altid om den nuværende.",
         "on": "CannonCommander spørger om din adgangskode før følsomme ændringer.",
         "off": "Spørgsmålet er slået fra. Følsomme ændringer kræver et nyt login."
       },

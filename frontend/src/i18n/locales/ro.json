@@ -4638,9 +4638,10 @@
         "removed": "Parola a fost eliminată. CannonCommander se deschide fără autentificare"
       },
       "askPassword": {
-        "title": "Cererea din nou a parolei",
-        "hint": "Unele modificări au nevoie de o conectare din ultimele minute: chei de acces noi, tokenuri API și chei MCP, autentificarea cu doi factori, serviciile de conectare și o parolă pe care o setezi pentru altcineva. Dacă a ta e mai veche, CannonCommander îți cere întâi parola. Cu întrebarea oprită, te deconectezi și te conectezi din nou.",
+        "title": "Verificarea parolei la modificări",
+        "hint": "Înaintea unei modificări sensibile, CannonCommander îți poate cere parola, ca să nu fie nevoie să te deconectezi și să te conectezi din nou.",
         "label": "Cere parola la modificări",
+        "when": "Aceste modificări cer o conectare din ultimele 10 minute, sau 5 printr-un serviciu de conectare: un token API, o cheie de acces sau o cheie MCP nouă, configurarea autentificării cu doi factori, coduri de recuperare noi, adăugarea sau schimbarea unui serviciu de conectare și conectarea lui de probă, repornirea serviciului din config.yaml și, pentru administratori, un cont nou sau parola altui cont. Când îți scrii parola, contează ca o conectare nouă. Cu întrebarea oprită, CannonCommander te trimite în schimb să te conectezi din nou. Schimbarea sau eliminarea propriei parole cere mereu parola actuală.",
         "on": "CannonCommander îți cere parola înainte de modificările sensibile.",
         "off": "Întrebarea e oprită. Modificările sensibile au nevoie de o conectare recentă."
       },

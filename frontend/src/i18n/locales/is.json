@@ -4484,9 +4484,10 @@
         "removed": "Lykilorð fjarlægt. CannonCommander opnast án innskráningar"
       },
       "askPassword": {
-        "title": "Spyrja aftur um lykilorðið",
-        "hint": "Sumar breytingar krefjast innskráningar frá síðustu mínútum: nýir aðgangslyklar, API-tákn og MCP-lyklar, tveggja þátta auðkenning, innskráningarþjónustur og lykilorð sem þú stillir fyrir einhvern annan. Ef þín er eldri spyr CannonCommander fyrst um lykilorðið þitt. Ef slökkt er á spurningunni skráirðu þig í staðinn út og aftur inn.",
+        "title": "Lykilorðsathugun við breytingar",
+        "hint": "Á undan viðkvæmri breytingu getur CannonCommander beðið um lykilorðið þitt, svo þú þurfir ekki að skrá þig út og aftur inn.",
         "label": "Biðja um lykilorðið við breytingar",
+        "when": "Þessar breytingar krefjast innskráningar frá síðustu 10 mínútum, eða 5 í gegnum innskráningarþjónustu: nýtt API-tákn, aðgangslykill eða MCP-lykill, að setja upp tveggja þátta auðkenningu, nýir endurheimtarkóðar, að bæta við eða breyta innskráningarþjónustu og prufuinnskráningu hennar, að kveikja aftur á þjónustunni úr config.yaml og fyrir stjórnendur nýr aðgangur eða lykilorð annars aðgangs. Að slá inn lykilorðið telst ný innskráning. Ef slökkt er á spurningunni sendir CannonCommander þig í staðinn aftur á innskráningu. Að breyta eða fjarlægja þitt eigið lykilorð biður alltaf um það núverandi.",
         "on": "CannonCommander spyr um lykilorðið þitt á undan viðkvæmum breytingum.",
         "off": "Slökkt er á spurningunni. Viðkvæmar breytingar krefjast nýrrar innskráningar."
       },

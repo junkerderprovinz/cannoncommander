@@ -4792,9 +4792,10 @@
         "removed": "Heslo odebráno. CannonCommander se otevře bez přihlášení"
       },
       "askPassword": {
-        "title": "Znovu se ptát na heslo",
-        "hint": "Některé změny vyžadují přihlášení z posledních pár minut: nové přístupové klíče, tokeny API a klíče MCP, dvoufaktorové ověřování, přihlašovací služby a heslo, které nastavujete někomu jinému. Pokud je to vaše starší, CannonCommander se nejdřív zeptá na vaše heslo. Když je otázka vypnutá, odhlásíte se a znovu přihlásíte.",
+        "title": "Kontrola hesla při změnách",
+        "hint": "Před citlivou změnou se CannonCommander může zeptat na vaše heslo, takže se nemusíte odhlašovat a znovu přihlašovat.",
         "label": "Ptát se na heslo při změnách",
+        "when": "Tyto změny chtějí přihlášení z posledních 10 minut, přes přihlašovací službu z posledních 5: nový token API, přístupový klíč nebo klíč MCP, nastavení dvoufaktorového ověřování, nové záchranné kódy, přidání nebo změna přihlašovací služby a její zkušební přihlášení, opětovné zapnutí služby z config.yaml a pro správce nový účet nebo heslo jiného účtu. Zadání hesla se počítá jako nové přihlášení. Když je otázka vypnutá, pošle vás CannonCommander místo toho znovu se přihlásit. Změna nebo odstranění vlastního hesla se vždy ptá na to současné.",
         "on": "CannonCommander se před citlivými změnami ptá na vaše heslo.",
         "off": "Otázka je vypnutá. Citlivé změny vyžadují čerstvé přihlášení."
       },

@@ -2,7 +2,7 @@
 
 Both live under **Settings > Account & security**, and both wait until your account has a password.
 
-![Account & security: the password, asking for the password on changes, two-factor authentication turned on with 8 recovery codes left, and two passkeys.](../assets/screenshots/account.png)
+![Account & security: the password, the password check on changes, two-factor authentication turned on with 8 recovery codes left, and two passkeys.](../assets/screenshots/account.png)
 
 ## Turn on two-factor authentication {#totp}
 

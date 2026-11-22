@@ -17,7 +17,7 @@ const KEYS = {
   change: 'IconPencil', setPassword: 'IconKey', removePassword: 'IconKeyRevoke', savePassword: 'IconSave', setUp: 'IconShieldOn',
   newCodes: 'IconRefresh', turnOff: 'IconShieldOff', copy: 'IconCopy', confirm: 'IconConfirm', add: 'IconAdd', rename: 'IconPencil',
   remove: 'IconTrash', end: 'IconSignOut', endOthers: 'IconSignOut', createToken: 'IconAdd', revoke: 'IconKeyRevoke',
-  addService: 'IconAdd', turnOn: 'IconSignIn', save: 'IconSave', block: 'IconShieldOff', unblock: 'IconShieldOn', passkey: 'IconKey',
+  addService: 'IconAdd', test: 'IconSendTest', edit: 'IconPencil', turnOn: 'IconSignIn', save: 'IconSave', block: 'IconShieldOff', unblock: 'IconShieldOn', passkey: 'IconKey',
   token: 'IconKey', account: 'IconAccounts', laptop: 'IconLaptop', phone: 'IconPhone', service: 'IconSignIn', forward: 'IconForward',
 };
 

@@ -73,7 +73,7 @@ export function tileText(): SignInTileText {
     },
     askPassword: {
       title: tile('askPassword.title'), hint: tile('askPassword.hint'), label: tile('askPassword.label'),
-      on: tile('askPassword.on'), off: tile('askPassword.off'),
+      when: tile('askPassword.when'), on: tile('askPassword.on'), off: tile('askPassword.off'),
     },
     twoFactor: {
       title: tile('twoFactor.title'), hint: tile('twoFactor.hint'), state: tile('twoFactor.state'), on: tile('twoFactor.on'),

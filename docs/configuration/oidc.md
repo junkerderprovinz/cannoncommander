@@ -12,8 +12,8 @@ Sign-in services added in the app wait until your account has a password, so you
 
 1. Open **Settings > Account & security** and click **Add a sign-in service** at the bottom.
 2. Pick your service from the list, or **Other sign-in service** for any other.
-3. Create an application for CannonCommander at the service and give it the **Redirect address** the form shows.
-4. Fill in the service's **Address**, the **Client ID** and the **Client secret**.
+3. Create an application for CannonCommander at the service and give it the **Redirect address** the form shows. The button next to it copies it.
+4. Fill in the service's **Address**, the **Client ID** and the **Client secret**. Pasting both into **Client ID** at once fills both fields, as two lines, as `id:secret` or as the JSON many services hand out.
 5. Pick the **Role for newcomers**. Whoever the service lets in for the first time gets it, and it stays User unless you change it.
 6. Save, then click **Test sign-in**. The button shows up on the sign-in page once a test sign-in has worked.
 

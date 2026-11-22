@@ -4484,9 +4484,10 @@
         "removed": "Passordet er fjernet. CannonCommander åpner uten pålogging"
       },
       "askPassword": {
-        "title": "Spørre om passordet igjen",
-        "hint": "Noen endringer krever en innlogging fra de siste minuttene: nye tilgangsnøkler, API-tokener og MCP-nøkler, tofaktorautentisering, innloggingstjenester og et passord du setter for noen andre. Er din eldre, spør CannonCommander først om passordet ditt. Er spørsmålet slått av, logger du i stedet ut og inn igjen.",
+        "title": "Passordsjekk ved endringer",
+        "hint": "Før en sensitiv endring kan CannonCommander spørre om passordet ditt, så du slipper å logge ut og inn igjen.",
         "label": "Spør om passordet ved endringer",
+        "when": "Disse endringene krever en innlogging fra de siste 10 minuttene, eller 5 via en innloggingstjeneste: et nytt API-token, en ny tilgangsnøkkel eller MCP-nøkkel, å sette opp tofaktorautentisering, nye gjenopprettingskoder, å legge til eller endre en innloggingstjeneste og testinnloggingen dens, å slå på tjenesten fra config.yaml igjen og for administratorer en ny konto eller passordet til en annen konto. Å skrive inn passordet teller som en ny innlogging. Er spørsmålet slått av, sender CannonCommander deg i stedet til innlogging igjen. Å endre eller fjerne ditt eget passord spør alltid om det nåværende.",
         "on": "CannonCommander spør om passordet ditt før følsomme endringer.",
         "off": "Spørsmålet er slått av. Følsomme endringer krever en ny innlogging."
       },

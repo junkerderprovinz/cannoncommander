@@ -4475,9 +4475,10 @@
         "removed": "Pasahitza kenduta. CannonCommander saioa hasi gabe irekitzen da"
       },
       "askPassword": {
-        "title": "Pasahitza berriro eskatzea",
-        "hint": "Aldaketa batzuek azken minutuetako saio-hasiera behar dute: sarbide-gako berriak, API tokenak eta MCP gakoak, bi faktoreko autentifikazioa, saio-hasierako zerbitzuak eta beste norbaitentzat ezartzen duzun pasahitza. Zurea zaharragoa bada, CannonCommander-ek zure pasahitza eskatzen du lehenik. Galdera desaktibatuta badago, saioa amaitu eta berriro hasten duzu.",
+        "title": "Pasahitzaren egiaztapena aldaketetan",
+        "hint": "Aldaketa delikatu baten aurretik, CannonCommander-ek zure pasahitza eska dezake, saioa amaitu eta berriro hasi beharrik izan ez dezazun.",
         "label": "Eskatu pasahitza aldaketetan",
+        "when": "Aldaketa hauek azken 10 minutuetako saio-hasiera behar dute, edo 5ekoa saio-hasierako zerbitzu baten bidez: API token, sarbide-gako edo MCP gako berri bat, bi faktoreko autentifikazioa konfiguratzea, berreskuratze-kode berriak, saio-hasierako zerbitzu bat gehitzea edo aldatzea eta haren proba, config.yaml-eko zerbitzua berriro aktibatzea eta, administratzaileentzat, kontu berri bat edo beste kontu baten pasahitza. Pasahitza idazteak saioa berriro hastea bezala balio du. Galdera desaktibatuta badago, CannonCommander-ek saioa berriro hastera bidaltzen zaitu. Zure pasahitza aldatzeak edo kentzeak beti eskatzen du oraingoa.",
         "on": "CannonCommander-ek zure pasahitza eskatzen du aldaketa sentikorren aurretik.",
         "off": "Galdera desaktibatuta dago. Aldaketa sentikorrek saio-hasiera berri bat behar dute."
       },

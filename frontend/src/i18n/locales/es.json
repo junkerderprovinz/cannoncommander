@@ -4638,9 +4638,10 @@
         "removed": "Contraseña quitada. CannonCommander se abre sin iniciar sesión"
       },
       "askPassword": {
-        "title": "Volver a pedir la contraseña",
-        "hint": "Algunos cambios necesitan un inicio de sesión de hace pocos minutos: nuevas llaves de acceso, tokens de API y claves MCP, la autenticación de dos factores, los servicios de inicio de sesión y una contraseña que pones para otra persona. Si el tuyo es más antiguo, CannonCommander te pide primero la contraseña. Con la pregunta desactivada, cierras sesión y vuelves a entrar.",
+        "title": "Comprobación de contraseña en cambios",
+        "hint": "Antes de un cambio delicado, CannonCommander puede pedirte la contraseña, así no tienes que cerrar sesión y volver a entrar.",
         "label": "Pedir la contraseña al hacer cambios",
+        "when": "Estos cambios piden un inicio de sesión de los últimos 10 minutos, o 5 con un servicio de inicio de sesión: un token de API, una llave de acceso o una clave MCP nueva, configurar la autenticación de dos factores, códigos de recuperación nuevos, añadir o cambiar un servicio de inicio de sesión y su prueba, volver a activar el servicio de config.yaml y, para los administradores, una cuenta nueva o la contraseña de otra cuenta. Escribir tu contraseña cuenta como volver a iniciar sesión. Con la pregunta desactivada, CannonCommander te manda a iniciar sesión de nuevo. Cambiar o quitar tu propia contraseña siempre pide la actual.",
         "on": "CannonCommander te pide la contraseña antes de los cambios delicados.",
         "off": "La pregunta está desactivada. Los cambios delicados necesitan un inicio de sesión reciente."
       },

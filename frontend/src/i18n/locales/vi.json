@@ -4330,9 +4330,10 @@
         "removed": "Đã gỡ mật khẩu. CannonCommander mở mà không cần đăng nhập"
       },
       "askPassword": {
-        "title": "Hỏi lại mật khẩu",
-        "hint": "Một số thay đổi cần một lần đăng nhập trong vài phút gần đây: khóa truy cập mới, mã thông báo API và khóa MCP, xác thực hai yếu tố, dịch vụ đăng nhập và mật khẩu bạn đặt cho người khác. Nếu lần đăng nhập của bạn cũ hơn, CannonCommander sẽ hỏi mật khẩu trước. Khi tắt câu hỏi, bạn sẽ đăng xuất rồi đăng nhập lại.",
+        "title": "Kiểm tra mật khẩu khi thay đổi",
+        "hint": "Trước một thay đổi nhạy cảm, CannonCommander có thể hỏi mật khẩu của bạn, nên bạn không phải đăng xuất rồi đăng nhập lại.",
         "label": "Hỏi mật khẩu khi thay đổi",
+        "when": "Những thay đổi này cần một lần đăng nhập trong 10 phút gần nhất, hoặc 5 phút nếu qua dịch vụ đăng nhập: mã thông báo API, khóa truy cập hoặc khóa MCP mới, thiết lập xác thực hai yếu tố, mã khôi phục mới, thêm hoặc sửa dịch vụ đăng nhập và lần đăng nhập thử của nó, bật lại dịch vụ từ config.yaml, và với quản trị viên là tài khoản mới hoặc mật khẩu của tài khoản khác. Nhập mật khẩu được tính là đăng nhập lại. Khi tắt câu hỏi, CannonCommander sẽ đưa bạn đi đăng nhập lại thay vào đó. Đổi hoặc xóa mật khẩu của chính bạn luôn hỏi mật khẩu hiện tại.",
         "on": "CannonCommander hỏi mật khẩu của bạn trước các thay đổi nhạy cảm.",
         "off": "Câu hỏi đã tắt. Các thay đổi nhạy cảm cần một lần đăng nhập mới."
       },

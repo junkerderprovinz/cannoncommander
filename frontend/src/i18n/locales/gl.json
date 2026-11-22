@@ -4484,9 +4484,10 @@
         "removed": "Contrasinal quitado. CannonCommander ábrese sen iniciar sesión"
       },
       "askPassword": {
-        "title": "Volver pedir o contrasinal",
-        "hint": "Algúns cambios precisan un inicio de sesión dos últimos minutos: novas chaves de acceso, tokens de API e chaves MCP, a autenticación de dous factores, os servizos de inicio de sesión e un contrasinal que pos para outra persoa. Se o teu é máis antigo, CannonCommander pídeche primeiro o contrasinal. Coa pregunta desactivada, pechas a sesión e volves entrar.",
+        "title": "Comprobación do contrasinal nos cambios",
+        "hint": "Antes dun cambio delicado, CannonCommander pode pedirche o contrasinal, así non tes que pechar a sesión e volver entrar.",
         "label": "Pedir o contrasinal ao facer cambios",
+        "when": "Estes cambios piden un inicio de sesión dos últimos 10 minutos, ou 5 cun servizo de inicio de sesión: un token de API, unha chave de acceso ou unha chave MCP nova, configurar a autenticación de dous factores, códigos de recuperación novos, engadir ou cambiar un servizo de inicio de sesión e a súa proba, volver activar o servizo de config.yaml e, para os administradores, unha conta nova ou o contrasinal doutra conta. Escribir o teu contrasinal conta como volver iniciar sesión. Coa pregunta desactivada, CannonCommander mándate iniciar sesión de novo. Cambiar ou quitar o teu propio contrasinal sempre pide o actual.",
         "on": "CannonCommander pídeche o contrasinal antes dos cambios delicados.",
         "off": "A pregunta está desactivada. Os cambios delicados precisan un inicio de sesión recente."
       },

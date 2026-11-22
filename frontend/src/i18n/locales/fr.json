@@ -4638,9 +4638,10 @@
         "removed": "Mot de passe retiré. CannonCommander s'ouvre sans connexion"
       },
       "askPassword": {
-        "title": "Redemander le mot de passe",
-        "hint": "Certaines modifications exigent une connexion datant de quelques minutes : nouvelles clés d'accès, jetons d'API et clés MCP, l'authentification à deux facteurs, les services de connexion et un mot de passe que vous définissez pour quelqu'un d'autre. Si la vôtre est plus ancienne, CannonCommander vous demande d'abord votre mot de passe. Si la question est désactivée, vous vous déconnectez et vous reconnectez à la place.",
+        "title": "Vérification du mot de passe lors des modifications",
+        "hint": "Avant une modification sensible, CannonCommander peut vous demander votre mot de passe, pour que vous n'ayez pas à vous déconnecter et à vous reconnecter.",
         "label": "Demander le mot de passe lors des modifications",
+        "when": "Ces modifications exigent une connexion datant des 10 dernières minutes, ou 5 via un service de connexion : un nouveau jeton d'API, une nouvelle clé d'accès ou clé MCP, la configuration de l'authentification à deux facteurs, de nouveaux codes de récupération, l'ajout ou la modification d'un service de connexion et sa connexion d'essai, la réactivation du service de config.yaml et, pour les administrateurs, un nouveau compte ou le mot de passe d'un autre compte. Saisir votre mot de passe compte comme une nouvelle connexion. Si la question est désactivée, CannonCommander vous renvoie plutôt vers la connexion. Changer ou retirer votre propre mot de passe demande toujours l'actuel.",
         "on": "CannonCommander vous demande votre mot de passe avant les modifications sensibles.",
         "off": "La question est désactivée. Les modifications sensibles exigent une connexion récente."
       },

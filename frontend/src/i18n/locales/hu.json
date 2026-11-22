@@ -4484,9 +4484,10 @@
         "removed": "Jelszó eltávolítva. A CannonCommander belépés nélkül nyílik meg"
       },
       "askPassword": {
-        "title": "A jelszó újbóli kérése",
-        "hint": "Egyes módosításokhoz az elmúlt néhány percből származó bejelentkezés kell: új azonosítókulcsok, API-tokenek és MCP-kulcsok, a kéttényezős hitelesítés, a bejelentkezési szolgáltatások és egy jelszó, amelyet valaki másnak állít be. Ha az öné régebbi, a CannonCommander előbb a jelszavát kéri. Ha a kérdés ki van kapcsolva, helyette ki- és újra bejelentkezik.",
+        "title": "Jelszó-ellenőrzés módosításkor",
+        "hint": "Egy érzékeny módosítás előtt a CannonCommander elkérheti a jelszavát, így nem kell ki- és újra bejelentkeznie.",
         "label": "Jelszó kérése módosításkor",
+        "when": "Ezekhez a módosításokhoz az elmúlt 10 percből, bejelentkezési szolgáltatáson át az elmúlt 5 percből való bejelentkezés kell: új API-token, azonosítókulcs vagy MCP-kulcs, a kéttényezős hitelesítés beállítása, új helyreállító kódok, bejelentkezési szolgáltatás hozzáadása vagy módosítása és a próbabejelentkezése, a config.yaml szolgáltatásának visszakapcsolása, a rendszergazdáknak pedig új fiók vagy egy másik fiók jelszava. A jelszó beírása új bejelentkezésnek számít. Ha a kérdés ki van kapcsolva, a CannonCommander helyette újra bejelentkezni küldi. A saját jelszó módosítása vagy eltávolítása mindig a jelenlegit kéri.",
         "on": "A CannonCommander az érzékeny módosítások előtt kéri a jelszavát.",
         "off": "A kérdés ki van kapcsolva. Az érzékeny módosításokhoz friss bejelentkezés kell."
       },

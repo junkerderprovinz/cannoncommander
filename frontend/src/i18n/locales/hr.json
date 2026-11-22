@@ -4638,9 +4638,10 @@
         "removed": "Lozinka je uklonjena. CannonCommander se otvara bez prijave"
       },
       "askPassword": {
-        "title": "Ponovno traženje lozinke",
-        "hint": "Neke promjene traže prijavu iz posljednjih nekoliko minuta: novi pristupni ključevi, API tokeni i MCP ključevi, dvofaktorska autentifikacija, usluge za prijavu i lozinka koju postavljate nekome drugome. Ako je vaša starija, CannonCommander najprije traži vašu lozinku. Kad je pitanje isključeno, umjesto toga se odjavljujete i ponovno prijavljujete.",
+        "title": "Provjera lozinke kod promjena",
+        "hint": "Prije osjetljive promjene CannonCommander može tražiti vašu lozinku, pa se ne morate odjaviti i ponovno prijaviti.",
         "label": "Traži lozinku pri promjenama",
+        "when": "Ove promjene traže prijavu iz posljednjih 10 minuta, ili 5 preko usluge za prijavu: novi API token, pristupni ključ ili MCP ključ, postavljanje dvofaktorske autentifikacije, novi kodovi za oporavak, dodavanje ili mijenjanje usluge za prijavu i njezina probna prijava, ponovno uključivanje usluge iz config.yaml te za administratore novi račun ili lozinka drugog računa. Upisivanje lozinke vrijedi kao nova prijava. Kad je pitanje isključeno, CannonCommander vas umjesto toga šalje na ponovnu prijavu. Promjena ili uklanjanje vlastite lozinke uvijek traži trenutačnu.",
         "on": "CannonCommander prije osjetljivih promjena traži vašu lozinku.",
         "off": "Pitanje je isključeno. Osjetljive promjene traže svježu prijavu."
       },
