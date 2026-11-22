@@ -8,7 +8,7 @@ import SharePage from './SharePage.vue';
 
 addMessages('visit', { de, en });
 
-type Answer = { status?: number; body?: unknown };
+type Answer = { status?: number; body?: unknown; headers?: Record<string, string> };
 let script: Record<string, Answer | Answer[]> = {};
 const sent: { key: string; token: string | null }[] = [];
 
@@ -22,7 +22,7 @@ beforeEach(() => {
     const entry = script[key];
     const a = (Array.isArray(entry) ? entry.shift() : entry) ?? { status: 404, body: { title: 'Not Found', status: 404 } };
     const status = a.status ?? 200;
-    return new Response(JSON.stringify(a.body ?? {}), { status, headers: { 'Content-Type': status >= 400 ? 'application/problem+json' : 'application/json' } });
+    return new Response(JSON.stringify(a.body ?? {}), { status, headers: { 'Content-Type': status >= 400 ? 'application/problem+json' : 'application/json', ...a.headers } });
   });
 });
 afterEach(() => {
@@ -52,6 +52,20 @@ describe('the page for visitors', () => {
     script['GET '] = { status: 404, body: { title: 'Not Found', status: 404 } };
     await mount();
     expect(text('.sp-gone h1')).toBe('Nichts gefunden');
+  });
+
+  it('tells a visitor who guessed too often the time to try again, to the second', async () => {
+    vi.useFakeTimers({ now: new Date(2026, 10, 22, 10, 30, 0), toFake: ['Date'] });
+    script['GET '] = { body: { slug: 'k3x9qa-urlaub', locked: true } };
+    script['POST /unlock'] = { status: 429, body: { title: 'Too Many Requests', status: 429, code: 'tooManyTries' }, headers: { 'Retry-After': '8' } };
+    await mount();
+    const pass = document.querySelector('#sp-pass') as HTMLInputElement;
+    pass.value = 'regen';
+    pass.dispatchEvent(new Event('input'));
+    document.querySelector('.sp-lock')!.dispatchEvent(new Event('submit', { cancelable: true }));
+    await settle();
+    expect(text('.sp-err')).toBe('Zu viele Versuche. Ab 10:30:08 kannst du es wieder versuchen.');
+    vi.useRealTimers();
   });
 
   it('opens a link with its password and sends the token along', async () => {
