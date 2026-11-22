@@ -43,7 +43,6 @@ const status = computed(() => {
   if (data.value?.oauth.active) return c('mcp.statusOAuth');
   return keys.value.length ? c('mcp.statusNone') : c('mcp.statusOff');
 });
-const host = location.hostname;
 const base = () => new URL(import.meta.env.BASE_URL, location.href).pathname;
 const endpointParts = computed(() => ({ origin: location.origin + base(), endpointPath: data.value?.endpointPath ?? 'mcp' }));
 const endpoint = computed(() => mcpUrl(endpointParts.value));
@@ -120,7 +119,6 @@ watch(admin, (yes) => { if (yes) void load(); });
     <template v-if="data">
       <FieldRow :label="c('mcp.endpoint')" :hint="c('mcp.endpointTip')"><CopyField width="grow" :value="endpoint" :label="c('mcp.endpoint')" :text="copyWords()" data-mcp="endpoint" /></FieldRow>
       <SubCard v-if="data.desktop" class="a-text" data-mcp="port"><p>{{ c('mcp.desktopPort') }}</p></SubCard>
-      <SubCard v-if="!data.hostAllowsKeys" class="a-text"><p>{{ c('mcp.hostRefused', { host }) }}</p></SubCard>
       <FieldRow v-if="data.oauth.active && connector" :label="c('mcp.connector')" :hint="c('mcp.connectorTip')"><CopyField width="grow" :value="connector" :label="c('mcp.connector')" :text="copyWords()" /></FieldRow>
       <FieldRow :label="c('mcp.connect')" :hint="c('mcp.connectTip')"><Button id="mcp-choose" :label="c('mcp.choose')" label-key="IconLink" @click="choose" /></FieldRow>
     </template>
@@ -137,7 +135,7 @@ watch(admin, (yes) => { if (yes) void load(); });
           <template #actions>
             <Toggle :model-value="k.canWrite" :label="c('mcp.write')" data-mcp="write" @update:model-value="setWrite(k, $event)" />
             <IconButton :absent="k.viaOAuth" :glyph="glyphComponent('IconPencil')" :tip="c('mcp.rename')" data-mcp="rename" @click="rename(k)" />
-            <IconButton :absent="k.viaOAuth || !data?.hostAllowsKeys" :glyph="glyphComponent('IconRetry')" :tip="c('mcp.replace')" data-mcp="replace" @click="replace(k)" />
+            <IconButton :absent="k.viaOAuth" :glyph="glyphComponent('IconRetry')" :tip="c('mcp.replace')" data-mcp="replace" @click="replace(k)" />
             <IconButton :glyph="glyphComponent('IconLog')" :tip="c('mcp.log')" data-mcp="log" @click="log(k)" />
             <IconButton :glyph="glyphComponent('IconKeyRevoke')" :tip="c('security.revoke')" data-mcp="revoke" @click="revoke(k)" />
           </template>

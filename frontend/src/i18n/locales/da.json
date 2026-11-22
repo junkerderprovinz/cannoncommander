@@ -923,7 +923,6 @@
       "scope": "Område",
       "scopeTip": "Personen ser kun denne mappe og alt i den.",
       "password": "Adgangskode",
-      "pwTip": "Mindst 12 tegn.",
       "repeat": "Gentag",
       "pwSet": "Angivet",
       "pwNew": "Angiv ny",
@@ -934,7 +933,6 @@
       "nameTaken": "Det brugernavn findes allerede",
       "ownAdmin": "Kun en anden administrator kan tage din egen administratorrolle",
       "needAdmin": "Der skal være mindst én administrator",
-      "pwShort": "Adgangskoden skal have mindst 12 tegn",
       "pwDiffer": "De to adgangskoder er ikke ens",
       "groupName": "Navn",
       "groupNamePh": "fx familie",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Kræv adgangskode",
       "askPwTip": "Den, der åbner linket, skal først indtaste adgangskoden.",
-      "pwTip": "Mindst 6 tegn.",
-      "pwShort": "Adgangskoden skal have mindst 6 tegn",
       "exhausted": "Opbrugt",
       "message": "Besked til modtagerne",
       "messageTip": "Står på linkets side over filerne, fx en hilsen eller et hint. Må gerne være tom.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Endepunkt",
       "endpointTip": "Her forbinder din assistent. Den taler Streamable HTTP og sender nøglen i headeren Authorization eller X-API-Key.",
       "desktopPort": "Skrivebordsappen kan kun nås fra denne computer. Er dens port optaget, når den starter, tager den en anden. Så skriver du bare den nye adresse ind i klienten.",
-      "hostRefused": "Denne side er åbnet som {host}. Uden login opretter CannonCommander kun nøgler under en IP-adresse eller et lokalt navn som tower.local, så ingen side på internettet kan gøre det. Åbn derfor CannonCommander på dens lokale adresse.",
       "connect": "Forbind en klient",
       "connectTip": "Vælg din klient, så får den sin egen nøgle, og du får den passende konfiguration til at kopiere. Det, assistenten læser, som mapper, filnavne eller indholdet af en tekstfil, går til AI-udbyderen bag den.",
       "choose": "Vælg en klient",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Login via OAuth",
       "oauthTip": "Til ChatGPT, Claude på claude.ai og andre tjenester, der ikke kan tage en nøgle. De sender dig til en side i CannonCommander, hvor du logger ind og giver adgang. Slår du det fra, bliver alle disse klienter logget ud.",
-      "oauthNeedsSignIn": "Det virker kun, når alle logger ind i CannonCommander.",
+      "oauthDesktop": "Skrivebordsappen har ingen offentlig adresse til login via OAuth.",
       "issuer": "Offentlig adresse",
       "issuerTip": "Den https-adresse uden sti, hvor CannonCommander kan nås fra internettet, fx https://files.example.com. Ændrer den sig, skal hver klient logge ind igen.",
       "oauthSaved": "Login via OAuth gemt",
@@ -2944,7 +2939,6 @@
     "create": "Opret link",
     "badSlug": "Adressen skal have 3 til 40 tegn: små bogstaver, cifre og bindestreger",
     "slugTaken": "Denne adresse er allerede optaget. Terningen finder en ledig.",
-    "shortPassword": "Adgangskoden skal have mindst 6 tegn",
     "rerolled": "Ny adresse slået, den gamle fører ingen steder hen",
     "together": "Samlet deling",
     "folderName": "Mappens navn",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Giv nøglen et navn på højst 64 tegn",
     "mcpKeyLabelTaken": "En aktiv nøgle hedder allerede sådan",
     "mcpKeyLimit": "Du har allerede så mange aktive nøgler, som en konto kan have. Tilbagekald en, så er der plads igen",
-    "mcpKeyNeedsSignIn": "Uden login kan nøgler kun oprettes via en IP-adresse eller et lokalt navn",
     "mcpKeyNotFound": "Denne nøgle findes ikke længere",
     "mcpKeyNotYours": "Det kan kun den konto, nøglen tilhører",
     "mcpOAuthIssuer": "Indtast venligst en https-adresse uden sti, fx https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Login via OAuth virker kun, når alle logger ind i CannonCommander",
+    "mcpOAuthDesktop": "Skrivebordsappen har ingen offentlig adresse til login via OAuth",
     "noSystemMenu": "Denne computer har ingen egen genvejsmenu",
     "noPropertiesDialog": "Her findes ingen egenskabsdialog fra systemet",
     "notAProgram": "Det er ikke et program, der kan køres som administrator",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Via dette link kan man ikke uploade noget",
     "linkNothingHere": "Der er intet på dette sted i linket",
     "linkOwnerGone": "Kontoen bag dette link findes ikke længere",
-    "linkPasswordShort": {
-      "one": "Adgangskoden skal have mindst {n} tegn",
-      "other": "Adgangskoden skal have mindst {n} tegn"
-    },
     "linkPasswordWrong": "Denne adgangskode er ikke rigtig",
     "loginNameMissing": "Brugernavnet mangler",
     "loginNameRule": "Brugernavnet kræver små bogstaver, mindst to",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Din egen adgangskode ændrer du under Konto og sikkerhed",
     "ownSessionsElsewhere": "Dine egne sessioner, tokens og adgangsnøgler afslutter du under Konto og sikkerhed",
     "passwordMissing": "Adgangskoden mangler",
-    "passwordShort": {
-      "one": "Adgangskoden skal have mindst {n} tegn",
-      "other": "Adgangskoden skal have mindst {n} tegn"
-    },
     "pathSlash": "Stien skal starte med /",
     "pickShareFolder": "Vælg en mappe i en user share",
     "pickUserFolder": "Vælg den mappe, brugeren må se",
@@ -4429,10 +4414,8 @@
     "newPassword": "Ny adgangskode",
     "setPassword": "Angiv adgangskode",
     "saving": "Gemmer…",
-    "short": {
-      "one": "Den nye adgangskode skal have mindst {n} tegn.",
-      "other": "Den nye adgangskode skal have mindst {n} tegn."
-    },
+    "shortHint": "Under {min} tegn. Det virker, men en længere adgangskode er sværere at gætte.",
+    "longer": "En længere adgangskode ville være sværere at gætte.",
     "resetRejected": "Koden er forkert eller udløbet. Hvis den er udløbet, viser loggen nu en ny.",
     "failed": "Det lykkedes ikke. Prøv igen.",
     "needBoth": "Indtast navn og adgangskode.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Bekræft",
       "needsPassword": {
-        "title": "Det kræver først en adgangskode",
-        "reason": "Sæt en adgangskode af dine egne ovenfor. Med den kommer du altid ind, også når en anden vej svigter."
+        "title": "Klar, når der er en adgangskode",
+        "reason": "CannonCommander er åben for alle lige nu, så her er intet at beskytte endnu. Sæt en adgangskode ovenfor, når du har lyst, så er dette klar."
       },
       "notLocal": {
         "title": "Det hører til din logintjeneste",
         "reason": "Du logger ind via {name}. Opsæt tofaktorgodkendelse og adgangsnøgler der."
       },
       "password": {
-        "hint": "En adgangskode skal have mindst {min} tegn. Når du ændrer den, afsluttes alle andre sessioner.",
+        "hint": "En adgangskode på {min} tegn eller mere er svær at gætte, men en kortere virker også. Ændrer du den, slutter alle andre sessioner.",
         "openHint": "Indtil der er sat en adgangskode, er CannonCommander åben, og alle, der når den, er administrator.",
         "viaService": "Du logger ind via {name}, så denne konto har ingen adgangskode her.",
         "set": "Angivet",
@@ -4570,6 +4553,8 @@
         "neverUsed": "aldrig brugt",
         "expires": "udløber {when}",
         "forever": "udløber ikke",
+        "endsWhenClosed": "udløber, når CannonCommander beder om login",
+        "openHint": "CannonCommander har ingen adgangskode endnu. Et token, du laver nu, står for dig og holder op med at virke, når CannonCommander beder om login, efter en første adgangskode eller en første logintjeneste.",
         "revoke": "Tilbagekald",
         "revokeText": "Det, der bruger {name}, får ikke adgang længere bagefter.",
         "revoked": "Tokenet er tilbagekaldt",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} bestemmer, hvem der må logge ind, for eksempel gennem sine grupper.",
         "role": "Rolle for nye",
         "roleHint": "Den, som {name} lukker ind første gang, får rollen {role} her.",
+        "openBinds": "CannonCommander har ingen adgangskode endnu. Et testlogin, der virker, gør din konto hos {name} til ejer her og slår {name} til. Derefter logger alle ind, og du kommer tilbage logget ind via {name}. Slår du den sidste tjeneste fra, er CannonCommander åben igen.",
         "issuer": "Adresse",
         "issuerHint": "Tjenestens egen adresse, hvor den udgiver sine OpenID-oplysninger, for eksempel https://id.example.",
         "clientId": "Klient-ID",

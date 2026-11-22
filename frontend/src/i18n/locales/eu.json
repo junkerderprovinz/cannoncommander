@@ -1385,7 +1385,6 @@
       "scope": "Eremua",
       "scopeTip": "Pertsonak karpeta hau eta barruan dagoen guztia bakarrik ikusten ditu.",
       "password": "Pasahitza",
-      "pwTip": "Gutxienez 12 karaktere.",
       "repeat": "Errepikatu",
       "pwSet": "Ezarrita",
       "pwNew": "Ezarri berria",
@@ -1396,7 +1395,6 @@
       "nameTaken": "Saio-hasierako izen hori badago jada",
       "ownAdmin": "Zure administratzaile-rola beste administratzaile batek bakarrik ken diezazuke",
       "needAdmin": "Administratzaile bat egon behar du gutxienez",
-      "pwShort": "Pasahitzak gutxienez 12 karaktere behar ditu",
       "pwDiffer": "Bi pasahitzak ez dira berdinak",
       "groupName": "Izena",
       "groupNamePh": "adibidez familia",
@@ -1511,8 +1509,6 @@
       },
       "askPw": "Eskatu pasahitza",
       "askPwTip": "Esteka irekitzen duenak pasahitza idatzi behar du lehenik.",
-      "pwTip": "Gutxienez 6 karaktere.",
-      "pwShort": "Pasahitzak gutxienez 6 karaktere behar ditu",
       "exhausted": "Agortuta",
       "message": "Bisitarientzako mezua",
       "messageTip": "Estekaren orrian agertzen da fitxategien gainean, adibidez agur bat edo ohar bat. Hutsik utz daiteke.",
@@ -1829,7 +1825,6 @@
       "endpoint": "Konexio puntua",
       "endpointTip": "Hemen konektatzen da zure laguntzailea. Streamable HTTP hitz egiten du eta gakoa Authorization edo X-API-Key goiburuan bidaltzen du.",
       "desktopPort": "Mahaigaineko aplikazioa ordenagailu honetatik bakarrik dago eskuragarri. Abiaraztean bere ataka hartuta badago, beste bat hartzen du. Kasu horretan, idatzi helbide berria bezeroan, besterik ez.",
-      "hostRefused": "Orri hau {host} gisa ireki da. Saioa hasi gabe, CannonCommander-ek IP helbide batean edo tower.local bezalako izen lokal batean bakarrik sortzen ditu gakoak, interneteko webgune batek ezin dezan. Horretarako, ireki CannonCommander bere helbide lokaletik, mesedez.",
       "connect": "Konektatu bezero bat",
       "connectTip": "Aukeratu zure bezeroa: berak bere gakoa jasoko du, eta zuk kopiatzeko konfigurazio egokia. Laguntzaileak irakurtzen duena, hala nola karpetak, fitxategi-izenak edo testu-fitxategi baten edukia, haren atzean dagoen AA hornitzailera doa.",
       "choose": "Aukeratu bezero bat",
@@ -1912,7 +1907,7 @@
       },
       "oauth": "OAuth bidezko saio-hasiera",
       "oauthTip": "ChatGPT, claude.ai-ko Claude eta gakorik onartzen ez duten beste zerbitzuentzat. CannonCommander-en orri batera bidaltzen zaituzte, eta han saioa hasi eta sarbidea baimentzen duzu. Desaktibatzean, bezero horien guztien saioa ixten da.",
-      "oauthNeedsSignIn": "Hau guztiek CannonCommander-en saioa hasten badute bakarrik dabil.",
+      "oauthDesktop": "Mahaigaineko aplikazioak ez du helbide publikorik OAuth bidez saioa hasteko.",
       "issuer": "Helbide publikoa",
       "issuerTip": "CannonCommander internetetik eskuragarri dagoen https helbidea, biderik gabe, adibidez https://files.example.com. Aldatzen bada, bezero bakoitzak saioa hasi behar du berriro.",
       "oauthSaved": "OAuth bidezko saio-hasiera gordeta",
@@ -3387,7 +3382,6 @@
     "create": "Sortu esteka",
     "badSlug": "Helbideak 3 eta 40 karaktere artean behar ditu: letra xeheak, zifrak eta marratxoak",
     "slugTaken": "Helbide hau hartuta dago. Dadoak libre bat aurkitzen du.",
-    "shortPassword": "Pasahitzak gutxienez 6 karaktere behar ditu",
     "rerolled": "Helbide berria sortuta, zaharrak ez du inora eramaten",
     "together": "Bilduma partekatua",
     "folderName": "Karpetaren izena",
@@ -4178,11 +4172,10 @@
     "mcpKeyLabel": "Eman gakoari gehienez 64 karaktereko izena",
     "mcpKeyLabelTaken": "Gako aktibo batek badu izen hori",
     "mcpKeyLimit": "Kontu batek izan ditzakeen gako aktibo guztiak dituzu jada. Baliogabetu bat, eta berriro egongo da lekua",
-    "mcpKeyNeedsSignIn": "Saioa hasi gabe, IP helbide baten edo izen lokal baten bidez bakarrik sor daitezke gakoak",
     "mcpKeyNotFound": "Gako hau ez dago jada",
     "mcpKeyNotYours": "Gakoaren jabe den kontuak bakarrik egin dezake hori",
     "mcpOAuthIssuer": "Idatzi biderik gabeko https helbide bat, mesedez, adibidez https://files.example.com",
-    "mcpOAuthNeedsSignIn": "OAuth bidezko saio-hasiera guztiek CannonCommander-en saioa hasten badute bakarrik dabil",
+    "mcpOAuthDesktop": "Mahaigaineko aplikazioak ez du helbide publikorik OAuth bidez saioa hasteko",
     "noSystemMenu": "Ordenagailu honek ez du bere laster-menurik",
     "noPropertiesDialog": "Hemen ez dago sistemaren propietateen elkarrizketa-koadrorik",
     "notAProgram": "Hau ez da administratzaile gisa exekuta daitekeen programa bat",
@@ -4232,10 +4225,6 @@
     "linkNoUploads": "Esteka honen bidez ezin da ezer igo",
     "linkNothingHere": "Estekaren leku honetan ez dago ezer",
     "linkOwnerGone": "Esteka honen atzean zegoen kontua ez dago jada",
-    "linkPasswordShort": {
-      "one": "Pasahitzak gutxienez karaktere {n} behar du",
-      "other": "Pasahitzak gutxienez {n} karaktere behar ditu"
-    },
     "linkPasswordWrong": "Pasahitz hau ez da zuzena",
     "loginNameMissing": "Saio-hasierako izena falta da",
     "loginNameRule": "Saio-hasierako izenak letra xeheak behar ditu, gutxienez bi",
@@ -4295,10 +4284,6 @@
     "ownPasswordElsewhere": "Zure pasahitza Kontua eta segurtasuna atalean aldatzen duzu",
     "ownSessionsElsewhere": "Zure saioak, tokenak eta sarbide-gakoak Kontua eta segurtasuna atalean amaitzen dituzu",
     "passwordMissing": "Pasahitza falta da",
-    "passwordShort": {
-      "one": "Pasahitzak gutxienez karaktere {n} behar du",
-      "other": "Pasahitzak gutxienez {n} karaktere behar ditu"
-    },
     "pathSlash": "Bideak / ikurrarekin hasi behar du",
     "pickShareFolder": "Aukeratu user share bateko karpeta bat",
     "pickUserFolder": "Aukeratu erabiltzaileak ikus dezakeen karpeta",
@@ -4420,10 +4405,8 @@
     "newPassword": "Pasahitz berria",
     "setPassword": "Ezarri pasahitza",
     "saving": "Gordetzen…",
-    "short": {
-      "one": "Pasahitz berriak gutxienez karaktere {n} behar du.",
-      "other": "Pasahitz berriak gutxienez {n} karaktere behar ditu."
-    },
+    "shortHint": "{min} karaktere baino gutxiago. Balio du, baina pasahitz luzeago bat zailagoa da asmatzen.",
+    "longer": "Pasahitz luzeago bat zailagoa litzateke asmatzen.",
     "resetRejected": "Kodea okerra da edo iraungi da. Iraungi bada, erregistroak berri bat erakusten du orain.",
     "failed": "Ez da ondo atera. Saiatu berriro.",
     "needBoth": "Idatzi izena eta pasahitza.",
@@ -4437,15 +4420,15 @@
     "tile": {
       "confirm": "Berretsi",
       "needsPassword": {
-        "title": "Horretarako pasahitz bat behar da lehenik",
-        "reason": "Ezarri goian zure pasahitza. Horrekin beti sartzen zara, beste bide batek huts egiten duenean ere."
+        "title": "Prest, pasahitz bat dagoenean",
+        "reason": "CannonCommander denontzat irekita dago orain, beraz hemen ez dago babesteko ezer oraindik. Ezarri pasahitz bat goian nahi duzunean, eta hau prest egongo da."
       },
       "notLocal": {
         "title": "Hau zure saio-hasierako zerbitzutik dator",
         "reason": "{name} bidez hasten duzu saioa. Konfiguratu han bi faktoreko autentifikazioa eta sarbide-gakoak."
       },
       "password": {
-        "hint": "Pasahitzak gutxienez {min} karaktere behar ditu. Aldatzeak beste saio guztiak amaitzen ditu.",
+        "hint": "{min} karaktere edo gehiagoko pasahitza zaila da asmatzen, baina laburrago batek ere balio du. Aldatzeak beste saio guztiak amaitzen ditu.",
         "openHint": "Pasahitzik ezarri ez den bitartean, CannonCommander irekita dago eta bertara iristen den edonor administratzailea da.",
         "viaService": "{name} bidez hasten duzu saioa, beraz kontu honek ez du pasahitzik hemen.",
         "set": "Ezarrita",
@@ -4561,6 +4544,8 @@
         "neverUsed": "inoiz erabili gabea",
         "expires": "iraungitzen da {when}",
         "forever": "ez da iraungitzen",
+        "endsWhenClosed": "CannonCommander-ek saioa hasteko eskatzen duenean amaitzen da",
+        "openHint": "CannonCommander-ek ez du pasahitzik oraindik. Orain sortutako token batek zure izenean jarduten du, eta CannonCommander-ek saioa hasteko eskatzen duenean uzten dio funtzionatzeari, lehen pasahitzaren edo saio-hasierako lehen zerbitzuaren ondoren.",
         "revoke": "Baliogabetu",
         "revokeText": "{name} erabiltzen duenak ez du sarbiderik izango horren ondoren.",
         "revoked": "Tokena baliogabetu da",
@@ -4613,6 +4598,7 @@
         "whoGetsIn": "{name} zerbitzuak erabakitzen du nork has dezakeen saioa, adibidez bere taldeen bidez.",
         "role": "Berrientzako rola",
         "roleHint": "{name} zerbitzuak lehen aldiz sartzen uzten duenak {role} rola jasotzen du hemen.",
+        "openBinds": "CannonCommander-ek ez du pasahitzik oraindik. Ondo ateratzen den saio-hasierako proba batek {name}-ko zure kontua hemengo jabe bihurtzen du eta {name} aktibatzen du. Hortik aurrera denek hasten dute saioa, eta zu {name} bidez saioa hasita itzultzen zara. Azken zerbitzua desaktibatzeak CannonCommander berriro irekitzen du.",
         "issuer": "Helbidea",
         "issuerHint": "Zerbitzuaren beraren helbidea, bere OpenID datuak argitaratzen dituen tokia, adibidez https://id.example.",
         "clientId": "Bezeroaren IDa",

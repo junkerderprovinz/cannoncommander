@@ -12,7 +12,7 @@ export interface McpKey {
 export interface McpOAuth { possible: boolean; enabled: boolean; issuer: string; active: boolean; grantLimit: number }
 export interface McpWriteLimits { entriesPerCall: number; entriesPerHour: number; filesPerCall: number; bytesPerCall: number; callsPerMinute: number }
 export interface McpKeys {
-  endpointPath: string; limit: number; signIn: boolean; hostAllowsKeys: boolean; desktop: boolean; writeLimits: McpWriteLimits;
+  endpointPath: string; limit: number; signIn: boolean; desktop: boolean; writeLimits: McpWriteLimits;
   keys: McpKey[]; revoked: McpKey[]; oauth: McpOAuth;
   stats?: { requests: Record<string, number>; tools: Record<string, number> };
 }

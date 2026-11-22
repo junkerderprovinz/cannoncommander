@@ -6,6 +6,7 @@ import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, win, type WinEntry } from '@/core/windows';
 import { withPassword } from '@/signin/kit';
+import { shortNote, shortSaved } from '@/signin/words';
 import { useUser } from '@/stores/user';
 import { t } from '@/i18n';
 import { attempt, c, cn, fail, stepFoot } from '@/features/config/shared';
@@ -39,7 +40,6 @@ async function save() {
   if (u?.owner && d.role !== 'admin') return fail(t('signin.errors.accountOwner'), at('#a-urole'));
   if (u && u.role === 'admin' && d.role !== 'admin' && admins().length === 1) return fail(c('users.needAdmin'), at('#a-urole'));
   if (pwOpen.value) {
-    if (pw1.value.length < 12) return fail(c('users.pwShort'), at('#a-upw'));
     if (pw1.value !== pw2.value) return fail(c('users.pwDiffer'), at('#a-upw2'));
   }
   const groups = props.groups.filter((g) => inGroup[g.name]).map((g) => g.name);
@@ -51,7 +51,7 @@ async function save() {
   const done = await attempt(withPassword(() => (u ? admin.updateUser(u.name, { ...body, ...change }) : admin.createUser({ ...body, password: pw1.value }))), at('#a-uname'));
   if (!done) return;
   props.win.close();
-  toast(isNew ? c('users.created', { name: body.full }) : pwOpen.value ? c(revoke.value ? 'access.savedPwEnded' : 'users.savedPw') : c('saved'));
+  toast((isNew ? c('users.created', { name: body.full }) : pwOpen.value ? c(revoke.value ? 'access.savedPwEnded' : 'users.savedPw') : c('saved')) + shortSaved(done.value));
   props.saved();
 }
 
@@ -85,7 +85,7 @@ onMounted(() => {
   </SubCard>
   <SubCard v-if="!self">
     <template v-if="pwOpen">
-      <FieldRow :label="c('users.password')" :hint="c('users.pwTip')"><PasswordField id="a-upw" v-model="pw1" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
+      <FieldRow :label="c('users.password')"><PasswordField id="a-upw" v-model="pw1" width="medium" autocomplete="new-password" :text="eyeWords()" :note="shortNote(pw1)" /></FieldRow>
       <FieldRow :label="c('users.repeat')"><PasswordField id="a-upw2" v-model="pw2" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
       <FieldRow v-if="!isNew" :label="c('access.revoke')" :hint="c('access.revokeTip')"><Toggle id="a-urevoke" v-model="revoke" /></FieldRow>
     </template>

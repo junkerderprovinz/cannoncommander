@@ -34,7 +34,7 @@ describe('the sign-in words', () => {
 
     it(`leave no word of the card, the tile or the password question unsaid in ${lang}`, async () => {
       await setLanguage(lang);
-      expect(unsaid(cardText(12))).toEqual([]);
+      expect(unsaid(cardText())).toEqual([]);
       expect(unsaid(tileText())).toEqual([]);
       expect(unsaid(reauthText())).toEqual([]);
     });
@@ -59,7 +59,7 @@ describe('the sign-in words', () => {
   });
 
   it('take the second password field and its mismatch from GlimStone, as every PasswordField says them', () => {
-    expect(cardText(12)).toMatchObject({ confirmPassword: 'Passwort bestätigen', mismatch: 'Die Passwörter stimmen nicht überein' });
+    expect(cardText()).toMatchObject({ confirmPassword: 'Passwort bestätigen', mismatch: 'Die Passwörter stimmen nicht überein' });
   });
 
   it('name what a reset took away, and leave out what it did not', () => {

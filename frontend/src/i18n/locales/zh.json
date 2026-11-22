@@ -886,7 +886,6 @@
       "scope": "范围",
       "scopeTip": "此人只能看到这个文件夹及其中的一切。",
       "password": "密码",
-      "pwTip": "至少 12 个字符。",
       "repeat": "再次输入",
       "pwSet": "已设置",
       "pwNew": "重新设置",
@@ -897,7 +896,6 @@
       "nameTaken": "此登录名已存在",
       "ownAdmin": "你自己的管理员角色只能由另一位管理员取消",
       "needAdmin": "至少需要一名管理员",
-      "pwShort": "密码至少需要 12 个字符",
       "pwDiffer": "两次输入的密码不一致",
       "groupName": "名称",
       "groupNamePh": "例如 family",
@@ -1008,8 +1006,6 @@
       },
       "askPw": "需要密码",
       "askPwTip": "打开链接的人必须先输入密码。",
-      "pwTip": "至少 6 个字符。",
-      "pwShort": "密码至少需要 6 个字符",
       "exhausted": "已用完",
       "message": "给访问者的留言",
       "messageTip": "显示在链接页面的文件上方，例如问候或说明。可以留空。",
@@ -1323,7 +1319,6 @@
       "endpoint": "端点",
       "endpointTip": "你的助手连接到这里。它使用 Streamable HTTP，并在 Authorization 或 X-API-Key 请求头中发送密钥。",
       "desktopPort": "桌面应用只能从这台电脑访问。如果启动时端口已被占用，它会换一个端口。这时只需在客户端里填上新地址就行。",
-      "hostRefused": "此页面是以 {host} 打开的。在不登录的情况下，CannonCommander 只在通过 IP 地址或 tower.local 这类本地名称打开时才创建密钥，这样互联网上的网页就无法创建密钥。请通过本地地址打开 CannonCommander。",
       "connect": "连接客户端",
       "connectTip": "选择你的客户端，它会得到一个专属密钥，你也会得到可以直接复制的配置。助手读取的内容，例如文件夹、文件名或文本文件的内容，会发送给它背后的 AI 提供商。",
       "choose": "选择客户端",
@@ -1404,7 +1399,7 @@
       },
       "oauth": "通过 OAuth 登录",
       "oauthTip": "用于 ChatGPT、claude.ai 上的 Claude 以及其他无法使用密钥的服务。它们会把你带到 CannonCommander 的一个页面，你在那里登录并允许访问。关闭后，所有这类客户端都会被登出。",
-      "oauthNeedsSignIn": "只有当所有人都需要登录 CannonCommander 时才能使用。",
+      "oauthDesktop": "桌面应用没有用于 OAuth 登录的公开地址.",
       "issuer": "公开地址",
       "issuerTip": "可从互联网访问 CannonCommander 的 https 地址，不带路径，例如 https://files.example.com。更改后，每个客户端都需要重新登录。",
       "oauthSaved": "已保存通过 OAuth 登录的设置",
@@ -2850,7 +2845,6 @@
     "create": "创建链接",
     "badSlug": "地址需要 3 到 40 个字符：小写字母、数字和连字符",
     "slugTaken": "这个地址已被占用。点骰子会找一个可用的。",
-    "shortPassword": "密码至少需要 6 个字符",
     "rerolled": "已生成新地址，旧地址已失效",
     "together": "合集分享",
     "folderName": "文件夹名称",
@@ -4042,11 +4036,10 @@
     "mcpKeyLabel": "给密钥起一个不超过 64 个字符的名字",
     "mcpKeyLabelTaken": "已有一个可用密钥叫这个名字",
     "mcpKeyLimit": "你的可用密钥数量已达到一个账户的上限。撤销一个，就又有空位了",
-    "mcpKeyNeedsSignIn": "不登录时，只能通过 IP 地址或本地名称创建密钥",
     "mcpKeyNotFound": "这个密钥已不存在",
     "mcpKeyNotYours": "只有密钥所属的账户才能这样做",
     "mcpOAuthIssuer": "请输入不带路径的 https 地址，例如 https://files.example.com",
-    "mcpOAuthNeedsSignIn": "只有当所有人都需要登录 CannonCommander 时，才能使用通过 OAuth 登录",
+    "mcpOAuthDesktop": "桌面应用没有用于 OAuth 登录的公开地址",
     "noSystemMenu": "这台电脑没有自己的右键菜单",
     "noPropertiesDialog": "这里没有系统属性对话框",
     "notAProgram": "这不是可以以管理员身份运行的程序",
@@ -4095,9 +4088,6 @@
     "linkNoUploads": "此链接不允许上传",
     "linkNothingHere": "链接中的这个位置没有内容",
     "linkOwnerGone": "此链接所属的账户已不存在",
-    "linkPasswordShort": {
-      "other": "密码至少需要 {n} 个字符"
-    },
     "linkPasswordWrong": "密码不正确",
     "loginNameMissing": "缺少登录名",
     "loginNameRule": "登录名需要小写字母，至少两个",
@@ -4156,9 +4146,6 @@
     "ownPasswordElsewhere": "你自己的密码请在“账户和安全”中修改",
     "ownSessionsElsewhere": "你自己的会话、令牌和通行密钥请在“账户和安全”中结束",
     "passwordMissing": "缺少密码",
-    "passwordShort": {
-      "other": "密码至少需要 {n} 个字符"
-    },
     "pathSlash": "路径必须以 / 开头",
     "pickShareFolder": "请选择 User Share 中的文件夹",
     "pickUserFolder": "请选择该用户可以看到的文件夹",
@@ -4278,9 +4265,8 @@
     "newPassword": "新密码",
     "setPassword": "设置密码",
     "saving": "正在保存…",
-    "short": {
-      "other": "新密码至少需要 {n} 个字符。"
-    },
+    "shortHint": "少于 {min} 个字符。可以使用，不过更长的密码更难被猜到。",
+    "longer": "更长的密码会更难被猜到。",
     "resetRejected": "代码不对或已过期。如果已过期，日志里现在有一个新的。",
     "failed": "没有成功。请再试一次。",
     "needBoth": "请输入名称和密码。",
@@ -4294,15 +4280,15 @@
     "tile": {
       "confirm": "确认",
       "needsPassword": {
-        "title": "这需要先设置密码",
-        "reason": "在上方设置你自己的密码。即使其他方式不能用，你也总能用它进来。"
+        "title": "设置密码后即可使用",
+        "reason": "CannonCommander 现在对所有人开放，所以这里暂时没有需要保护的东西。随时在上方设置密码，这里就能用了。"
       },
       "notLocal": {
         "title": "这由你的登录服务管理",
         "reason": "你通过 {name} 登录。请在那里设置双重身份验证和通行密钥。"
       },
       "password": {
-        "hint": "密码至少需要 {min} 个字符。修改密码会结束所有其他会话。",
+        "hint": "{min} 个字符或更长的密码很难被猜到，不过更短的也可以用。更改密码会结束其他所有会话。",
         "openHint": "在设置密码之前，CannonCommander 是开放的，任何能访问它的人都是管理员。",
         "viaService": "你通过 {name} 登录，因此此账户在这里没有密码。",
         "set": "已设置",
@@ -4415,6 +4401,8 @@
         "neverUsed": "从未使用",
         "expires": "{when} 过期",
         "forever": "永不过期",
+        "endsWhenClosed": "在 CannonCommander 要求登录后失效",
+        "openHint": "CannonCommander 还没有密码。现在创建的令牌代表你，并会在 CannonCommander 要求登录后失效，也就是设置第一个密码或第一个登录服务之后。",
         "revoke": "撤销",
         "revokeText": "此后使用 {name} 的程序将无法再访问。",
         "revoked": "令牌已撤销",
@@ -4466,6 +4454,7 @@
         "whoGetsIn": "{name} 决定谁可以登录，比如通过它的组。",
         "role": "新用户的角色",
         "roleHint": "{name} 首次放行的人在这里获得 {role} 角色。",
+        "openBinds": "CannonCommander 还没有密码。测试登录成功后，你在 {name} 的账户会成为这里的所有者，{name} 也会开启。此后所有人都要登录，你会通过 {name} 以登录状态回来。关闭最后一个服务后，CannonCommander 会重新开放。",
         "issuer": "地址",
         "issuerHint": "服务自身的地址，它在那里发布 OpenID 信息，例如 https://id.example。",
         "clientId": "客户端 ID",

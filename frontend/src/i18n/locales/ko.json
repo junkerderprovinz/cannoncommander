@@ -886,7 +886,6 @@
       "scope": "범위",
       "scopeTip": "이 사람은 이 폴더와 그 안의 모든 것만 볼 수 있습니다.",
       "password": "비밀번호",
-      "pwTip": "12자 이상.",
       "repeat": "다시 입력",
       "pwSet": "설정됨",
       "pwNew": "새로 설정",
@@ -897,7 +896,6 @@
       "nameTaken": "이미 있는 로그인 이름입니다",
       "ownAdmin": "내 관리자 역할은 다른 관리자만 해제할 수 있습니다",
       "needAdmin": "관리자가 한 명 이상 있어야 합니다",
-      "pwShort": "비밀번호는 12자 이상이어야 합니다",
       "pwDiffer": "두 비밀번호가 같지 않습니다",
       "groupName": "이름",
       "groupNamePh": "예: family",
@@ -1008,8 +1006,6 @@
       },
       "askPw": "비밀번호 요구",
       "askPwTip": "링크를 여는 사람은 먼저 비밀번호를 입력해야 합니다.",
-      "pwTip": "6자 이상.",
-      "pwShort": "비밀번호는 6자 이상이어야 합니다",
       "exhausted": "소진됨",
       "message": "받는 사람에게 남길 메시지",
       "messageTip": "링크 페이지의 파일 위에 표시됩니다. 인사나 안내 등을 적어 보세요. 비워 두어도 됩니다.",
@@ -1323,7 +1319,6 @@
       "endpoint": "엔드포인트",
       "endpointTip": "어시스턴트가 여기에 연결합니다. Streamable HTTP로 통신하며 키를 Authorization 또는 X-API-Key 헤더에 담아 보냅니다.",
       "desktopPort": "데스크톱 앱은 이 컴퓨터에서만 접속할 수 있습니다. 시작할 때 포트가 이미 사용 중이면 다른 포트를 씁니다. 그럴 때는 클라이언트에 새 주소를 입력하기만 하면 됩니다.",
-      "hostRefused": "이 페이지는 {host} 주소로 열려 있습니다. 로그인을 쓰지 않으면 CannonCommander는 IP 주소나 tower.local 같은 로컬 이름으로 열었을 때만 키를 만듭니다. 인터넷의 웹 페이지가 키를 만들지 못하게 하기 위해서입니다. CannonCommander를 로컬 주소로 열어 주세요.",
       "connect": "클라이언트 연결",
       "connectTip": "클라이언트를 고르면 그 클라이언트 전용 키와 바로 복사할 수 있는 구성이 준비됩니다. 어시스턴트가 읽는 폴더, 파일 이름, 텍스트 파일 내용 등은 그 뒤에 있는 AI 제공업체로 전송됩니다.",
       "choose": "클라이언트 선택",
@@ -1404,7 +1399,7 @@
       },
       "oauth": "OAuth 로그인",
       "oauthTip": "ChatGPT, claude.ai의 Claude 등 키를 받을 수 없는 서비스를 위한 기능입니다. 이 서비스들이 CannonCommander 페이지로 안내하면, 그곳에서 로그인하고 접근을 허용합니다. 끄면 이런 클라이언트가 모두 로그아웃됩니다.",
-      "oauthNeedsSignIn": "모든 사용자가 CannonCommander에 로그인하는 경우에만 쓸 수 있습니다.",
+      "oauthDesktop": "데스크톱 앱에는 OAuth 로그인을 위한 공개 주소가 없습니다.",
       "issuer": "공개 주소",
       "issuerTip": "인터넷에서 CannonCommander에 접속할 수 있는, 경로 없는 https 주소입니다. 예: https://files.example.com. 이 주소가 바뀌면 모든 클라이언트가 다시 로그인합니다.",
       "oauthSaved": "OAuth 로그인 설정을 저장했습니다",
@@ -2850,7 +2845,6 @@
     "create": "링크 만들기",
     "badSlug": "주소는 소문자, 숫자, 하이픈으로 3자에서 40자여야 합니다",
     "slugTaken": "이미 쓰이는 주소입니다. 주사위가 비어 있는 주소를 찾아 줍니다.",
-    "shortPassword": "비밀번호는 6자 이상이어야 합니다",
     "rerolled": "새 주소를 만들었습니다. 이전 주소는 더 이상 열리지 않습니다",
     "together": "모아서 공유",
     "folderName": "폴더 이름",
@@ -4042,11 +4036,10 @@
     "mcpKeyLabel": "키 이름은 64자 이내로 정하세요",
     "mcpKeyLabelTaken": "같은 이름의 활성 키가 이미 있습니다",
     "mcpKeyLimit": "한 계정이 가질 수 있는 만큼 활성 키가 이미 있습니다. 하나를 취소하면 다시 만들 수 있습니다",
-    "mcpKeyNeedsSignIn": "로그인을 쓰지 않으면 IP 주소나 로컬 이름으로만 키를 만들 수 있습니다",
     "mcpKeyNotFound": "이 키는 더 이상 없습니다",
     "mcpKeyNotYours": "키를 가진 계정만 할 수 있습니다",
     "mcpOAuthIssuer": "경로 없는 https 주소를 입력해 주세요. 예: https://files.example.com",
-    "mcpOAuthNeedsSignIn": "OAuth 로그인은 모든 사용자가 CannonCommander에 로그인하는 경우에만 쓸 수 있습니다",
+    "mcpOAuthDesktop": "데스크톱 앱에는 OAuth 로그인을 위한 공개 주소가 없습니다",
     "noSystemMenu": "이 컴퓨터에는 자체 오른쪽 클릭 메뉴가 없습니다",
     "noPropertiesDialog": "여기에는 시스템 속성 대화 상자가 없습니다",
     "notAProgram": "관리자 권한으로 실행할 수 있는 프로그램이 아닙니다",
@@ -4095,9 +4088,6 @@
     "linkNoUploads": "이 링크로는 업로드할 수 없습니다",
     "linkNothingHere": "링크의 이 위치에는 아무것도 없습니다",
     "linkOwnerGone": "이 링크를 만든 계정이 더 이상 없습니다",
-    "linkPasswordShort": {
-      "other": "비밀번호는 {n}자 이상이어야 합니다"
-    },
     "linkPasswordWrong": "비밀번호가 맞지 않습니다",
     "loginNameMissing": "로그인 이름이 없습니다",
     "loginNameRule": "로그인 이름에는 소문자가 두 글자 이상 필요합니다",
@@ -4156,9 +4146,6 @@
     "ownPasswordElsewhere": "내 비밀번호는 ‘계정 및 보안’에서 바꾸세요",
     "ownSessionsElsewhere": "내 세션, 토큰, 패스키는 ‘계정 및 보안’에서 끝내세요",
     "passwordMissing": "비밀번호가 없습니다",
-    "passwordShort": {
-      "other": "비밀번호는 {n}자 이상이어야 합니다"
-    },
     "pathSlash": "경로는 /로 시작해야 합니다",
     "pickShareFolder": "User Share 안의 폴더를 고르세요",
     "pickUserFolder": "이 사용자가 볼 수 있는 폴더를 고르세요",
@@ -4278,9 +4265,8 @@
     "newPassword": "새 비밀번호",
     "setPassword": "비밀번호 설정",
     "saving": "저장하는 중…",
-    "short": {
-      "other": "새 비밀번호는 {n}자 이상이어야 합니다."
-    },
+    "shortHint": "{min}자 미만입니다. 쓸 수는 있지만 더 긴 비밀번호가 추측하기 어렵습니다.",
+    "longer": "더 긴 비밀번호가 추측하기 더 어렵습니다.",
     "resetRejected": "코드가 틀렸거나 만료되었습니다. 만료되었다면 지금 로그에 새 코드가 있습니다.",
     "failed": "잘 되지 않았습니다. 다시 시도해 주세요.",
     "needBoth": "이름과 비밀번호를 입력하세요.",
@@ -4294,15 +4280,15 @@
     "tile": {
       "confirm": "확인",
       "needsPassword": {
-        "title": "먼저 비밀번호가 필요합니다",
-        "reason": "위에서 직접 비밀번호를 설정하세요. 다른 방법이 안 될 때도 이 비밀번호로 언제나 들어올 수 있습니다."
+        "title": "비밀번호가 생기면 준비됩니다",
+        "reason": "CannonCommander는 지금 모두에게 열려 있어서 여기서 아직 지킬 것이 없습니다. 원할 때 위에서 비밀번호를 설정하면 준비됩니다."
       },
       "notLocal": {
         "title": "이것은 로그인 서비스에서 관리합니다",
         "reason": "{name}(으)로 로그인합니다. 2단계 인증과 패스키는 그곳에서 설정하세요."
       },
       "password": {
-        "hint": "비밀번호는 {min}자 이상이어야 합니다. 바꾸면 다른 세션이 모두 끝납니다.",
+        "hint": "{min}자 이상의 비밀번호는 추측하기 어렵지만, 더 짧아도 쓸 수 있습니다. 바꾸면 다른 모든 세션이 끝납니다.",
         "openHint": "비밀번호를 설정하기 전까지 CannonCommander는 열려 있고, 접속하는 사람은 누구나 관리자가 됩니다.",
         "viaService": "{name}(으)로 로그인하므로 이 계정에는 여기 비밀번호가 없습니다.",
         "set": "설정됨",
@@ -4415,6 +4401,8 @@
         "neverUsed": "사용한 적 없음",
         "expires": "{when} 만료",
         "forever": "만료 없음",
+        "endsWhenClosed": "CannonCommander가 로그인을 요구하면 끝남",
+        "openHint": "CannonCommander에는 아직 비밀번호가 없습니다. 지금 만든 토큰은 나를 대신하며, 첫 비밀번호나 첫 로그인 서비스로 CannonCommander가 로그인을 요구하게 되면 더 이상 작동하지 않습니다.",
         "revoke": "취소",
         "revokeText": "이후 {name} 토큰을 쓰는 것은 더 이상 접근할 수 없습니다.",
         "revoked": "토큰을 취소했습니다",
@@ -4466,6 +4454,7 @@
         "whoGetsIn": "누가 로그인할 수 있는지는 예를 들어 그룹을 통해 {name}이(가) 결정합니다.",
         "role": "새로 온 사용자의 역할",
         "roleHint": "{name}이(가) 처음 들여보낸 사람은 여기서 {role} 역할을 받습니다.",
+        "openBinds": "CannonCommander에는 아직 비밀번호가 없습니다. 테스트 로그인이 성공하면 {name}의 내 계정이 이곳의 소유자가 되고 {name}이(가) 켜집니다. 그때부터 모두 로그인하며, 나는 {name}을(를) 통해 로그인된 채로 돌아옵니다. 마지막 서비스를 끄면 CannonCommander가 다시 열립니다.",
         "issuer": "주소",
         "issuerHint": "서비스가 OpenID 정보를 게시하는 자체 주소입니다. 예: https://id.example.",
         "clientId": "클라이언트 ID",

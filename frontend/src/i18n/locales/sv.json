@@ -923,7 +923,6 @@
       "scope": "Område",
       "scopeTip": "Personen ser bara den här mappen och allt i den.",
       "password": "Lösenord",
-      "pwTip": "Minst 12 tecken.",
       "repeat": "Upprepa",
       "pwSet": "Angivet",
       "pwNew": "Ange ett nytt",
@@ -934,7 +933,6 @@
       "nameTaken": "Det inloggningsnamnet finns redan",
       "ownAdmin": "Bara en annan admin kan ta ifrån dig din egen adminroll",
       "needAdmin": "Det måste finnas minst en admin",
-      "pwShort": "Lösenordet måste ha minst 12 tecken",
       "pwDiffer": "De två lösenorden är inte likadana",
       "groupName": "Namn",
       "groupNamePh": "till exempel familj",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Kräv lösenord",
       "askPwTip": "Den som öppnar länken måste först ange lösenordet.",
-      "pwTip": "Minst 6 tecken.",
-      "pwShort": "Lösenordet måste ha minst 6 tecken",
       "exhausted": "Förbrukad",
       "message": "Meddelande till besökarna",
       "messageTip": "Visas på länkens sida ovanför filerna, till exempel en hälsning eller ett tips. Får lämnas tomt.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Slutpunkt",
       "endpointTip": "Hit ansluter din assistent. Den talar Streamable HTTP och skickar nyckeln i headern Authorization eller X-API-Key.",
       "desktopPort": "Skrivbordsappen kan bara nås från den här datorn. Är dess port upptagen när den startar tar den en annan. Då skriver du bara in den nya adressen i klienten.",
-      "hostRefused": "Den här sidan öppnades som {host}. Utan inloggning skapar CannonCommander bara nycklar under en IP-adress eller ett lokalt namn som tower.local, så att ingen webbsida på internet kan göra det. Öppna därför CannonCommander via dess lokala adress.",
       "connect": "Anslut en klient",
       "connectTip": "Välj din klient, så får den en egen nyckel och du rätt konfiguration att kopiera. Det assistenten läser, som mappar, filnamn eller innehållet i en textfil, går till AI-leverantören bakom den.",
       "choose": "Välj en klient",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Inloggning via OAuth",
       "oauthTip": "För ChatGPT, Claude på claude.ai och andra tjänster som inte kan ta emot en nyckel. De skickar dig till en sida i CannonCommander där du loggar in och ger åtkomst. Stänger du av det loggas alla de här klienterna ut.",
-      "oauthNeedsSignIn": "Det fungerar bara när alla loggar in i CannonCommander.",
+      "oauthDesktop": "Skrivbordsappen har ingen offentlig adress för inloggning via OAuth.",
       "issuer": "Offentlig adress",
       "issuerTip": "https-adressen utan sökväg där CannonCommander nås från internet, till exempel https://files.example.com. Ändras den måste varje klient logga in igen.",
       "oauthSaved": "Inloggning via OAuth sparad",
@@ -2944,7 +2939,6 @@
     "create": "Skapa länk",
     "badSlug": "Adressen behöver 3 till 40 tecken: gemener, siffror och bindestreck",
     "slugTaken": "Den här adressen är redan upptagen. Tärningen hittar en ledig.",
-    "shortPassword": "Lösenordet måste ha minst 6 tecken",
     "rerolled": "Ny adress slagen, den gamla leder ingenstans",
     "together": "Samlad delning",
     "folderName": "Mappens namn",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Ge nyckeln ett namn på högst 64 tecken",
     "mcpKeyLabelTaken": "En aktiv nyckel heter redan så",
     "mcpKeyLimit": "Du har redan så många aktiva nycklar som ett konto kan ha. Återkalla en så finns det plats igen",
-    "mcpKeyNeedsSignIn": "Utan inloggning kan nycklar bara skapas via en IP-adress eller ett lokalt namn",
     "mcpKeyNotFound": "Den här nyckeln finns inte längre",
     "mcpKeyNotYours": "Det kan bara kontot som äger nyckeln göra",
     "mcpOAuthIssuer": "Ange en https-adress utan sökväg, till exempel https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Inloggning via OAuth fungerar bara när alla loggar in i CannonCommander",
+    "mcpOAuthDesktop": "Skrivbordsappen har ingen offentlig adress för inloggning via OAuth",
     "noSystemMenu": "Den här datorn har ingen egen snabbmeny",
     "noPropertiesDialog": "Här finns ingen egenskapsdialog från systemet",
     "notAProgram": "Det här är inget program som kan köras som administratör",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Den här länken tar inte emot uppladdningar",
     "linkNothingHere": "Det finns inget på det här stället i länken",
     "linkOwnerGone": "Kontot bakom den här länken finns inte längre",
-    "linkPasswordShort": {
-      "one": "Lösenordet måste ha minst {n} tecken",
-      "other": "Lösenordet måste ha minst {n} tecken"
-    },
     "linkPasswordWrong": "Det här lösenordet stämmer inte",
     "loginNameMissing": "Inloggningsnamnet saknas",
     "loginNameRule": "Inloggningsnamnet ska bestå av gemener, minst två",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Ditt eget lösenord ändrar du under Konto och säkerhet",
     "ownSessionsElsewhere": "Dina egna sessioner, tokens och nycklar avslutar du under Konto och säkerhet",
     "passwordMissing": "Lösenordet saknas",
-    "passwordShort": {
-      "one": "Lösenordet måste ha minst {n} tecken",
-      "other": "Lösenordet måste ha minst {n} tecken"
-    },
     "pathSlash": "Sökvägen måste börja med /",
     "pickShareFolder": "Välj en mapp i en user-share",
     "pickUserFolder": "Välj mappen som användaren får se",
@@ -4429,10 +4414,8 @@
     "newPassword": "Nytt lösenord",
     "setPassword": "Ange lösenord",
     "saving": "Sparar …",
-    "short": {
-      "one": "Det nya lösenordet måste ha minst {n} tecken.",
-      "other": "Det nya lösenordet måste ha minst {n} tecken."
-    },
+    "shortHint": "Under {min} tecken. Det fungerar, men ett längre lösenord är svårare att gissa.",
+    "longer": "Ett längre lösenord vore svårare att gissa.",
     "resetRejected": "Koden är fel eller har gått ut. Om den har gått ut visar loggen nu en ny.",
     "failed": "Det fungerade inte. Försök igen.",
     "needBoth": "Ange namn och lösenord.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Bekräfta",
       "needsPassword": {
-        "title": "Det här kräver först ett lösenord",
-        "reason": "Sätt ett eget lösenord ovan. Med det kommer du alltid in, även när en annan väg inte fungerar."
+        "title": "Klart så snart det finns ett lösenord",
+        "reason": "CannonCommander är öppen för alla just nu, så här finns inget att skydda än. Sätt ett lösenord ovan när du vill, så är det här klart."
       },
       "notLocal": {
         "title": "Det här sköts av din inloggningstjänst",
         "reason": "Du loggar in via {name}. Ställ in tvåfaktorsautentisering och lösennycklar där."
       },
       "password": {
-        "hint": "Ett lösenord behöver minst {min} tecken. Ändrar du det avslutas alla andra sessioner.",
+        "hint": "Ett lösenord på {min} tecken eller fler är svårt att gissa, men ett kortare fungerar också. Att ändra det avslutar alla andra sessioner.",
         "openHint": "Så länge inget lösenord är satt är CannonCommander öppet, och alla som når det är administratör.",
         "viaService": "Du loggar in via {name}, så det här kontot har inget lösenord här.",
         "set": "Angivet",
@@ -4570,6 +4553,8 @@
         "neverUsed": "aldrig använd",
         "expires": "går ut {when}",
         "forever": "går inte ut",
+        "endsWhenClosed": "upphör när CannonCommander ber om inloggning",
+        "openHint": "CannonCommander har inget lösenord än. En token du skapar nu står för dig och slutar fungera när CannonCommander ber om inloggning, efter ett första lösenord eller en första inloggningstjänst.",
         "revoke": "Återkalla",
         "revokeText": "Det som använder {name} kommer inte in längre efter det här.",
         "revoked": "Token återkallad",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} bestämmer vem som får logga in, till exempel genom sina grupper.",
         "role": "Roll för nya",
         "roleHint": "Den som {name} släpper in för första gången får rollen {role} här.",
+        "openBinds": "CannonCommander har inget lösenord än. En testinloggning som lyckas gör ditt konto hos {name} till ägare här och slår på {name}. Från och med då loggar alla in, och du kommer tillbaka inloggad via {name}. Stänger du av den sista tjänsten är CannonCommander öppen igen.",
         "issuer": "Adress",
         "issuerHint": "Tjänstens egen adress, där den publicerar sina OpenID-uppgifter, till exempel https://id.example.",
         "clientId": "Klient-ID",

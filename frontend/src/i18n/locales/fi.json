@@ -923,7 +923,6 @@
       "scope": "Alue",
       "scopeTip": "Henkilö näkee vain tämän kansion ja kaiken sen sisällä.",
       "password": "Salasana",
-      "pwTip": "Vähintään 12 merkkiä.",
       "repeat": "Toista",
       "pwSet": "Asetettu",
       "pwNew": "Aseta uusi",
@@ -934,7 +933,6 @@
       "nameTaken": "Tämä käyttäjätunnus on jo käytössä",
       "ownAdmin": "Vain toinen ylläpitäjä voi poistaa oman ylläpitäjäroolisi",
       "needAdmin": "Vähintään yksi ylläpitäjä tarvitaan",
-      "pwShort": "Salasanassa on oltava vähintään 12 merkkiä",
       "pwDiffer": "Salasanat eivät täsmää",
       "groupName": "Nimi",
       "groupNamePh": "esimerkiksi perhe",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Vaadi salasana",
       "askPwTip": "Linkin avaajan on ensin syötettävä salasana.",
-      "pwTip": "Vähintään 6 merkkiä.",
-      "pwShort": "Salasanassa on oltava vähintään 6 merkkiä",
       "exhausted": "Käytetty loppuun",
       "message": "Viesti vierailijoille",
       "messageTip": "Näkyy linkin sivulla tiedostojen yläpuolella, esimerkiksi tervehdys tai vihje. Voi jäädä tyhjäksi.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Päätepiste",
       "endpointTip": "Tähän avustajasi yhdistää. Se puhuu Streamable HTTP:tä ja lähettää avaimen otsakkeessa Authorization tai X-API-Key.",
       "desktopPort": "Työpöytäsovellukseen pääsee vain tältä tietokoneelta. Jos sen portti on käynnistyessä varattu, se valitsee toisen. Silloin päivität vain uuden osoitteen asiakasohjelmaan.",
-      "hostRefused": "Tämä sivu on avattu osoitteella {host}. Ilman kirjautumista CannonCommander luo avaimia vain IP-osoitteen tai paikallisen nimen, kuten tower.local, kautta, jotta mikään internetin verkkosivu ei voi tehdä sitä. Avaa siksi CannonCommander sen paikallisella osoitteella.",
       "connect": "Yhdistä asiakasohjelma",
       "connectTip": "Valitse asiakasohjelmasi, niin se saa oman avaimen ja sinä valmiin määrityksen kopioitavaksi. Se, mitä avustaja lukee, kuten kansiot, tiedostonimet tai tekstitiedoston sisältö, menee sen takana olevalle tekoälypalvelulle.",
       "choose": "Valitse asiakasohjelma",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Kirjautuminen OAuthilla",
       "oauthTip": "ChatGPT:lle, claude.ai:n Claudelle ja muille palveluille, jotka eivät ota vastaan avainta. Ne ohjaavat sinut CannonCommanderin sivulle, jolla kirjaudut ja sallit käytön. Pois kytkeminen kirjaa kaikki nämä asiakasohjelmat ulos.",
-      "oauthNeedsSignIn": "Tämä toimii vain, kun kaikki kirjautuvat CannonCommanderiin.",
+      "oauthDesktop": "Työpöytäsovelluksella ei ole julkista osoitetta OAuth-kirjautumiselle.",
       "issuer": "Julkinen osoite",
       "issuerTip": "https-osoite ilman polkua, josta CannonCommander tavoitetaan internetistä, esimerkiksi https://files.example.com. Jos se muuttuu, jokainen asiakasohjelma kirjautuu uudelleen.",
       "oauthSaved": "Kirjautuminen OAuthilla tallennettu",
@@ -2944,7 +2939,6 @@
     "create": "Luo linkki",
     "badSlug": "Osoitteessa on oltava vähintään 3 ja enintään 40 merkkiä: pieniä kirjaimia, numeroita ja yhdysmerkkejä",
     "slugTaken": "Tämä osoite on jo käytössä. Noppa löytää vapaan.",
-    "shortPassword": "Salasanassa on oltava vähintään 6 merkkiä",
     "rerolled": "Uusi osoite heitetty, vanha ei johda minnekään",
     "together": "Yhteinen jako",
     "folderName": "Kansion nimi",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Anna avaimelle enintään 64 merkin nimi",
     "mcpKeyLabelTaken": "Aktiivisella avaimella on jo tämä nimi",
     "mcpKeyLimit": "Sinulla on jo niin monta aktiivista avainta kuin tilillä voi olla. Peru yksi, niin tilaa vapautuu",
-    "mcpKeyNeedsSignIn": "Ilman kirjautumista avaimia voi luoda vain IP-osoitteen tai paikallisen nimen kautta",
     "mcpKeyNotFound": "Tätä avainta ei enää ole",
     "mcpKeyNotYours": "Tämän voi tehdä vain tili, jolle avain kuuluu",
     "mcpOAuthIssuer": "Anna https-osoite ilman polkua, esimerkiksi https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Kirjautuminen OAuthilla toimii vain, kun kaikki kirjautuvat CannonCommanderiin",
+    "mcpOAuthDesktop": "Työpöytäsovelluksella ei ole julkista osoitetta OAuth-kirjautumiselle",
     "noSystemMenu": "Tällä tietokoneella ei ole omaa pikavalikkoa",
     "noPropertiesDialog": "Täällä ei ole järjestelmän ominaisuusikkunaa",
     "notAProgram": "Tämä ei ole ohjelma, jonka voi suorittaa järjestelmänvalvojana",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Tämän linkin kautta ei voi ladata mitään palvelimelle",
     "linkNothingHere": "Tässä kohdassa linkkiä ei ole mitään",
     "linkOwnerGone": "Tämän linkin takana olevaa tiliä ei enää ole",
-    "linkPasswordShort": {
-      "one": "Salasanassa on oltava vähintään {n} merkki",
-      "other": "Salasanassa on oltava vähintään {n} merkkiä"
-    },
     "linkPasswordWrong": "Tämä salasana on väärä",
     "loginNameMissing": "Käyttäjätunnus puuttuu",
     "loginNameRule": "Käyttäjätunnuksessa on oltava pieniä kirjaimia, vähintään kaksi",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Oman salasanasi vaihdat kohdassa Tili ja turvallisuus",
     "ownSessionsElsewhere": "Omat istuntosi, tunnuksesi ja pääsyavaimesi lopetat kohdassa Tili ja turvallisuus",
     "passwordMissing": "Salasana puuttuu",
-    "passwordShort": {
-      "one": "Salasanassa on oltava vähintään {n} merkki",
-      "other": "Salasanassa on oltava vähintään {n} merkkiä"
-    },
     "pathSlash": "Polun on alettava merkillä /",
     "pickShareFolder": "Valitse kansio user-sharesta",
     "pickUserFolder": "Valitse kansio, jonka käyttäjä saa nähdä",
@@ -4429,10 +4414,8 @@
     "newPassword": "Uusi salasana",
     "setPassword": "Aseta salasana",
     "saving": "Tallennetaan …",
-    "short": {
-      "one": "Uudessa salasanassa on oltava vähintään {n} merkki.",
-      "other": "Uudessa salasanassa on oltava vähintään {n} merkkiä."
-    },
+    "shortHint": "Alle {min} merkkiä. Se toimii, mutta pidempää salasanaa on vaikeampi arvata.",
+    "longer": "Pidempää salasanaa olisi vaikeampi arvata.",
     "resetRejected": "Koodi on väärä tai vanhentunut. Jos se vanheni, lokissa näkyy nyt uusi.",
     "failed": "Se ei onnistunut. Yritä uudelleen.",
     "needBoth": "Syötä nimi ja salasana.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Vahvista",
       "needsPassword": {
-        "title": "Tähän tarvitaan ensin salasana",
-        "reason": "Aseta yllä oma salasana. Sillä pääset aina sisään, vaikka jokin toinen tapa ei toimisi."
+        "title": "Valmis, kun salasana on asetettu",
+        "reason": "CannonCommander on nyt avoinna kaikille, joten täällä ei ole vielä mitään suojattavaa. Aseta salasana yllä milloin haluat, niin tämä on valmis."
       },
       "notLocal": {
         "title": "Tämä hoituu kirjautumispalvelussasi",
         "reason": "Kirjaudut palvelulla {name}. Ota kaksivaiheinen tunnistautuminen ja pääsyavaimet käyttöön siellä."
       },
       "password": {
-        "hint": "Salasanassa on oltava vähintään {min} merkkiä. Sen vaihtaminen päättää kaikki muut istunnot.",
+        "hint": "Vähintään {min} merkin salasanaa on vaikea arvata, mutta lyhyempikin toimii. Sen vaihtaminen päättää kaikki muut istunnot.",
         "openHint": "Niin kauan kuin salasanaa ei ole asetettu, CannonCommander on auki, ja jokainen sen tavoittava on ylläpitäjä.",
         "viaService": "Kirjaudut palvelulla {name}, joten tällä tilillä ei ole täällä salasanaa.",
         "set": "Asetettu",
@@ -4570,6 +4553,8 @@
         "neverUsed": "ei koskaan käytetty",
         "expires": "vanhenee {when}",
         "forever": "ei vanhene",
+        "endsWhenClosed": "päättyy, kun CannonCommander alkaa vaatia kirjautumista",
+        "openHint": "CannonCommanderilla ei ole vielä salasanaa. Nyt tehty tunnus toimii puolestasi ja lakkaa toimimasta, kun CannonCommander alkaa vaatia kirjautumista, ensimmäisen salasanan tai ensimmäisen kirjautumispalvelun jälkeen.",
         "revoke": "Peru",
         "revokeText": "Mikään, joka käyttää tunnusta {name}, ei tämän jälkeen pääse sisään.",
         "revoked": "Tunnus peruttu",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} päättää, kuka saa kirjautua, esimerkiksi ryhmiensä kautta.",
         "role": "Uusien rooli",
         "roleHint": "Kun {name} päästää jonkun sisään ensimmäistä kertaa, hän saa täällä roolin {role}.",
+        "openBinds": "CannonCommanderilla ei ole vielä salasanaa. Onnistunut koekirjautuminen tekee {name}-tilistäsi täällä omistajan ja ottaa {name}:n käyttöön. Siitä lähtien kaikki kirjautuvat, ja palaat kirjautuneena {name}:n kautta. Viimeisen palvelun poistaminen käytöstä avaa CannonCommanderin taas.",
         "issuer": "Osoite",
         "issuerHint": "Palvelun oma osoite, jossa se julkaisee OpenID-tietonsa, esimerkiksi https://id.example.",
         "clientId": "Asiakastunnus",

@@ -11,7 +11,7 @@ Send someone a link to a file or a folder. They open it in their browser without
     - **Message to visitors**: a greeting shown above the files.
     - **Valid**: 1 day, 7 days, 30 days or no end.
     - **Download limit**: after this many downloads the link stops working.
-    - **With a password**: asked before the files show.
+    - **With a password**: asked before the files show. Any length works, and under 12 characters the field tells you it is short.
     - **Note when opened**: you get a note here and in Unraid when someone opens it.
     - **Allow uploads** (folders only): visitors can put files in, but not see or delete what is there.
 4. Click **Create link** and copy it, or show its QR code.

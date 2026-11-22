@@ -13,10 +13,8 @@
   "newPassword": "New password",
   "setPassword": "Set password",
   "saving": "Saving …",
-  "short": {
-    "one": "The new password needs at least {n} character.",
-    "other": "The new password needs at least {n} characters."
-  },
+  "shortHint": "Under {min} characters. That works, though a longer password is harder to guess.",
+  "longer": "A longer password would be harder to guess.",
   "resetRejected": "The code is wrong or has run out. If it ran out, the log shows a new one now.",
   "failed": "That didn't work. Please try again.",
   "needBoth": "Enter your name and password.",
@@ -30,15 +28,15 @@
   "tile": {
     "confirm": "Confirm",
     "needsPassword": {
-      "title": "This needs a password first",
-      "reason": "Set a password of your own above. It always gets you in, even when another way fails."
+      "title": "Ready once there's a password",
+      "reason": "CannonCommander is open to everyone right now, so this has nothing to guard yet. Set a password above whenever you like, and this is ready."
     },
     "notLocal": {
       "title": "This comes from your sign-in service",
       "reason": "You sign in through {name}. Set up two-factor authentication and passkeys there."
     },
     "password": {
-      "hint": "A password needs at least {min} characters. Changing it ends every other session.",
+      "hint": "A password of {min} characters or more is hard to guess, though a shorter one works too. Changing it ends every other session.",
       "openHint": "Until a password is set, CannonCommander is open, and everyone who reaches it is an admin.",
       "viaService": "You sign in through {name}, so this account has no password here.",
       "set": "Set",
@@ -154,6 +152,8 @@
       "neverUsed": "never used",
       "expires": "expires {when}",
       "forever": "doesn't expire",
+      "endsWhenClosed": "ends once CannonCommander asks for a sign-in",
+      "openHint": "CannonCommander has no password yet. A token made now stands for you and stops working once CannonCommander asks for a sign-in, after a first password or a first sign-in service.",
       "revoke": "Revoke",
       "revokeText": "Whatever uses {name} won't get in after this.",
       "revoked": "Token revoked",
@@ -206,6 +206,7 @@
       "whoGetsIn": "{name} decides who may sign in, for example through its groups.",
       "role": "Role for newcomers",
       "roleHint": "Whoever {name} lets in for the first time gets the role {role} here.",
+      "openBinds": "CannonCommander has no password yet. A test sign-in that works makes your account at {name} the owner here and turns {name} on. From then on everyone signs in, and you come back signed in through {name}. Turning the last service off opens CannonCommander again.",
       "issuer": "Address",
       "issuerHint": "The service's own address, where it publishes its OpenID details, such as https://id.example.",
       "clientId": "Client ID",

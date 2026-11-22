@@ -923,7 +923,6 @@
       "scope": "Svæði",
       "scopeTip": "Viðkomandi sér aðeins þessa möppu og allt í henni.",
       "password": "Lykilorð",
-      "pwTip": "Að minnsta kosti 12 stafir.",
       "repeat": "Endurtaka",
       "pwSet": "Stillt",
       "pwNew": "Stilla nýtt",
@@ -934,7 +933,6 @@
       "nameTaken": "Þetta notandanafn er þegar til",
       "ownAdmin": "Aðeins annar stjórnandi getur tekið af þér þitt eigið stjórnandahlutverk",
       "needAdmin": "Það þarf að vera að minnsta kosti einn stjórnandi",
-      "pwShort": "Lykilorðið þarf að vera að minnsta kosti 12 stafir",
       "pwDiffer": "Lykilorðin tvö eru ekki eins",
       "groupName": "Heiti",
       "groupNamePh": "til dæmis fjolskylda",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Krefjast lykilorðs",
       "askPwTip": "Sá sem opnar tengilinn þarf fyrst að slá inn lykilorðið.",
-      "pwTip": "Að minnsta kosti 6 stafir.",
-      "pwShort": "Lykilorðið þarf að vera að minnsta kosti 6 stafir",
       "exhausted": "Uppurin",
       "message": "Skilaboð til gesta",
       "messageTip": "Birtist á síðu tengilsins fyrir ofan skrárnar, til dæmis kveðja eða ábending. Má vera autt.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Endapunktur",
       "endpointTip": "Hingað tengist aðstoðarmaðurinn þinn. Hann talar Streamable HTTP og sendir lykilinn í hausnum Authorization eða X-API-Key.",
       "desktopPort": "Skjáborðsforritið er aðeins aðgengilegt úr þessari tölvu. Ef gáttin þess er upptekin þegar það ræsist velur það aðra. Þá slærðu bara nýju slóðina inn í biðlarann.",
-      "hostRefused": "Þessi síða var opnuð sem {host}. Án innskráningar býr CannonCommander aðeins til lykla undir IP-tölu eða staðbundnu nafni eins og tower.local, svo engin vefsíða á netinu geti það. Opnaðu því CannonCommander á staðbundinni slóð þess.",
       "connect": "Tengja biðlara",
       "connectTip": "Veldu biðlarann þinn, þá fær hann eigin lykil og þú réttu stillingarnar til að afrita. Það sem aðstoðarmaðurinn les, svo sem möppur, skráaheiti eða innihald textaskrár, fer til gervigreindarþjónustunnar á bak við hann.",
       "choose": "Velja biðlara",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Innskráning með OAuth",
       "oauthTip": "Fyrir ChatGPT, Claude á claude.ai og aðrar þjónustur sem geta ekki tekið við lykli. Þær senda þig á síðu í CannonCommander þar sem þú skráir þig inn og leyfir aðgang. Ef slökkt er á þessu eru allir þessir biðlarar skráðir út.",
-      "oauthNeedsSignIn": "Þetta virkar aðeins þegar allir skrá sig inn í CannonCommander.",
+      "oauthDesktop": "Skjáborðsforritið hefur ekkert opinbert vistfang fyrir innskráningu með OAuth.",
       "issuer": "Opinber slóð",
       "issuerTip": "https-slóðin, án undirslóðar, þar sem CannonCommander er aðgengilegt af netinu, til dæmis https://files.example.com. Ef hún breytist þarf hver biðlari að skrá sig inn aftur.",
       "oauthSaved": "Innskráning með OAuth vistuð",
@@ -2944,7 +2939,6 @@
     "create": "Búa til tengil",
     "badSlug": "Vistfangið þarf 3 til 40 stafi: lágstafi, tölustafi og bandstrik",
     "slugTaken": "Þetta vistfang er þegar í notkun. Teningurinn finnur laust vistfang.",
-    "shortPassword": "Lykilorðið þarf að vera að minnsta kosti 6 stafir",
     "rerolled": "Nýju vistfangi kastað upp, það gamla leiðir hvergi",
     "together": "Sameiginleg deiling",
     "folderName": "Heiti möppunnar",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Gefðu lyklinum heiti með mest 64 stöfum",
     "mcpKeyLabelTaken": "Virkur lykill heitir þegar þessu nafni",
     "mcpKeyLimit": "Þú ert þegar með eins marga virka lykla og aðgangur getur haft. Afturkallaðu einn, þá er aftur pláss",
-    "mcpKeyNeedsSignIn": "Án innskráningar er aðeins hægt að búa til lykla í gegnum IP-tölu eða staðbundið nafn",
     "mcpKeyNotFound": "Þessi lykill er ekki lengur til",
     "mcpKeyNotYours": "Aðeins aðgangurinn sem á lykilinn getur gert þetta",
     "mcpOAuthIssuer": "Sláðu inn https-slóð án undirslóðar, til dæmis https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Innskráning með OAuth virkar aðeins þegar allir skrá sig inn í CannonCommander",
+    "mcpOAuthDesktop": "Skjáborðsforritið hefur ekkert opinbert vistfang fyrir innskráningu með OAuth",
     "noSystemMenu": "Þessi tölva er ekki með eigin samhengisvalmynd",
     "noPropertiesDialog": "Hér er enginn eiginleikagluggi frá kerfinu",
     "notAProgram": "Þetta er ekki forrit sem hægt er að keyra sem stjórnandi",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Þessi tengill tekur ekki við upphleðslum",
     "linkNothingHere": "Ekkert er á þessum stað í tenglinum",
     "linkOwnerGone": "Aðgangurinn á bak við þennan tengil er ekki lengur til",
-    "linkPasswordShort": {
-      "one": "Lykilorðið þarf að vera að minnsta kosti {n} stafur",
-      "other": "Lykilorðið þarf að vera að minnsta kosti {n} stafir"
-    },
     "linkPasswordWrong": "Þetta lykilorð er ekki rétt",
     "loginNameMissing": "Notandanafnið vantar",
     "loginNameRule": "Notandanafnið þarf lágstafi, að minnsta kosti tvo",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Þínu eigin lykilorði breytirðu undir Aðgangur og öryggi",
     "ownSessionsElsewhere": "Þínum eigin setum, tókum og aðgangslyklum lýkurðu undir Aðgangur og öryggi",
     "passwordMissing": "Lykilorðið vantar",
-    "passwordShort": {
-      "one": "Lykilorðið þarf að vera að minnsta kosti {n} stafur",
-      "other": "Lykilorðið þarf að vera að minnsta kosti {n} stafir"
-    },
     "pathSlash": "Slóðin þarf að byrja á /",
     "pickShareFolder": "Veldu möppu í user-share",
     "pickUserFolder": "Veldu möppuna sem notandinn má sjá",
@@ -4429,10 +4414,8 @@
     "newPassword": "Nýtt lykilorð",
     "setPassword": "Stilla lykilorð",
     "saving": "Vista …",
-    "short": {
-      "one": "Nýja lykilorðið þarf að vera að minnsta kosti {n} stafur.",
-      "other": "Nýja lykilorðið þarf að vera að minnsta kosti {n} stafir."
-    },
+    "shortHint": "Færri en {min} stafir. Það virkar, en lengra lykilorð er erfiðara að giska á.",
+    "longer": "Lengra lykilorð væri erfiðara að giska á.",
     "resetRejected": "Kóðinn er rangur eða útrunninn. Ef hann rann út sýnir annállinn nú nýjan.",
     "failed": "Það tókst ekki. Reyndu aftur.",
     "needBoth": "Sláðu inn heiti og lykilorð.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Staðfesta",
       "needsPassword": {
-        "title": "Til þess þarf fyrst lykilorð",
-        "reason": "Settu eigið lykilorð hér fyrir ofan. Með því kemstu alltaf inn, líka þegar önnur leið bregst."
+        "title": "Tilbúið um leið og lykilorð er komið",
+        "reason": "CannonCommander er opið öllum núna, svo hér er ekkert að verja enn. Settu lykilorð hér fyrir ofan hvenær sem þú vilt, og þetta er tilbúið."
       },
       "notLocal": {
         "title": "Þetta kemur frá innskráningarþjónustunni þinni",
         "reason": "Þú skráir þig inn með {name}. Settu upp tveggja þátta auðkenningu og aðgangslykla þar."
       },
       "password": {
-        "hint": "Lykilorð þarf að minnsta kosti {min} stafi. Ef þú breytir því lýkur öllum öðrum setum.",
+        "hint": "Lykilorð með {min} stöfum eða fleiri er erfitt að giska á, en styttra virkar líka. Að breyta því lýkur öllum öðrum setum.",
         "openHint": "Á meðan ekkert lykilorð er stillt er CannonCommander opið og allir sem ná í það eru stjórnendur.",
         "viaService": "Þú skráir þig inn með {name}, svo þessi aðgangur er ekki með lykilorð hér.",
         "set": "Stillt",
@@ -4570,6 +4553,8 @@
         "neverUsed": "aldrei notaður",
         "expires": "rennur út {when}",
         "forever": "rennur ekki út",
+        "endsWhenClosed": "rennur út um leið og CannonCommander biður um innskráningu",
+        "openHint": "CannonCommander er ekki enn með lykilorð. Tákn sem þú býrð til núna kemur fram fyrir þína hönd og hættir að virka um leið og CannonCommander biður um innskráningu, eftir fyrsta lykilorðið eða fyrstu innskráningarþjónustuna.",
         "revoke": "Afturkalla",
         "revokeText": "Það sem notar {name} kemst ekki inn eftir þetta.",
         "revoked": "Tákn afturkallað",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} ræður hver má skrá sig inn, til dæmis í gegnum hópana sína.",
         "role": "Hlutverk nýliða",
         "roleHint": "Sá sem {name} hleypir inn í fyrsta sinn fær hlutverkið {role} hér.",
+        "openBinds": "CannonCommander er ekki enn með lykilorð. Prufuinnskráning sem tekst gerir aðganginn þinn hjá {name} að eiganda hér og kveikir á {name}. Upp frá því skrá allir sig inn, og þú kemur aftur innskráð(ur) í gegnum {name}. Ef slökkt er á síðustu þjónustunni opnast CannonCommander aftur.",
         "issuer": "Vistfang",
         "issuerHint": "Eigið vistfang þjónustunnar, þar sem hún birtir OpenID-upplýsingar sínar, til dæmis https://id.example.",
         "clientId": "Auðkenni biðlara",

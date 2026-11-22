@@ -28,7 +28,7 @@ const note = ref(takeNote() || (props.overlay ? s('again') : ''));
 const code = takeSignInCode();
 const refused = code ? ({ ...errorWords(), ...arrivedWords() } as Record<string, string | undefined>)[code] ?? s('failed') : undefined;
 
-const text = computed(() => cardText(offer.value?.minPassword ?? 12));
+const text = computed(() => cardText());
 const labelKeys = { signIn: 'IconSignIn', forgot: 'IconForgotPassword', back: 'IconBack', setPassword: 'IconKey', service: 'IconSignIn' };
 const many = computed(() => !offer.value?.owner);
 const first = computed(() => offer.value?.services[0]);

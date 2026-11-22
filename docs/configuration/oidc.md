@@ -8,7 +8,7 @@ You set one up in the app or in `config.yaml`. Either way, CannonCommander needs
 
 ## In the app {#app}
 
-Sign-in services added in the app wait until your account has a password, so you can still get in when the service is down.
+You can add one before CannonCommander has a password. Then the first test sign-in that works makes your account at the service the owner and turns the service on, and from then on everyone signs in. Turning the last service off opens CannonCommander again. Set a password as well, so you still get in when the service is down.
 
 1. Open **Settings > Account & security** and click **Add a sign-in service** at the bottom.
 2. Pick your service from the list, or **Other sign-in service** for any other.

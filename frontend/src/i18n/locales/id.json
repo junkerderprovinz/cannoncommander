@@ -886,7 +886,6 @@
       "scope": "Area",
       "scopeTip": "Orang ini hanya melihat folder ini dan semua isinya.",
       "password": "Kata sandi",
-      "pwTip": "Minimal 12 karakter.",
       "repeat": "Ulangi",
       "pwSet": "Sudah diatur",
       "pwNew": "Atur yang baru",
@@ -897,7 +896,6 @@
       "nameTaken": "Nama login ini sudah ada",
       "ownAdmin": "Peran admin Anda sendiri hanya bisa dicabut oleh admin lain",
       "needAdmin": "Harus ada setidaknya satu admin",
-      "pwShort": "Kata sandi memerlukan minimal 12 karakter",
       "pwDiffer": "Kedua kata sandi tidak sama",
       "groupName": "Nama",
       "groupNamePh": "misalnya keluarga",
@@ -1008,8 +1006,6 @@
       },
       "askPw": "Minta kata sandi",
       "askPwTip": "Siapa pun yang membuka tautan harus memasukkan kata sandi dulu.",
-      "pwTip": "Minimal 6 karakter.",
-      "pwShort": "Kata sandi memerlukan minimal 6 karakter",
       "exhausted": "Habis",
       "message": "Pesan untuk penerima",
       "messageTip": "Tampil di halaman tautan di atas berkas, misalnya salam atau petunjuk. Boleh dikosongkan.",
@@ -1323,7 +1319,6 @@
       "endpoint": "Titik akhir",
       "endpointTip": "Di sinilah asisten Anda terhubung. Ia berbicara Streamable HTTP dan mengirim kunci di header Authorization atau X-API-Key.",
       "desktopPort": "Aplikasi desktop hanya bisa dijangkau dari komputer ini. Jika port-nya sudah terpakai saat dimulai, ia memakai port lain. Cukup masukkan alamat baru itu di klien Anda.",
-      "hostRefused": "Halaman ini dibuka sebagai {host}. Selama masuk tidak diwajibkan, CannonCommander hanya membuat kunci lewat alamat IP atau nama lokal seperti tower.local, supaya tidak ada halaman web dari internet yang bisa melakukannya. Untuk itu, silakan buka CannonCommander lewat alamat lokalnya.",
       "connect": "Hubungkan klien",
       "connectTip": "Pilih klien Anda, lalu ia mendapat kuncinya sendiri dan Anda mendapat konfigurasi yang pas untuk disalin. Apa yang dibaca asisten, misalnya folder, nama berkas, atau isi berkas teks, dikirim ke penyedia AI di belakangnya.",
       "choose": "Pilih klien",
@@ -1404,7 +1399,7 @@
       },
       "oauth": "Masuk lewat OAuth",
       "oauthTip": "Untuk ChatGPT, Claude di claude.ai, dan layanan lain yang tidak bisa menerima kunci. Mereka mengarahkan Anda ke halaman CannonCommander, tempat Anda masuk dan mengizinkan akses. Mematikannya mengeluarkan semua klien ini.",
-      "oauthNeedsSignIn": "Ini hanya bisa jika semua orang wajib masuk ke CannonCommander.",
+      "oauthDesktop": "Aplikasi desktop tidak punya alamat publik untuk masuk lewat OAuth.",
       "issuer": "Alamat publik",
       "issuerTip": "Alamat https tanpa jalur tempat CannonCommander bisa dijangkau dari internet, misalnya https://files.example.com. Jika alamat ini berubah, setiap klien harus masuk lagi.",
       "oauthSaved": "Masuk lewat OAuth disimpan",
@@ -2850,7 +2845,6 @@
     "create": "Buat tautan",
     "badSlug": "Alamat memerlukan 3 sampai 40 karakter: huruf kecil, angka, dan tanda hubung",
     "slugTaken": "Alamat ini sudah dipakai. Dadu akan menemukan yang kosong.",
-    "shortPassword": "Kata sandi memerlukan minimal 6 karakter",
     "rerolled": "Alamat baru dikocok, yang lama tidak berlaku lagi",
     "together": "Berbagi koleksi",
     "folderName": "Nama folder",
@@ -4042,11 +4036,10 @@
     "mcpKeyLabel": "Beri kunci nama paling panjang 64 karakter",
     "mcpKeyLabelTaken": "Sudah ada kunci aktif dengan nama ini",
     "mcpKeyLimit": "Akun Anda sudah mencapai batas kunci aktif. Cabut satu agar ada tempat lagi",
-    "mcpKeyNeedsSignIn": "Selama masuk tidak diwajibkan, kunci hanya bisa dibuat lewat alamat IP atau nama lokal",
     "mcpKeyNotFound": "Kunci ini sudah tidak ada",
     "mcpKeyNotYours": "Hanya akun pemilik kunci yang bisa melakukannya",
     "mcpOAuthIssuer": "Silakan masukkan alamat https tanpa jalur, misalnya https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Masuk lewat OAuth hanya bisa jika semua orang wajib masuk ke CannonCommander",
+    "mcpOAuthDesktop": "Aplikasi desktop tidak punya alamat publik untuk masuk lewat OAuth",
     "noSystemMenu": "Komputer ini tidak punya menu konteks sendiri",
     "noPropertiesDialog": "Di sini tidak ada dialog properti sistem",
     "notAProgram": "Ini bukan program yang bisa dijalankan sebagai administrator",
@@ -4095,9 +4088,6 @@
     "linkNoUploads": "Tautan ini tidak menerima unggahan",
     "linkNothingHere": "Tidak ada apa pun di tempat ini dalam tautan",
     "linkOwnerGone": "Akun di balik tautan ini sudah tidak ada",
-    "linkPasswordShort": {
-      "other": "Kata sandi memerlukan minimal {n} karakter"
-    },
     "linkPasswordWrong": "Kata sandi ini salah",
     "loginNameMissing": "Nama login kosong",
     "loginNameRule": "Nama login memerlukan huruf kecil, minimal dua",
@@ -4156,9 +4146,6 @@
     "ownPasswordElsewhere": "Kata sandi Anda sendiri diubah di Akun & keamanan",
     "ownSessionsElsewhere": "Sesi, token, dan passkey Anda sendiri diakhiri di Akun & keamanan",
     "passwordMissing": "Kata sandi kosong",
-    "passwordShort": {
-      "other": "Kata sandi memerlukan minimal {n} karakter"
-    },
     "pathSlash": "Path harus diawali /",
     "pickShareFolder": "Pilih folder di sebuah user share",
     "pickUserFolder": "Pilih folder yang boleh dilihat pengguna ini",
@@ -4278,9 +4265,8 @@
     "newPassword": "Kata sandi baru",
     "setPassword": "Atur kata sandi",
     "saving": "Sedang menyimpan …",
-    "short": {
-      "other": "Kata sandi baru memerlukan minimal {n} karakter."
-    },
+    "shortHint": "Kurang dari {min} karakter. Itu bisa, tetapi kata sandi yang lebih panjang lebih sulit ditebak.",
+    "longer": "Kata sandi yang lebih panjang akan lebih sulit ditebak.",
     "resetRejected": "Kode salah atau sudah kedaluwarsa. Jika kedaluwarsa, log sekarang menampilkan kode baru.",
     "failed": "Itu tidak berhasil. Silakan coba lagi.",
     "needBoth": "Masukkan nama dan kata sandi Anda.",
@@ -4294,15 +4280,15 @@
     "tile": {
       "confirm": "Konfirmasi",
       "needsPassword": {
-        "title": "Ini perlu kata sandi dulu",
-        "reason": "Atur kata sandi Anda sendiri di atas. Dengan itu Anda selalu bisa masuk, bahkan saat cara lain gagal."
+        "title": "Siap begitu ada kata sandi",
+        "reason": "CannonCommander saat ini terbuka untuk semua orang, jadi belum ada yang perlu dijaga di sini. Atur kata sandi di atas kapan pun Anda mau, dan ini siap."
       },
       "notLocal": {
         "title": "Ini diatur di layanan masuk Anda",
         "reason": "Anda masuk lewat {name}. Atur autentikasi dua faktor dan kunci sandi di sana."
       },
       "password": {
-        "hint": "Kata sandi perlu setidaknya {min} karakter. Mengubahnya mengakhiri semua sesi lain.",
+        "hint": "Kata sandi dengan {min} karakter atau lebih sulit ditebak, tetapi yang lebih pendek juga bisa. Mengubahnya mengakhiri semua sesi lain.",
         "openHint": "Selama belum ada kata sandi, CannonCommander terbuka dan siapa pun yang mencapainya adalah admin.",
         "viaService": "Anda masuk lewat {name}, jadi akun ini tidak punya kata sandi di sini.",
         "set": "Sudah diatur",
@@ -4415,6 +4401,8 @@
         "neverUsed": "belum pernah dipakai",
         "expires": "kedaluwarsa {when}",
         "forever": "tidak kedaluwarsa",
+        "endsWhenClosed": "berakhir begitu CannonCommander meminta masuk",
+        "openHint": "CannonCommander belum punya kata sandi. Token yang dibuat sekarang bertindak atas nama Anda dan berhenti bekerja begitu CannonCommander meminta masuk, setelah kata sandi pertama atau layanan masuk pertama.",
         "revoke": "Cabut",
         "revokeText": "Apa pun yang memakai {name} tidak mendapat akses lagi setelah ini.",
         "revoked": "Token dicabut",
@@ -4466,6 +4454,7 @@
         "whoGetsIn": "{name} menentukan siapa yang boleh masuk, misalnya lewat grupnya.",
         "role": "Peran untuk pendatang baru",
         "roleHint": "Siapa pun yang pertama kali diloloskan {name} mendapat peran {role} di sini.",
+        "openBinds": "CannonCommander belum punya kata sandi. Uji masuk yang berhasil menjadikan akun Anda di {name} sebagai pemilik di sini dan menyalakan {name}. Sejak itu semua orang masuk, dan Anda kembali dalam keadaan masuk lewat {name}. Mematikan layanan terakhir membuka CannonCommander lagi.",
         "issuer": "Alamat",
         "issuerHint": "Alamat layanan itu sendiri, tempat ia menerbitkan detail OpenID-nya, misalnya https://id.example.",
         "clientId": "ID klien",

@@ -31,13 +31,11 @@ const keys = computed(() => data.value?.keys ?? []);
 const own = computed(() => keys.value.filter((k) => !k.viaOAuth));
 const usable = computed(() => own.value.filter((k) => !k.unusable));
 const full = computed(() => !!data.value && own.value.length >= data.value.limit);
-const canMake = computed(() => data.value?.hostAllowsKeys !== false);
 
 const mode = ref<'new' | 'pick'>('new');
 const label = ref(other ? '' : props.client.name), write = ref(false);
 const created = ref<{ key: string; id: string } | null>(null), picked = ref<{ id: string; since: number } | null>(null);
 const nameField = ref<InstanceType<typeof TextField> | null>(null);
-const host = location.hostname;
 
 // Each key's last use as the first list after opening has it. The list the card had may be minutes old, and a call
 // from before the window must not count as the client's first.
@@ -91,7 +89,7 @@ const keyTip = computed(() => {
 let timer: ReturnType<typeof setInterval> | undefined;
 onMounted(async () => {
   stepFoot(props.win, [closeBtn()]);
-  if (!canMake.value || full.value) mode.value = usable.value.length ? 'pick' : 'new';
+  if (full.value) mode.value = usable.value.length ? 'pick' : 'new';
   await props.reload().catch(() => {});
   baseline.value = Object.fromEntries(keys.value.map((k) => [k.id, k.lastUsedAt]));
   timer = setInterval(() => { void props.reload().catch(() => {}); }, POLL);
@@ -141,12 +139,11 @@ onBeforeUnmount(() => clearInterval(timer));
         <FieldRow :label="label.trim()"><CopyField width="grow" :value="created.key" :label="label.trim()" :text="copyWords()" /></FieldRow>
       </template>
       <template v-else>
-        <FieldRow v-if="usable.length && canMake" :label="c('mcp.stepKey')">
+        <FieldRow v-if="usable.length" :label="c('mcp.stepKey')">
           <Selector v-model="mode" :items="segItems([['new', c('mcp.newKey')], ['pick', c('mcp.existingKey')]])" size="sm" activation="manual" inline button-height pairs-on-phone />
         </FieldRow>
         <template v-if="mode === 'new'">
-          <p v-if="!canMake" class="a-text">{{ c('mcp.hostRefused', { host }) }}</p>
-          <p v-else-if="full" class="a-text">{{ c('mcp.full', { n: data!.limit }) }}</p>
+          <p v-if="full" class="a-text">{{ c('mcp.full', { n: data!.limit }) }}</p>
           <template v-else>
             <FieldRow :label="c('sources.name')"><TextField id="mcp-label" ref="nameField" v-model="label" :placeholder="c('mcp.namePh')" width="medium" maxlength="64" @keydown.enter="make" /></FieldRow>
             <FieldRow :label="c('mcp.write')" :hint="c('mcp.writeTip', { perCall: data?.writeLimits.entriesPerCall ?? 0, perHour: data?.writeLimits.entriesPerHour ?? 0 })"><Toggle v-model="write" data-mcp="newWrite" /></FieldRow>

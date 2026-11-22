@@ -22,7 +22,6 @@ export function readForm(f: LinkForm): Omit<ShareCreate, 'paths'> | null {
   const slug = f.slug.trim().toLowerCase(), days = Number(f.exp), message = f.message.trim();
   if (!SLUG.test(slug)) { toast(t('share.badSlug'), 'warn'); return null; }
   if (message.length > MESSAGE_MAX) { toast(plural(MESSAGE_MAX, 'share.longMessage'), 'warn'); return null; }
-  if (f.pw && f.pass.length < 6) { toast(t('share.shortPassword'), 'warn'); return null; }
   return {
     slug, expires: days ? new Date(now() + days * DAY).toISOString() : null, limit: Number(f.limit), notify: f.notify,
     ...(message ? { message } : {}), ...(f.pw ? { password: f.pass } : {}), ...(f.folder && f.uploads ? { uploads: true } : {}),
@@ -31,7 +30,9 @@ export function readForm(f: LinkForm): Omit<ShareCreate, 'paths'> | null {
 
 export async function create(req: ShareCreate): Promise<Share | null> {
   try {
-    return await tools.share(req);
+    const made = await tools.share(req);
+    if (made.short) toast(t('signin.longer'));
+    return made;
   } catch (e) {
     toast(e instanceof ApiError && e.status === 409 ? t('share.slugTaken') : (e as Error).message, 'warn');
     return null;

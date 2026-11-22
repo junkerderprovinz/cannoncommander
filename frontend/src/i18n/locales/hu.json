@@ -923,7 +923,6 @@
       "scope": "Terület",
       "scopeTip": "Az illető csak ezt a mappát és a tartalmát látja.",
       "password": "Jelszó",
-      "pwTip": "Legalább 12 karakter.",
       "repeat": "Ismétlés",
       "pwSet": "Beállítva",
       "pwNew": "Új beállítása",
@@ -934,7 +933,6 @@
       "nameTaken": "Ez a belépési név már foglalt",
       "ownAdmin": "A saját rendszergazdai szerepkörét csak egy másik rendszergazda veheti el",
       "needAdmin": "Legalább egy rendszergazdára szükség van",
-      "pwShort": "A jelszónak legalább 12 karakterből kell állnia",
       "pwDiffer": "A két jelszó nem egyezik",
       "groupName": "Név",
       "groupNamePh": "pl. otthon",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Jelszó kérése",
       "askPwTip": "Aki megnyitja a hivatkozást, előbb meg kell adnia a jelszót.",
-      "pwTip": "Legalább 6 karakter.",
-      "pwShort": "A jelszónak legalább 6 karakterből kell állnia",
       "exhausted": "Elfogyott",
       "message": "Üzenet a látogatóknak",
       "messageTip": "A hivatkozás oldalán áll a fájlok felett, például egy köszöntés vagy egy tipp. Üresen is maradhat.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Végpont",
       "endpointTip": "Ide csatlakozik az asszisztense. Streamable HTTP-t beszél, és a kulcsot az Authorization vagy az X-API-Key fejlécben küldi.",
       "desktopPort": "Az asztali alkalmazás csak erről a számítógépről érhető el. Ha induláskor a portja már foglalt, másikat választ. Ilyenkor egyszerűen írja be az új címet a kliensbe.",
-      "hostRefused": "Ez az oldal {host} néven nyílt meg. Belépés nélkül a CannonCommander csak IP-címen vagy helyi néven, például tower.local, hoz létre kulcsot, hogy ezt egyetlen internetes weboldal se tehesse meg. Ehhez kérjük, nyissa meg a CannonCommandert a helyi címén.",
       "connect": "Kliens csatlakoztatása",
       "connectTip": "Válassza ki a kliensét: ő saját kulcsot kap, Ön pedig a hozzá illő konfigurációt, amelyet csak ki kell másolnia. Amit az asszisztens elolvas, például mappákat, fájlneveket vagy egy szövegfájl tartalmát, az a mögötte álló MI-szolgáltatóhoz kerül.",
       "choose": "Kliens kiválasztása",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Belépés OAuth-tal",
       "oauthTip": "A ChatGPT, a claude.ai-os Claude és más olyan szolgáltatások számára, amelyek nem fogadnak el kulcsot. Egy CannonCommander-oldalra küldik, ahol belép és engedélyezi a hozzáférést. Kikapcsolva ezek a kliensek mind kilépnek.",
-      "oauthNeedsSignIn": "Ez csak akkor működik, ha a CannonCommanderbe mindenki belép.",
+      "oauthDesktop": "Az asztali alkalmazásnak nincs nyilvános címe az OAuth-bejelentkezéshez.",
       "issuer": "Nyilvános cím",
       "issuerTip": "Az útvonal nélküli https-cím, amelyen a CannonCommander az internetről elérhető, például https://files.example.com. Ha megváltozik, minden kliens újra belép.",
       "oauthSaved": "OAuth-belépés mentve",
@@ -2944,7 +2939,6 @@
     "create": "Hivatkozás létrehozása",
     "badSlug": "A címnek 3 és 40 karakter között kell lennie: kisbetűk, számjegyek és kötőjelek",
     "slugTaken": "Ez a cím már foglalt. A dobókocka talál egy szabadot.",
-    "shortPassword": "A jelszónak legalább 6 karakterből kell állnia",
     "rerolled": "Új cím kidobva, a régi a semmibe vezet",
     "together": "Közös megosztás",
     "folderName": "A mappa neve",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Adjon a kulcsnak legfeljebb 64 karakteres nevet",
     "mcpKeyLabelTaken": "Egy aktív kulcsnak már ez a neve",
     "mcpKeyLimit": "Már annyi aktív kulcsa van, amennyi egy fióknak lehet. Vonjon vissza egyet, és lesz újra hely",
-    "mcpKeyNeedsSignIn": "Belépés nélkül kulcsot csak IP-címen vagy helyi néven keresztül lehet létrehozni",
     "mcpKeyNotFound": "Ez a kulcs már nem létezik",
     "mcpKeyNotYours": "Ezt csak az a fiók teheti meg, amelyhez a kulcs tartozik",
     "mcpOAuthIssuer": "Kérjük, adjon meg egy útvonal nélküli https-címet, például https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Az OAuth-belépés csak akkor működik, ha a CannonCommanderbe mindenki belép",
+    "mcpOAuthDesktop": "Az asztali alkalmazásnak nincs nyilvános címe az OAuth-bejelentkezéshez",
     "noSystemMenu": "Ennek a számítógépnek nincs saját helyi menüje",
     "noPropertiesDialog": "Itt nincs a rendszernek tulajdonságok párbeszédpanele",
     "notAProgram": "Ez nem olyan program, amely rendszergazdaként futtatható",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Ezen a hivatkozáson keresztül nem lehet feltölteni",
     "linkNothingHere": "A hivatkozás ezen a pontján nincs semmi",
     "linkOwnerGone": "A hivatkozás mögötti fiók már nem létezik",
-    "linkPasswordShort": {
-      "one": "A jelszónak legalább {n} karakteresnek kell lennie",
-      "other": "A jelszónak legalább {n} karakteresnek kell lennie"
-    },
     "linkPasswordWrong": "Ez a jelszó nem stimmel",
     "loginNameMissing": "Hiányzik a belépési név",
     "loginNameRule": "A belépési névhez kisbetűk kellenek, legalább kettő",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "A saját jelszavát a Fiók és biztonság alatt módosíthatja",
     "ownSessionsElsewhere": "A saját munkameneteit, tokenjeit és azonosítókulcsait a Fiók és biztonság alatt zárhatja le",
     "passwordMissing": "Hiányzik a jelszó",
-    "passwordShort": {
-      "one": "A jelszónak legalább {n} karakteresnek kell lennie",
-      "other": "A jelszónak legalább {n} karakteresnek kell lennie"
-    },
     "pathSlash": "Az útvonalnak /-rel kell kezdődnie",
     "pickShareFolder": "Válasszon egy mappát egy User Share-ben",
     "pickUserFolder": "Válassza ki a mappát, amelyet a felhasználó láthat",
@@ -4429,10 +4414,8 @@
     "newPassword": "Új jelszó",
     "setPassword": "Jelszó beállítása",
     "saving": "Mentés …",
-    "short": {
-      "one": "Az új jelszónak legalább {n} karakteresnek kell lennie.",
-      "other": "Az új jelszónak legalább {n} karakteresnek kell lennie."
-    },
+    "shortHint": "{min} karakternél rövidebb. Működik, de egy hosszabb jelszót nehezebb kitalálni.",
+    "longer": "Egy hosszabb jelszót nehezebb volna kitalálni.",
     "resetRejected": "A kód hibás vagy lejárt. Ha lejárt, a napló most egy újat mutat.",
     "failed": "Ez nem sikerült. Próbálja újra.",
     "needBoth": "Adja meg a nevét és a jelszavát.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Megerősítés",
       "needsPassword": {
-        "title": "Ehhez előbb jelszó kell",
-        "reason": "Állítson be fent egy saját jelszót. Ezzel mindig bejut, akkor is, ha egy másik út nem működik."
+        "title": "Kész, amint van jelszó",
+        "reason": "A CannonCommander most mindenki előtt nyitva áll, így itt még nincs mit védeni. Állítson be fent jelszót, amikor csak szeretne, és ez készen áll."
       },
       "notLocal": {
         "title": "Ez a bejelentkezési szolgáltatásához tartozik",
         "reason": "Ezzel jelentkezik be: {name}. A kéttényezős hitelesítést és az azonosítókulcsokat ott állítsa be."
       },
       "password": {
-        "hint": "A jelszónak legalább {min} karakterből kell állnia. A módosítása minden más munkamenetet lezár.",
+        "hint": "Egy {min} vagy több karakteres jelszót nehéz kitalálni, de rövidebb is működik. A módosítása minden más munkamenetet lezár.",
         "openHint": "Amíg nincs jelszó beállítva, a CannonCommander nyitott, és mindenki rendszergazda, aki eléri.",
         "viaService": "Ezzel jelentkezik be: {name}, ezért ennek a fióknak itt nincs jelszava.",
         "set": "Beállítva",
@@ -4570,6 +4553,8 @@
         "neverUsed": "még nem használt",
         "expires": "lejár {when}",
         "forever": "nem jár le",
+        "endsWhenClosed": "lejár, amint a CannonCommander bejelentkezést kér",
+        "openHint": "A CannonCommandernek még nincs jelszava. A most készített token az ön nevében jár el, és megszűnik működni, amint a CannonCommander bejelentkezést kér, az első jelszó vagy az első bejelentkezési szolgáltatás után.",
         "revoke": "Visszavonás",
         "revokeText": "Ami ezt használja, ezután nem jut be: {name}.",
         "revoked": "Token visszavonva",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} dönti el, ki jelentkezhet be, például a csoportjai alapján.",
         "role": "Az újonnan érkezők szerepköre",
         "roleHint": "Akit {name} először enged be, itt a(z) {role} szerepkört kapja.",
+        "openBinds": "A CannonCommandernek még nincs jelszava. Egy sikeres próbabejelentkezés a(z) {name} fiókját teszi itt tulajdonossá, és bekapcsolja a(z) {name} szolgáltatást. Onnantól mindenki bejelentkezik, ön pedig a(z) {name} révén bejelentkezve tér vissza. Az utolsó szolgáltatás kikapcsolása újra megnyitja a CannonCommandert.",
         "issuer": "Cím",
         "issuerHint": "A szolgáltatás saját címe, ahol közzéteszi az OpenID-adatait, például https://id.example.",
         "clientId": "Kliensazonosító",

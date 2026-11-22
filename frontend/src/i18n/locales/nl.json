@@ -923,7 +923,6 @@
       "scope": "Gebied",
       "scopeTip": "De persoon ziet alleen deze map en alles erin.",
       "password": "Wachtwoord",
-      "pwTip": "Minstens 12 tekens.",
       "repeat": "Herhalen",
       "pwSet": "Ingesteld",
       "pwNew": "Nieuw instellen",
@@ -934,7 +933,6 @@
       "nameTaken": "Deze inlognaam bestaat al",
       "ownAdmin": "Je eigen adminrol kan alleen een andere admin je afnemen",
       "needAdmin": "Er moet minstens één admin zijn",
-      "pwShort": "Het wachtwoord moet minstens 12 tekens hebben",
       "pwDiffer": "De twee wachtwoorden zijn niet gelijk",
       "groupName": "Naam",
       "groupNamePh": "bijvoorbeeld familie",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Wachtwoord vragen",
       "askPwTip": "Wie de link opent, moet eerst het wachtwoord invoeren.",
-      "pwTip": "Minstens 6 tekens.",
-      "pwShort": "Het wachtwoord moet minstens 6 tekens hebben",
       "exhausted": "Opgebruikt",
       "message": "Bericht aan de bezoekers",
       "messageTip": "Staat op de pagina van de link boven de bestanden, zoals een groet of een hint. Mag leeg blijven.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Eindpunt",
       "endpointTip": "Hier maakt je assistent verbinding. Hij spreekt Streamable HTTP en stuurt de sleutel mee in de header Authorization of X-API-Key.",
       "desktopPort": "De desktop-app is alleen op deze computer bereikbaar. Is zijn poort bij het starten al bezet, dan neemt hij een andere. Vul dan gewoon het nieuwe adres in bij je client.",
-      "hostRefused": "Deze pagina is geopend als {host}. Zonder inloggen maakt CannonCommander alleen sleutels aan onder een IP-adres of een lokale naam zoals tower.local, zodat geen webpagina op internet dat kan. Open CannonCommander hiervoor via zijn lokale adres.",
       "connect": "Client verbinden",
       "connectTip": "Kies je client, dan krijgt hij een eigen sleutel en jij de passende configuratie om te kopiëren. Wat de assistent leest, zoals mappen, bestandsnamen of de inhoud van een tekstbestand, gaat naar de AI-aanbieder erachter.",
       "choose": "Kies een client",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Inloggen via OAuth",
       "oauthTip": "Voor ChatGPT, Claude op claude.ai en andere diensten die geen sleutel aannemen. Ze sturen je naar een pagina van CannonCommander, waar je inlogt en toegang geeft. Uitschakelen logt al deze clients uit.",
-      "oauthNeedsSignIn": "Dit werkt alleen als iedereen bij CannonCommander inlogt.",
+      "oauthDesktop": "De desktop-app heeft geen openbaar adres om via OAuth in te loggen.",
       "issuer": "Openbaar adres",
       "issuerTip": "Het https-adres zonder pad waarop CannonCommander vanaf internet bereikbaar is, zoals https://files.example.com. Verandert het, dan logt elke client opnieuw in.",
       "oauthSaved": "Inloggen via OAuth opgeslagen",
@@ -2944,7 +2939,6 @@
     "create": "Link maken",
     "badSlug": "Het adres heeft 3 tot 40 tekens nodig: kleine letters, cijfers en koppeltekens",
     "slugTaken": "Dit adres is al in gebruik. De dobbelsteen vindt een vrij adres.",
-    "shortPassword": "Het wachtwoord moet minstens 6 tekens hebben",
     "rerolled": "Nieuw adres gegooid, het oude leidt nergens meer heen",
     "together": "Gedeelde verzameling",
     "folderName": "Naam van de map",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Geef de sleutel een naam van hoogstens 64 tekens",
     "mcpKeyLabelTaken": "Een actieve sleutel heet al zo",
     "mcpKeyLimit": "Je hebt al zoveel actieve sleutels als een account kan hebben. Trek er een in, dan is er weer plek",
-    "mcpKeyNeedsSignIn": "Zonder inloggen kun je sleutels alleen via een IP-adres of een lokale naam aanmaken",
     "mcpKeyNotFound": "Deze sleutel bestaat niet meer",
     "mcpKeyNotYours": "Dat kan alleen het account waar de sleutel bij hoort",
     "mcpOAuthIssuer": "Vul een https-adres zonder pad in, zoals https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Inloggen via OAuth werkt alleen als iedereen bij CannonCommander inlogt",
+    "mcpOAuthDesktop": "De desktop-app heeft geen openbaar adres om via OAuth in te loggen",
     "noSystemMenu": "Deze computer heeft geen eigen contextmenu",
     "noPropertiesDialog": "Hier is geen eigenschappenvenster van het systeem",
     "notAProgram": "Dit is geen programma dat als administrator kan starten",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Via deze link kan niets worden geüpload",
     "linkNothingHere": "Op deze plek in de link staat niets",
     "linkOwnerGone": "Het account achter deze link bestaat niet meer",
-    "linkPasswordShort": {
-      "one": "Het wachtwoord moet minstens {n} teken hebben",
-      "other": "Het wachtwoord moet minstens {n} tekens hebben"
-    },
     "linkPasswordWrong": "Dit wachtwoord klopt niet",
     "loginNameMissing": "De inlognaam ontbreekt",
     "loginNameRule": "De inlognaam moet uit kleine letters bestaan, minstens twee",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Je eigen wachtwoord wijzig je onder Account en beveiliging",
     "ownSessionsElsewhere": "Je eigen sessies, tokens en passkeys beëindig je onder Account en beveiliging",
     "passwordMissing": "Het wachtwoord ontbreekt",
-    "passwordShort": {
-      "one": "Het wachtwoord moet minstens {n} teken hebben",
-      "other": "Het wachtwoord moet minstens {n} tekens hebben"
-    },
     "pathSlash": "Het pad moet met / beginnen",
     "pickShareFolder": "Kies een map in een user share",
     "pickUserFolder": "Kies de map die de gebruiker mag zien",
@@ -4429,10 +4414,8 @@
     "newPassword": "Nieuw wachtwoord",
     "setPassword": "Wachtwoord instellen",
     "saving": "Opslaan…",
-    "short": {
-      "one": "Het nieuwe wachtwoord moet minstens {n} teken hebben.",
-      "other": "Het nieuwe wachtwoord moet minstens {n} tekens hebben."
-    },
+    "shortHint": "Minder dan {min} tekens. Dat werkt, al is een langer wachtwoord moeilijker te raden.",
+    "longer": "Een langer wachtwoord zou moeilijker te raden zijn.",
     "resetRejected": "De code klopt niet of is verlopen. Als hij verlopen is, staat er nu een nieuwe in de log.",
     "failed": "Dat lukte niet. Probeer het opnieuw.",
     "needBoth": "Voer je naam en wachtwoord in.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Bevestigen",
       "needsPassword": {
-        "title": "Hiervoor is eerst een wachtwoord nodig",
-        "reason": "Stel hierboven een eigen wachtwoord in. Daarmee kom je er altijd in, ook als een andere weg niet werkt."
+        "title": "Klaar zodra er een wachtwoord is",
+        "reason": "CannonCommander staat nu voor iedereen open, dus hier valt nog niets te beschermen. Stel hierboven een wachtwoord in wanneer je wilt, en dit is klaar."
       },
       "notLocal": {
         "title": "Dit regel je bij je inlogdienst",
         "reason": "Je logt in via {name}. Stel tweestapsverificatie en toegangssleutels daar in."
       },
       "password": {
-        "hint": "Een wachtwoord heeft minstens {min} tekens nodig. Wijzigen beëindigt alle andere sessies.",
+        "hint": "Een wachtwoord van {min} tekens of meer is moeilijk te raden, al werkt een korter ook. Wijzigen beëindigt alle andere sessies.",
         "openHint": "Zolang er geen wachtwoord is, staat CannonCommander open en is iedereen die het bereikt beheerder.",
         "viaService": "Je logt in via {name}, dus dit account heeft hier geen wachtwoord.",
         "set": "Ingesteld",
@@ -4570,6 +4553,8 @@
         "neverUsed": "nooit gebruikt",
         "expires": "verloopt {when}",
         "forever": "verloopt niet",
+        "endsWhenClosed": "stopt zodra CannonCommander om een login vraagt",
+        "openHint": "CannonCommander heeft nog geen wachtwoord. Een token dat je nu maakt staat voor jou en werkt niet meer zodra CannonCommander om een login vraagt, na een eerste wachtwoord of een eerste inlogdienst.",
         "revoke": "Intrekken",
         "revokeText": "Wat {name} gebruikt, krijgt daarna geen toegang meer.",
         "revoked": "Token ingetrokken",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} bepaalt wie mag inloggen, bijvoorbeeld via zijn groepen.",
         "role": "Rol voor nieuwkomers",
         "roleHint": "Wie {name} voor het eerst binnenlaat, krijgt hier de rol {role}.",
+        "openBinds": "CannonCommander heeft nog geen wachtwoord. Een testlogin die lukt, maakt je account bij {name} hier de eigenaar en zet {name} aan. Vanaf dan logt iedereen in, en kom je terug ingelogd via {name}. Zet je de laatste dienst uit, dan is CannonCommander weer open.",
         "issuer": "Adres",
         "issuerHint": "Het eigen adres van de dienst, waar hij zijn OpenID-gegevens publiceert, zoals https://id.example.",
         "clientId": "Client-ID",

@@ -32,11 +32,12 @@ async function server(url: string, init: RequestInit = {}) {
     fresh = body.password === 'geheim';
     return fresh ? answer(200, {}) : answer(401, { error: 'wrongPassword' });
   }
+  if (path === '/api/signin/v1/options') return answer(200, { open: false, owner: false, minPassword: 12, signedIn: true, passkeys: false, services: [] });
   if (path === '/admin/users' && method === 'GET') return answer(200, { items: USERS });
   if (path === '/admin/groups' || path === '/shares') return answer(200, path === '/shares' ? [] : { items: [] });
   if (path.startsWith('/admin/users') && method !== 'GET') {
     if (body.password && !fresh) return answer(403, { status: 403, code: 'signInAgain', params: { askPassword: true }, detail: 'sign in again' });
-    return answer(200, user(String(body.name ?? 'x')));
+    return answer(200, { ...user(String(body.name ?? 'x')), ...(body.password && String(body.password).length < 12 ? { short: true } : {}) });
   }
   if (path.startsWith('/fs/list')) return answer(200, { path: '/mnt/user', items: [] });
   return answer(200, { items: [] });
@@ -110,6 +111,21 @@ describe('the users tab', () => {
     rows()[0]!.click();
     await settle();
     expect(q('#a-ublocked')).toBeNull();
+  });
+
+  it('takes a short password for a new account and only points out that it is short', async () => {
+    fresh = true;
+    await mount();
+    q<HTMLButtonElement>('[data-uadd]')!.click();
+    await settle();
+    await type('#a-uname', 'carla');
+    await type('#a-upw', 'kurz');
+    await type('#a-upw2', 'kurz');
+    expect(document.querySelector('.glim-field-note')?.textContent).toContain('12');
+    primary().click();
+    await settle();
+    expect(sent.at(-1)).toMatchObject({ method: 'POST', path: '/admin/users', body: { name: 'carla', password: 'kurz' } });
+    expect(winStack).toHaveLength(0);
   });
 
   it('asks for the own password before a new account gets its password, and sends it again', async () => {

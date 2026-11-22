@@ -117,8 +117,9 @@ const index = (x: Wire<IndexState, 'lastIndexed' | 'nextScan'>): IndexState => (
 
 export const admin = {
   users: async () => (await items<WireUser>('/admin/users')).map(user),
-  createUser: (u: UserInput) => write('POST', '/admin/users', u),
-  updateUser: (name: string, u: UserInput) => write('PATCH', `/admin/users/${at(name)}`, u),
+  // The answer says short when the password it set is under the length the page points out.
+  createUser: (u: UserInput) => write<{ short?: boolean }>('POST', '/admin/users', u),
+  updateUser: (name: string, u: UserInput) => write<{ short?: boolean }>('PATCH', `/admin/users/${at(name)}`, u),
   deleteUser: (name: string) => write('DELETE', `/admin/users/${at(name)}`),
   userSessions: async (name: string) => (await items<Wire<Session, 'created' | 'seen'>>(`/admin/users/${at(name)}/sessions`)).map(session),
   endUserSession: (name: string, id: string) => write('DELETE', `/admin/users/${at(name)}/sessions/${at(id)}`),
@@ -149,7 +150,7 @@ export const admin = {
   shares: async (all: boolean) => (await (all ? tools.allShares() : tools.shares())).map(share),
   // An expiry of null makes the link last, an empty password takes it off.
   updateShare: (id: string, change: { expires?: number | null; password?: string; message?: string }) =>
-    write('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
+    write<{ short?: boolean }>('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
   deleteShare: (id: string) => write('DELETE', `/shares/${at(id)}`),
   remotes: () => get<{ remotes: Remote[]; rclone: Rclone }>('/remotes'),
   addRemote: (r: RemoteInput) => write<Remote>('POST', '/remotes', r),

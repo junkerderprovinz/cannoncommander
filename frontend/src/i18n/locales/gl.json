@@ -923,7 +923,6 @@
       "scope": "Área",
       "scopeTip": "A persoa só ve este cartafol e todo o que hai dentro.",
       "password": "Contrasinal",
-      "pwTip": "Polo menos 12 caracteres.",
       "repeat": "Repetir",
       "pwSet": "Definido",
       "pwNew": "Definir outro",
@@ -934,7 +933,6 @@
       "nameTaken": "Ese nome de inicio de sesión xa existe",
       "ownAdmin": "O teu propio rol de admin só cho pode quitar outro admin",
       "needAdmin": "Ten que haber polo menos un admin",
-      "pwShort": "O contrasinal precisa polo menos 12 caracteres",
       "pwDiffer": "Os dous contrasinais non son iguais",
       "groupName": "Nome",
       "groupNamePh": "por exemplo familia",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Pedir contrasinal",
       "askPwTip": "Quen abra a ligazón ten que escribir antes o contrasinal.",
-      "pwTip": "Polo menos 6 caracteres.",
-      "pwShort": "O contrasinal precisa polo menos 6 caracteres",
       "exhausted": "Esgotada",
       "message": "Mensaxe para quen a abra",
       "messageTip": "Aparece na páxina da ligazón enriba dos ficheiros, por exemplo un saúdo ou un aviso. Pode quedar baleira.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Punto de conexión",
       "endpointTip": "Aquí conéctase o teu asistente. Fala Streamable HTTP e envía a chave na cabeceira Authorization ou X-API-Key.",
       "desktopPort": "A app de escritorio só é accesible desde este ordenador. Se ao arrancar o seu porto xa está ocupado, colle outro. Nese caso, só tes que poñer o novo enderezo no cliente.",
-      "hostRefused": "Esta páxina abriuse como {host}. Sen inicio de sesión, CannonCommander só crea chaves desde un enderezo IP ou un nome local como tower.local, para que ningunha páxina de internet poida facelo. Para isto, abre CannonCommander polo seu enderezo local.",
       "connect": "Conectar un cliente",
       "connectTip": "Escolle o teu cliente: recibe unha chave propia e ti, a configuración axeitada para copiar. O que le o asistente, como cartafoles, nomes de ficheiros ou o contido dun ficheiro de texto, vai ao provedor de IA que hai detrás.",
       "choose": "Escoller un cliente",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Inicio de sesión con OAuth",
       "oauthTip": "Para ChatGPT, Claude en claude.ai e outros servizos que non aceptan unha chave. Envíante a unha páxina de CannonCommander, onde inicias sesión e permites o acceso. Ao desactivalo, péchase a sesión de todos estes clientes.",
-      "oauthNeedsSignIn": "Isto só funciona se todo o mundo inicia sesión en CannonCommander.",
+      "oauthDesktop": "A aplicación de escritorio non ten un enderezo público para iniciar sesión con OAuth.",
       "issuer": "Enderezo público",
       "issuerTip": "O enderezo https sen ruta no que CannonCommander é accesible desde internet, como https://files.example.com. Se cambia, cada cliente volve iniciar sesión.",
       "oauthSaved": "Inicio de sesión con OAuth gardado",
@@ -2944,7 +2939,6 @@
     "create": "Crear a ligazón",
     "badSlug": "O enderezo precisa de 3 a 40 caracteres: minúsculas, díxitos e guións",
     "slugTaken": "Este enderezo xa está collido. O dado atopa un libre.",
-    "shortPassword": "O contrasinal precisa polo menos 6 caracteres",
     "rerolled": "Enderezo novo, o vello xa non leva a ningures",
     "together": "Colección compartida",
     "folderName": "Nome do cartafol",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Ponlle á chave un nome de como moito 64 caracteres",
     "mcpKeyLabelTaken": "Xa hai unha chave activa con ese nome",
     "mcpKeyLimit": "Xa tes tantas chaves activas como admite unha conta. Revoga unha e volverá haber sitio",
-    "mcpKeyNeedsSignIn": "Sen inicio de sesión, as chaves só se poden crear desde un enderezo IP ou un nome local",
     "mcpKeyNotFound": "Esta chave xa non existe",
     "mcpKeyNotYours": "Isto só o pode facer a conta á que pertence a chave",
     "mcpOAuthIssuer": "Introduce un enderezo https sen ruta, como https://files.example.com",
-    "mcpOAuthNeedsSignIn": "O inicio de sesión con OAuth só funciona se todo o mundo inicia sesión en CannonCommander",
+    "mcpOAuthDesktop": "A aplicación de escritorio non ten un enderezo público para iniciar sesión con OAuth",
     "noSystemMenu": "Este ordenador non ten un menú contextual propio",
     "noPropertiesDialog": "Aquí non hai un diálogo de propiedades do sistema",
     "notAProgram": "Isto non é un programa que se poida executar como administrador",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Por esta ligazón non se pode subir nada",
     "linkNothingHere": "Neste punto da ligazón non hai nada",
     "linkOwnerGone": "A conta que hai detrás desta ligazón xa non existe",
-    "linkPasswordShort": {
-      "one": "O contrasinal precisa polo menos {n} carácter",
-      "other": "O contrasinal precisa polo menos {n} caracteres"
-    },
     "linkPasswordWrong": "Este contrasinal non é correcto",
     "loginNameMissing": "Falta o nome de inicio de sesión",
     "loginNameRule": "O nome de inicio de sesión precisa minúsculas, polo menos dúas",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "O teu propio contrasinal cámbialo en Conta e seguranza",
     "ownSessionsElsewhere": "As túas propias sesións, tokens e chaves de acceso péchalos en Conta e seguranza",
     "passwordMissing": "Falta o contrasinal",
-    "passwordShort": {
-      "one": "O contrasinal precisa polo menos {n} carácter",
-      "other": "O contrasinal precisa polo menos {n} caracteres"
-    },
     "pathSlash": "A ruta ten que comezar por /",
     "pickShareFolder": "Escolle un cartafol dun user share",
     "pickUserFolder": "Escolle o cartafol que o usuario pode ver",
@@ -4429,10 +4414,8 @@
     "newPassword": "Contrasinal novo",
     "setPassword": "Gardar o contrasinal",
     "saving": "Gardando…",
-    "short": {
-      "one": "O contrasinal novo precisa polo menos {n} carácter.",
-      "other": "O contrasinal novo precisa polo menos {n} caracteres."
-    },
+    "shortHint": "Menos de {min} caracteres. Funciona, aínda que un contrasinal máis longo é máis difícil de adiviñar.",
+    "longer": "Un contrasinal máis longo sería máis difícil de adiviñar.",
     "resetRejected": "O código non é correcto ou caducou. Se caducou, o rexistro amosa agora un novo.",
     "failed": "Non funcionou. Téntao de novo.",
     "needBoth": "Escribe o nome e o contrasinal.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Confirmar",
       "needsPassword": {
-        "title": "Primeiro fai falta un contrasinal",
-        "reason": "Pon arriba un contrasinal propio. Sempre te deixa entrar, aínda que falle outra vía."
+        "title": "Listo en canto haxa un contrasinal",
+        "reason": "Agora mesmo CannonCommander está aberto a todos, así que aquí aínda non hai nada que protexer. Pon un contrasinal arriba cando queiras, e isto quedará listo."
       },
       "notLocal": {
         "title": "Isto depende do teu servizo de inicio de sesión",
         "reason": "Inicias sesión con {name}. Configura alí a autenticación de dous factores e as chaves de acceso."
       },
       "password": {
-        "hint": "Un contrasinal necesita polo menos {min} caracteres. Cambialo pecha todas as outras sesións.",
+        "hint": "Un contrasinal de {min} caracteres ou máis é difícil de adiviñar, aínda que un máis curto tamén funciona. Cambialo pecha todas as demais sesións.",
         "openHint": "Mentres non haxa contrasinal, CannonCommander está aberto e calquera que chegue a el é administrador.",
         "viaService": "Inicias sesión con {name}, así que esta conta non ten contrasinal aquí.",
         "set": "Definido",
@@ -4570,6 +4553,8 @@
         "neverUsed": "nunca usada",
         "expires": "caduca {when}",
         "forever": "non caduca",
+        "endsWhenClosed": "remata cando CannonCommander pida iniciar sesión",
+        "openHint": "CannonCommander aínda non ten contrasinal. Un token creado agora actúa por ti e deixa de funcionar cando CannonCommander pida iniciar sesión, tras un primeiro contrasinal ou un primeiro servizo de inicio de sesión.",
         "revoke": "Revogar",
         "revokeText": "O que use {name} xa non terá acceso despois diso.",
         "revoked": "Token revogado",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} decide quen pode entrar, por exemplo mediante os seus grupos.",
         "role": "Rol para os recén chegados",
         "roleHint": "Quen {name} deixe entrar por primeira vez recibe aquí o rol {role}.",
+        "openBinds": "CannonCommander aínda non ten contrasinal. Unha proba de inicio de sesión que funcione fai da túa conta en {name} a propietaria aquí e activa {name}. Desde entón todos inician sesión, e volves coa sesión iniciada a través de {name}. Desactivar o último servizo volve abrir CannonCommander.",
         "issuer": "Enderezo",
         "issuerHint": "O enderezo propio do servizo, onde publica os seus datos de OpenID, por exemplo https://id.example.",
         "clientId": "ID de cliente",

@@ -886,7 +886,6 @@
       "scope": "Kawasan",
       "scopeTip": "Orang ini hanya melihat folder ini dan semua isinya.",
       "password": "Kata laluan",
-      "pwTip": "Sekurang-kurangnya 12 aksara.",
       "repeat": "Ulang",
       "pwSet": "Sudah ditetapkan",
       "pwNew": "Tetapkan yang baharu",
@@ -897,7 +896,6 @@
       "nameTaken": "Nama log masuk ini sudah ada",
       "ownAdmin": "Peranan pentadbir anda sendiri hanya boleh ditarik oleh pentadbir lain",
       "needAdmin": "Mesti ada sekurang-kurangnya seorang pentadbir",
-      "pwShort": "Kata laluan memerlukan sekurang-kurangnya 12 aksara",
       "pwDiffer": "Kedua-dua kata laluan tidak sama",
       "groupName": "Nama",
       "groupNamePh": "seperti keluarga",
@@ -1008,8 +1006,6 @@
       },
       "askPw": "Minta kata laluan",
       "askPwTip": "Sesiapa yang membuka pautan perlu memasukkan kata laluan dahulu.",
-      "pwTip": "Sekurang-kurangnya 6 aksara.",
-      "pwShort": "Kata laluan memerlukan sekurang-kurangnya 6 aksara",
       "exhausted": "Habis",
       "message": "Mesej untuk penerima",
       "messageTip": "Dipaparkan pada halaman pautan di atas fail, seperti ucapan atau petunjuk. Boleh dibiarkan kosong.",
@@ -1323,7 +1319,6 @@
       "endpoint": "Titik akhir",
       "endpointTip": "Di sinilah pembantu anda bersambung. Ia menggunakan Streamable HTTP dan menghantar kunci dalam pengepala Authorization atau X-API-Key.",
       "desktopPort": "Aplikasi desktop hanya boleh dicapai dari komputer ini. Jika portnya sudah digunakan semasa ia bermula, ia memilih port lain. Masukkan sahaja alamat baharu itu dalam klien anda.",
-      "hostRefused": "Halaman ini dibuka sebagai {host}. Selagi log masuk tidak diwajibkan, CannonCommander hanya mencipta kunci melalui alamat IP atau nama tempatan seperti tower.local, supaya tiada halaman web dari internet boleh melakukannya. Untuk itu, sila buka CannonCommander melalui alamat tempatannya.",
       "connect": "Sambungkan klien",
       "connectTip": "Pilih klien anda, lalu ia mendapat kuncinya sendiri dan anda mendapat konfigurasi yang sepadan untuk disalin. Apa yang dibaca oleh pembantu, seperti folder, nama fail atau kandungan fail teks, dihantar kepada penyedia AI di belakangnya.",
       "choose": "Pilih klien",
@@ -1404,7 +1399,7 @@
       },
       "oauth": "Log masuk melalui OAuth",
       "oauthTip": "Untuk ChatGPT, Claude di claude.ai dan perkhidmatan lain yang tidak boleh menerima kunci. Ia menghantar anda ke halaman CannonCommander, tempat anda log masuk dan membenarkan akses. Mematikannya melog keluar semua klien ini.",
-      "oauthNeedsSignIn": "Ini hanya berfungsi apabila semua orang perlu log masuk ke CannonCommander.",
+      "oauthDesktop": "Apl desktop tiada alamat awam untuk log masuk melalui OAuth.",
       "issuer": "Alamat awam",
       "issuerTip": "Alamat https tanpa laluan tempat CannonCommander boleh dicapai dari internet, seperti https://files.example.com. Jika ia berubah, setiap klien perlu log masuk semula.",
       "oauthSaved": "Log masuk melalui OAuth disimpan",
@@ -2850,7 +2845,6 @@
     "create": "Cipta pautan",
     "badSlug": "Alamat memerlukan 3 hingga 40 aksara: huruf kecil, digit dan sempang",
     "slugTaken": "Alamat ini sudah digunakan. Dadu akan mencari yang kosong.",
-    "shortPassword": "Kata laluan memerlukan sekurang-kurangnya 6 aksara",
     "rerolled": "Alamat baharu dibaling, yang lama tidak berfungsi lagi",
     "together": "Perkongsian himpunan",
     "folderName": "Nama folder",
@@ -4042,11 +4036,10 @@
     "mcpKeyLabel": "Beri kunci nama sepanjang 64 aksara sahaja",
     "mcpKeyLabelTaken": "Sebuah kunci aktif sudah memakai nama ini",
     "mcpKeyLimit": "Akaun anda sudah mencapai had kunci aktif. Tarik balik satu untuk memberi ruang semula",
-    "mcpKeyNeedsSignIn": "Selagi log masuk tidak diwajibkan, kunci hanya boleh dicipta melalui alamat IP atau nama tempatan",
     "mcpKeyNotFound": "Kunci ini sudah tiada",
     "mcpKeyNotYours": "Hanya akaun pemilik kunci boleh berbuat begitu",
     "mcpOAuthIssuer": "Sila masukkan alamat https tanpa laluan, seperti https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Log masuk melalui OAuth hanya berfungsi apabila semua orang perlu log masuk ke CannonCommander",
+    "mcpOAuthDesktop": "Apl desktop tiada alamat awam untuk log masuk melalui OAuth",
     "noSystemMenu": "Komputer ini tiada menu konteks sendiri",
     "noPropertiesDialog": "Tiada dialog sifat sistem di sini",
     "notAProgram": "Ini bukan program yang boleh dijalankan sebagai pentadbir",
@@ -4095,9 +4088,6 @@
     "linkNoUploads": "Pautan ini tidak menerima muat naik",
     "linkNothingHere": "Tiada apa di tempat ini dalam pautan",
     "linkOwnerGone": "Akaun di sebalik pautan ini sudah tiada",
-    "linkPasswordShort": {
-      "other": "Kata laluan memerlukan sekurang-kurangnya {n} aksara"
-    },
     "linkPasswordWrong": "Kata laluan ini tidak betul",
     "loginNameMissing": "Nama log masuk masih kosong",
     "loginNameRule": "Nama log masuk memerlukan huruf kecil, sekurang-kurangnya dua",
@@ -4156,9 +4146,6 @@
     "ownPasswordElsewhere": "Kata laluan anda sendiri diubah dalam Akaun & keselamatan",
     "ownSessionsElsewhere": "Sesi, token dan kunci laluan anda sendiri ditamatkan dalam Akaun & keselamatan",
     "passwordMissing": "Kata laluan masih kosong",
-    "passwordShort": {
-      "other": "Kata laluan memerlukan sekurang-kurangnya {n} aksara"
-    },
     "pathSlash": "Laluan mesti bermula dengan /",
     "pickShareFolder": "Pilih folder dalam user share",
     "pickUserFolder": "Pilih folder yang boleh dilihat oleh pengguna ini",
@@ -4278,9 +4265,8 @@
     "newPassword": "Kata laluan baharu",
     "setPassword": "Tetapkan kata laluan",
     "saving": "Sedang menyimpan …",
-    "short": {
-      "other": "Kata laluan baharu memerlukan sekurang-kurangnya {n} aksara."
-    },
+    "shortHint": "Kurang daripada {min} aksara. Itu boleh, tetapi kata laluan yang lebih panjang lebih sukar diteka.",
+    "longer": "Kata laluan yang lebih panjang akan lebih sukar diteka.",
     "resetRejected": "Kod salah atau sudah tamat tempoh. Jika tamat tempoh, log kini menunjukkan kod baharu.",
     "failed": "Itu tidak berjaya. Sila cuba lagi.",
     "needBoth": "Masukkan nama dan kata laluan anda.",
@@ -4294,15 +4280,15 @@
     "tile": {
       "confirm": "Sahkan",
       "needsPassword": {
-        "title": "Ini memerlukan kata laluan dahulu",
-        "reason": "Tetapkan kata laluan anda sendiri di atas. Dengannya anda sentiasa boleh masuk, walaupun cara lain gagal."
+        "title": "Sedia sebaik ada kata laluan",
+        "reason": "CannonCommander kini terbuka kepada semua orang, jadi belum ada apa-apa untuk dilindungi di sini. Tetapkan kata laluan di atas bila-bila masa anda mahu, dan ini akan sedia."
       },
       "notLocal": {
         "title": "Ini datang daripada perkhidmatan log masuk anda",
         "reason": "Anda log masuk melalui {name}. Sediakan pengesahan dua faktor dan kunci laluan di sana."
       },
       "password": {
-        "hint": "Kata laluan memerlukan sekurang-kurangnya {min} aksara. Menukarnya menamatkan semua sesi lain.",
+        "hint": "Kata laluan dengan {min} aksara atau lebih sukar diteka, tetapi yang lebih pendek juga boleh. Menukarnya menamatkan semua sesi lain.",
         "openHint": "Selagi tiada kata laluan ditetapkan, CannonCommander terbuka dan sesiapa yang sampai kepadanya ialah pentadbir.",
         "viaService": "Anda log masuk melalui {name}, jadi akaun ini tiada kata laluan di sini.",
         "set": "Sudah ditetapkan",
@@ -4415,6 +4401,8 @@
         "neverUsed": "belum pernah digunakan",
         "expires": "tamat tempoh {when}",
         "forever": "tidak tamat tempoh",
+        "endsWhenClosed": "tamat sebaik CannonCommander meminta log masuk",
+        "openHint": "CannonCommander belum ada kata laluan. Token yang dibuat sekarang bertindak bagi pihak anda dan berhenti berfungsi sebaik CannonCommander meminta log masuk, selepas kata laluan pertama atau perkhidmatan log masuk pertama.",
         "revoke": "Tarik balik",
         "revokeText": "Apa sahaja yang menggunakan {name} tidak akan mendapat akses lagi selepas ini.",
         "revoked": "Token dibatalkan",
@@ -4466,6 +4454,7 @@
         "whoGetsIn": "{name} menentukan siapa yang boleh log masuk, contohnya melalui kumpulannya.",
         "role": "Peranan untuk pendatang baharu",
         "roleHint": "Sesiapa yang dibenarkan masuk oleh {name} buat kali pertama mendapat peranan {role} di sini.",
+        "openBinds": "CannonCommander belum ada kata laluan. Log masuk ujian yang berjaya menjadikan akaun anda di {name} pemilik di sini dan menghidupkan {name}. Sejak itu semua orang log masuk, dan anda kembali dalam keadaan log masuk melalui {name}. Mematikan perkhidmatan terakhir membuka CannonCommander semula.",
         "issuer": "Alamat",
         "issuerHint": "Alamat perkhidmatan itu sendiri, tempat ia menerbitkan butiran OpenID, contohnya https://id.example.",
         "clientId": "ID klien",

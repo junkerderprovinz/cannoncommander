@@ -923,7 +923,6 @@
       "scope": "Alan",
       "scopeTip": "Kişi yalnızca bu klasörü ve içindeki her şeyi görür.",
       "password": "Parola",
-      "pwTip": "En az 12 karakter.",
       "repeat": "Tekrarla",
       "pwSet": "Ayarlı",
       "pwNew": "Yenisini ayarla",
@@ -934,7 +933,6 @@
       "nameTaken": "Bu giriş adı zaten kullanımda",
       "ownAdmin": "Kendi yönetici rolünü senden yalnızca başka bir yönetici alabilir",
       "needAdmin": "En az bir yönetici olmalı",
-      "pwShort": "Parola en az 12 karakter olmalı",
       "pwDiffer": "İki parola aynı değil",
       "groupName": "Ad",
       "groupNamePh": "örneğin aile",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Parola iste",
       "askPwTip": "Bağlantıyı açan önce parolayı girmeli.",
-      "pwTip": "En az 6 karakter.",
-      "pwShort": "Parola en az 6 karakter olmalı",
       "exhausted": "Tükendi",
       "message": "Ziyaretçilere mesaj",
       "messageTip": "Bağlantının sayfasında dosyaların üstünde görünür, örneğin bir selam ya da bir not. Boş kalabilir.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Uç nokta",
       "endpointTip": "Asistanın buraya bağlanır. Streamable HTTP konuşur ve anahtarı Authorization ya da X-API-Key başlığında gönderir.",
       "desktopPort": "Masaüstü uygulamasına yalnızca bu bilgisayardan erişilebilir. Başlarken portu doluysa başka bir port seçer. O zaman yeni adresi istemcine girmen yeterli.",
-      "hostRefused": "Bu sayfa {host} olarak açıldı. Giriş yapılmadan CannonCommander anahtarları yalnızca bir IP adresi ya da tower.local gibi yerel bir ad altında oluşturur, böylece internetteki hiçbir web sayfası bunu yapamaz. Bunun için lütfen CannonCommander'ı yerel adresinden aç.",
       "connect": "İstemci bağla",
       "connectTip": "İstemcini seç: ona özel bir anahtar, sana da kopyalamaya hazır uygun yapılandırma gelir. Asistanın okuduğu şeyler, örneğin klasörler, dosya adları ya da bir metin dosyasının içeriği, arkasındaki yapay zekâ sağlayıcısına gider.",
       "choose": "İstemci seç",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "OAuth ile giriş",
       "oauthTip": "ChatGPT, claude.ai üzerindeki Claude ve anahtar kabul edemeyen diğer hizmetler için. Seni bir CannonCommander sayfasına gönderirler; orada giriş yapar ve erişime izin verirsin. Kapatmak bu istemcilerin hepsinin oturumunu kapatır.",
-      "oauthNeedsSignIn": "Bu yalnızca herkes CannonCommander'a giriş yaptığında çalışır.",
+      "oauthDesktop": "Masaüstü uygulamasının OAuth ile giriş için genel bir adresi yok.",
       "issuer": "Genel adres",
       "issuerTip": "CannonCommander'a internetten erişilen, yol içermeyen https adresi, örneğin https://files.example.com. Değişirse her istemci yeniden giriş yapar.",
       "oauthSaved": "OAuth ile giriş kaydedildi",
@@ -2944,7 +2939,6 @@
     "create": "Bağlantı oluştur",
     "badSlug": "Adres 3 ile 40 karakter arasında olmalı: küçük harf, rakam ve kısa çizgi",
     "slugTaken": "Bu adres zaten alınmış. Zar boşta olan birini bulur.",
-    "shortPassword": "Parola en az 6 karakter olmalı",
     "rerolled": "Yeni adres için zar atıldı, eskisi boşa çıkıyor",
     "together": "Toplu paylaşım",
     "folderName": "Klasör adı",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Anahtara en fazla 64 karakterlik bir ad ver",
     "mcpKeyLabelTaken": "Etkin bir anahtarın adı zaten bu",
     "mcpKeyLimit": "Bir hesabın sahip olabileceği kadar etkin anahtarın zaten var. Birini geri al, yer açılsın",
-    "mcpKeyNeedsSignIn": "Giriş yapılmadan anahtarlar yalnızca bir IP adresi ya da yerel bir ad üzerinden oluşturulabilir",
     "mcpKeyNotFound": "Bu anahtar artık yok",
     "mcpKeyNotYours": "Bunu yalnızca anahtarın ait olduğu hesap yapabilir",
     "mcpOAuthIssuer": "Lütfen yol içermeyen bir https adresi gir, örneğin https://files.example.com",
-    "mcpOAuthNeedsSignIn": "OAuth ile giriş yalnızca herkes CannonCommander'a giriş yaptığında çalışır",
+    "mcpOAuthDesktop": "Masaüstü uygulamasının OAuth ile giriş için genel bir adresi yok",
     "noSystemMenu": "Bu bilgisayarın kendi bağlam menüsü yok",
     "noPropertiesDialog": "Burada sistemin özellikler iletişim kutusu yok",
     "notAProgram": "Bu, yönetici olarak çalıştırılabilecek bir program değil",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Bu bağlantı üzerinden bir şey yüklenemez",
     "linkNothingHere": "Bağlantının bu noktasında bir şey yok",
     "linkOwnerGone": "Bu bağlantının arkasındaki hesap artık yok",
-    "linkPasswordShort": {
-      "one": "Parola en az {n} karakter olmalı",
-      "other": "Parola en az {n} karakter olmalı"
-    },
     "linkPasswordWrong": "Bu parola doğru değil",
     "loginNameMissing": "Giriş adı eksik",
     "loginNameRule": "Giriş adı küçük harflerden oluşmalı, en az iki tane",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Kendi parolanı Hesap ve güvenlik altında değiştirirsin",
     "ownSessionsElsewhere": "Kendi oturumlarını, token'larını ve geçiş anahtarlarını Hesap ve güvenlik altında sonlandırırsın",
     "passwordMissing": "Parola eksik",
-    "passwordShort": {
-      "one": "Parola en az {n} karakter olmalı",
-      "other": "Parola en az {n} karakter olmalı"
-    },
     "pathSlash": "Yol / ile başlamalı",
     "pickShareFolder": "Bir user share'de klasör seç",
     "pickUserFolder": "Kullanıcının görebileceği klasörü seç",
@@ -4429,10 +4414,8 @@
     "newPassword": "Yeni parola",
     "setPassword": "Parolayı belirle",
     "saving": "Kaydediliyor …",
-    "short": {
-      "one": "Yeni parola en az {n} karakter olmalı.",
-      "other": "Yeni parola en az {n} karakter olmalı."
-    },
+    "shortHint": "{min} karakterden kısa. Olur, ama daha uzun bir parolayı tahmin etmek daha zordur.",
+    "longer": "Daha uzun bir parolayı tahmin etmek daha zor olurdu.",
     "resetRejected": "Kod yanlış ya da süresi dolmuş. Süresi dolduysa günlükte şimdi yenisi var.",
     "failed": "Olmadı. Lütfen tekrar dene.",
     "needBoth": "Adını ve parolanı gir.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Onayla",
       "needsPassword": {
-        "title": "Bunun için önce bir parola gerekiyor",
-        "reason": "Yukarıda kendi parolanı ayarla. Onunla, başka bir yol çalışmasa bile her zaman içeri girersin."
+        "title": "Bir parola olunca hazır",
+        "reason": "CannonCommander şu an herkese açık, yani burada henüz korunacak bir şey yok. İstediğin zaman yukarıdan bir parola belirle, bu da hazır olur."
       },
       "notLocal": {
         "title": "Bu, giriş hizmetinden gelir",
         "reason": "{name} üzerinden giriş yapıyorsun. İki faktörlü kimlik doğrulamayı ve geçiş anahtarlarını orada kur."
       },
       "password": {
-        "hint": "Bir parola en az {min} karakter olmalı. Değiştirmek diğer tüm oturumları kapatır.",
+        "hint": "{min} veya daha fazla karakterli bir parolayı tahmin etmek zordur, ama daha kısası da olur. Değiştirmek diğer tüm oturumları sonlandırır.",
         "openHint": "Parola ayarlanmadığı sürece CannonCommander açıktır ve ona ulaşan herkes yöneticidir.",
         "viaService": "{name} üzerinden giriş yapıyorsun, bu yüzden bu hesabın burada parolası yok.",
         "set": "Ayarlı",
@@ -4570,6 +4553,8 @@
         "neverUsed": "hiç kullanılmadı",
         "expires": "sona erer {when}",
         "forever": "sona ermez",
+        "endsWhenClosed": "CannonCommander giriş istediğinde sona erer",
+        "openHint": "CannonCommander'ın henüz parolası yok. Şimdi oluşturulan belirteç senin adına çalışır ve CannonCommander giriş istemeye başladığında, ilk paroladan ya da ilk giriş hizmetinden sonra, çalışmayı bırakır.",
         "revoke": "Geri al",
         "revokeText": "{name} kullanan her şey bundan sonra erişemez.",
         "revoked": "Belirteç iptal edildi",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "Kimin giriş yapabileceğine {name} karar verir, örneğin grupları üzerinden.",
         "role": "Yeni gelenlerin rolü",
         "roleHint": "{name} ilk kez içeri aldığı herkese burada {role} rolünü verir.",
+        "openBinds": "CannonCommander'ın henüz parolası yok. Başarılı bir deneme girişi {name} hesabını burada sahip yapar ve {name} hizmetini açar. O andan itibaren herkes giriş yapar, sen de {name} üzerinden girişli olarak dönersin. Son hizmeti kapatmak CannonCommander'ı yeniden açar.",
         "issuer": "Adres",
         "issuerHint": "Hizmetin OpenID bilgilerini yayımladığı kendi adresi, örneğin https://id.example.",
         "clientId": "İstemci kimliği",

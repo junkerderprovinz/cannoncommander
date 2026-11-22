@@ -886,7 +886,6 @@
       "scope": "Vùng",
       "scopeTip": "Người đó chỉ thấy thư mục này và mọi thứ bên trong.",
       "password": "Mật khẩu",
-      "pwTip": "Ít nhất 12 ký tự.",
       "repeat": "Nhập lại",
       "pwSet": "Đã đặt",
       "pwNew": "Đặt mới",
@@ -897,7 +896,6 @@
       "nameTaken": "Tên đăng nhập này đã có rồi",
       "ownAdmin": "Chỉ một quản trị viên khác mới có thể bỏ vai trò quản trị của bạn",
       "needAdmin": "Cần có ít nhất một quản trị viên",
-      "pwShort": "Mật khẩu cần ít nhất 12 ký tự",
       "pwDiffer": "Hai mật khẩu không giống nhau",
       "groupName": "Tên",
       "groupNamePh": "ví dụ giadinh",
@@ -1008,8 +1006,6 @@
       },
       "askPw": "Yêu cầu mật khẩu",
       "askPwTip": "Ai mở liên kết phải nhập mật khẩu trước.",
-      "pwTip": "Ít nhất 6 ký tự.",
-      "pwShort": "Mật khẩu cần ít nhất 6 ký tự",
       "exhausted": "Đã dùng hết",
       "message": "Lời nhắn cho người nhận",
       "messageTip": "Hiện trên trang của liên kết, phía trên các tệp, ví dụ một lời chào hay một lưu ý. Có thể để trống.",
@@ -1323,7 +1319,6 @@
       "endpoint": "Điểm kết nối",
       "endpointTip": "Trợ lý của bạn kết nối tới đây. Nó nói Streamable HTTP và gửi khóa trong header Authorization hoặc X-API-Key.",
       "desktopPort": "Ứng dụng máy tính chỉ truy cập được từ chính máy này. Nếu cổng của nó đã bị chiếm khi khởi động, nó sẽ chọn cổng khác. Khi đó bạn chỉ cần nhập địa chỉ mới vào máy khách.",
-      "hostRefused": "Trang này được mở dưới tên {host}. Khi không bắt buộc đăng nhập, CannonCommander chỉ tạo khóa qua một địa chỉ IP hoặc một tên nội bộ như tower.local, để không trang web nào trên internet làm được việc đó. Vì vậy, hãy mở CannonCommander bằng địa chỉ nội bộ của nó.",
       "connect": "Kết nối một máy khách",
       "connectTip": "Chọn máy khách của bạn, nó sẽ nhận một khóa riêng và bạn nhận cấu hình phù hợp để sao chép. Những gì trợ lý đọc, như thư mục, tên tệp hay nội dung một tệp văn bản, sẽ đến nhà cung cấp AI đứng sau nó.",
       "choose": "Chọn máy khách",
@@ -1404,7 +1399,7 @@
       },
       "oauth": "Đăng nhập qua OAuth",
       "oauthTip": "Dành cho ChatGPT, Claude trên claude.ai và các dịch vụ khác không nhận được khóa. Chúng đưa bạn tới một trang của CannonCommander, nơi bạn đăng nhập và cho phép truy cập. Tắt mục này sẽ đăng xuất mọi máy khách loại này.",
-      "oauthNeedsSignIn": "Chỉ dùng được khi mọi người đều phải đăng nhập vào CannonCommander.",
+      "oauthDesktop": "Ứng dụng máy tính không có địa chỉ công khai để đăng nhập qua OAuth.",
       "issuer": "Địa chỉ công khai",
       "issuerTip": "Địa chỉ https không có đường dẫn, nơi CannonCommander truy cập được từ internet, ví dụ https://files.example.com. Nếu địa chỉ này đổi, mọi máy khách phải đăng nhập lại.",
       "oauthSaved": "Đã lưu đăng nhập qua OAuth",
@@ -2850,7 +2845,6 @@
     "create": "Tạo liên kết",
     "badSlug": "Địa chỉ cần 3 đến 40 ký tự: chữ thường, chữ số và dấu gạch nối",
     "slugTaken": "Địa chỉ này đã có người dùng. Xúc xắc sẽ tìm một địa chỉ còn trống.",
-    "shortPassword": "Mật khẩu cần ít nhất 6 ký tự",
     "rerolled": "Đã gieo địa chỉ mới, địa chỉ cũ không còn dẫn đến đâu",
     "together": "Chia sẻ gộp",
     "folderName": "Tên thư mục",
@@ -4042,11 +4036,10 @@
     "mcpKeyLabel": "Hãy đặt cho khóa một tên dài tối đa 64 ký tự",
     "mcpKeyLabelTaken": "Đã có một khóa đang hoạt động mang tên này",
     "mcpKeyLimit": "Tài khoản của bạn đã đạt giới hạn số khóa đang hoạt động. Hãy thu hồi một khóa để có chỗ trống",
-    "mcpKeyNeedsSignIn": "Khi không bắt buộc đăng nhập, chỉ tạo được khóa qua một địa chỉ IP hoặc một tên nội bộ",
     "mcpKeyNotFound": "Khóa này không còn nữa",
     "mcpKeyNotYours": "Chỉ tài khoản sở hữu khóa mới làm được việc này",
     "mcpOAuthIssuer": "Hãy nhập một địa chỉ https không có đường dẫn, ví dụ https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Đăng nhập qua OAuth chỉ dùng được khi mọi người đều phải đăng nhập vào CannonCommander",
+    "mcpOAuthDesktop": "Ứng dụng máy tính không có địa chỉ công khai để đăng nhập qua OAuth",
     "noSystemMenu": "Máy tính này không có menu ngữ cảnh riêng",
     "noPropertiesDialog": "Ở đây không có hộp thoại thuộc tính của hệ thống",
     "notAProgram": "Đây không phải chương trình có thể chạy với tư cách quản trị viên",
@@ -4095,9 +4088,6 @@
     "linkNoUploads": "Không thể tải lên qua liên kết này",
     "linkNothingHere": "Ở chỗ này trong liên kết không có gì",
     "linkOwnerGone": "Tài khoản đứng sau liên kết này không còn nữa",
-    "linkPasswordShort": {
-      "other": "Mật khẩu cần ít nhất {n} ký tự"
-    },
     "linkPasswordWrong": "Mật khẩu này không đúng",
     "loginNameMissing": "Còn thiếu tên đăng nhập",
     "loginNameRule": "Tên đăng nhập cần chữ thường, ít nhất hai ký tự",
@@ -4156,9 +4146,6 @@
     "ownPasswordElsewhere": "Bạn đổi mật khẩu của chính mình trong Tài khoản và bảo mật",
     "ownSessionsElsewhere": "Bạn kết thúc phiên, token và passkey của chính mình trong Tài khoản và bảo mật",
     "passwordMissing": "Còn thiếu mật khẩu",
-    "passwordShort": {
-      "other": "Mật khẩu cần ít nhất {n} ký tự"
-    },
     "pathSlash": "Đường dẫn phải bắt đầu bằng /",
     "pickShareFolder": "Hãy chọn một thư mục trong user share",
     "pickUserFolder": "Hãy chọn thư mục người dùng được phép thấy",
@@ -4278,9 +4265,8 @@
     "newPassword": "Mật khẩu mới",
     "setPassword": "Đặt mật khẩu",
     "saving": "Đang lưu …",
-    "short": {
-      "other": "Mật khẩu mới cần ít nhất {n} ký tự."
-    },
+    "shortHint": "Dưới {min} ký tự. Vẫn dùng được, nhưng mật khẩu dài hơn sẽ khó đoán hơn.",
+    "longer": "Mật khẩu dài hơn sẽ khó đoán hơn.",
     "resetRejected": "Mã sai hoặc đã hết hạn. Nếu đã hết hạn, nhật ký giờ hiện một mã mới.",
     "failed": "Không được. Bạn thử lại nhé.",
     "needBoth": "Hãy nhập tên và mật khẩu.",
@@ -4294,15 +4280,15 @@
     "tile": {
       "confirm": "Xác nhận",
       "needsPassword": {
-        "title": "Việc này cần có mật khẩu trước",
-        "reason": "Đặt mật khẩu của riêng bạn ở trên. Với nó bạn luôn vào được, kể cả khi cách khác không dùng được."
+        "title": "Sẵn sàng khi có mật khẩu",
+        "reason": "Hiện CannonCommander đang mở cho mọi người, nên ở đây chưa có gì cần bảo vệ. Hãy đặt mật khẩu ở trên bất cứ lúc nào bạn muốn, và phần này sẽ sẵn sàng."
       },
       "notLocal": {
         "title": "Phần này thuộc về dịch vụ đăng nhập của bạn",
         "reason": "Bạn đăng nhập qua {name}. Hãy thiết lập xác thực hai yếu tố và khóa truy cập ở đó."
       },
       "password": {
-        "hint": "Mật khẩu cần ít nhất {min} ký tự. Đổi mật khẩu sẽ kết thúc mọi phiên khác.",
+        "hint": "Mật khẩu từ {min} ký tự trở lên khó đoán, nhưng ngắn hơn cũng dùng được. Đổi mật khẩu sẽ kết thúc mọi phiên khác.",
         "openHint": "Khi chưa đặt mật khẩu, CannonCommander đang mở và bất kỳ ai truy cập được đều là quản trị viên.",
         "viaService": "Bạn đăng nhập qua {name}, nên tài khoản này không có mật khẩu ở đây.",
         "set": "Đã đặt",
@@ -4415,6 +4401,8 @@
         "neverUsed": "chưa từng dùng",
         "expires": "hết hạn {when}",
         "forever": "không hết hạn",
+        "endsWhenClosed": "hết hiệu lực khi CannonCommander yêu cầu đăng nhập",
+        "openHint": "CannonCommander chưa có mật khẩu. Mã thông báo tạo bây giờ thay mặt bạn và ngừng hoạt động khi CannonCommander yêu cầu đăng nhập, sau mật khẩu đầu tiên hoặc dịch vụ đăng nhập đầu tiên.",
         "revoke": "Thu hồi",
         "revokeText": "Những gì đang dùng {name} sẽ không vào được nữa.",
         "revoked": "Đã thu hồi mã thông báo",
@@ -4466,6 +4454,7 @@
         "whoGetsIn": "{name} quyết định ai được đăng nhập, ví dụ qua các nhóm của nó.",
         "role": "Vai trò cho người mới",
         "roleHint": "Ai được {name} cho vào lần đầu sẽ nhận vai trò {role} ở đây.",
+        "openBinds": "CannonCommander chưa có mật khẩu. Một lần đăng nhập thử thành công sẽ biến tài khoản của bạn tại {name} thành chủ sở hữu ở đây và bật {name}. Từ đó mọi người đều đăng nhập, và bạn quay lại trong trạng thái đã đăng nhập qua {name}. Tắt dịch vụ cuối cùng sẽ mở lại CannonCommander.",
         "issuer": "Địa chỉ",
         "issuerHint": "Địa chỉ riêng của dịch vụ, nơi nó công bố thông tin OpenID, ví dụ https://id.example.",
         "clientId": "ID máy khách",

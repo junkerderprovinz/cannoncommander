@@ -21,7 +21,7 @@ The endpoint is `/mcp` below the address you open CannonCommander at, such as `h
 ## Reading and writing {#rights}
 
 - A new key only reads: it lists folders, searches and reads text files.
-- **Write** is a switch per key and asks for your password first. With it on, the assistant can create folders, copy, move, rename, move things to the trash and restore them.
+- **Write** is a switch per key and asks for your password first when CannonCommander has one. With it on, the assistant can create folders, copy, move, rename, move things to the trash and restore them.
 - Every change is a job you can follow and undo. Nothing is ever deleted for good.
 - Writing is held to 25 entries per call and 200 per hour.
 

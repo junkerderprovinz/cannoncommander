@@ -15,7 +15,7 @@ On the very first visit a welcome window asks for one window or two. The panels 
 
     ![The password card with the field New password and the buttons Cancel and Save password.](../assets/screenshots/set-password.png)
 
-From now on everyone signs in. The page you just used now also offers two-factor authentication, passkeys, API tokens and sign-in services, see [Two-factor and passkeys](../access/two-factor.md).
+From now on everyone signs in. Two-factor authentication and passkeys now join the API tokens and sign-in services on the same page, see [Two-factor and passkeys](../access/two-factor.md).
 
 ## Add more people {#people}
 

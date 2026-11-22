@@ -13,10 +13,8 @@
   "newPassword": "Neues Passwort",
   "setPassword": "Passwort setzen",
   "saving": "Wird gespeichert …",
-  "short": {
-    "one": "Das neue Passwort braucht mindestens {n} Zeichen.",
-    "other": "Das neue Passwort braucht mindestens {n} Zeichen."
-  },
+  "shortHint": "Unter {min} Zeichen. Das geht, ein längeres Passwort ist aber schwerer zu erraten.",
+  "longer": "Ein längeres Passwort wäre schwerer zu erraten.",
   "resetRejected": "Der Code stimmt nicht oder ist abgelaufen. Ist er abgelaufen, steht jetzt ein neuer im Log.",
   "failed": "Das hat nicht geklappt. Versuch es bitte noch einmal.",
   "needBoth": "Gib Name und Passwort ein.",
@@ -30,15 +28,15 @@
   "tile": {
     "confirm": "Bestätigen",
     "needsPassword": {
-      "title": "Dafür braucht es zuerst ein Passwort",
-      "reason": "Setz oben ein eigenes Passwort. Damit kommst du immer herein, auch wenn ein anderer Weg mal nicht geht."
+      "title": "Bereit, sobald es ein Passwort gibt",
+      "reason": "CannonCommander ist gerade für alle offen, hier gibt es also noch nichts zu schützen. Setz oben ein Passwort, wann immer du magst, dann ist das hier bereit."
     },
     "notLocal": {
       "title": "Das läuft über deinen Anmeldedienst",
       "reason": "Du meldest dich über {name} an. Zwei-Faktor-Authentifizierung und Passkeys richtest du dort ein."
     },
     "password": {
-      "hint": "Ein Passwort braucht mindestens {min} Zeichen. Wenn du es änderst, enden alle anderen Sitzungen.",
+      "hint": "Ein Passwort mit {min} Zeichen oder mehr ist schwer zu erraten, ein kürzeres geht aber auch. Wenn du es änderst, enden alle anderen Sitzungen.",
       "openHint": "Solange kein Passwort gesetzt ist, ist CannonCommander offen, und alle, die es erreichen, sind Admin.",
       "viaService": "Du meldest dich über {name} an, deshalb hat dieses Konto hier kein Passwort.",
       "set": "Gesetzt",
@@ -154,6 +152,8 @@
       "neverUsed": "noch nie benutzt",
       "expires": "läuft ab {when}",
       "forever": "läuft nicht ab",
+      "endsWhenClosed": "endet, sobald CannonCommander eine Anmeldung verlangt",
+      "openHint": "CannonCommander hat noch kein Passwort. Ein Token, das du jetzt erstellst, steht für dich und hört auf zu gehen, sobald CannonCommander eine Anmeldung verlangt, also nach dem ersten Passwort oder dem ersten Anmeldedienst.",
       "revoke": "Widerrufen",
       "revokeText": "Was {name} benutzt, bekommt danach keinen Zugriff mehr.",
       "revoked": "Token widerrufen",
@@ -206,6 +206,7 @@
       "whoGetsIn": "{name} entscheidet, wer sich anmelden darf, etwa über seine Gruppen.",
       "role": "Rolle für Neue",
       "roleHint": "Wen {name} zum ersten Mal hereinlässt, bekommt hier die Rolle {role}.",
+      "openBinds": "CannonCommander hat noch kein Passwort. Klappt eine Testanmeldung, wird dein Konto bei {name} hier zum Eigentümer und {name} eingeschaltet. Ab dann melden sich alle an, und du kommst über {name} angemeldet zurück. Schaltest du den letzten Dienst aus, ist CannonCommander wieder offen.",
       "issuer": "Adresse",
       "issuerHint": "Die eigene Adresse des Dienstes, unter der er seine OpenID-Angaben veröffentlicht, etwa https://id.example.",
       "clientId": "Client-ID",

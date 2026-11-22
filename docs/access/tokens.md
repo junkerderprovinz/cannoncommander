@@ -6,7 +6,7 @@ Scripts, WebDAV clients and other programs sign in with an API token instead of 
 
 ## Create a token {#create}
 
-Tokens wait until your account has a password.
+Tokens work before CannonCommander has a password too. A token made then stands for the admin and ends once CannonCommander asks for a sign-in, after the first password or the first sign-in service, and its row says so.
 
 1. Open **Settings > Account & security** and scroll to **API tokens**.
 2. Click **Create a token**.

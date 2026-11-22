@@ -923,7 +923,6 @@
       "scope": "Ala",
       "scopeTip": "Inimene näeb ainult seda kausta ja kõike selles.",
       "password": "Parool",
-      "pwTip": "Vähemalt 12 märki.",
       "repeat": "Korda",
       "pwSet": "Määratud",
       "pwNew": "Määra uus",
@@ -934,7 +933,6 @@
       "nameTaken": "See kasutajanimi on juba olemas",
       "ownAdmin": "Sinu enda administraatorirolli saab ära võtta ainult teine administraator",
       "needAdmin": "Vähemalt üks administraator peab olema",
-      "pwShort": "Paroolis peab olema vähemalt 12 märki",
       "pwDiffer": "Paroolid ei ole samad",
       "groupName": "Nimi",
       "groupNamePh": "näiteks pere",
@@ -1049,8 +1047,6 @@
       },
       "askPw": "Nõua parooli",
       "askPwTip": "Lingi avaja peab kõigepealt parooli sisestama.",
-      "pwTip": "Vähemalt 6 märki.",
-      "pwShort": "Paroolis peab olema vähemalt 6 märki",
       "exhausted": "Ära kasutatud",
       "message": "Sõnum külastajatele",
       "messageTip": "Kuvatakse lingi lehel failide kohal, näiteks tervitus või vihje. Võib jääda tühjaks.",
@@ -1367,7 +1363,6 @@
       "endpoint": "Lõpp-punkt",
       "endpointTip": "Siia ühendub sinu assistent. Ta räägib Streamable HTTP-d ja saadab võtme Authorization- või X-API-Key-päises.",
       "desktopPort": "Töölauarakendus on kättesaadav ainult selles arvutis. Kui selle port on käivitamisel juba hõivatud, võtab see teise. Siis sisesta lihtsalt uus aadress kliendis.",
-      "hostRefused": "See leht on avatud nimega {host}. Ilma sisselogimiseta loob CannonCommander võtmeid ainult IP-aadressi või kohaliku nime, näiteks tower.local, kaudu, et ükski veebileht internetist seda teha ei saaks. Ava selleks CannonCommander palun tema kohaliku aadressi kaudu.",
       "connect": "Ühenda klient",
       "connectTip": "Vali oma klient: tema saab oma võtme ja sina sobiva konfiguratsiooni, mille jääb vaid kopeerida. Mida assistent loeb, näiteks kaustad, failinimed või tekstifaili sisu, läheb tema taga olevale AI-teenuse pakkujale.",
       "choose": "Vali klient",
@@ -1450,7 +1445,7 @@
       },
       "oauth": "Sisselogimine OAuthiga",
       "oauthTip": "ChatGPT, claude.ai Claude'i ja teiste teenuste jaoks, mis võtit vastu ei võta. Need saadavad sind CannonCommanderi lehele, kus logid sisse ja lubad juurdepääsu. Väljalülitamine logib kõik need kliendid välja.",
-      "oauthNeedsSignIn": "See töötab ainult siis, kui kõik logivad CannonCommanderisse sisse.",
+      "oauthDesktop": "Töölauarakendusel pole avalikku aadressi OAuthiga sisselogimiseks.",
       "issuer": "Avalik aadress",
       "issuerTip": "https-aadress ilma teeta, millel CannonCommander on internetist kättesaadav, näiteks https://files.example.com. Kui see muutub, logib iga klient uuesti sisse.",
       "oauthSaved": "Sisselogimine OAuthiga salvestatud",
@@ -2944,7 +2939,6 @@
     "create": "Loo link",
     "badSlug": "Aadressis peab olema 3 kuni 40 märki: väiketähed, numbrid ja sidekriipsud",
     "slugTaken": "See aadress on juba kasutusel. Täring leiab vaba.",
-    "shortPassword": "Paroolis peab olema vähemalt 6 märki",
     "rerolled": "Uus aadress veeretatud, vana ei vii enam kuhugi",
     "together": "Ühisjagamine",
     "folderName": "Kausta nimi",
@@ -4187,11 +4181,10 @@
     "mcpKeyLabel": "Anna võtmele kuni 64 märgi pikkune nimi",
     "mcpKeyLabelTaken": "Aktiivsel võtmel on juba see nimi",
     "mcpKeyLimit": "Sul on juba nii palju aktiivseid võtmeid, kui kontol olla saab. Tühista üks, siis on jälle ruumi",
-    "mcpKeyNeedsSignIn": "Ilma sisselogimiseta saab võtmeid luua ainult IP-aadressi või kohaliku nime kaudu",
     "mcpKeyNotFound": "Seda võtit pole enam",
     "mcpKeyNotYours": "Seda saab teha ainult konto, kellele võti kuulub",
     "mcpOAuthIssuer": "Sisesta palun https-aadress ilma teeta, näiteks https://files.example.com",
-    "mcpOAuthNeedsSignIn": "Sisselogimine OAuthiga töötab ainult siis, kui kõik logivad CannonCommanderisse sisse",
+    "mcpOAuthDesktop": "Töölauarakendusel pole avalikku aadressi OAuthiga sisselogimiseks",
     "noSystemMenu": "Sellel arvutil pole oma kontekstimenüüd",
     "noPropertiesDialog": "Siin pole süsteemi atribuutide dialoogi",
     "notAProgram": "See pole programm, mida saab administraatorina käivitada",
@@ -4241,10 +4234,6 @@
     "linkNoUploads": "Selle lingi kaudu ei saa midagi üles laadida",
     "linkNothingHere": "Selles lingi kohas pole midagi",
     "linkOwnerGone": "Selle lingi taga olevat kontot pole enam",
-    "linkPasswordShort": {
-      "one": "Paroolis peab olema vähemalt {n} märk",
-      "other": "Paroolis peab olema vähemalt {n} märki"
-    },
     "linkPasswordWrong": "See parool ei ole õige",
     "loginNameMissing": "Kasutajanimi puudub",
     "loginNameRule": "Kasutajanimes peavad olema väiketähed, vähemalt kaks",
@@ -4304,10 +4293,6 @@
     "ownPasswordElsewhere": "Oma parooli muudad jaotises Konto ja turvalisus",
     "ownSessionsElsewhere": "Oma seansid, load ja pääsuvõtmed lõpetad jaotises Konto ja turvalisus",
     "passwordMissing": "Parool puudub",
-    "passwordShort": {
-      "one": "Paroolis peab olema vähemalt {n} märk",
-      "other": "Paroolis peab olema vähemalt {n} märki"
-    },
     "pathSlash": "Tee peab algama märgiga /",
     "pickShareFolder": "Vali kaust user-share'is",
     "pickUserFolder": "Vali kaust, mida kasutaja võib näha",
@@ -4429,10 +4414,8 @@
     "newPassword": "Uus parool",
     "setPassword": "Määra parool",
     "saving": "Salvestamine …",
-    "short": {
-      "one": "Uues paroolis peab olema vähemalt {n} märk.",
-      "other": "Uues paroolis peab olema vähemalt {n} märki."
-    },
+    "shortHint": "Alla {min} märgi. See töötab, kuid pikemat parooli on raskem ära arvata.",
+    "longer": "Pikemat parooli oleks raskem ära arvata.",
     "resetRejected": "Kood on vale või aegunud. Kui see aegus, näitab logi nüüd uut.",
     "failed": "See ei õnnestunud. Proovi uuesti.",
     "needBoth": "Sisesta nimi ja parool.",
@@ -4446,15 +4429,15 @@
     "tile": {
       "confirm": "Kinnita",
       "needsPassword": {
-        "title": "Selleks on kõigepealt vaja parooli",
-        "reason": "Määra ülal oma parool. Sellega pääsed alati sisse, isegi kui mõni muu tee ei toimi."
+        "title": "Valmis, kui parool on olemas",
+        "reason": "CannonCommander on praegu kõigile avatud, nii et siin pole veel midagi kaitsta. Määra üleval parool, millal soovid, ja see on valmis."
       },
       "notLocal": {
         "title": "See käib sinu sisselogimisteenuse kaudu",
         "reason": "Sa logid sisse teenusega {name}. Seadista kaheastmeline autentimine ja pääsuvõtmed seal."
       },
       "password": {
-        "hint": "Paroolis peab olema vähemalt {min} märki. Selle muutmine lõpetab kõik teised seansid.",
+        "hint": "Vähemalt {min}-märgilist parooli on raske ära arvata, kuid lühem töötab ka. Selle muutmine lõpetab kõik teised seansid.",
         "openHint": "Kuni parooli pole määratud, on CannonCommander avatud ja igaüks, kes selleni jõuab, on administraator.",
         "viaService": "Sa logid sisse teenusega {name}, seega sellel kontol pole siin parooli.",
         "set": "Määratud",
@@ -4570,6 +4553,8 @@
         "neverUsed": "pole kunagi kasutatud",
         "expires": "aegub {when}",
         "forever": "ei aegu",
+        "endsWhenClosed": "lõpeb, kui CannonCommander hakkab sisselogimist küsima",
+        "openHint": "CannonCommanderil pole veel parooli. Praegu loodud tõend tegutseb sinu nimel ja lakkab töötamast, kui CannonCommander hakkab sisselogimist küsima, pärast esimest parooli või esimest sisselogimisteenust.",
         "revoke": "Tühista",
         "revokeText": "Miski, mis kasutab luba {name}, ei pääse pärast seda enam sisse.",
         "revoked": "Tõend tühistatud",
@@ -4622,6 +4607,7 @@
         "whoGetsIn": "{name} otsustab, kes tohib sisse logida, näiteks oma gruppide kaudu.",
         "role": "Roll uutele",
         "roleHint": "Kelle {name} esimest korda sisse laseb, saab siin rolli {role}.",
+        "openBinds": "CannonCommanderil pole veel parooli. Õnnestunud proovisisselogimine teeb sinu {name} konto siin omanikuks ja lülitab {name} sisse. Sellest peale logivad kõik sisse ja sina tuled tagasi {name} kaudu sisselogituna. Viimase teenuse väljalülitamine avab CannonCommanderi uuesti.",
         "issuer": "Aadress",
         "issuerHint": "Teenuse enda aadress, kus see avaldab oma OpenID andmed, näiteks https://id.example.",
         "clientId": "Kliendi ID",
