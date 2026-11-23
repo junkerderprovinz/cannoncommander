@@ -7,7 +7,7 @@ toolchain go1.27.4
 require (
 	github.com/alecthomas/kong v1.17.0
 	github.com/bodgit/sevenzip v1.6.5
-	github.com/boombuler/barcode v1.1.0
+	github.com/boombuler/barcode v1.1.1
 	github.com/coder/websocket v1.8.15
 	github.com/coreos/go-systemd/v22 v22.7.0
 	github.com/creack/pty v1.1.24
@@ -44,8 +44,8 @@ require (
 	golang.org/x/time v0.16.0
 	golang.org/x/tools v0.53.0
 	gopkg.in/yaml.v3 v3.0.1
-	lukechampine.com/blake3 v1.5.1
-	modernc.org/sqlite v1.62.0
+	lukechampine.com/blake3 v1.5.3
+	modernc.org/sqlite v1.63.0
 )
 
 require (
