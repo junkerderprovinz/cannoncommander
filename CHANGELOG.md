@@ -4,9 +4,30 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## v1.3.1 (2026-11-21)
+## v1.4.0 (2026-11-23)
 
-The desktop shortcut shows the current logo again.
+CannonCommander signs you in a new way. Sign-in services such as Pocket ID are set up right in the app, a password is always optional, and every part of the app works before you set one.
+
+## ✨ Added
+
+- **Sign-in services in the app.** Admins add a service such as Pocket ID under Settings, pick the role its newcomers get and test it before it lets anyone in. A service that passed its test closes CannonCommander to strangers the way a password does.
+- **The service from config.yaml gets a name and a logo.** `name` and `provider` under `auth.methods.oidc` decide what the button says and which logo it wears. `caFile` lets CannonCommander trust a provider whose certificate comes from a CA of its own.
+
+## 🎨 Design
+
+- **The installer follows PommelPorter 1.2.6.**
+
+## ⚡ Improved
+
+- **Everything works without a password.** MCP keys can be made from any address and cloud assistants sign in through OAuth while CannonCommander is open. What was made in that time, such as MCP keys, OAuth clients and API tokens, stops working as soon as it asks for a sign-in, whichever way it closed.
+- **A password of any length.** There is no minimum any more. Under 12 characters the page tells you the password is short and takes it all the same, and `auth.methods.password.minLength` moves that hint. Share links take a password of any length too.
+- **No start password.** The first start writes no password into the log. CannonCommander opens, and you set a password when you want one.
+- **Stay signed in for 30 days.** Every session lasts 30 days and ends after 7 days without a visit, so the Stay signed in choice is gone.
+- **Wrong passwords slow down instead of locking out.** After five wrong passwords for a name, each further try waits a little longer, up to a minute, in the browser and from WebDAV alike. An address that keeps guessing waits up to 15 minutes. A share link takes ten wrong passwords an hour from all addresses together before it slows down, and an IPv6 network counts as one visitor.
+- **A reset starts clean.** Resetting a password through the log ends every session and API token of that account.
+- **WebDAV follows the new sign-in.** A WebDAV client signs in with your password or an API token. An account with two-factor sign-in or from a sign-in service uses an API token.
+- **Fewer switches.** Lock password and Require password change are gone from the user settings. `auth.methods.password.enforcedOtp` has no effect, since each account turns on two-factor sign-in for itself.
+- **A page that fails to load tries again.** A part of the interface that does not load is fetched once more, and if that fails too, a Try again button takes its place.
 
 ## 🐛 Fixed
 
