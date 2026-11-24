@@ -4,6 +4,12 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## Unreleased
+
+## 🐛 Fixed
+
+- **CannonCommander starts in an unprivileged LXC on Proxmox.** With /config on a Proxmox volume, the start stopped at the volume's own lost+found folder, which belongs to the host. That folder is now left alone, and anything else in /config that the container can't take over still stops the start.
+
 ## v1.4.1 (2026-11-24)
 
 Office documents close as soon as the sign-in behind them ends, and the sign-in comes from ParleyPort.
