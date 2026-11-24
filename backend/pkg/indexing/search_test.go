@@ -43,10 +43,9 @@ func TestMain(m *testing.M) {
 		settings.Config.Server.CacheDir = originalCacheDir
 	}()
 
-	// Run the tests
 	code := m.Run()
-
-	// Exit with the test result code
+	// os.Exit skips the deferred calls.
+	os.RemoveAll(tmpDir)
 	os.Exit(code)
 }
 
