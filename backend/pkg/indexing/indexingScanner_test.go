@@ -3,6 +3,7 @@ package indexing
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -140,5 +141,37 @@ func TestTheRootQuickScanReadsTheFoldersInTheRoot(t *testing.T) {
 	}
 	if got, err := idx.db.GetItem(idx.Name, "/cloud/new.txt"); err != nil || got == nil {
 		t.Errorf("new file after the quick scan: %+v, %v", got, err)
+	}
+}
+
+// A full pass leaves the folder sizes behind and nothing else per folder,
+// so a server that has been scanning for a day holds no more than one that
+// just started and loaded the sizes back.
+func TestAFullPassKeepsNoMoreThanARestart(t *testing.T) {
+	const dirs = 8192
+	root := benchTree(t, dirs)
+	// The first scan of the process also sets up what the packages below
+	// keep for good, such as the MIME tables.
+	if err := benchIndex(t, root).createScanner("/cloud/").runFullScanChild(); err != nil {
+		t.Fatal(err)
+	}
+	idx := benchIndex(t, root)
+	base := liveHeap()
+	if err := idx.createScanner("/cloud/").runFullScanChild(); err != nil {
+		t.Fatal(err)
+	}
+	scanned := liveHeap() - base
+	runtime.KeepAlive(idx)
+
+	again := &Index{Source: idx.Source, db: idx.db, mock: true}
+	idx = nil
+	base = liveHeap()
+	if !again.restoreFolderSizes() {
+		t.Fatal("nothing restored")
+	}
+	restored := liveHeap() - base
+	runtime.KeepAlive(again)
+	if scanned > restored*5/4 {
+		t.Errorf("a full pass keeps %d bytes per folder, a restart %d", scanned/dirs, restored/dirs)
 	}
 }
