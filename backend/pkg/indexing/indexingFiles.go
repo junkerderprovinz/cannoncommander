@@ -12,7 +12,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gtsteffaniak/go-cache/cache"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -22,11 +21,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
-)
-
-var (
-	RealPathCache = cache.NewCache[string](48*time.Hour, 72*time.Hour)
-	IsDirCache    = cache.NewCache[bool](48*time.Hour, 72*time.Hour)
 )
 
 // getDiskUsage returns the actual disk space used by a file in bytes
@@ -1258,7 +1252,7 @@ func (idx *Index) GetDirInfo(dirInfo *os.File, stat os.FileInfo, indexPath strin
 }
 
 // GetRealPath resolves an index path to a real filesystem path, enforcing
-// source-root containment. It is cached (RealPathCache) — use it for reads and
+// source-root containment. It is cached in realPaths, so use it for reads and
 // bookkeeping only. Mutating filesystem operations must use
 // GetRealPathForMutation or GetRealPathForRemoval, which resolve uncached and
 // enforce a caller-supplied scope bound.
@@ -1283,9 +1277,7 @@ func (idx *Index) getRealPathInternal(boundIndexPath string, enforceScope bool, 
 		bound = "/"
 	}
 	cacheKey := fmt.Sprintf("realpath|scoped=%t|bound=%q|path=%q", enforceScope, bound, joinedPath)
-	isDir, _ := IsDirCache.Get(cacheKey + ":isdir")
-	cached, ok := RealPathCache.Get(cacheKey)
-	if ok && cached != "" {
+	if cached, isDir, ok := realPaths.get(cacheKey); ok && cached != "" {
 		return cached, isDir, nil
 	}
 	absolutePath, err := filepath.Abs(joinedPath)
@@ -1303,8 +1295,7 @@ func (idx *Index) getRealPathInternal(boundIndexPath string, enforceScope bool, 
 	} else if err := idx.ensureResolvedContained(realPath, "/"); err != nil {
 		return "", false, err
 	}
-	RealPathCache.Set(cacheKey, realPath)
-	IsDirCache.Set(cacheKey+":isdir", isDir)
+	realPaths.set(cacheKey, realPath, isDir)
 	return realPath, isDir, nil
 }
 

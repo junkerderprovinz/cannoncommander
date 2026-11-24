@@ -142,8 +142,7 @@ func TestGetRealPathScoped_CacheKeyDoesNotCollideWithUnscoped(t *testing.T) {
 	// Legacy scoped cache keys used joinedPath + ":bound:" + bound, which could collide
 	// with an unscoped joinedPath when ":bound:" appeared in a path component.
 	legacyKey := filepath.Join(sourceRoot, "user1", "foo") + ":bound:" + "/user1"
-	RealPathCache.Set(legacyKey, insideSource)
-	IsDirCache.Set(legacyKey+":isdir", false)
+	realPaths.set(legacyKey, insideSource, false)
 
 	realPath, _, err := idx.GetRealPathScoped(userScope, "/user1/foo")
 	if err != nil {
