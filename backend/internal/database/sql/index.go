@@ -538,6 +538,30 @@ func (db *IndexDB) GetDirectoryChildren(source, dirPath string) ([]*iteminfo.Fil
 	return children, nil
 }
 
+// SettledFiles returns the file rows of dirPath written after the second
+// their file last changed. Such a row still describes the file as long as
+// its size and time match; a row written in that same second may predate a
+// second change.
+func (db *IndexDB) SettledFiles(source, dirPath string) ([]*iteminfo.FileInfo, error) {
+	rows, err := db.Query(`
+	SELECT path, name, size, created_time, mod_time, type, is_dir, is_hidden, has_preview
+	FROM index_items WHERE source = ? AND parent_path = ? AND is_dir = 0 AND last_updated > mod_time
+	`, source, dirPath)
+	if err != nil {
+		return nil, sqlitebusy.Wrap(err)
+	}
+	defer rows.Close()
+	var files []*iteminfo.FileInfo
+	for rows.Next() {
+		item, err := scanRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		files = append(files, item)
+	}
+	return files, rows.Err()
+}
+
 // DeleteItem removes an item and optionally its children (recursive) for a specific source.
 func (db *IndexDB) DeleteItem(source, path string, recursive bool) error {
 	if !recursive {
