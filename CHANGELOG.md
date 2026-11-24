@@ -8,7 +8,7 @@ Every release is written by hand. The full notes for each release are in
 
 ## 🐛 Fixed
 
-- **CannonCommander starts in an unprivileged LXC on Proxmox.** With /config on a Proxmox volume, the start stopped at the volume's own lost+found folder, which belongs to the host. That folder is now left alone, and anything else in /config that the container can't take over still stops the start.
+- **CannonCommander starts in an unprivileged LXC on Proxmox.** Two things stopped it there. With /config on a Proxmox volume, the start halted at the volume's own lost+found folder, which belongs to the host. And the server, running as PUID, wasn't allowed to open port 80, because an LXC keeps ports below 1024 for root. The lost+found folder is now left alone, and the server keeps the one right it needs for port 80. Anything else in /config that the container can't take over still stops the start.
 
 ## v1.4.1 (2026-11-24)
 

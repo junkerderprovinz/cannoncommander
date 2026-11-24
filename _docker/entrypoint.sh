@@ -70,7 +70,9 @@ if [ "$PUID" != 0 ]; then
   # chown and fowner let "Set permissions the Unraid way" hand files to
   # nobody:users. Unraid keeps /boot/config readable for root alone, which
   # dac_read_search gets past, and /tmp/notifications writable for root
-  # alone, which dac_override gets past. Each is kept only when the
+  # alone, which dac_override gets past. net_bind_service opens port 80
+  # where ports below 1024 stay with root: Docker lowers that limit in a
+  # container, an LXC on Proxmox cannot. Each is kept only when the
   # container has it, so a run without the template's capabilities still
   # starts.
   caps="+chown,+fowner"
@@ -80,6 +82,9 @@ if [ "$PUID" != 0 ]; then
   fi
   if [ $((0x$bounding & 4)) != 0 ]; then
     caps="$caps,+dac_read_search"
+  fi
+  if [ $((0x$bounding & 0x400)) != 0 ]; then
+    caps="$caps,+net_bind_service"
   fi
   as_user="setpriv --reuid=$PUID --regid=$PGID --init-groups --inh-caps=$caps --ambient-caps=$caps"
 fi
