@@ -449,10 +449,9 @@ func TestGetDirInfoCore_IndexableListing(t *testing.T) {
 				},
 			},
 		},
-		db:                  indexDB,
-		scanUpdatedPaths:    make(map[string]bool),
-		folderSizes:         make(map[string]uint64),
-		folderSizesUnsynced: make(map[string]struct{}),
+		db:               indexDB,
+		scanUpdatedPaths: make(map[string]bool),
+		folderSizes:      newFolderSizes(),
 	}
 	// Clean any rows left by a previous run for this source.
 	if err := idx.db.DeleteItem(idx.Name, "/", true); err != nil {
@@ -539,10 +538,9 @@ func TestPersistDirectoryListing_PropagatesSizeToParents(t *testing.T) {
 				UseLogicalSize: true,
 			},
 		},
-		db:                  db,
-		scanUpdatedPaths:    make(map[string]bool),
-		folderSizes:         make(map[string]uint64),
-		folderSizesUnsynced: make(map[string]struct{}),
+		db:               db,
+		scanUpdatedPaths: make(map[string]bool),
+		folderSizes:      newFolderSizes(),
 	}
 
 	opts := Options{CheckViewable: true}
@@ -612,11 +610,10 @@ func TestALinkedFolderAtTheRootIsIndexedAsTheFolderItLeadsTo(t *testing.T) {
 	t.Cleanup(func() { LinkedFolder = nil })
 
 	idx := &Index{
-		Source:              settings.Source{Name: "test_linked", Path: root},
-		db:                  indexDB,
-		scanUpdatedPaths:    make(map[string]bool),
-		folderSizes:         make(map[string]uint64),
-		folderSizesUnsynced: make(map[string]struct{}),
+		Source:           settings.Source{Name: "test_linked", Path: root},
+		db:               indexDB,
+		scanUpdatedPaths: make(map[string]bool),
+		folderSizes:      newFolderSizes(),
 	}
 	dir, err := os.Open(root)
 	if err != nil {

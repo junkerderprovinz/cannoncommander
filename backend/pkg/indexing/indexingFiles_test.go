@@ -32,11 +32,10 @@ func setupTestIndex(t *testing.T) (*Index, string, func()) {
 				UseLogicalSize: true,
 			},
 		},
-		mock:                true, // Enable mock mode
-		db:                  indexDB,
-		scanUpdatedPaths:    make(map[string]bool),
-		folderSizes:         make(map[string]uint64),   // Initialize folder sizes map
-		folderSizesUnsynced: make(map[string]struct{}), // Initialize unsynced map
+		mock:             true, // Enable mock mode
+		db:               indexDB,
+		scanUpdatedPaths: make(map[string]bool),
+		folderSizes:      newFolderSizes(),
 	}
 
 	// Create mock directory structure with predictable sizes using database

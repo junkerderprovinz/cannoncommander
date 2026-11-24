@@ -67,12 +67,11 @@ func benchIndex(b testing.TB, root string) *Index {
 	}
 	b.Cleanup(func() { db.Close() })
 	return &Index{
-		Source:              settings.Source{Name: "bench", Path: root, Config: settings.SourceConfig{UseLogicalSize: true}},
-		db:                  db,
-		mock:                true,
-		folderSizes:         map[string]uint64{},
-		folderSizesUnsynced: map[string]struct{}{},
-		scanUpdatedPaths:    map[string]bool{},
+		Source:           settings.Source{Name: "bench", Path: root, Config: settings.SourceConfig{UseLogicalSize: true}},
+		db:               db,
+		mock:             true,
+		folderSizes:      newFolderSizes(),
+		scanUpdatedPaths: map[string]bool{},
 	}
 }
 
@@ -144,7 +143,7 @@ func BenchmarkFullScan(b *testing.B) {
 				b.StopTimer()
 				p := sampler.peak()
 				live, peak = perDir(liveHeap(), base, dirs), perDir(p, base, dirs)
-				if n := len(idx.folderSizes); n < dirs {
+				if n := idx.folderSizes.len(); n < dirs {
 					b.Fatalf("index holds %d folders, want at least %d", n, dirs)
 				}
 				runtime.KeepAlive(idx)
@@ -169,7 +168,7 @@ func BenchmarkRestoreFolderSizes(b *testing.B) {
 			var live float64
 			for b.Loop() {
 				b.StopTimer()
-				idx := &Index{Source: first.Source, db: first.db, mock: true, folderSizesUnsynced: map[string]struct{}{}}
+				idx := &Index{Source: first.Source, db: first.db, mock: true, folderSizes: newFolderSizes()}
 				base := liveHeap()
 				b.StartTimer()
 				if !idx.restoreFolderSizes() {

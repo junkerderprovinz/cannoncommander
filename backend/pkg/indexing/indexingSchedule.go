@@ -212,6 +212,13 @@ func (idx *Index) PostScan() error {
 		idx.scanSessionStartTime = 0
 		idx.scanUpdatedPaths = make(map[string]bool) // Clear tracking map
 		idx.mu.Unlock()
+
+		// No scan holds folder ids now, so the sizes may be renumbered.
+		idx.folderSizesMu.Lock()
+		if idx.folderSizes.sparse() {
+			idx.folderSizes.compact()
+		}
+		idx.folderSizesMu.Unlock()
 		return idx.SetStatus(READY)
 	}
 	// Scanners still running - skip expensive operations
@@ -250,15 +257,15 @@ func (idx *Index) restoreFolderSizes() bool {
 	if idx.db == nil {
 		return false
 	}
-	sizes, err := idx.db.LoadFolderSizes(idx.Name)
-	if err != nil {
+	sizes := newFolderSizes()
+	if err := idx.db.LoadFolderSizes(idx.Name, sizes.restore); err != nil {
 		logger.Errorf("[%s] Failed to load persisted folder sizes: %v", idx.Name, err)
 		return false
 	}
 	idx.folderSizesMu.Lock()
 	idx.folderSizes = sizes
 	idx.folderSizesMu.Unlock()
-	return len(sizes) > 0
+	return sizes.len() > 0
 }
 
 // setupMultiScanner creates and starts the multi-scanner system

@@ -354,20 +354,32 @@ func GetIndexInfo(sourceName string, forceCacheRefresh bool) (ReducedIndex, erro
 	return reducedIdx, nil
 }
 
-// SetFolderSize sets the size for a directory in the in-memory map
+// SetFolderSize sets the size of a folder, to be written with the next sync.
 func (idx *Index) SetFolderSize(path string, newSize uint64) {
 	idx.folderSizesMu.Lock()
 	defer idx.folderSizesMu.Unlock()
-	idx.folderSizes[path] = newSize
-	idx.folderSizesUnsynced[path] = struct{}{} // Mark as changed for next DB sync
+	idx.folderSizes.set(path, newSize)
 }
 
-// GetFolderSize retrieves the size for a directory from the in-memory map
+// GetFolderSize returns the size of a folder, if the index measured it.
 func (idx *Index) GetFolderSize(path string) (uint64, bool) {
 	idx.folderSizesMu.RLock()
 	defer idx.folderSizesMu.RUnlock()
-	size, exists := idx.folderSizes[path]
-	return size, exists
+	return idx.folderSizes.get(path)
+}
+
+// folderPath returns the path of a folder a scan picked from sizes, unless
+// the folder lost its size since or the sizes were replaced.
+func (idx *Index) folderPath(sizes *folderSizes, id uint32) (string, bool) {
+	idx.folderSizesMu.RLock()
+	defer idx.folderSizesMu.RUnlock()
+	if idx.folderSizes != sizes {
+		return "", false
+	}
+	if _, ok := sizes.size(id); !ok {
+		return "", false
+	}
+	return sizes.path(id), true
 }
 
 // folderSizeLookupKey maps a quota/listing index path to the folderSizes map key

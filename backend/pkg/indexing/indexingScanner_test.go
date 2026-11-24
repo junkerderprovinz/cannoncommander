@@ -2,6 +2,7 @@ package indexing
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -33,10 +34,9 @@ func TestCheckFolderModtime_unchangedPreservesHasPreviewAndHidden(t *testing.T) 
 			Name: "test_modtime",
 			Path: root,
 		},
-		db:                  indexDB,
-		scanUpdatedPaths:    make(map[string]bool),
-		folderSizes:         make(map[string]uint64),
-		folderSizesUnsynced: make(map[string]struct{}),
+		db:               indexDB,
+		scanUpdatedPaths: make(map[string]bool),
+		folderSizes:      newFolderSizes(),
 	}
 
 	folderPath := "/photos/"
@@ -84,5 +84,61 @@ func TestCheckFolderModtime_unchangedPreservesHasPreviewAndHidden(t *testing.T) 
 	}
 	if !got.Hidden {
 		t.Error("Hidden should be preserved on unchanged modtime touch update")
+	}
+}
+
+// quickScanIndex reads a tree with a full pass of the scanner for /cloud/
+// and dates every folder back, so a quick scan sees only what changes next.
+func quickScanIndex(t *testing.T, folders ...string) (*Index, *Scanner) {
+	t.Helper()
+	root := t.TempDir()
+	for _, f := range folders {
+		put(t, root, "cloud/"+f+"/file.txt")
+	}
+	idx := benchIndex(t, root)
+	s := idx.createScanner("/cloud/")
+	if err := s.runFullScanChild(); err != nil {
+		t.Fatal(err)
+	}
+	past := time.Now().Add(-2 * time.Hour)
+	err := filepath.WalkDir(root, func(p string, d os.DirEntry, err error) error {
+		if err == nil && d.IsDir() {
+			err = os.Chtimes(p, past, past)
+		}
+		return err
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.lastScanned = time.Now().Add(-time.Hour)
+	return idx, s
+}
+
+func TestAQuickScanReadsAChangedFolderDeepDown(t *testing.T) {
+	idx, s := quickScanIndex(t, "a/b/c", "d")
+	put(t, idx.Path, "cloud/a/b/c/new.txt")
+	if err := s.runQuickScanChild(); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []string{"/cloud/a/b/c/new.txt", "/cloud/a/b/c/file.txt", "/cloud/d/file.txt"} {
+		if got, err := idx.db.GetItem(idx.Name, p); err != nil || got == nil {
+			t.Errorf("%s after the quick scan: %+v, %v", p, got, err)
+		}
+	}
+	if size, ok := idx.GetFolderSize("/cloud/a/b/c/"); !ok || size != 8 {
+		t.Errorf("size of the changed folder %d (known %v), want 8", size, ok)
+	}
+}
+
+func TestTheRootQuickScanReadsTheFoldersInTheRoot(t *testing.T) {
+	idx, _ := quickScanIndex(t, "a")
+	s := idx.createScanner("/")
+	s.lastScanned = time.Now().Add(-time.Hour)
+	put(t, idx.Path, "cloud/new.txt")
+	if err := s.runQuickScanRoot(); err != nil {
+		t.Fatal(err)
+	}
+	if got, err := idx.db.GetItem(idx.Name, "/cloud/new.txt"); err != nil || got == nil {
+		t.Errorf("new file after the quick scan: %+v, %v", got, err)
 	}
 }

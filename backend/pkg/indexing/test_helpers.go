@@ -15,9 +15,8 @@ func SetTestIndex(name string, path string) {
 			Name: name,
 			Path: path,
 		},
-		mock:                true,
-		folderSizes:         make(map[string]uint64),
-		folderSizesUnsynced: make(map[string]struct{}),
+		mock:        true,
+		folderSizes: newFolderSizes(),
 	}
 	indexes[name] = idx
 }
