@@ -8,8 +8,8 @@
  * Both themes embed logo.svg, whose two greys read on either background. Text becomes SVG paths, so the SVG renders
  * the same everywhere without the fonts.
  *
- * The name is set in Bree Serif Light and the claim in Bree Light. Both are licensed and never committed, so
- * HOUSE_FONTS (default %LOCALAPPDATA%\halleluja-fonts) must hold them as TTF.
+ * The name is set in Bree Serif Regular and the claim in Bree Light. Bree Light is licensed, and neither font is
+ * committed, so HOUSE_FONTS (default %LOCALAPPDATA%\halleluja-fonts) must hold them as TTF.
  *
  * Deps (global): opentype.js, @resvg/resvg-js.
  * Run: node .github/assets/gen-banner.mjs
@@ -41,7 +41,7 @@ const THEMES = [
 ];
 
 const fonts = process.env.HOUSE_FONTS ?? join(process.env.LOCALAPPDATA ?? tmpdir(), "halleluja-fonts");
-const nameFont = opentype.parse(readFileSync(join(fonts, "bree-serif-light.ttf")).buffer);
+const nameFont = opentype.parse(readFileSync(join(fonts, "bree-serif-regular.ttf")).buffer);
 const claimFont = opentype.parse(readFileSync(join(fonts, "bree-light.ttf")).buffer);
 
 // The shared name size is 132; a name too long for the row beside the logo is set smaller rather than run off.

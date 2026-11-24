@@ -257,7 +257,7 @@ async function style() {
   // The drawn window bars keep the sans of a real one.
   const lato = dataUrl(await cached('Lato-Regular.ttf', 'https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf'), 'font/ttf');
   return `
-@font-face { font-family: "Bree Serif"; font-weight: 300; src: url(${houseFont('bree-serif-light.ttf')}); }
+@font-face { font-family: "Bree Serif"; font-weight: 400; src: url(${houseFont('bree-serif-regular.ttf')}); }
 @font-face { font-family: Bree; font-weight: 300; src: url(${houseFont('bree-light.ttf')}); }
 @font-face { font-family: Lato; src: url(${lato}); }
 * { box-sizing: border-box; margin: 0; }
@@ -270,7 +270,7 @@ body { position: relative; width: 1920px; height: 1000px; overflow: hidden; font
 .vignette { inset: 0; box-shadow: inset 0 0 200px rgba(0,0,0,.6); }
 .copy { position: absolute; left: 84px; top: 0; bottom: 0; width: 470px; display: flex; flex-direction: column; justify-content: center; gap: 28px; }
 .copy img { width: 92px; }
-h1 { font: 300 64px/1.12 "Bree Serif", serif; color: #f4f4f4; text-wrap: balance; }
+h1 { font: 400 64px/1.12 "Bree Serif", serif; color: #f4f4f4; text-wrap: balance; }
 h1 em { font-style: normal; color: #FCC419; }
 .sub { font: 300 28px/1.35 Bree, sans-serif; color: #9d9481; }
 .stage { position: absolute; left: 600px; width: 1270px; perspective: 2400px; }
@@ -326,7 +326,7 @@ async function render(browser, shots) {
   for (const shot of shots) {
     const big = await browser.newPage({ viewport: { width: 1920, height: 1000 }, deviceScaleFactor: 2 });
     await big.setContent(picture(css, logo, shot));
-    await big.evaluate(() => Promise.all(['300 1em "Bree Serif"', '300 1em Bree'].map((f) => document.fonts.load(f))));
+    await big.evaluate(() => Promise.all(['400 1em "Bree Serif"', '300 1em Bree'].map((f) => document.fonts.load(f))));
     await big.evaluate(() => document.fonts.ready);
     await big.evaluate(() => Promise.all([...document.images].map((img) => img.decode())));
     const png = await big.screenshot();
