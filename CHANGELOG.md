@@ -4,6 +4,12 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## Unreleased
+
+## ⚡ Improved
+
+- **Full scans leave unchanged files closed.** A file whose size and time haven't changed since the last scan keeps the type the index already knows, so a full scan doesn't read its first bytes again. On a share of millions of Storj pieces, whose ending CannonCommander doesn't recognise, that reading made a full pass take longer than a day.
+
 ## v1.4.1 (2026-11-24)
 
 Office documents close as soon as the sign-in behind them ends, and the sign-in comes from ParleyPort.
