@@ -20,6 +20,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
@@ -47,6 +48,7 @@ func Routes(r *v1.Router) {
 			u, err := state.GetUserByID(id)
 			return &u, err
 		},
+		blocked:   accounts.Blocked,
 		base:      publicBase,
 		discovery: &discovery{},
 		locks:     newLocks(),
@@ -60,6 +62,7 @@ type service struct {
 	keys      *keys
 	settings  func(context.Context) (system.Office, error)
 	user      func(id uint64) (*users.User, error)
+	blocked   func(id uint64) bool
 	base      func(r *http.Request) string
 	discovery *discovery
 	locks     *locks
@@ -180,8 +183,8 @@ func (s *service) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 	return loc, info, nil
 }
 
-// granted checks a token from the document server and the rights its user
-// holds now.
+// granted checks a token from the document server, the rights its user
+// holds now and that the account is not blocked.
 func (s *service) granted(ctx context.Context, token string, write bool) (grant, *users.User, ccfs.Location, os.FileInfo, error) {
 	g, err := s.keys.verify(ctx, token)
 	if err != nil {
@@ -191,7 +194,7 @@ func (s *service) granted(ctx context.Context, token string, write bool) (grant,
 		return grant{}, nil, ccfs.Location{}, nil, errBadToken
 	}
 	u, err := s.user(g.User)
-	if err != nil {
+	if err != nil || s.blocked(g.User) {
 		return grant{}, nil, ccfs.Location{}, nil, errBadToken
 	}
 	// The document server passes the whole file on to the browser, which

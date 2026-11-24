@@ -27,12 +27,13 @@ import (
 )
 
 type fixture struct {
-	t      *testing.T
-	h      http.Handler
-	share  string
-	office system.Office
-	people map[string]*users.User
-	db     *sql.DB
+	t       *testing.T
+	h       http.Handler
+	share   string
+	office  system.Office
+	people  map[string]*users.User
+	blocked map[uint64]bool
+	db      *sql.DB
 }
 
 const base = "http://cc.test/api/v1"
@@ -60,7 +61,7 @@ func newFixture(t *testing.T) *fixture {
 		t.Fatal(err)
 	}
 	all := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
-	f := &fixture{t: t, share: share, db: db, people: map[string]*users.User{
+	f := &fixture{t: t, share: share, db: db, blocked: map[uint64]bool{}, people: map[string]*users.User{
 		"jdp":  {ID: 1, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}}},
 		"anna": {ID: 2, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true, Download: true}}}},
 	}}
@@ -89,6 +90,7 @@ func newFixture(t *testing.T) *fixture {
 		keys:      &keys{db: db},
 		settings:  func(context.Context) (system.Office, error) { return f.office, nil },
 		user:      byID,
+		blocked:   func(id uint64) bool { return f.blocked[id] },
 		base:      func(*http.Request) string { return base },
 		discovery: &discovery{},
 		locks:     newLocks(),
@@ -252,6 +254,20 @@ func TestATakenRightClosesTheDocument(t *testing.T) {
 	}
 	if rec := f.do(local(t, "GET", strings.Replace(file, "token=", "token=x", 1), nil)); rec.Code != http.StatusUnauthorized {
 		t.Fatalf("forged token: %d", rec.Code)
+	}
+}
+
+func TestAnOfficeLinkStopsWhenItsAccountIsBlocked(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	_, c := f.config("jdp")
+	file := c.Config["document"].(map[string]any)["url"].(string)
+	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusOK {
+		t.Fatalf("download before the block: %d", rec.Code)
+	}
+	f.blocked[f.people["jdp"].ID] = true
+	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusUnauthorized {
+		t.Fatalf("download after the account was blocked: %d", rec.Code)
 	}
 }
 
