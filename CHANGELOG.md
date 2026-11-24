@@ -4,6 +4,12 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## Unreleased
+
+## ⚡ Improved
+
+- **The file index needs much less memory.** CannonCommander keeps the size of every indexed folder in memory. After a full scan each folder takes about a third of the memory it used to, and the index no longer grows while the scans work through the shares. On a server with three million folders that frees several hundred megabytes.
+
 ## v1.4.1 (2026-11-24)
 
 Office documents close as soon as the sign-in behind them ends, and the sign-in comes from ParleyPort.
