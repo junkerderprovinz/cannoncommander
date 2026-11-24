@@ -134,7 +134,7 @@ type Index struct {
 	folderSizesMu       sync.RWMutex        // Dedicated RWMutex allows concurrent reads, serializes writes
 	// Scan session tracking: timestamp when scan session started (for timestamp-based conflict detection)
 	scanSessionStartTime int64           // Unix timestamp when current scan session started (0 if no active scan)
-	scanUpdatedPaths     map[string]bool // Tracks directories updated by the scan (to distinguish from API updates)
+	scanUpdatedPaths     map[string]bool // Folders a quick scan read again, whose files it then purges
 
 	// Adaptive scheduler: shared slot map (UTC unix seconds -> scanners).
 	scheduleSlotsMu sync.Mutex

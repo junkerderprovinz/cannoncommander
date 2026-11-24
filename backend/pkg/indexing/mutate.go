@@ -45,14 +45,6 @@ func (idx *Index) UpdateMetadata(info *iteminfo.FileInfo, scanner *Scanner, pers
 	}
 
 	if scanner != nil {
-		normalizedPath := utils.AddTrailingSlashIfNotExists(info.Path)
-		idx.mu.Lock()
-		if idx.scanUpdatedPaths == nil {
-			idx.scanUpdatedPaths = make(map[string]bool)
-		}
-		idx.scanUpdatedPaths[normalizedPath] = true
-		idx.mu.Unlock()
-
 		scanner.batchItems = append(scanner.batchItems, items...)
 		if len(scanner.batchItems) >= idx.db.BatchSize {
 			scanner.flushBatch()
