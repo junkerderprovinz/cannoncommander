@@ -49,6 +49,9 @@ func Routes(r *v1.Router) {
 			return &u, err
 		},
 		blocked:   accounts.Blocked,
+		session:   accounts.SessionOf,
+		alive:     accounts.Alive,
+		signIn:    func() bool { return !state.OpenAccess() },
 		base:      publicBase,
 		discovery: &discovery{},
 		locks:     newLocks(),
@@ -63,6 +66,9 @@ type service struct {
 	settings  func(context.Context) (system.Office, error)
 	user      func(id uint64) (*users.User, error)
 	blocked   func(id uint64) bool
+	session   func(r *http.Request) (string, bool)
+	alive     func(session string) bool
+	signIn    func() bool
 	base      func(r *http.Request) string
 	discovery *discovery
 	locks     *locks
@@ -133,10 +139,14 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	session, err := s.sessionOf(r)
+	if err != nil {
+		return err
+	}
 	_, werr := s.fs.Check(u, loc.Path, ccfs.Modify)
 	// A preview asks for view mode here, because a signed config cannot be
 	// changed in the browser.
-	g := grant{User: u.ID, Path: loc.Path, Write: werr == nil && r.URL.Query().Get("mode") != "view"}
+	g := grant{User: u.ID, Path: loc.Path, Write: werr == nil && r.URL.Query().Get("mode") != "view", Session: session}
 	token, expires, err := s.keys.sign(r.Context(), g)
 	if err != nil {
 		return err
@@ -183,8 +193,31 @@ func (s *service) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 	return loc, info, nil
 }
 
+var errSessionNeeded = v1.Coded(http.StatusForbidden, "sessionNeeded", "sign in in the browser to open an office document")
+
+// sessionOf is the session a link lives with. An API token has none, so it
+// cannot open a document. On a server nobody signs in to a link lives until
+// the server closes.
+func (s *service) sessionOf(r *http.Request) (string, error) {
+	if !s.signIn() {
+		return "", nil
+	}
+	id, ok := s.session(r)
+	if !ok {
+		return "", errSessionNeeded
+	}
+	return id, nil
+}
+
+func (s *service) lasts(g grant) bool {
+	if g.Session == "" {
+		return !s.signIn()
+	}
+	return s.alive(g.Session)
+}
+
 // granted checks a token from the document server, the rights its user
-// holds now and that the account is not blocked.
+// holds now and that the account is not blocked and its session lasts.
 func (s *service) granted(ctx context.Context, token string, write bool) (grant, *users.User, ccfs.Location, os.FileInfo, error) {
 	g, err := s.keys.verify(ctx, token)
 	if err != nil {
@@ -194,7 +227,7 @@ func (s *service) granted(ctx context.Context, token string, write bool) (grant,
 		return grant{}, nil, ccfs.Location{}, nil, errBadToken
 	}
 	u, err := s.user(g.User)
-	if err != nil || s.blocked(g.User) {
+	if err != nil || s.blocked(g.User) || !s.lasts(g) {
 		return grant{}, nil, ccfs.Location{}, nil, errBadToken
 	}
 	// The document server passes the whole file on to the browser, which

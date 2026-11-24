@@ -33,6 +33,8 @@ type fixture struct {
 	office  system.Office
 	people  map[string]*users.User
 	blocked map[uint64]bool
+	ended   map[string]bool
+	open    bool
 	db      *sql.DB
 }
 
@@ -61,7 +63,7 @@ func newFixture(t *testing.T) *fixture {
 		t.Fatal(err)
 	}
 	all := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
-	f := &fixture{t: t, share: share, db: db, blocked: map[uint64]bool{}, people: map[string]*users.User{
+	f := &fixture{t: t, share: share, db: db, blocked: map[uint64]bool{}, ended: map[string]bool{}, people: map[string]*users.User{
 		"jdp":  {ID: 1, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}}},
 		"anna": {ID: 2, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true, Download: true}}}},
 	}}
@@ -85,12 +87,21 @@ func newFixture(t *testing.T) *fixture {
 	router := v1.NewRouter(v1.Deps{FS: fs, DB: db}, auth)
 	router.Contract("office", contract)
 	bind(router, &service{
-		fs:        fs,
-		db:        db,
-		keys:      &keys{db: db},
-		settings:  func(context.Context) (system.Office, error) { return f.office, nil },
-		user:      byID,
-		blocked:   func(id uint64) bool { return f.blocked[id] },
+		fs:       fs,
+		db:       db,
+		keys:     &keys{db: db},
+		settings: func(context.Context) (system.Office, error) { return f.office, nil },
+		user:     byID,
+		blocked:  func(id uint64) bool { return f.blocked[id] },
+		session: func(r *http.Request) (string, bool) {
+			who := r.Header.Get("X-User")
+			if f.open || who == "" || r.Header.Get("X-Token") != "" {
+				return "", false
+			}
+			return "session-" + who, true
+		},
+		alive:     func(id string) bool { return !f.ended[id] },
+		signIn:    func() bool { return !f.open },
 		base:      func(*http.Request) string { return base },
 		discovery: &discovery{},
 		locks:     newLocks(),
@@ -268,6 +279,67 @@ func TestAnOfficeLinkStopsWhenItsAccountIsBlocked(t *testing.T) {
 	f.blocked[f.people["jdp"].ID] = true
 	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusUnauthorized {
 		t.Fatalf("download after the account was blocked: %d", rec.Code)
+	}
+}
+
+func TestAnOfficeLinkEndsWithItsSession(t *testing.T) {
+	f := newFixture(t)
+	cool := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/hosting/discovery" {
+			_, _ = w.Write([]byte(discoveryXML))
+		}
+	}))
+	defer cool.Close()
+	f.office = system.Office{Kind: system.OfficeCollabora, URL: cool.URL}
+	_, c := f.config("jdp")
+	editor, err := url.Parse(c.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	src := editor.Query().Get("WOPISrc")
+	q := "?access_token=" + url.QueryEscape(c.Token)
+	wopi := func(method, suffix, body string, header ...string) *httptest.ResponseRecorder {
+		req := local(t, method, src+suffix+q, strings.NewReader(body))
+		for i := 0; i+1 < len(header); i += 2 {
+			req.Header.Set(header[i], header[i+1])
+		}
+		return f.do(req)
+	}
+	if rec := wopi("POST", "", "", "X-WOPI-Override", "LOCK", "X-WOPI-Lock", "A"); rec.Code != http.StatusOK {
+		t.Fatalf("lock while the session lasts: %d", rec.Code)
+	}
+	f.ended["session-jdp"] = true
+	if rec := wopi("GET", "/contents", ""); rec.Code != http.StatusUnauthorized {
+		t.Fatalf("read after the session ended: %d", rec.Code)
+	}
+	if wopi("POST", "/contents", "neu", "X-WOPI-Override", "PUT", "X-WOPI-Lock", "A"); f.content() != "alt" {
+		t.Fatal("saved after the session ended")
+	}
+}
+
+func TestAnAPITokenCannotOpenAnOfficeDocument(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	req := httptest.NewRequest("GET", "/office/config?path=/mnt/user/dokumente/Brief.docx", nil)
+	req.Header.Set("X-User", "jdp")
+	req.Header.Set("X-Token", "1")
+	if rec := f.do(req); rec.Code != http.StatusForbidden {
+		t.Fatalf("config through an API token: %d", rec.Code)
+	}
+}
+
+func TestAnOfficeLinkFromAnOpenServerEndsWhenItCloses(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	f.open = true
+	_, c := f.config("jdp")
+	file := c.Config["document"].(map[string]any)["url"].(string)
+	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusOK {
+		t.Fatalf("download while the server is open: %d", rec.Code)
+	}
+	f.open = false
+	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusUnauthorized {
+		t.Fatalf("download after the server closed: %d", rec.Code)
 	}
 }
 

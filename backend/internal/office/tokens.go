@@ -32,11 +32,15 @@ const tokenTTL = 24 * time.Hour
 
 // grant is what a link lets the document server do: one file, for one
 // user, reading or also writing. The user's rights are checked again on
-// every call, so a right taken away or a block closes the open document.
+// every call, so a right taken away or a block closes the open document,
+// and so does the end of the session it was opened from.
 type grant struct {
 	User  uint64 `json:"u"`
 	Path  string `json:"p"`
 	Write bool   `json:"w"`
+	// Session is the sign-in's id of the session, a digest of its cookie
+	// that signs nobody in. It is empty for a server nobody signs in to.
+	Session string `json:"s,omitempty"`
 	jwt.RegisteredClaims
 }
 

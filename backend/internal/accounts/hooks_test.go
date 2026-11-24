@@ -242,20 +242,22 @@ func TestAStaleAdminGetsTheSignInsOwnAnswerForANewUser(t *testing.T) {
 	}
 }
 
+// sessionID is the sign-in's id of the session name is signed in with.
+func (w *world) sessionID(name string) string {
+	var id string
+	w.auth.Guard(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) { id, _ = accounts.SessionOf(r) })).
+		ServeHTTP(httptest.NewRecorder(), func() *http.Request {
+			r := httptest.NewRequest("GET", "http://"+host+"/me", nil)
+			r.Header.Set("Cookie", w.session(name))
+			return r
+		}())
+	return id
+}
+
 func TestASessionEndsWithItsSignOutAndABlock(t *testing.T) {
 	w := newWorld(t).open()
 	anna := w.addUser("anna", "user", "/mnt/user")
-	session := func() string {
-		var id string
-		w.auth.Guard(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) { id, _ = accounts.SessionOf(r) })).
-			ServeHTTP(httptest.NewRecorder(), func() *http.Request {
-				r := httptest.NewRequest("GET", "http://"+host+"/me", nil)
-				r.Header.Set("Cookie", w.session("anna"))
-				return r
-			}())
-		return id
-	}
-	first := session()
+	first := w.sessionID("anna")
 	if !accounts.Alive(first) {
 		t.Fatal("a session does not count right after the sign-in")
 	}
@@ -264,7 +266,7 @@ func TestASessionEndsWithItsSignOutAndABlock(t *testing.T) {
 	if accounts.Alive(first) {
 		t.Fatal("a session outlives its sign-out")
 	}
-	second := session()
+	second := w.sessionID("anna")
 	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"blocked": true}))
 	if accounts.Alive(second) || !accounts.Blocked(anna.ID) {
 		t.Fatal("a session outlives a block")
@@ -272,5 +274,27 @@ func TestASessionEndsWithItsSignOutAndABlock(t *testing.T) {
 	w.must(http.StatusOK, w.as("jdp", "PATCH", "/admin/users/anna", map[string]any{"blocked": false}))
 	if accounts.Blocked(anna.ID) || accounts.Alive(second) {
 		t.Fatal("unblocking brought the session back, or the account stays blocked")
+	}
+}
+
+func TestEveryWayOutEndsASession(t *testing.T) {
+	w := newWorld(t).open()
+	for _, out := range []struct {
+		name, method, target string
+		body                 any
+	}{
+		{"anna", "POST", "/api/signin/v1/logout", map[string]string{}},
+		{"bert", "DELETE", "/api/signin/v1/me/sessions", nil},
+		{"carl", "PUT", "/api/signin/v1/me/password", map[string]string{"current": strong, "next": "noch-ein-langes-passwort"}},
+	} {
+		w.addUser(out.name, "user", "/mnt/user")
+		id := w.sessionID(out.name)
+		if !accounts.Alive(id) {
+			t.Fatalf("%s %s: the session does not count after the sign-in", out.method, out.target)
+		}
+		w.must(http.StatusOK, w.as(out.name, out.method, out.target, out.body))
+		if accounts.Alive(id) {
+			t.Fatalf("%s %s: the session outlives it", out.method, out.target)
+		}
 	}
 }
