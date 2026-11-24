@@ -80,6 +80,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.4.1" date="2026-11-24">
+      <description>
+        <p>Office documents close as soon as the sign-in behind them ends, and the sign-in comes from ParleyPort.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.4.1</url>
+    </release>
     <release version="1.4.0" date="2026-11-23">
       <description>
         <p>CannonCommander signs you in a new way. Sign-in services such as Pocket ID are set up right in the app, a password is always optional, and every part of the app works before you set one. The desktop shortcut on Windows shows the current logo again, without the old white tile behind it.</p>

@@ -4,6 +4,18 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.4.1 (2026-11-24)
+
+Office documents close as soon as the sign-in behind them ends, and the sign-in comes from ParleyPort.
+
+## ⚡ Improved
+
+- **The sign-in comes from ParleyPort.** The kit no longer has a version of its own, so CannonCommander follows ParleyPort's releases from here on.
+
+## 🐛 Fixed
+
+- **Office documents close when the sign-in behind them ends.** A document open in OnlyOffice, Euro-Office or Collabora could still be read and saved through its link for up to a day after its account was blocked or signed out. The link ends with the session it was opened from, so signing out, signing out everywhere, a new password or a block closes the document right away. Opening one takes a sign-in in the browser, so an API token can't.
+
 ## v1.4.0 (2026-11-23)
 
 CannonCommander signs you in a new way. Sign-in services such as Pocket ID are set up right in the app, a password is always optional, and every part of the app works before you set one.
