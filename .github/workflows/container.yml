@@ -120,6 +120,9 @@ jobs:
           docker logs smoke || true
           docker rm -f smoke || true
 
+      - name: Start it the way an unprivileged LXC on Proxmox does
+        run: sh testing/lxc/test.sh cannoncommander:smoke
+
   push:
     name: Build and push
     needs: smoke

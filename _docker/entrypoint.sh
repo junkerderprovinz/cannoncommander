@@ -61,8 +61,11 @@ if [ "$PUID" != 0 ]; then
       esac
     fi
   fi
-  # Only what the server writes itself, never the shares.
-  find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
+  # Only what the server writes itself, never the shares. The lost+found
+  # mke2fs leaves at the root of a fresh volume stays as it is: on a Proxmox
+  # mount point it belongs to the host's root, which an unprivileged LXC can
+  # neither read nor hand over. Anything else that fails stops the start.
+  find "$config_dir" -path "$config_dir/lost+found" -prune -o \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
 
   # chown and fowner let "Set permissions the Unraid way" hand files to
   # nobody:users. Unraid keeps /boot/config readable for root alone, which
