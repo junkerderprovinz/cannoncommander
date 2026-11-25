@@ -44,12 +44,11 @@ func scanIndex(b testing.TB, root string) *Index {
 	}
 	b.Cleanup(func() { db.Close() })
 	return &Index{
-		Source:              settings.Source{Name: "scanbench", Path: root, Config: settings.SourceConfig{UseLogicalSize: true}},
-		db:                  db,
-		mock:                true,
-		folderSizes:         map[string]uint64{},
-		folderSizesUnsynced: map[string]struct{}{},
-		scanUpdatedPaths:    map[string]bool{},
+		Source:           settings.Source{Name: "scanbench", Path: root, Config: settings.SourceConfig{UseLogicalSize: true}},
+		db:               db,
+		mock:             true,
+		folderSizes:      newFolderSizes(),
+		scanUpdatedPaths: map[string]bool{},
 	}
 }
 
