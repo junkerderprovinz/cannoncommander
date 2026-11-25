@@ -70,7 +70,7 @@ func newFixture(t *testing.T) *fixture {
 		"jdp":  {ID: 1, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}}},
 		"anna": {ID: 2, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true, Download: true}}}},
 	}}
-	f.people["boss"] = &users.User{ID: 3, Permissions: users.Permissions{Admin: true}}
+	f.people["boss"] = &users.User{ID: 30, Permissions: users.Permissions{Admin: true}}
 	f.finder = &fakeFinder{secrets: map[string]string{}}
 	for name, u := range f.people {
 		u.Username = name
