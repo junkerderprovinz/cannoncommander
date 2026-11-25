@@ -175,21 +175,29 @@ export const Columns = {
   shown: () => ['name', ...((prefs.columns as string[]) || DEFAULT_COLUMNS).filter((id) => id !== 'name' && COL[id])],
   // A phone has room for the name and the size; the chosen columns stay as they are for wider screens.
   visible: () => (narrow() ? Columns.shown().filter((id) => id === 'name' || id === 'size') : Columns.shown()),
-  width: (id: string) => (prefs.colWidths?.[id] ? `${prefs.colWidths[id]}rem` : COL[id]!.width),
-  template: () => Columns.visible().map(Columns.width).join(' '),
+  width: (id: string) => (prefs.colWidths?.[id] && !(narrow() && fills(id)) ? `${prefs.colWidths[id]}rem` : COL[id]!.width),
+  // A name with a width of its own stops filling, or dragging it narrower would change nothing, and the last column
+  // takes the rest of the row from its own width up.
+  template: () => {
+    const ids = Columns.visible(), last = ids.at(-1)!;
+    const named = !Columns.width('name').includes('fr');
+    return ids.map((id) => (named && id === last ? `minmax(${Columns.width(id)}, 1fr)` : Columns.width(id))).join(' ');
+  },
   // Every row is its own grid, so they line up only when all share one width; below it the list scrolls sideways.
   minWidth: () => {
     if (narrow()) return '0';
     const ids = Columns.visible();
-    return `${ids.reduce((a, id) => a + (COL[id]!.min || parseFloat(Columns.width(id))), 0) + (ids.length - 1) + 1}rem`;
+    return `${ids.reduce((a, id) => a + (prefs.colWidths?.[id] || COL[id]!.min || parseFloat(Columns.width(id))), 0) + (ids.length - 1) + 1}rem`;
   },
   // Dragging the line between two columns moves just that line, from widths in rem taken when the drag began: one
-  // column gains what the other gives up. The name fills what the row has left, so beside it only the other changes.
+  // column gains what the other gives up. The line after the name widens or narrows the name alone, since a long
+  // name needs more room than its neighbour has to give.
   lineMoved(left: string, right: string, start: Record<string, number>, by: number): Record<string, number> {
-    if (!fills(left)) by = Math.max(by, NARROWEST - start[left]!);
+    if (fills(left)) return { ...prefs.colWidths, [left]: quarter(Math.max(start[left]! + by, COL[left]!.min!)) };
+    by = Math.max(by, NARROWEST - start[left]!);
     if (!fills(right)) by = Math.min(by, start[right]! - NARROWEST);
     const widths = { ...prefs.colWidths };
-    if (!fills(left)) widths[left] = quarter(start[left]! + by);
+    widths[left] = quarter(start[left]! + by);
     if (!fills(right)) widths[right] = quarter(start[right]! - by);
     return widths;
   },
