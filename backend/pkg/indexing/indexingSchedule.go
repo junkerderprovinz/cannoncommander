@@ -213,7 +213,7 @@ func (idx *Index) PostScan() error {
 		idx.scanUpdatedPaths = make(map[string]bool) // Clear tracking map
 		idx.mu.Unlock()
 
-		// No scan holds folder ids now, so the sizes may be renumbered.
+		// With every scanner done nothing holds a folder id, so the sizes may be renumbered.
 		idx.folderSizesMu.Lock()
 		if idx.folderSizes.sparse() {
 			idx.folderSizes.compact()
