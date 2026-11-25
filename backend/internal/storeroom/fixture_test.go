@@ -10,6 +10,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/dockerengine"
 )
 
 // engine is a docker engine in memory. It answers the calls the storeroom
@@ -133,7 +135,7 @@ func newBox(t *testing.T) *box {
 	srv := httptest.NewServer(b.engine)
 	t.Cleanup(srv.Close)
 	b.svc = New(b.cfg)
-	b.svc.docker = &docker{c: srv.Client(), base: srv.URL}
+	b.svc.docker = &docker{dockerengine.New(srv.Client(), srv.URL)}
 	b.svc.now = func() time.Time { return now }
 	return b
 }

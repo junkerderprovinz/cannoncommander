@@ -14,6 +14,8 @@ import (
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/dockerengine"
 )
 
 // ErrWriteOff is returned while write access is switched off.
@@ -299,7 +301,7 @@ func (s *Service) release(ctx context.Context, op string, e Entry, act bool) (st
 	case e.Kind == "volume":
 		err = s.docker.removeVolume(ctx, e.Held)
 	}
-	if errors.Is(err, errNotFound) && op == "discard" {
+	if errors.Is(err, dockerengine.ErrNotFound) && op == "discard" {
 		err = nil
 	}
 	if err != nil {
@@ -318,12 +320,12 @@ func (s *Service) removeImage(ctx context.Context, w *world, id string) error {
 			continue
 		}
 		for _, tag := range im.tags() {
-			if err := s.docker.removeImage(ctx, tag); err != nil && !errors.Is(err, errNotFound) {
+			if err := s.docker.removeImage(ctx, tag); err != nil && !errors.Is(err, dockerengine.ErrNotFound) {
 				return err
 			}
 		}
 	}
-	if err := s.docker.removeImage(ctx, id); err != nil && !errors.Is(err, errNotFound) {
+	if err := s.docker.removeImage(ctx, id); err != nil && !errors.Is(err, dockerengine.ErrNotFound) {
 		return err
 	}
 	return nil
