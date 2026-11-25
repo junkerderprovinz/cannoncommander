@@ -12,7 +12,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gtsteffaniak/go-cache/cache"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -22,11 +21,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
-)
-
-var (
-	RealPathCache = cache.NewCache[string](48*time.Hour, 72*time.Hour)
-	IsDirCache    = cache.NewCache[bool](48*time.Hour, 72*time.Hour)
 )
 
 // getDiskUsage returns the actual disk space used by a file in bytes
@@ -128,13 +122,13 @@ type Index struct {
 	schedulerStopped  atomic.Bool
 	schedulerRunning  sync.WaitGroup
 	schedulerBatch    int // >0: serial pass in progress; suppresses PostScan inside executeScan
-	// In-memory folder size tracking (not stored in SQLite)
-	folderSizes         map[string]uint64   // path -> size (in-memory only, calculated from children)
-	folderSizesUnsynced map[string]struct{} // Tracks which folder sizes have changed since last DB sync
-	folderSizesMu       sync.RWMutex        // Dedicated RWMutex allows concurrent reads, serializes writes
+	// Folder sizes add up what lies below, which only the scans see whole.
+	// They are written to SQLite after a pass.
+	folderSizes   *folderSizes
+	folderSizesMu sync.RWMutex
 	// Scan session tracking: timestamp when scan session started (for timestamp-based conflict detection)
 	scanSessionStartTime int64           // Unix timestamp when current scan session started (0 if no active scan)
-	scanUpdatedPaths     map[string]bool // Tracks directories updated by the scan (to distinguish from API updates)
+	scanUpdatedPaths     map[string]bool // Folders a quick scan read again, whose files it then purges
 
 	// Adaptive scheduler: shared slot map (UTC unix seconds -> scanners).
 	scheduleSlotsMu sync.Mutex
@@ -426,12 +420,11 @@ func Initialize(source *settings.Source, mock bool, isNewDb bool) {
 	}
 
 	newIndex := Index{
-		mock:                mock,
-		Source:              *source,
-		db:                  indexDB, // Use shared database
-		scanUpdatedPaths:    make(map[string]bool),
-		folderSizes:         make(map[string]uint64),   // In-memory folder size tracking
-		folderSizesUnsynced: make(map[string]struct{}), // Track changed folders
+		mock:             mock,
+		Source:           *source,
+		db:               indexDB, // Use shared database
+		scanUpdatedPaths: make(map[string]bool),
+		folderSizes:      newFolderSizes(),
 	}
 	newIndex.ReducedIndex = ReducedIndex{
 		Status:  "indexing",
@@ -1259,7 +1252,7 @@ func (idx *Index) GetDirInfo(dirInfo *os.File, stat os.FileInfo, indexPath strin
 }
 
 // GetRealPath resolves an index path to a real filesystem path, enforcing
-// source-root containment. It is cached (RealPathCache) — use it for reads and
+// source-root containment. It is cached in realPaths, so use it for reads and
 // bookkeeping only. Mutating filesystem operations must use
 // GetRealPathForMutation or GetRealPathForRemoval, which resolve uncached and
 // enforce a caller-supplied scope bound.
@@ -1284,9 +1277,7 @@ func (idx *Index) getRealPathInternal(boundIndexPath string, enforceScope bool, 
 		bound = "/"
 	}
 	cacheKey := fmt.Sprintf("realpath|scoped=%t|bound=%q|path=%q", enforceScope, bound, joinedPath)
-	isDir, _ := IsDirCache.Get(cacheKey + ":isdir")
-	cached, ok := RealPathCache.Get(cacheKey)
-	if ok && cached != "" {
+	if cached, isDir, ok := realPaths.get(cacheKey); ok && cached != "" {
 		return cached, isDir, nil
 	}
 	absolutePath, err := filepath.Abs(joinedPath)
@@ -1304,8 +1295,7 @@ func (idx *Index) getRealPathInternal(boundIndexPath string, enforceScope bool, 
 	} else if err := idx.ensureResolvedContained(realPath, "/"); err != nil {
 		return "", false, err
 	}
-	RealPathCache.Set(cacheKey, realPath)
-	IsDirCache.Set(cacheKey+":isdir", isDir)
+	realPaths.set(cacheKey, realPath, isDir)
 	return realPath, isDir, nil
 }
 
@@ -1420,9 +1410,7 @@ func (idx *Index) RefreshDirectory(indexPath string, recursive bool) error {
 	if os.IsNotExist(err) && indexPath != "/" {
 		// Directory deleted - clear from cache and update parents
 		idx.folderSizesMu.Lock()
-		previousSize, exists := idx.folderSizes[indexPath]
-		delete(idx.folderSizes, indexPath)
-		delete(idx.folderSizesUnsynced, indexPath)
+		previousSize, exists := idx.folderSizes.remove(indexPath)
 		idx.folderSizesMu.Unlock()
 
 		if exists && previousSize > 0 {
@@ -1483,24 +1471,24 @@ func (idx *Index) RefreshDirectory(indexPath string, recursive bool) error {
 func (idx *Index) updateFolderSizeDelta(indexPath string, newSize uint64) {
 	idx.folderSizesMu.Lock()
 	defer idx.folderSizesMu.Unlock()
-	previousSize, exists := idx.folderSizes[indexPath]
+	id := idx.folderSizes.node(indexPath)
+	previousSize, exists := idx.folderSizes.size(id)
 	if !exists {
-		idx.folderSizes[indexPath] = newSize
-		idx.folderSizesUnsynced[indexPath] = struct{}{}
+		idx.folderSizes.setID(id, newSize)
 		return
 	}
-	idx.updateFolderSizeAndParentsLocked(indexPath, newSize, previousSize, true)
+	idx.updateFolderSizeAndParentsLocked(id, newSize, previousSize, true)
 }
 
 // updateFolderSizeAndParents updates a folder size and propagates the change to all parents
 func (idx *Index) updateFolderSizeAndParents(path string, newSize uint64, previousSize uint64, updateTarget bool) {
 	idx.folderSizesMu.Lock()
 	defer idx.folderSizesMu.Unlock()
-	idx.updateFolderSizeAndParentsLocked(path, newSize, previousSize, updateTarget)
+	idx.updateFolderSizeAndParentsLocked(idx.folderSizes.node(path), newSize, previousSize, updateTarget)
 }
 
 // updateFolderSizeAndParentsLocked is updateFolderSizeAndParents with folderSizesMu already held.
-func (idx *Index) updateFolderSizeAndParentsLocked(path string, newSize uint64, previousSize uint64, updateTarget bool) {
+func (idx *Index) updateFolderSizeAndParentsLocked(id uint32, newSize uint64, previousSize uint64, updateTarget bool) {
 	// Calculate the delta
 	var sizeDelta int64
 	if newSize >= previousSize {
@@ -1513,47 +1501,28 @@ func (idx *Index) updateFolderSizeAndParentsLocked(path string, newSize uint64, 
 		return // No change, nothing to propagate
 	}
 
-	// Optionally update the target folder itself
+	f := idx.folderSizes
 	if updateTarget {
-		idx.folderSizes[path] = newSize
-		idx.folderSizesUnsynced[path] = struct{}{}
+		f.setID(id, newSize)
 	}
-
 	if sizeDelta == 0 {
-		return // No parent updates needed
+		return
 	}
-
-	// Walk up the parent chain and update all parents
-	currentPath := path
-	for {
-		parentDir := utils.GetParentDirectoryPath(currentPath)
-		if parentDir == "" {
-			break // Reached the top
-		}
-		// Keys in folderSizes match indexing paths (trailing slash for non-root dirs; root stays "/").
-		if parentDir != "/" {
-			parentDir = utils.AddTrailingSlashIfNotExists(parentDir)
-		}
-
-		// Update parent size with delta
-		parentSize := idx.folderSizes[parentDir]
+	for id != 0 {
+		id = f.nodes[id].parent
+		parentSize, _ := f.size(id)
 		if sizeDelta > 0 {
-			idx.folderSizes[parentDir] = parentSize + uint64(sizeDelta)
-		} else {
-			// Prevent underflow
-			absDelta := uint64(-sizeDelta)
-			if parentSize >= absDelta {
-				idx.folderSizes[parentDir] = parentSize - absDelta
-			} else {
-				logger.Warningf("[FOLDER_SIZE] Parent %s would underflow (%d - %d), setting to 0",
-					parentDir, parentSize, absDelta)
-				idx.folderSizes[parentDir] = 0
-			}
+			f.setID(id, parentSize+uint64(sizeDelta))
+			continue
 		}
-		idx.folderSizesUnsynced[parentDir] = struct{}{} // Mark parent as unsynced
-
-		// Move up to the next parent
-		currentPath = parentDir
+		absDelta := uint64(-sizeDelta)
+		if parentSize >= absDelta {
+			f.setID(id, parentSize-absDelta)
+			continue
+		}
+		logger.Warningf("[FOLDER_SIZE] Parent %s would underflow (%d - %d), setting to 0",
+			f.path(id), parentSize, absDelta)
+		f.setID(id, 0)
 	}
 }
 
@@ -1587,70 +1556,52 @@ func (idx *Index) getFileSizeForDisplay(file os.FileInfo) int64 {
 	return getDiskUsage(file, false)
 }
 
-// SyncFolderSizesToDB syncs in-memory folder sizes to the database after a scan completes
-// Only syncs folders marked as dirty (changed) and processes in batches to avoid large SQL statements
+// SyncFolderSizesToDB writes the folder sizes that changed since the last
+// sync, a thousand to a statement. It holds folder ids between batches, so
+// it runs on the scheduler, the only place that compacts the sizes.
 func (idx *Index) SyncFolderSizesToDB() error {
+	idx.folderSizesMu.RLock()
+	f := idx.folderSizes
+	var dirty []uint32
+	f.eachUnsynced(func(id uint32) { dirty = append(dirty, id) })
+	idx.folderSizesMu.RUnlock()
 
-	idx.folderSizesMu.Lock()
-
-	// Collect only dirty (changed) folder sizes
-	sizesToSync := make(map[string]uint64)
-	for path := range idx.folderSizesUnsynced {
-		if size, exists := idx.folderSizes[path]; exists {
-			sizesToSync[path] = size
-		}
-	}
-	idx.folderSizesMu.Unlock()
-
-	if len(sizesToSync) == 0 {
-		return nil
-	}
-
-	// Process in batches of 1000 to avoid massive SQL statements
 	const batchSize = 1000
-	paths := make([]string, 0, len(sizesToSync))
-	for path := range sizesToSync {
-		paths = append(paths, path)
-	}
-
 	totalUpdated := int64(0)
-	for i := 0; i < len(paths); i += batchSize {
-		end := i + batchSize
-		if end > len(paths) {
-			end = len(paths)
+	for i := 0; i < len(dirty); i += batchSize {
+		batch := dirty[i:min(i+batchSize, len(dirty))]
+		sizes := make(map[string]uint64, len(batch))
+		idx.folderSizesMu.RLock()
+		for _, id := range batch {
+			if size, ok := f.size(id); ok {
+				sizes[f.path(id)] = size
+			}
 		}
+		idx.folderSizesMu.RUnlock()
 
-		batchPaths := paths[i:end]
-		batchMap := make(map[string]uint64, len(batchPaths))
-		for _, path := range batchPaths {
-			batchMap[path] = sizesToSync[path]
-		}
-
-		rowsUpdated, err := idx.db.UpdateFolderSizesIfChanged(idx.Name, batchMap)
+		rowsUpdated, err := idx.db.UpdateFolderSizesIfChanged(idx.Name, sizes)
 		if err != nil {
-			logger.Errorf("[FOLDER_SIZE_SYNC] Failed to update folder sizes batch %d-%d: %v", i, end, err)
+			logger.Errorf("[FOLDER_SIZE_SYNC] Failed to update folder sizes batch %d-%d: %v", i, i+len(batch), err)
 			return err
 		}
 		totalUpdated += rowsUpdated
 
-		// Remove synced paths from unsynced map
 		idx.folderSizesMu.Lock()
-		for _, path := range batchPaths {
-			delete(idx.folderSizesUnsynced, path)
+		for _, id := range batch {
+			f.synced(id)
 		}
 		idx.folderSizesMu.Unlock()
 
 		if rowsUpdated > 0 {
 			logger.Debugf("[FOLDER_SIZE_SYNC] Batch %d-%d: updated %d folders (skipped %d unchanged)",
-				i, end, rowsUpdated, len(batchPaths)-int(rowsUpdated))
+				i, i+len(batch), rowsUpdated, len(sizes)-int(rowsUpdated))
 		}
 	}
 
 	if totalUpdated > 0 {
 		logger.Infof("[FOLDER_SIZE_SYNC] Updated %d folder sizes (skipped %d unchanged)",
-			totalUpdated, len(sizesToSync)-int(totalUpdated))
+			totalUpdated, len(dirty)-int(totalUpdated))
 	}
-
 	return nil
 }
 

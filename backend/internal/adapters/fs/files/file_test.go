@@ -189,9 +189,6 @@ func TestSortItems(t *testing.T) {
 	}
 }
 
-// TestDeleteFilesCacheClearing was removed because cache clearing is not performed
-// per design decision - RealPathCache is auxiliary and doesn't need clearing
-
 func TestOverrideDirectoryToFile(t *testing.T) {
 	// Use a temporary directory for cache to avoid creating directories in the source tree
 	tmpDir := t.TempDir()

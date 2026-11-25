@@ -206,38 +206,21 @@ func (s *Scanner) runQuickScanRoot() error {
 		s.filesChanged = false
 	})
 
-	// Get root-level folders from folderSizes map
+	// The root scanner checks the folders directly inside the root.
 	s.idx.folderSizesMu.RLock()
-	var foldersToCheck []string
-	for path := range s.idx.folderSizes {
-		// Root scanner: only check direct children (one slash after root, like "/subdir/")
-		if strings.Count(path, "/") == 2 && path != "/" {
-			foldersToCheck = append(foldersToCheck, path)
+	sizes := s.idx.folderSizes
+	var foldersToCheck []uint32
+	sizes.each(func(id uint32) {
+		if id != 0 && sizes.nodes[id].parent == 0 {
+			foldersToCheck = append(foldersToCheck, id)
 		}
-	}
+	})
 	s.idx.folderSizesMu.RUnlock()
 
 	batchSize := s.idx.db.BatchSize
 	s.batchItems = make([]*iteminfo.FileInfo, 0, batchSize)
-
-	// Track stats
-	unchangedCount := 0
-	changedCount := 0
-	errorCount := 0
-
-	// Check each folder's modtime
-	for _, folderPath := range foldersToCheck {
-		changed, err := s.checkFolderModtime(folderPath)
-		if errors.Is(err, errScanStopped) {
-			return err
-		}
-		if err != nil {
-			errorCount++
-		} else if changed {
-			changedCount++
-		} else {
-			unchangedCount++
-		}
+	if err := s.checkFolders(sizes, foldersToCheck); err != nil {
+		return err
 	}
 
 	s.flushBatch()
@@ -345,46 +328,46 @@ func (s *Scanner) runQuickScanChild() error {
 		s.filesChanged = false
 	})
 
-	// Get folders in this scanner's scope from folderSizes map
+	// The scanner's own folder is checked even without a size, since only
+	// checkFolderModtime finds the new folders inside it.
 	s.idx.folderSizesMu.RLock()
-	var foldersToCheck []string
-	// Scanner root must be modtime-checked: the loop below skips path == scanPath, but only
-	// checkFolderModtime compares modtime to lastScanned and re-reads the directory for new children.
-	foldersToCheck = append(foldersToCheck, s.scanPath)
-	for path := range s.idx.folderSizes {
-		// Child scanner: check all paths under its scope
-		if strings.HasPrefix(path, s.scanPath) && path != s.scanPath {
-			foldersToCheck = append(foldersToCheck, path)
+	sizes := s.idx.folderSizes
+	top, _ := sizes.lookup(s.scanPath)
+	var foldersBelow []uint32
+	sizes.eachBelow([]string{s.scanPath}, func(id uint32) {
+		if id != top {
+			foldersBelow = append(foldersBelow, id)
 		}
-	}
+	})
 	s.idx.folderSizesMu.RUnlock()
 
 	batchSize := s.idx.db.BatchSize
 	s.batchItems = make([]*iteminfo.FileInfo, 0, batchSize)
-
-	// Track stats
-	unchangedCount := 0
-	changedCount := 0
-	errorCount := 0
-
-	// Check each folder's modtime
-	for _, folderPath := range foldersToCheck {
-		changed, err := s.checkFolderModtime(folderPath)
-		if errors.Is(err, errScanStopped) {
-			return err
-		}
-		if err != nil {
-			errorCount++
-		} else if changed {
-			changedCount++
-		} else {
-			unchangedCount++
-		}
+	if _, err := s.checkFolderModtime(s.scanPath); errors.Is(err, errScanStopped) {
+		return err
+	}
+	if err := s.checkFolders(sizes, foldersBelow); err != nil {
+		return err
 	}
 
 	s.flushBatch()
 	s.purgeStaleEntries(false, true) // isRoot=false, isQuickScan=true
 	s.syncStatsWithDB()
+	return nil
+}
+
+// checkFolders checks the folders a quick scan picked from sizes and passes
+// over those that lost their size since.
+func (s *Scanner) checkFolders(sizes *folderSizes, ids []uint32) error {
+	for _, id := range ids {
+		folderPath, ok := s.idx.folderPath(sizes, id)
+		if !ok {
+			continue
+		}
+		if _, err := s.checkFolderModtime(folderPath); errors.Is(err, errScanStopped) {
+			return err
+		}
+	}
 	return nil
 }
 

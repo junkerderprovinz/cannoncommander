@@ -28,11 +28,10 @@ func liveIndex(t *testing.T, files ...string) (*Index, string) {
 	}
 	t.Cleanup(func() { db.Close() })
 	idx := &Index{
-		Source:              settings.Source{Name: "live", Path: root, Config: settings.SourceConfig{UseLogicalSize: true}},
-		db:                  db,
-		scanUpdatedPaths:    map[string]bool{},
-		folderSizes:         map[string]uint64{},
-		folderSizesUnsynced: map[string]struct{}{},
+		Source:           settings.Source{Name: "live", Path: root, Config: settings.SourceConfig{UseLogicalSize: true}},
+		db:               db,
+		scanUpdatedPaths: map[string]bool{},
+		folderSizes:      newFolderSizes(),
 	}
 	if err := idx.RefreshDirectory("/", true); err != nil {
 		t.Fatal(err)
@@ -82,15 +81,16 @@ func wantSizes(t *testing.T, idx *Index, want map[string]uint64) {
 	idx.folderSizesMu.RLock()
 	defer idx.folderSizesMu.RUnlock()
 	for k, v := range want {
-		if got, ok := idx.folderSizes[k]; !ok || got != v {
+		if got, ok := idx.folderSizes.get(k); !ok || got != v {
 			t.Errorf("size of %s is %d (known %v), want %d", k, got, ok, v)
 		}
 	}
-	for k := range idx.folderSizes {
+	idx.folderSizes.each(func(id uint32) {
+		k := idx.folderSizes.path(id)
 		if _, ok := want[k]; !ok {
 			t.Errorf("size kept for %s", k)
 		}
-	}
+	})
 }
 
 func TestRefreshDropsWhatIsGone(t *testing.T) {

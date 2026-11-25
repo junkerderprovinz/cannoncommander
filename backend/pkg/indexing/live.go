@@ -78,17 +78,15 @@ func (idx *Index) Moved(from, to string) {
 	}
 	idx.folderSizesMu.Lock()
 	defer idx.folderSizesMu.Unlock()
-	sizes := map[string]uint64{}
-	for key, size := range idx.folderSizes {
-		if rest, ok := strings.CutPrefix(key, from); ok {
-			sizes[to+rest] = size
-			delete(idx.folderSizes, key)
-			delete(idx.folderSizesUnsynced, key)
-		}
+	f := idx.folderSizes
+	var ids []uint32
+	f.eachBelow([]string{from}, func(id uint32) { ids = append(ids, id) })
+	sizes := make(map[string]uint64, len(ids))
+	for _, id := range ids {
+		sizes[to+strings.TrimPrefix(f.path(id), from)], _ = f.removeID(id)
 	}
 	for key, size := range sizes {
-		idx.folderSizes[key] = size
-		idx.folderSizesUnsynced[key] = struct{}{}
+		f.set(key, size)
 	}
 }
 
@@ -127,10 +125,10 @@ func (idx *Index) dropTrees(paths []string) {
 	if err := idx.db.DeleteTrees(idx.Name, paths); err != nil {
 		logger.Debugf("Failed to drop %d index entries: %v", len(paths), err)
 	}
-	gone := map[string]bool{}
+	var gone []string
 	for _, p := range paths {
 		if strings.HasSuffix(p, "/") {
-			gone[p] = true
+			gone = append(gone, p)
 		}
 	}
 	if len(gone) == 0 {
@@ -138,14 +136,11 @@ func (idx *Index) dropTrees(paths []string) {
 	}
 	idx.folderSizesMu.Lock()
 	defer idx.folderSizesMu.Unlock()
-	for key := range idx.folderSizes {
-		for k := key; k != ""; k = parentFolder(k) {
-			if gone[k] {
-				delete(idx.folderSizes, key)
-				delete(idx.folderSizesUnsynced, key)
-				break
-			}
-		}
+	f := idx.folderSizes
+	var ids []uint32
+	f.eachBelow(gone, func(id uint32) { ids = append(ids, id) })
+	for _, id := range ids {
+		f.removeID(id)
 	}
 }
 

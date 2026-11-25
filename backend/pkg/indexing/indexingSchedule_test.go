@@ -72,12 +72,11 @@ func newRestoreTestIndex(t *testing.T, name string, subdirs []string, persisted 
 	t.Cleanup(func() { SetMetaStore(nil) })
 
 	idx := &Index{
-		Source:              settings.Source{Name: name, Path: srcDir},
-		db:                  db,
-		mock:                true,
-		folderSizes:         make(map[string]uint64),
-		folderSizesUnsynced: make(map[string]struct{}),
-		scanUpdatedPaths:    make(map[string]bool),
+		Source:           settings.Source{Name: name, Path: srcDir},
+		db:               db,
+		mock:             true,
+		folderSizes:      newFolderSizes(),
+		scanUpdatedPaths: make(map[string]bool),
 	}
 	// Registered last so the scheduler goroutine stops before the database is closed.
 	t.Cleanup(idx.stopScheduler)
@@ -107,8 +106,7 @@ func TestFolderSizesRestoredOnStartup(t *testing.T) {
 	}, nil, true)
 
 	idx.folderSizesMu.Lock()
-	idx.folderSizes = make(map[string]uint64)
-	idx.folderSizesUnsynced = make(map[string]struct{})
+	idx.folderSizes = newFolderSizes()
 	idx.folderSizesMu.Unlock()
 
 	idx.setupMultiScanner(false)

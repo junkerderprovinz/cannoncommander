@@ -1088,9 +1088,8 @@ func (db *IndexDB) UpdateFolderSizesIfChanged(source string, pathSizes map[strin
 	return 0, nil // defensive: unreachable when dbTransientOpAttempts >= 1
 }
 
-// LoadFolderSizes loads all folder sizes for a source from the database
-// Used on initialization to populate the in-memory map with existing sizes
-func (db *IndexDB) LoadFolderSizes(source string) (map[string]uint64, error) {
+// LoadFolderSizes calls fn with the stored size of every folder of source.
+func (db *IndexDB) LoadFolderSizes(source string, fn func(path string, size uint64)) error {
 	query := `
 		SELECT path, size 
 		FROM index_items 
@@ -1099,21 +1098,19 @@ func (db *IndexDB) LoadFolderSizes(source string) (map[string]uint64, error) {
 
 	rows, err := db.Query(query, source)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer rows.Close()
 
-	folderSizes := make(map[string]uint64)
 	for rows.Next() {
 		var path string
 		var size uint64
 		if err := rows.Scan(&path, &size); err != nil {
-			return nil, err
+			return err
 		}
-		folderSizes[path] = size
+		fn(path, size)
 	}
-
-	return folderSizes, rows.Err()
+	return rows.Err()
 }
 
 // GetFilesBySizeAndType retrieves files matching both size and type.
