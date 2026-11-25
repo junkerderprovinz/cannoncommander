@@ -901,12 +901,16 @@ func (idx *Index) fetchExtendedAttributes(indexPath string, opts Options) map[st
 // a single GetMetadataInfo query and returns both the subfolder has_preview map
 // and a per-name cache of indexed file metadata. The file cache lets
 // processFileItem reuse type/preview fields for unchanged entries instead of
-// re-opening every file on each listing.
+// re-opening every file on each listing. A recursive read gets the settled
+// file rows only, since its folders below bring their own preview flags.
 func (idx *Index) fetchDirectoryCache(indexPath string, opts Options) (map[string]bool, map[string]*iteminfo.ItemInfo) {
 	subdirHasPreviewMap := make(map[string]bool)
 
-	if opts.SkipExtendedAttrs || opts.Recursive {
+	if opts.SkipExtendedAttrs {
 		return subdirHasPreviewMap, nil
+	}
+	if opts.Recursive {
+		return subdirHasPreviewMap, idx.settledFiles(indexPath)
 	}
 
 	realDirInfo, exists := idx.GetMetadataInfo(indexPath, true, false)
@@ -929,6 +933,29 @@ func (idx *Index) fetchDirectoryCache(indexPath string, opts Options) (map[strin
 	}
 
 	return subdirHasPreviewMap, cachedFiles
+}
+
+// settledFiles returns the stored rows of the files in dir that a full scan
+// may take the type from instead of reading each file again, keyed by name.
+// Reading millions of files of unknown type on every pass takes longer than
+// a day on spinning disks.
+func (idx *Index) settledFiles(dir string) map[string]*iteminfo.ItemInfo {
+	if idx.db == nil {
+		return nil
+	}
+	rows, err := idx.db.SettledFiles(idx.Name, dir)
+	if err != nil {
+		logger.Debugf("stored files of %s: %v", dir, err)
+		return nil
+	}
+	if len(rows) == 0 {
+		return nil
+	}
+	files := make(map[string]*iteminfo.ItemInfo, len(rows))
+	for _, r := range rows {
+		files[r.Name] = &r.ItemInfo
+	}
+	return files
 }
 
 // processDirectoryItem processes a directory item and returns the itemInfo, size, and whether it should be counted
@@ -1034,7 +1061,10 @@ func (idx *Index) processFileItem(file os.FileInfo, indexPath string, opts Optio
 	bubblesUpHasPreview := false
 	if !opts.SkipExtendedAttrs {
 		usedCachedPreview := false
-		if cached != nil {
+		// A full scan works the preview out again, since it follows the
+		// settings for converters and office documents, which may have
+		// changed since the row was written.
+		if cached != nil && !opts.Recursive {
 			itemInfo.HasPreview = cached.HasPreview
 			usedCachedPreview = true
 		} else if !idx.Config.ResolvedRules.IndexingDisabled && opts.Recursive {

@@ -10,6 +10,7 @@ Every release is written by hand. The full notes for each release are in
 
 - **The file index needs much less memory.** CannonCommander keeps the size of every indexed folder in memory. After a full scan each folder takes about a third of the memory it used to, and the index no longer grows while the scans work through the shares. On a server with three million folders that frees several hundred megabytes.
 - **The cache of resolved paths has a limit.** CannonCommander remembers up to 10,000 real paths for two days and lets the one it used least recently go first, so a client that walks a whole share can no longer make it grow without end.
+- **Full scans leave unchanged files closed.** A file whose size and time haven't changed since the last scan keeps the type the index already knows, so a full scan doesn't read its first bytes again. On a share of millions of Storj pieces, whose ending CannonCommander doesn't recognise, that reading made a full pass take longer than a day.
 
 ## v1.4.1 (2026-11-24)
 
