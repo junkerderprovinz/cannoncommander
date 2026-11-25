@@ -3,6 +3,9 @@ package system
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -133,5 +136,78 @@ func TestArrowLoopTestChecksTheToken(t *testing.T) {
 		if res := tr.run(ctx, KindArrowLoop, tc.url, tc.token); !res.Reachable || res.Token != tc.want {
 			t.Errorf("token %q: %+v", tc.token, res)
 		}
+	}
+}
+
+// twoHosts answers office.lan with one server and elsewhere.lan with the
+// other, so a redirect between them leaves the host.
+func twoHosts(t *testing.T, office, elsewhere http.Handler) tester {
+	t.Helper()
+	servers := map[string]*httptest.Server{"office.lan:80": httptest.NewServer(office), "elsewhere.lan:80": httptest.NewServer(elsewhere)}
+	for _, s := range servers {
+		t.Cleanup(s.Close)
+	}
+	tr := newTester()
+	tr.client.Transport = &http.Transport{DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+		s, ok := servers[addr]
+		if !ok {
+			return nil, fmt.Errorf("no server at %s", addr)
+		}
+		var d net.Dialer
+		return d.DialContext(ctx, network, s.Listener.Addr().String())
+	}}
+	return tr
+}
+
+func TestATokenNeverFollowsARedirectToAnotherHost(t *testing.T) {
+	for _, code := range []int{http.StatusTemporaryRedirect, http.StatusPermanentRedirect} {
+		t.Run(http.StatusText(code), func(t *testing.T) {
+			var reached []string
+			office := http.NewServeMux()
+			office.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("true")) })
+			office.HandleFunc("POST /coauthoring/CommandService.ashx", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "http://elsewhere.lan/command", code)
+			})
+			elsewhere := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				body, _ := io.ReadAll(r.Body)
+				reached = append(reached, r.URL.Path+" "+string(body)+" "+r.Header.Get("Authorization"))
+				_, _ = w.Write([]byte(`{"error":0,"version":"1"}`))
+			})
+			res := twoHosts(t, office, elsewhere).run(context.Background(), KindOnlyOffice, "http://office.lan", "geheim")
+			if len(reached) != 0 {
+				t.Fatalf("the other host got %q", reached)
+			}
+			if res.OK || !strings.Contains(res.Error, "sent us elsewhere") {
+				t.Fatalf("%+v", res)
+			}
+		})
+	}
+}
+
+func TestARedirectOnTheSameHostIsFollowed(t *testing.T) {
+	office := http.NewServeMux()
+	office.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("true")) })
+	office.HandleFunc("POST /coauthoring/CommandService.ashx", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/command", http.StatusTemporaryRedirect)
+	})
+	office.HandleFunc("POST /command", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"error":0,"version":"9.1"}`))
+	})
+	res := twoHosts(t, office, http.NotFoundHandler()).run(context.Background(), KindOnlyOffice, "http://office.lan", "")
+	if !res.OK || res.Version != "9.1" {
+		t.Fatalf("%+v", res)
+	}
+}
+
+func TestAHealthCheckSentElsewhereFails(t *testing.T) {
+	office := http.RedirectHandler("http://elsewhere.lan/healthcheck", http.StatusFound)
+	reached := false
+	elsewhere := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		reached = true
+		_, _ = w.Write([]byte("true"))
+	})
+	res := twoHosts(t, office, elsewhere).run(context.Background(), KindOnlyOffice, "http://office.lan", "geheim")
+	if reached || res.Reachable || !strings.Contains(res.Error, "sent us elsewhere") {
+		t.Fatalf("reached %v, %+v", reached, res)
 	}
 }
