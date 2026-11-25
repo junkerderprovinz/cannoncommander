@@ -100,3 +100,12 @@ jobs:
         with:
           name: parity
           path: testing/out/parity
+
+  # The entrypoint of this commit in the image of the last release, started
+  # the way an unprivileged LXC on Proxmox starts it. The container workflow
+  # runs the same test on the image it builds.
+  lxc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: sh testing/lxc/test.sh ghcr.io/junkerderprovinz/cannoncommander:latest _docker/entrypoint.sh
