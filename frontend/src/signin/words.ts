@@ -79,7 +79,7 @@ export function tileText(): SignInTileText {
     notLocal: { title: tile('notLocal.title'), reason: tile('notLocal.reason') },
     password: {
       title: s('password'), hint: tile('password.hint'), openHint: tile('password.openHint'), viaService: tile('password.viaService'), state: s('password'),
-      set: tile('password.set'), none: tile('password.none'), change: tile('password.change'), add: tile('password.add'),
+      set: tile('password.set'), none: tile('password.none'), noneHint: tile('password.noneHint'), change: tile('password.change'), add: tile('password.add'),
       current: tile('password.current'), next: s('newPassword'), save: tile('password.save'), saved: tile('password.saved'),
       first: tile('password.first'), wrongCurrent: tile('password.wrongCurrent'), shortHint: s('shortHint'), shortSaved: s('longer'),
       remove: tile('password.remove'), removeTitle: tile('password.removeTitle'), removeText: tile('password.removeText'),
@@ -95,7 +95,7 @@ export function tileText(): SignInTileText {
     },
     twoFactor: {
       title: tile('twoFactor.title'), hint: tile('twoFactor.hint'), state: tile('twoFactor.state'), on: tile('twoFactor.on'),
-      off: tile('twoFactor.off'), setUp: tile('twoFactor.setUp'), codesLeft: tile('twoFactor.codes'),
+      none: tile('twoFactor.none'), noneHint: tile('twoFactor.noneHint'), setUp: tile('twoFactor.setUp'), codesLeft: tile('twoFactor.codes'),
       codesLeftValue: counted('twoFactor.codesLeft'), newCodes: tile('twoFactor.newCodes'), turnOff: tile('twoFactor.turnOff'),
       setupTitle: tile('twoFactor.setupTitle'), scan: tile('twoFactor.scan'), qr: tile('twoFactor.qr'), key: tile('twoFactor.key'),
       code: tile('twoFactor.code'), confirm: tile('twoFactor.turnOn'), sixDigits: tile('twoFactor.sixDigits'),
