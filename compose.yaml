@@ -15,6 +15,10 @@ services:
     volumes:
       - "./appdata:/config"
       - "/mnt:/mnt"
+      # Lets CannonCommander find unused Docker leftovers and the office servers
+      # running next to it. The socket controls every container, so only map it
+      # if you trust everyone with an admin account.
+      # - "/var/run/docker.sock:/var/run/docker.sock"
     # rclone needs /dev/fuse and SYS_ADMIN to mount remote storage. Everything
     # else works without them.
     devices:

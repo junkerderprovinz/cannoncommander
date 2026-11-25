@@ -17,7 +17,7 @@ CannonCommander can read, change and delete everything you map into it, so it de
 - **Users and rules.** Admins see everything. Everyone else stays inside an area of their own, and [access rules](access/rules.md) hide a folder or make it read only. The rules apply to the interface, WebDAV, share links and API tokens alike, and disk shares are for admins only.
 - **API tokens** can be read only. New tokens, passkeys and sign-in services need a sign-in from the last few minutes or your password again. An admin can see and revoke the sessions, tokens and passkeys of every user, and block an account.
 - **Unraid write access** is off until you switch it on, because the emhttpd socket controls the whole array.
-- **The Docker socket** is not mapped until you map it, because it controls every container. With it, admins can clear away what nothing uses into the [storeroom](configuration/unraid.md#storeroom).
+- **The Docker socket** is not mapped until you map it, because it controls every container. With it, admins can clear away what nothing uses into the [storeroom](configuration/unraid.md#storeroom) and connect the [office servers](integrations/office.md#privacy) found next to CannonCommander. An office server's JWT secret is only copied when an admin clicks **Connect**.
 - **The terminal** is off until you switch it on, because it hands admins a shell with the rights of CannonCommander's user.
 - **MCP keys** read until you allow writing, which asks for your password again. The server keeps only a fingerprint of each key, and an admin can take writing away or revoke any key.
 
