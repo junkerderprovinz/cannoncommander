@@ -184,6 +184,105 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "409":
           description: Locked by someone else, or changed meanwhile.
+  /admin/office/found:
+    get:
+      operationId: officeFound
+      summary: Office servers running as containers next to this one
+      description: |
+        Reads the Docker engine when its socket is mounted: the running
+        OnlyOffice, Euro-Office and Collabora containers with the address
+        that answers, the browser's host with a published port first. A
+        container's JWT secret stays on the server, secret only says whether
+        there is one to take. Without a socket docker is false and the list
+        is empty.
+      x-access: admin
+      responses:
+        "200":
+          description: What was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfficeFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/office/probe:
+    post:
+      operationId: officeProbe
+      summary: Look for office servers at one host
+      description: |
+        Asks the host on the ports office servers usually listen on, such as
+        9900 for Euro-Office and 9980 for Collabora, for the OnlyOffice
+        health check and the WOPI discovery. Only that host is asked.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [host]
+              properties:
+                host:
+                  type: string
+                  description: A host name or address, without scheme or port.
+      responses:
+        "200":
+          description: The servers that answered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfficeFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/office/connect:
+    post:
+      operationId: officeConnect
+      summary: Use an office server found in Docker
+      description: |
+        Tests the container's server at its address with its JWT secret and,
+        when it answers, saves it as the office server. The secret goes from
+        the container into the settings and is not sent back.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id:
+                  type: string
+                  description: The container's id from office/found.
+      responses:
+        "200":
+          description: What the test found and the office settings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [result, office]
+                properties:
+                  result:
+                    $ref: "#/components/schemas/IntegrationResult"
+                  office:
+                    type: object
+                    properties:
+                      kind:
+                        type: string
+                        enum: [none, onlyoffice, eurooffice, collabora]
+                      url:
+                        type: string
+                      secretSet:
+                        type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   parameters:
     OfficeToken:
@@ -199,6 +298,53 @@ components:
       schema:
         type: string
   schemas:
+    OfficeFound:
+      type: object
+      required: [docker, servers]
+      properties:
+        docker:
+          type: boolean
+          description: Whether the Docker engine could be read.
+        servers:
+          type: array
+          items:
+            $ref: "#/components/schemas/OfficeServer"
+    OfficeServer:
+      type: object
+      required: [kind, url, reachable]
+      properties:
+        id:
+          type: string
+          description: The container's id, missing for a server a probe found.
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora]
+        name:
+          type: string
+          description: The container's name.
+        url:
+          type: string
+          description: The address that answered, or the best guess when none did.
+        reachable:
+          type: boolean
+          description: Whether this server got an answer at url.
+        secret:
+          type: string
+          enum: [found, "off", unknown]
+          description: |
+            For OnlyOffice and Euro-Office in a container: found when its
+            JWT_SECRET can be taken over, off when it checks no token,
+            unknown when it made up its own.
+        wopi:
+          type: string
+          enum: [open, allowed, blocked]
+          description: |
+            For Collabora in a container: open when its aliasgroup settings
+            name no hosts, allowed when they name this server, blocked when
+            they name others only.
+        allow:
+          type: string
+          description: The address to add to Collabora's aliasgroup1 when wopi is blocked.
     OfficeConfig:
       type: object
       required: [kind, url]

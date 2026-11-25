@@ -36,6 +36,9 @@ type fixture struct {
 	ended   map[string]bool
 	open    bool
 	db      *sql.DB
+	finder  *fakeFinder
+	// connected are the servers the settings were asked to connect.
+	connected []system.Office
 }
 
 const base = "http://cc.test/api/v1"
@@ -67,6 +70,8 @@ func newFixture(t *testing.T) *fixture {
 		"jdp":  {ID: 1, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}}},
 		"anna": {ID: 2, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true, Download: true}}}},
 	}}
+	f.people["boss"] = &users.User{ID: 3, Permissions: users.Permissions{Admin: true}}
+	f.finder = &fakeFinder{secrets: map[string]string{}}
 	for name, u := range f.people {
 		u.Username = name
 	}
@@ -106,6 +111,13 @@ func newFixture(t *testing.T) *fixture {
 		discovery: &discovery{},
 		locks:     newLocks(),
 		client:    http.DefaultClient,
+		find:      f.finder,
+		connect: func(_ context.Context, o system.Office) (system.IntegrationResult, system.Office, error) {
+			f.connected = append(f.connected, o)
+			pub := o
+			pub.SecretSet, pub.Secret = o.Secret != "", ""
+			return system.IntegrationResult{Kind: o.Kind, OK: true, Reachable: true, Token: system.TokenOK}, pub, nil
+		},
 	})
 	f.h, err = router.Handler()
 	if err != nil {

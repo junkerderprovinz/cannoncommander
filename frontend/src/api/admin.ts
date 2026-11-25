@@ -92,6 +92,11 @@ export interface AppSettings {
 }
 // A save sends only what changed, down to a single switch.
 export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends object ? Partial<AppSettings[K]> : AppSettings[K] };
+// An office server found next to this one. The server keeps a container's secret, secret only says whether it has one.
+export interface FoundOffice {
+  id?: string; kind: Exclude<OfficeKind, 'none'>; name?: string; url: string; reachable: boolean;
+  secret?: 'found' | 'off' | 'unknown'; wopi?: 'open' | 'allowed' | 'blocked'; allow?: string;
+}
 export interface IntegrationResult { kind: string; ok: boolean; reachable: boolean; token?: 'ok' | 'rejected' | 'missing' | 'off' | 'none'; version?: string; error?: string }
 // checking is set while the desktop app still looks for ffmpeg.
 export interface Tool { available: boolean; path?: string; version?: string; checking?: boolean }
@@ -144,6 +149,9 @@ export const admin = {
   saveApp: (change: AppChange) => write<AppSettings>('PUT', '/admin/app', change),
   testIntegration: (kind: Exclude<OfficeKind, 'none'> | 'arrowloop', url: string, key?: string) =>
     write<IntegrationResult>('POST', '/admin/integrations/test', { kind, url, ...(key ? (kind === 'arrowloop' ? { token: key } : { secret: key }) : {}) }),
+  foundOffices: () => get<{ docker: boolean; servers: FoundOffice[] }>('/admin/office/found'),
+  probeOffices: (host: string) => write<{ servers: FoundOffice[] }>('POST', '/admin/office/probe', { host }),
+  connectOffice: (id: string) => write<{ result: IntegrationResult; office: AppSettings['office'] }>('POST', '/admin/office/connect', { id }),
   restart: () => write('POST', '/admin/app/restart'),
   exportSettings: (path: string, users: boolean) => write<{ path: string; size: number }>('POST', '/admin/app/export', { path, users }),
   importSettings: (path: string, users: boolean) => write<Imported>('POST', '/admin/app/import', { path, users }),
