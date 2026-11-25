@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { toItem } from '@/api/client';
 import { prefs } from '@/core/prefs';
 import { t } from '@/i18n';
@@ -76,6 +76,45 @@ describe('list width', () => {
   });
 });
 
+describe('a name with a width of its own', () => {
+  beforeEach(() => {
+    shell.width = 1536;
+    Columns.reset();
+  });
+  afterEach(() => {
+    shell.width = 1536;
+    Columns.reset();
+  });
+
+  it('fills the row until somebody drags it', () => {
+    expect(Columns.template()).toBe('minmax(0, 1fr) 6.5rem 7.5rem');
+  });
+
+  it('keeps its width and lets the last column take the rest of the row', () => {
+    prefs.colWidths = { name: 20 };
+    expect(Columns.template()).toBe('20rem 6.5rem minmax(7.5rem, 1fr)');
+    prefs.colWidths = { name: 20, modified: 9 };
+    expect(Columns.template()).toBe('20rem 6.5rem minmax(9rem, 1fr)');
+  });
+
+  it('fills the row from its own width up when it stands alone', () => {
+    prefs.columns = ['name'];
+    prefs.colWidths = { name: 20 };
+    expect(Columns.template()).toBe('minmax(20rem, 1fr)');
+  });
+
+  it('counts in full in the list width, so a wide name scrolls the list sideways', () => {
+    prefs.colWidths = { name: 20 };
+    expect(Columns.minWidth()).toBe('37rem');
+  });
+
+  it('fills a phone again, beside the size alone', () => {
+    shell.width = 500;
+    prefs.colWidths = { name: 30 };
+    expect(Columns.template()).toBe('minmax(0, 1fr) 6.5rem');
+  });
+});
+
 describe('size column', () => {
   const folder = (extra: object) => toEntry(toItem({ name: 'filme', dir: true, size: 0, mtime: '2026-11-02T09:00:00.000Z', mode: '0755', ...extra }));
 
@@ -93,19 +132,16 @@ describe('dragging the line between two columns', () => {
     expect(Columns.lineMoved('size', 'modified', start, -2)).toMatchObject({ size: 4.5, modified: 9.5 });
   });
 
-  it('changes only the other column beside the name, which fills the rest', () => {
-    const right = Columns.lineMoved('name', 'size', start, 2);
-    expect(right).toMatchObject({ size: 4.5 });
-    expect(right).not.toHaveProperty('name');
-    const left = Columns.lineMoved('type', 'name', start, 2);
-    expect(left).toMatchObject({ type: 10.5 });
-    expect(left).not.toHaveProperty('name');
+  it('widens and narrows the name on its own, leaving the column beside it as it was', () => {
+    const named = { ...start, name: 20 };
+    expect(Columns.lineMoved('name', 'size', named, 15)).toEqual({ name: 35 });
+    expect(Columns.lineMoved('name', 'size', named, -8)).toEqual({ name: 12 });
   });
 
   it('stops where a column would get narrower than a short label', () => {
     expect(Columns.lineMoved('size', 'modified', start, 9)).toMatchObject({ size: 11.5, modified: 2.5 });
     expect(Columns.lineMoved('size', 'modified', start, -9)).toMatchObject({ size: 2.5, modified: 11.5 });
-    expect(Columns.lineMoved('name', 'size', start, 9)).toMatchObject({ size: 2.5 });
+    expect(Columns.lineMoved('name', 'size', { ...start, name: 20 }, -30)).toEqual({ name: 7 });
   });
 
   it('keeps the widths in quarter rems', () => {
