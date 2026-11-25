@@ -294,7 +294,7 @@ From the image, Proxmox 9.1 and newer turn the container image into a container 
 bash <(curl -fsSL https://raw.githubusercontent.com/junkerderprovinz/proxmox-apps/main/image.sh) install cannoncommander
 ```
 
-To update, run the same line with `update` in place of `install`. It replaces the container and keeps the folders and the address. This way works from the next release of CannonCommander. The current image does not start in a Proxmox container yet.
+To update, run the same line with `update` in place of `install`. It replaces the container and keeps the folders and the address.
 
 Docker works just as well, nothing is wrong with it. Create a container with Docker using the Community Scripts and start the compose file in it, as under [Getting started](#6-getting-started):
 

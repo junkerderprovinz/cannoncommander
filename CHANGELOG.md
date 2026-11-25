@@ -4,17 +4,35 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## Unreleased
+## v1.4.2 (2026-11-25)
+
+CannonCommander finds the office servers running next to it, needs much less memory for its file index, starts on Proxmox VE and lets you drag the name column wider.
+
+## ✨ Added
+
+- **CannonCommander finds your office server.** The Office card under Settings › Integrations lists the OnlyOffice, Euro-Office and Collabora containers it finds through the Docker socket, and Connect takes over the address and, for OnlyOffice and Euro-Office, the JWT secret, tests the connection and saves it. Without the socket, as on the desktop app, in a Proxmox container or on umbrelOS, Look for an office server asks the one machine you name on the ports office servers usually use. The [office guide](https://github.com/junkerderprovinz/cannoncommander/blob/main/docs/integrations/office.md) explains which address it picks and what to do for Collabora.
+
+## 🎨 Design
+
+- **The Security tab takes GlimStone 4.9.2.** Tokens, passkeys, sessions and sign-in services stand in the same rows as your connections: the service's logo or the kind's glyph on a tile, the name over a quiet line, and the buttons at the end. A long name wraps instead of being cut off.
+- **The password question sits in the password card,** as a switch under the password, and a sign-in service's switch sits at the end of its name's line with no On badge repeating it.
+- **Empty cards look like an empty list.** Without a password, the password card says "No password yet" over Set a password, and two-factor that is off says "Not set up yet" over Set up.
 
 ## ⚡ Improved
 
-- **The file index needs much less memory.** CannonCommander keeps the size of every indexed folder in memory. After a full scan each folder takes about a third of the memory it used to, and the index no longer grows while the scans work through the shares. On a server with three million folders that frees several hundred megabytes.
-- **The cache of resolved paths has a limit.** CannonCommander remembers up to 10,000 real paths for two days and lets the one it used least recently go first, so a client that walks a whole share can no longer make it grow without end.
+- **The file index needs much less memory.** After a full scan each indexed folder takes about a third of the memory it used to, and the index no longer grows while the scans work through the shares. On a server with three million folders that frees several hundred megabytes.
 - **Full scans leave unchanged files closed.** A file whose size and time haven't changed since the last scan keeps the type the index already knows, so a full scan doesn't read its first bytes again. On a share of millions of Storj pieces, whose ending CannonCommander doesn't recognise, that reading made a full pass take longer than a day.
+- **The cache of resolved paths has a limit.** CannonCommander remembers up to 10,000 real paths and lets the one it used least recently go first, so a client that walks a whole share can't make it grow without end.
+- **The office probe stays on the host it was given.** A test or a search that an office server answers with a redirect to another machine counts as no answer, so the JWT secret never travels to a host you didn't name.
 
 ## 🐛 Fixed
 
-- **CannonCommander starts in an unprivileged LXC on Proxmox.** Two things stopped it there. With /config on a Proxmox volume, the start halted at the volume's own lost+found folder, which belongs to the host. And the server, running as PUID, wasn't allowed to open port 80, because an LXC keeps ports below 1024 for root. The lost+found folder is now left alone, and the server keeps the one right it needs for port 80. Anything else in /config that the container can't take over still stops the start.
+- **The name column can be dragged wider and narrower.** Every other column could be resized, but the name only filled what the others left. A dragged name now keeps its own width, the last column fills the rest of the row, and a name wider than the panel scrolls the list sideways. Thanks to @lcostianis for the report ([#75](https://github.com/junkerderprovinz/cannoncommander/issues/75)).
+- **CannonCommander starts in an unprivileged LXC on Proxmox.** With /config on a Proxmox volume, the start halted at the volume's own lost+found folder, which belongs to the host. And the server, running as PUID, wasn't allowed to open port 80, because an LXC keeps ports below 1024 for root. The lost+found folder is now left alone, and the server keeps the one right it needs for port 80.
+
+## 🌐 Translations
+
+- **The office finder and the empty password and two-factor cards** in English and German.
 
 ## v1.4.1 (2026-11-24)
 
