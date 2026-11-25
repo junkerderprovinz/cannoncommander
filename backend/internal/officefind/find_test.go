@@ -431,3 +431,23 @@ func TestWithoutASocketThereIsNoDocker(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
+
+func TestAProbeTellsEuroOfficeByItsEditorScript(t *testing.T) {
+	l := newLAN(t)
+	euro := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/healthcheck":
+			_, _ = w.Write([]byte("true"))
+		case "/web-apps/apps/api/documents/api.js":
+			_, _ = w.Write([]byte(`params += "&customer=Euro Office";`))
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+	l.serve("tower.lan:9900", euro, false)
+	l.serve("tower.lan:8080", documentServer(), false)
+	k := byKind(t, Finder{HTTP: l.client()}.Probe(context.Background(), tower, "tower.lan"))
+	if k[system.OfficeEuroOffice].URL != "http://tower.lan:9900" || k[system.OfficeOnlyOffice].URL != "http://tower.lan:8080" {
+		t.Fatalf("got %+v", k)
+	}
+}

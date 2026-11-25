@@ -470,11 +470,11 @@ func (f Finder) Probe(ctx context.Context, here Here, host string) []Server {
 	for i, p := range probePorts {
 		wg.Go(func() {
 			base := origin(p.scheme, host, p.number)
-			for _, kind := range []string{system.OfficeOnlyOffice, system.OfficeCollabora} {
-				if f.answers(ctx, kind, base) {
-					found[i] = Server{Kind: kind, URL: base, Reachable: true}
-					return
-				}
+			switch {
+			case f.answers(ctx, system.OfficeOnlyOffice, base):
+				found[i] = Server{Kind: f.documentServer(ctx, base), URL: base, Reachable: true}
+			case f.answers(ctx, system.OfficeCollabora, base):
+				found[i] = Server{Kind: system.OfficeCollabora, URL: base, Reachable: true}
 			}
 		})
 	}
@@ -487,6 +487,19 @@ func (f Finder) Probe(ctx context.Context, here Here, host string) []Server {
 	}
 	return out
 }
+
+// documentServer tells Euro-Office from OnlyOffice, which answer the same
+// health check. Euro-Office names itself as the customer in its editor
+// script.
+func (f Finder) documentServer(ctx context.Context, base string) string {
+	body, _ := f.get(ctx, base+"/web-apps/apps/api/documents/api.js")
+	if euroOffice.Match(body) {
+		return system.OfficeEuroOffice
+	}
+	return system.OfficeOnlyOffice
+}
+
+var euroOffice = regexp.MustCompile(`(?i)customer=euro[ -]office`)
 
 // ValidHost reports whether s is a bare host name or address, without a
 // scheme, port or path.
