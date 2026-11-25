@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -20,9 +21,11 @@ import (
 type engine struct {
 	containers []inspect
 	networks   map[string]string
+	asked      []string
 }
 
 func (e *engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	e.asked = append(e.asked, r.Method+" "+r.URL.Path)
 	reply := func(v any) { _ = json.NewEncoder(w).Encode(v) }
 	switch p := r.URL.Path; {
 	case r.Method != http.MethodGet:
@@ -449,5 +452,60 @@ func TestAProbeTellsEuroOfficeByItsEditorScript(t *testing.T) {
 	k := byKind(t, Finder{HTTP: l.client()}.Probe(context.Background(), tower, "tower.lan"))
 	if k[system.OfficeEuroOffice].URL != "http://tower.lan:9900" || k[system.OfficeOnlyOffice].URL != "http://tower.lan:8080" {
 		t.Fatalf("got %+v", k)
+	}
+}
+
+func TestAProbeFollowsNoRedirectToAnotherHost(t *testing.T) {
+	l := newLAN(t)
+	l.serve("tower.lan:9900", http.RedirectHandler("http://10.0.0.9:80/healthcheck", http.StatusFound), false)
+	l.serve("10.0.0.9:80", documentServer(), false)
+	got := Finder{HTTP: l.client()}.Probe(context.Background(), tower, "tower.lan")
+	if len(got) != 0 {
+		t.Fatalf("got %+v", got)
+	}
+	for _, a := range l.asked {
+		if h, _, _ := net.SplitHostPort(a); h != "tower.lan" {
+			t.Fatalf("the probe went on to %s", a)
+		}
+	}
+}
+
+func TestAnAddressCheckFollowsNoRedirect(t *testing.T) {
+	l := newLAN(t)
+	l.serve("tower.lan:9900", http.RedirectHandler("http://10.0.0.9:80/healthcheck", http.StatusFound), false)
+	l.serve("10.0.0.9:80", documentServer(), false)
+	e := &engine{containers: []inspect{container("o1", "onlyoffice", "onlyoffice/documentserver").publish("80", "9900")}}
+	got, _ := finder(t, e, l).Containers(context.Background(), tower)
+	if len(got) != 1 || got[0].Reachable {
+		t.Fatalf("got %+v, want the address not to count as answering", got)
+	}
+	if slices.Contains(l.asked, "10.0.0.9:80") {
+		t.Fatal("the check followed the redirect")
+	}
+}
+
+func TestOnlyAHostNameOrAddressCanBeProbed(t *testing.T) {
+	for _, ok := range []string{"tower.lan", "tower", "192.168.1.20", "::1", "[fd00::1]", "my_nas.local", "tower.lan."} {
+		if err := ValidHost(ok); err != nil {
+			t.Errorf("%q: %v", ok, err)
+		}
+	}
+	for _, bad := range []string{"", "tower.lan:9900", "http://tower.lan", "tower.lan/x", "a@b", `tower\lan`, "tower%2flan", "tower	lan", "tower lan", "-tower", "tower..lan", "töwer"} {
+		if err := ValidHost(bad); err == nil {
+			t.Errorf("%q passed", bad)
+		}
+	}
+}
+
+func TestOnlyAContainerIDOrNameReachesDocker(t *testing.T) {
+	e := &engine{}
+	f := finder(t, e, newLAN(t))
+	for _, bad := range []string{"..", ".", "", "../images/x", "a/b", "x?all=1"} {
+		if _, _, err := f.Secret(context.Background(), tower, bad); err == nil {
+			t.Errorf("%q: want an error", bad)
+		}
+	}
+	if len(e.asked) != 0 {
+		t.Fatalf("docker was asked %v", e.asked)
 	}
 }

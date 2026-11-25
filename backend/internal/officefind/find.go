@@ -80,6 +80,10 @@ type Finder struct {
 	HTTP   *http.Client
 }
 
+// containerRef is what Docker accepts as a container's id or name, so that
+// nothing else ends up in the path of the call.
+var containerRef = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_.-]*$`)
+
 // unraidWebUI is the label Unraid keeps a template's WebUI address in.
 const unraidWebUI = "net.unraid.docker.webui"
 
@@ -187,6 +191,9 @@ func (f Finder) Containers(ctx context.Context, here Here) ([]Server, error) {
 func (f Finder) Secret(ctx context.Context, here Here, id string) (Server, string, error) {
 	if f.Docker == nil {
 		return Server{}, "", ErrNoDocker
+	}
+	if !containerRef.MatchString(id) {
+		return Server{}, "", fmt.Errorf("%q is no container id or name", id)
 	}
 	c, err := f.inspect(ctx, id)
 	if err != nil {
@@ -394,7 +401,11 @@ func (f Finder) get(ctx context.Context, addr string) ([]byte, bool) {
 	if err != nil {
 		return nil, false
 	}
-	res, err := f.HTTP.Do(req)
+	// A redirect counts as no answer, so a probe never reaches past the
+	// address it was given.
+	client := *f.HTTP
+	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, false
 	}
@@ -504,14 +515,24 @@ var euroOffice = regexp.MustCompile(`(?i)customer=euro[ -]office`)
 // ValidHost reports whether s is a bare host name or address, without a
 // scheme, port or path.
 func ValidHost(s string) error {
-	if s == "" || strings.ContainsAny(s, "/?#@ ") {
-		return fmt.Errorf("%q: enter a host name or address only", s)
-	}
 	if ip := net.ParseIP(strings.Trim(s, "[]")); ip != nil {
 		return nil
 	}
-	if strings.Contains(s, ":") {
+	if strings.Contains(s, ":") && !strings.ContainsAny(s, "/@") {
 		return fmt.Errorf("%q: enter the host without a port", s)
+	}
+	name := strings.TrimSuffix(s, ".")
+	if name == "" || len(name) > 253 {
+		return fmt.Errorf("%q: enter a host name or address only", s)
+	}
+	for _, label := range strings.Split(name, ".") {
+		if !hostLabel.MatchString(label) {
+			return fmt.Errorf("%q: enter a host name or address only", s)
+		}
 	}
 	return nil
 }
+
+// hostLabel is one part of a host name. The underscore is not in the
+// standard, but many home networks name their machines with one.
+var hostLabel = regexp.MustCompile(`^[a-zA-Z0-9_]([a-zA-Z0-9_-]{0,61}[a-zA-Z0-9_])?$`)
