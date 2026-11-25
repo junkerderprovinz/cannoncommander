@@ -6,6 +6,7 @@
 /* Lists of the sign-in tile's kind, people and their ways in, with the buttons always in view. */
 .a-rows { display: flex; flex-direction: column; gap: var(--space-2); }
 .a-conns { display: flex; flex-direction: column; gap: .5rem; }
+.a-found-note { margin: .25rem 0 0; font-size: 12px; color: var(--carbon-text-muted); }
 .a-conn-path { margin: 0; font-size: 12px; color: var(--carbon-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .a-foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; padding-top: .5rem; }
 .a-to { width: 14px; height: 14px; flex: none; color: var(--carbon-text-muted); }

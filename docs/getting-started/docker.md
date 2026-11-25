@@ -41,4 +41,7 @@ More on this under [Folders](../configuration/folders.md).
 !!! note "Without FUSE"
     Without `--device /dev/fuse` and `SYS_ADMIN` everything works except mounting remote storage. On Debian and Ubuntu, Docker's AppArmor profile blocks FUSE mounts, which is what `apparmor:unconfined` is for.
 
+!!! note "The Docker socket"
+    Add `-v /var/run/docker.sock:/var/run/docker.sock`, or uncomment that line in compose.yaml, and CannonCommander finds unused Docker leftovers for the [storeroom](../configuration/unraid.md#storeroom) and the [office servers](../integrations/office.md#connect) running next to it. The socket controls every container, so only map it if you trust everyone with an admin account.
+
 Then set a password: [First start](first-start.md).

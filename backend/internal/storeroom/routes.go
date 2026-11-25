@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/dockerengine"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -31,8 +32,8 @@ func ConfigFromEnv() Config {
 	if db := settings.Config.Server.DatabaseV2.Path; db != "" {
 		c.Room = filepath.Join(filepath.Dir(db), "storeroom")
 	}
-	if _, err := os.Stat("/var/run/docker.sock"); err == nil {
-		c.Docker = "/var/run/docker.sock"
+	if _, err := os.Stat(dockerengine.Socket); err == nil {
+		c.Docker = dockerengine.Socket
 	}
 	for env, dst := range map[string]*string{
 		"CC_STOREROOM_TEMPLATES": &c.Templates,

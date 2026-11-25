@@ -43,5 +43,7 @@ When in doubt, a folder stays off the list. It only shows up when no container m
 
 Everything goes into the storeroom first, and you can bring it back from there. Only images and the build cache are removed for good, because they can be downloaded or built again. Before anything happens, CannonCommander shows what it will do and asks.
 
+The same socket lets the **Office** card find the office servers running next to CannonCommander, see [Office files](../integrations/office.md#connect).
+
 !!! warning
     The Docker socket controls every container. Only map it if you trust everyone with an admin account.

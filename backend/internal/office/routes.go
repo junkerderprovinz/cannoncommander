@@ -56,6 +56,10 @@ func Routes(r *v1.Router) {
 		discovery: &discovery{},
 		locks:     newLocks(),
 		client:    &http.Client{Timeout: 2 * time.Minute},
+		find:      newFinder(),
+		connect: func(ctx context.Context, o system.Office) (system.IntegrationResult, system.Office, error) {
+			return system.ConnectOffice(ctx, d, o)
+		},
 	})
 }
 
@@ -73,6 +77,8 @@ type service struct {
 	discovery *discovery
 	locks     *locks
 	client    *http.Client
+	find      finder
+	connect   func(context.Context, system.Office) (system.IntegrationResult, system.Office, error)
 }
 
 func bind(r *v1.Router, s *service) {
@@ -83,6 +89,9 @@ func bind(r *v1.Router, s *service) {
 	r.Handle("POST /wopi/files/{id}", s.lock)
 	r.Handle("GET /wopi/files/{id}/contents", s.getFile)
 	r.Handle("POST /wopi/files/{id}/contents", s.putFile)
+	r.Handle("GET /admin/office/found", s.found)
+	r.Handle("POST /admin/office/probe", s.probe)
+	r.Handle("POST /admin/office/connect", s.connectFound)
 }
 
 // publicBase is the address of /api/v1 as the document server reaches it:
@@ -99,18 +108,7 @@ func publicBase(r *http.Request) string {
 			return strings.TrimRight(configured, "/") + api
 		}
 	}
-	scheme, host := "http", r.Host
-	if r.TLS != nil {
-		scheme = "https"
-	}
-	if settings.Config.Http.TrustProxyHeaders {
-		if h, _, _ := strings.Cut(r.Header.Get("X-Forwarded-Host"), ","); strings.TrimSpace(h) != "" {
-			host, scheme = strings.TrimSpace(h), "https"
-			if p, _, _ := strings.Cut(r.Header.Get("X-Forwarded-Proto"), ","); strings.TrimSpace(p) == "http" {
-				scheme = "http"
-			}
-		}
-	}
+	scheme, host := browserOrigin(r)
 	return scheme + "://" + host + api
 }
 

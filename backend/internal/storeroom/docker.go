@@ -1,69 +1,21 @@
 package storeroom
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"net"
 	"net/http"
 	"net/url"
-	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/dockerengine"
 )
 
-// docker speaks the few calls of the Engine API the storeroom needs. Paths
-// carry no API version, so the engine answers in its own.
+// docker speaks the few calls of the Engine API the storeroom needs.
 type docker struct {
-	c    *http.Client
-	base string
+	*dockerengine.Engine
 }
 
 func dialDocker(socket string) *docker {
-	tr := &http.Transport{DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-		var d net.Dialer
-		return d.DialContext(ctx, "unix", socket)
-	}}
-	return &docker{c: &http.Client{Transport: tr, Timeout: 30 * time.Second}, base: "http://docker"}
-}
-
-// errNotFound is the engine's 404, a container or network that went away.
-var errNotFound = errors.New("storeroom: not found in docker")
-
-func (d *docker) do(ctx context.Context, method, path string, body, out any) error {
-	var rd io.Reader
-	if body != nil {
-		b, err := json.Marshal(body)
-		if err != nil {
-			return err
-		}
-		rd = bytes.NewReader(b)
-	}
-	req, err := http.NewRequestWithContext(ctx, method, d.base+path, rd)
-	if err != nil {
-		return err
-	}
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
-	}
-	res, err := d.c.Do(req)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-	if res.StatusCode == http.StatusNotFound {
-		return errNotFound
-	}
-	if res.StatusCode >= 300 {
-		var msg struct{ Message string }
-		_ = json.NewDecoder(res.Body).Decode(&msg)
-		return fmt.Errorf("docker %s %s: %d %s", method, path, res.StatusCode, msg.Message)
-	}
-	if out == nil {
-		return nil
-	}
-	return json.NewDecoder(res.Body).Decode(out)
+	return &docker{dockerengine.Dial(socket)}
 }
 
 type mount struct {
@@ -162,35 +114,35 @@ type usage struct {
 
 func (d *docker) containers(ctx context.Context) ([]container, error) {
 	var out []container
-	return out, d.do(ctx, http.MethodGet, "/containers/json?all=1", nil, &out)
+	return out, d.Do(ctx, http.MethodGet, "/containers/json?all=1", nil, &out)
 }
 
 func (d *docker) networks(ctx context.Context) ([]network, error) {
 	var out []network
-	return out, d.do(ctx, http.MethodGet, "/networks", nil, &out)
+	return out, d.Do(ctx, http.MethodGet, "/networks", nil, &out)
 }
 
 func (d *docker) network(ctx context.Context, id string) (network, error) {
 	var out network
-	return out, d.do(ctx, http.MethodGet, "/networks/"+url.PathEscape(id), nil, &out)
+	return out, d.Do(ctx, http.MethodGet, "/networks/"+url.PathEscape(id), nil, &out)
 }
 
 func (d *docker) danglingVolumes(ctx context.Context) ([]volume, error) {
 	var out struct{ Volumes []volume }
 	q := url.Values{"filters": {`{"dangling":["true"]}`}}
-	return out.Volumes, d.do(ctx, http.MethodGet, "/volumes?"+q.Encode(), nil, &out)
+	return out.Volumes, d.Do(ctx, http.MethodGet, "/volumes?"+q.Encode(), nil, &out)
 }
 
 func (d *docker) usage(ctx context.Context) (usage, error) {
 	var out usage
-	return out, d.do(ctx, http.MethodGet, "/system/df", nil, &out)
+	return out, d.Do(ctx, http.MethodGet, "/system/df", nil, &out)
 }
 
 // containerdStore reports whether the engine keeps its images in containerd,
 // which gives every image a digest, one built here as well.
 func (d *docker) containerdStore(ctx context.Context) (bool, error) {
 	var out struct{ DriverStatus [][2]string }
-	if err := d.do(ctx, http.MethodGet, "/info", nil, &out); err != nil {
+	if err := d.Do(ctx, http.MethodGet, "/info", nil, &out); err != nil {
 		return false, err
 	}
 	for _, kv := range out.DriverStatus {
@@ -203,35 +155,35 @@ func (d *docker) containerdStore(ctx context.Context) (bool, error) {
 
 func (d *docker) manifests(ctx context.Context, id string) ([]manifest, error) {
 	var out struct{ Manifests []manifest }
-	return out.Manifests, d.do(ctx, http.MethodGet, "/images/"+url.PathEscape(id)+"/json?manifests=1", nil, &out)
+	return out.Manifests, d.Do(ctx, http.MethodGet, "/images/"+url.PathEscape(id)+"/json?manifests=1", nil, &out)
 }
 
 func (d *docker) rename(ctx context.Context, id, name string) error {
-	return d.do(ctx, http.MethodPost, "/containers/"+url.PathEscape(id)+"/rename?"+url.Values{"name": {name}}.Encode(), nil, nil)
+	return d.Do(ctx, http.MethodPost, "/containers/"+url.PathEscape(id)+"/rename?"+url.Values{"name": {name}}.Encode(), nil, nil)
 }
 
 func (d *docker) removeContainer(ctx context.Context, id string) error {
-	return d.do(ctx, http.MethodDelete, "/containers/"+url.PathEscape(id), nil, nil)
+	return d.Do(ctx, http.MethodDelete, "/containers/"+url.PathEscape(id), nil, nil)
 }
 
 func (d *docker) removeNetwork(ctx context.Context, id string) error {
-	return d.do(ctx, http.MethodDelete, "/networks/"+url.PathEscape(id), nil, nil)
+	return d.Do(ctx, http.MethodDelete, "/networks/"+url.PathEscape(id), nil, nil)
 }
 
 func (d *docker) createNetwork(ctx context.Context, body json.RawMessage) error {
-	return d.do(ctx, http.MethodPost, "/networks/create", body, nil)
+	return d.Do(ctx, http.MethodPost, "/networks/create", body, nil)
 }
 
 func (d *docker) removeVolume(ctx context.Context, name string) error {
-	return d.do(ctx, http.MethodDelete, "/volumes/"+url.PathEscape(name), nil, nil)
+	return d.Do(ctx, http.MethodDelete, "/volumes/"+url.PathEscape(name), nil, nil)
 }
 
 func (d *docker) removeImage(ctx context.Context, id string) error {
-	return d.do(ctx, http.MethodDelete, "/images/"+url.PathEscape(id), nil, nil)
+	return d.Do(ctx, http.MethodDelete, "/images/"+url.PathEscape(id), nil, nil)
 }
 
 // pruneBuildCache drops the build cache no build uses. The engine keeps
 // what a running build holds.
 func (d *docker) pruneBuildCache(ctx context.Context) error {
-	return d.do(ctx, http.MethodPost, "/build/prune", nil, nil)
+	return d.Do(ctx, http.MethodPost, "/build/prune", nil, nil)
 }

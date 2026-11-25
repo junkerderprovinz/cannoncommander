@@ -19,6 +19,8 @@ import (
 	"sync"
 	"time"
 	"unicode"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/dockerengine"
 )
 
 // Config says where the server keeps what the storeroom looks at.
@@ -538,7 +540,7 @@ func (s *Service) pulled(ctx context.Context, images []image) (map[string]bool, 
 			continue
 		}
 		ms, err := s.docker.manifests(ctx, im.ID)
-		if errors.Is(err, errNotFound) {
+		if errors.Is(err, dockerengine.ErrNotFound) {
 			continue
 		}
 		if err != nil {

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // The office server is a choice: none uses the built-in previews, OnlyOffice and Euro-Office share one connection,
-// Collabora speaks WOPI. ArrowLoop takes folder pairs as recurring jobs and sees the shares under paths of its own.
+// Collabora speaks WOPI. Servers running next to this one are offered for one click. ArrowLoop takes folder pairs as recurring jobs and sees the shares under paths of its own.
 import { Select } from '@glimstone/vue/Select';
-import { Button, Card, CopyField, FieldRow, FieldRowGroup, IconButton, PasswordField, Pill, TextField, Toggle } from '@glimstone/vue';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { Button, Card, ConnectionRow, CopyField, FieldRow, FieldRowGroup, IconButton, PasswordField, Pill, TextField, Toggle, type ConnectionAction } from '@glimstone/vue';
+import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 import { lazyComponent } from '@/core/lazy';
-import { admin, type AppChange, type AppSettings, type IntegrationResult, type OfficeKind, type System, type Tool } from '@/api/admin';
+import { admin, type AppChange, type AppSettings, type FoundOffice, type IntegrationResult, type OfficeKind, type System, type Tool } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
+import { OFFICE_MARKS } from '@/features/config/officeMarks';
 import { c, fail } from '@/features/config/shared';
 import { terminalOn } from '@/features/terminal/state';
 import { copyWords, eyeWords, selectOptions, shake } from '@/ui/kit';
@@ -28,6 +29,7 @@ function take(a: AppSettings) {
 }
 onMounted(() => {
   admin.app().then(take, () => {});
+  admin.foundOffices().then((f) => { offices.value = f; }, () => {});
   admin.system().then((s) => { sys.value = s; }, () => {});
 });
 
@@ -58,6 +60,63 @@ const saveOffice = () => { if (office.value!.url.trim()) save({ office: { kind: 
 async function saveSecret() {
   if (!secret.value) return;
   if (await save({ office: { secret: secret.value } })) secret.value = '';
+}
+
+// Without Docker the page asks the host the browser came from, which is where the office server usually runs too.
+const offices = ref<{ docker: boolean; servers: FoundOffice[] } | null>(null);
+const host = ref(location.hostname);
+const looking = ref(false), joining = ref('');
+const lookBtn = ref<InstanceType<typeof Button> | null>(null);
+const suites: Record<FoundOffice['kind'], string> = { onlyoffice: 'OnlyOffice', eurooffice: 'Euro-Office', collabora: 'Collabora Online' };
+const rowText = computed(() => ({ test: c('test'), edit: c('edit'), remove: c('remove') }));
+const keyOf = (s: FoundOffice) => s.id ?? s.url;
+const isOurs = (s: FoundOffice) => office.value?.kind === s.kind && office.value?.url === s.url;
+const foundActions = (s: FoundOffice): ConnectionAction[] => (isOurs(s) ? [] : [{
+  id: 'connect', label: c('integrations.connect'), labelKey: 'IconLink', busy: joining.value === keyOf(s), onClick: () => { void join(s); },
+}]);
+
+async function look() {
+  const h = host.value.trim();
+  if (!h) return fail(c('integrations.lookHost'), lookBtn.value?.el);
+  looking.value = true;
+  const got = await admin.probeOffices(h).catch(() => null);
+  looking.value = false;
+  if (!got) return fail(c('integrations.hostOnly'), lookBtn.value?.el);
+  offices.value = { docker: false, servers: got.servers };
+  if (!got.servers.length) toast(c('integrations.lookNone', { host: h }));
+}
+
+async function askSecret() {
+  toast(c('integrations.enterSecret'));
+  await nextTick();
+  document.querySelector<HTMLInputElement>('#a-oosecret')?.focus();
+}
+
+// A container's secret travels from Docker into the settings on the server. A probe only knows the address, so the
+// secret is typed in afterwards.
+async function join(s: FoundOffice) {
+  const o = app.value!.office, name = suites[s.kind];
+  joining.value = keyOf(s);
+  try {
+    if (s.id) {
+      const got = await admin.connectOffice(s.id);
+      Object.assign(o, got.office);
+      tests.office = got.result.ok ? 'ok' : 'bad';
+      if (got.result.ok) toast(c('integrations.connectedTo', { name }));
+      else if (got.result.reachable && got.result.token === 'missing') await askSecret();
+      else toast(why(got.result, 'office'), 'warn');
+      return;
+    }
+    o.kind = s.kind;
+    o.url = s.url;
+    tests.office = 'idle';
+    if (!(await save({ office: { kind: s.kind, url: s.url } }, c('integrations.connectedTo', { name })))) return;
+    if (needsSecret.value && !o.secretSet) await askSecret();
+  } catch {
+    toast(c('notSaved'), 'warn');
+  } finally {
+    joining.value = '';
+  }
 }
 
 const flag = (k: 'thumbs' | 'video') => computed({ get: () => !!app.value?.previews[k], set: (v: boolean) => { app.value!.previews[k] = v; save({ previews: { [k]: v } }); } });
@@ -135,6 +194,26 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
         </FieldRow>
         <FieldRow v-if="needsSecret" :label="c('integrations.secret')" :hint="c('integrations.secretTip')"><PasswordField id="a-oosecret" v-model="secret" :placeholder="office.secretSet ? c('integrations.kept') : 'JWT_SECRET'" @change="saveSecret" width="wide" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
       </template>
+      <div v-if="offices" data-found>
+        <FieldRow v-if="!offices.docker" :label="c('integrations.look')" :hint="c('integrations.lookTip')">
+          <TextField v-model="host" :aria-label="c('integrations.lookHost')" placeholder="tower.lan" width="medium" @keydown.enter="look" />
+          <Button ref="lookBtn" data-probe :label="c('integrations.lookButton')" label-key="IconSearch" :busy="looking" @click="look" />
+        </FieldRow>
+        <FieldRow v-if="offices.docker || offices.servers.length" :label="c('integrations.found')" :hint="c('integrations.foundTip')">
+          <Pill v-if="!offices.servers.length">{{ c('integrations.foundNone') }}</Pill>
+        </FieldRow>
+        <div v-if="offices.servers.length" class="a-conns">
+          <ConnectionRow v-for="s in offices.servers" :key="keyOf(s)" :name="suites[s.kind]" :mark="OFFICE_MARKS[s.kind]" :status="s.url" :text="rowText" :actions="foundActions(s)">
+            <template #badges>
+              <Pill v-if="isOurs(s)" tone="ok">{{ c('remotes.connected') }}</Pill>
+              <Pill v-else-if="!s.reachable" tone="warn" :title="c('integrations.noAnswerTip')">{{ c('integrations.noAnswer') }}</Pill>
+            </template>
+            <p v-if="s.name" class="a-conn-path mono">{{ s.name }}</p>
+            <p v-if="s.wopi === 'blocked'" class="a-found-note">{{ c('integrations.wopiBlocked', { address: s.allow ?? '' }) }}</p>
+            <p v-else-if="s.secret === 'unknown' && !isOurs(s)" class="a-found-note">{{ c('integrations.ownSecret') }}</p>
+          </ConnectionRow>
+        </div>
+      </div>
     </Card>
     <Card :title="c('integrations.media')">
       <FieldRow :label="c('integrations.thumbs')" :hint="c('integrations.thumbsTip')"><Toggle v-model="thumbs" data-it="thumbs" /></FieldRow>

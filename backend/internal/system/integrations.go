@@ -63,10 +63,16 @@ type tester struct {
 	client *http.Client
 }
 
+// newTester follows a redirect only on the host it tests. The version
+// command carries a token signed with the secret, which must not reach a
+// server the address was not meant for.
 func newTester() tester {
 	return tester{client: &http.Client{
 		Timeout: 10 * time.Second,
-		CheckRedirect: func(_ *http.Request, via []*http.Request) error {
+		CheckRedirect: func(next *http.Request, via []*http.Request) error {
+			if !strings.EqualFold(next.URL.Hostname(), via[0].URL.Hostname()) {
+				return fmt.Errorf("the server sent us elsewhere, to %s", next.URL.Host)
+			}
 			if len(via) >= 3 {
 				return errors.New("too many redirects")
 			}
