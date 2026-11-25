@@ -21,11 +21,15 @@ import (
 type engine struct {
 	containers []inspect
 	networks   map[string]string
-	asked      []string
+
+	mu    sync.Mutex
+	asked []string
 }
 
 func (e *engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	e.mu.Lock()
 	e.asked = append(e.asked, r.Method+" "+r.URL.Path)
+	e.mu.Unlock()
 	reply := func(v any) { _ = json.NewEncoder(w).Encode(v) }
 	switch p := r.URL.Path; {
 	case r.Method != http.MethodGet:
