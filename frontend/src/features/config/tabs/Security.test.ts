@@ -68,8 +68,13 @@ const cards = () => [...document.querySelectorAll<HTMLElement>('[data-signin-car
 describe('the account and security tab', () => {
   it('draws the sign-in tile without the accounts, which the Users tab manages', async () => {
     await mount();
-    expect(cards()).toEqual(['password', 'askPassword', 'twoFactor', 'passkeys', 'sessions', 'tokens', 'services']);
+    expect(cards()).toEqual(['password', 'twoFactor', 'passkeys', 'sessions', 'tokens', 'services']);
     expect(asked).not.toContain('GET accounts');
+  });
+
+  it('asks about the password check inside the password card', async () => {
+    await mount();
+    expect(document.querySelector('[data-signin-card="password"] [data-signin-tile="ask-password"]')).not.toBeNull();
   });
 
   it('shows the service of config.yaml as coming from there, with nothing to edit, remove or switch', async () => {
