@@ -15,6 +15,9 @@ asks for attribution and nothing else. Copyright 2024 Fonticons, Inc.
 **CC0 1.0**, and Flatpak's mark itself is **CC BY 3.0**
 (<https://flatpak.org/press>).
 
+**Simple Icons** (<https://simpleicons.org>): `truenas.txt`, its `truenas.svg`.
+The path is **CC0 1.0**.
+
 **Dashboard Icons** (`homarr-labs/dashboard-icons`,
 <https://dashboardicons.com>): `unraid.txt`, its `unraid.svg` with the gradient
 left out, since the button draws it in one ink, and `umbrel.txt`. **Apache-2.0**, whose text is

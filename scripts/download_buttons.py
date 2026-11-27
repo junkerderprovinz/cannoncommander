@@ -24,6 +24,7 @@ BUTTONS = {
     "mos": "https://mos-official.net/apps.html?search=CannonCommander",
     "zimaos": "https://github.com/junkerderprovinz/zimaos-apps#cannoncommander",
     "umbrel": "https://github.com/junkerderprovinz/umbrel-apps#install",
+    "truenas-yaml": "https://github.com/junkerderprovinz/truenas-apps#cannoncommander",
     "compose": "https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml",
     "proxmox": "#proxmox-ve",
     # A release's "Source code (zip)" is the whole repository at that tag, and
