@@ -28,7 +28,7 @@ RUN go build -tags mupdf,musl -ldflags="-w -s \
 
 # The interface is the same for every platform, so it builds once on the
 # runner's own one instead of under emulation.
-FROM --platform=$BUILDPLATFORM node:24-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS nbuild
+FROM --platform=$BUILDPLATFORM node:24-slim@sha256:873f586f3794f52281bd039bf02c048a0be08fde619338f9941bad1eb6b34530 AS nbuild
 WORKDIR /build/frontend
 COPY ./frontend/package.json ./frontend/package-lock.json ./
 RUN npm ci
