@@ -7,16 +7,17 @@ reads both and draws every path in the button's one ink.
 ## Sources and licences
 
 **Font Awesome Free 6.7.2**, from <https://fontawesome.com>: `docker.txt`,
-`windows.txt`, `apple.txt` and `linux.txt` from the `brands` set and `zip.txt`,
-which is `file-zipper` from the `solid` set. The icons are **CC BY 4.0**, which
-asks for attribution and nothing else. Copyright 2024 Fonticons, Inc.
+`windows.txt`, `apple.txt` and `linux.txt` from the `brands` set, and `zip.txt`
+and `book.txt`, which are `file-zipper` and `book` from the `solid` set. The
+icons are **CC BY 4.0**, which asks for attribution and nothing else. Copyright
+2024 Fonticons, Inc.
 
 **Simple Icons** (<https://simpleicons.org>): `flatpak.txt`. The path is
 **CC0 1.0**, and Flatpak's mark itself is **CC BY 3.0**
 (<https://flatpak.org/press>).
 
-**Simple Icons** (<https://simpleicons.org>): `truenas.txt`, its `truenas.svg`.
-The path is **CC0 1.0**.
+**Simple Icons** (<https://simpleicons.org>): `proxmox.txt` and `truenas.txt`,
+its `proxmox.svg` and `truenas.svg`. The paths are **CC0 1.0**.
 
 **Dashboard Icons** (`homarr-labs/dashboard-icons`,
 <https://dashboardicons.com>): `unraid.txt`, its `unraid.svg` with the gradient
@@ -24,8 +25,8 @@ left out, since the button draws it in one ink, and `umbrel.txt`. **Apache-2.0**
 beside this file as `LICENSE-dashboard-icons.txt`. Copyright the Homarr Labs
 team and contributors.
 
-`mos.txt` and `zimaos.txt` are the marks of MOS and ZimaOS, the same paths the
-other repositories with these buttons draw.
+`mos.txt` is MOS's mark, the `mos.svg` in mos-nas/mos-releases, and
+`zimaos.txt` ZimaOS's, the `zimaos-logo.svg` of its web interface.
 
 ## Provider logos
 
@@ -54,8 +55,10 @@ company's product is left out, and that provider shows a glyph instead.
 
 ## Trademarks
 
-Docker, Unraid, MOS, ZimaOS, Umbrel, Windows, Apple, Linux, Flatpak and every
-provider mark are trademarks of their owners. Each mark sits on the button for
-that platform or the tile that connects to that service, unmodified apart from
-its colour, to name it, and nothing here claims endorsement by or affiliation
-with any of them.
+Docker, Unraid, MOS, ZimaOS, Umbrel, Proxmox, TrueNAS, Windows, Apple, Linux,
+Flatpak and every provider mark are trademarks of their owners. Each mark sits
+on the button for that platform or the tile that connects to that service,
+unmodified apart from its colour, to name it, and nothing here claims
+endorsement by or affiliation with Docker, Lime Technology, MOS, IceWhale,
+Umbrel, Proxmox, iXsystems, Microsoft, Apple, Linus Torvalds, the Flatpak
+project or any of the providers.
