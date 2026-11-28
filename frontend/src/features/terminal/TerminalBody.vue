@@ -2,6 +2,7 @@
 // A shell on the server in the window. xterm draws it in the app's colours and monospace font and follows the window's
 // size; the shell lives as long as the window, and a dropped connection says so with a way to start again.
 import '@xterm/xterm/css/xterm.css';
+import { copyText } from '@glimstone/core';
 import { Button } from '@glimstone/vue';
 import { FitAddon } from '@xterm/addon-fit';
 import { type ITheme, Terminal } from '@xterm/xterm';
@@ -69,7 +70,7 @@ function keys(e: KeyboardEvent) {
   if (e.type !== 'keydown' || !(e.ctrlKey || e.metaKey) || e.altKey) return true;
   const key = e.key.toLowerCase(), picked = term!.getSelection();
   if (key === 'c' && (e.shiftKey || picked)) {
-    if (picked) void navigator.clipboard?.writeText(picked).catch(() => {});
+    if (picked) void copyText(picked);
     e.preventDefault();
     return false;
   }

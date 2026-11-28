@@ -7,6 +7,7 @@ import { toast } from '@/core/toast';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { useUser } from '@/stores/user';
+import { copyText } from '@/ui/kit';
 import { inArchive, split } from './paths';
 
 const save = () => api.saveBookmarks(useUser().bookmarks).catch(() => toast(t('side.notSaved'), 'warn'));
@@ -47,6 +48,5 @@ export function renameBookmark(b: Bookmark, name: string) {
 
 export function copyInternalLink(path: string) {
   const url = location.href.split('#')[0] + '#' + encodeURI(path);
-  navigator.clipboard?.writeText(url).catch(() => {});
-  toast(t('files.linkCopied'));
+  void copyText(url, t('files.linkCopied'));
 }
